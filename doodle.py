@@ -1,22 +1,28 @@
-from PySide2.QtWidgets import *
+from PyQt5 import QtGui,QtCore,QtWidgets
+import os
 import sys
 from mainUI.mainWindow import Ui_MainWindow
-'''
-class mymain():
-    def __init__(self):
-'''
-class MainWindow(QMainWindow):
-    def __init__(self):
-        super(MainWindow,self).__init__()
-        self.ui = Ui_MainWindow()
-        self.ui.setupUi(self)
 
+
+class MainDoodle(Ui_MainWindow,QtWidgets.QMainWindow):
+    def __init__(self):
+        super(self.__class__, self).__init__()
+        self.setupUi(self)
+        self.pushButton.clicked.connect(self.browseFolder)
+
+
+    def browseFolder(self):
+        self.listView.clearFocus()
+        dirextory = QtWidgets.QFileDialog.getExistingDirectory(self,"pushButton")
+
+        if dirextory:
+            for fileName in os.listdir(dirextory):
+                self.listWidget.addItem(fileName)
 
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    # MainWidow = QMainWindow()
-    ui = MainWindow()
-    ui.show()
-    sys.exit(app.exec_())
+    app = QtWidgets.QApplication(sys.argv)
+    MainWidow = MainDoodle()
+    MainWidow.show()
+    app.exec_()
