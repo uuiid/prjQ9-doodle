@@ -12,12 +12,15 @@ class MainDoodle(Ui_MainWindow,QtWidgets.QMainWindow):
 
 
     def browseFolder(self):
-        self.listView.clearFocus()
+        self.treeWidget.clear()
         dirextory = QtWidgets.QFileDialog.getExistingDirectory(self,"pushButton")
 
         if dirextory:
+            root = QtWidgets.QTreeWidgetItem(self.treeWidget)
             for fileName in os.listdir(dirextory):
-                self.listWidget.addItem(fileName)
+                item = QtWidgets.QTreeWidgetItem(root)
+                item.setText(0,fileName)
+                root.addChild(item)
 
 
 

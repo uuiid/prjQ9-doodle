@@ -17,34 +17,35 @@
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
-      <x>0</x>
-      <y>1</y>
-      <width>788</width>
-      <height>229</height>
+      <x>1</x>
+      <y>4</y>
+      <width>784</width>
+      <height>225</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_3">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinimumSize</enum>
+     </property>
      <item>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetDefaultConstraint</enum>
+        <widget class="QTreeWidget" name="treeWidget">
+         <property name="columnCount">
+          <number>1</number>
          </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QListWidget" name="listWidget"/>
-           </item>
-           <item>
-            <widget class="QListWidget" name="listWidget"/>
-           </item>
-           <item>
-            <widget class="QListWidget" name="listWidget_2"/>
-           </item>
-          </layout>
-         </item>
-        </layout>
+         <column>
+          <property name="text">
+           <string notr="true">1</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item>
+        <widget class="QListWidget" name="listWidget"/>
+       </item>
+       <item>
+        <widget class="QListWidget" name="listWidget_2"/>
        </item>
       </layout>
      </item>
