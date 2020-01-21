@@ -21,7 +21,7 @@ class MainDoodle(Ui_MainWindow,QtWidgets.QMainWindow):
         if shots:
             root = QtWidgets.QTreeWidgetItem(self.treeWidget)
             for fileName in shots:
-                if fileName.split("-")[-1]:
+                #if fileName.split("-")[-1]:
 
                 item = QtWidgets.QTreeWidgetItem(root)
                 item.setText(0,fileName)
