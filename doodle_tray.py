@@ -12,22 +12,26 @@ from PyQt5 import QtWidgets, QtGui
 
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
-    patterns = "*"
-    ignore_patterns = ""
-    ignore_directories = False
-    case_sensitive = True
-    path = ""
-    go_recursively = True
-    my_event_handler =''
+    # patterns = "*"
+    # ignore_patterns = ""
+    # ignore_directories = False
+    # case_sensitive = True
+    # path = ""
+    # go_recursively = True
+    # my_event_handler = ''
+    setting = {}
 
     def __init__(self, icon, parent=None):
         QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
-        self.patterns = '*'
-        self.ignore_patterns = ""
-        self.ignore_directories = False
-        self.case_sensitive = True
-        self.path = "D:\\ue_prj"
-        self.go_recursively = True
+        doodle_setting = script.doodle_setting.Doodlesetting()
+        self.setting = doodle_setting.getString()
+        # print(self.setting)
+        # self.patterns = '*'
+        # self.ignore_patterns = ""
+        # self.ignore_directories = False
+        # self.case_sensitive = True
+        # self.path = "D:\\ue_prj"
+        # self.go_recursively = True
 
         self.timer = QtCore.QTimer(self)
         self.timer.setSingleShot(True)

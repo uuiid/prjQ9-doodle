@@ -28,8 +28,6 @@
     </Filter>
     <FolderPairs>
         <Pair>
-            <Left/>
-            <Right/>
         </Pair>
     </FolderPairs>
     <Errors Ignore="false" Retry="0" Delay="5"/>

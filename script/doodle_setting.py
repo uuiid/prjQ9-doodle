@@ -10,16 +10,12 @@ import pathlib
 import script.convert
 
 
-class Doodlesetting(QtWidgets.QMainWindow, script.setting.Ui_MainWindow):
+class Doodlesetting():
     setting = {}
     doc = pathlib.Path("{}{}".format(pathlib.Path.home(), '\\Documents\\doodle'))
     userland = doc.joinpath("doodle_conf.json")
 
     def __init__(self):
-        super(Doodlesetting, self).__init__(parent=None)
-        QtWidgets.QMainWindow.__init__(self)
-        self.setupUi(self)
-        self.setToolTip("文件管理设置")
 
         self.setting = {"user": '未记录',
                         "department": '未记录',
@@ -28,6 +24,9 @@ class Doodlesetting(QtWidgets.QMainWindow, script.setting.Ui_MainWindow):
 
         self.doc = pathlib.Path("{}{}".format(pathlib.Path.home(), '\\Documents\\doodle'))
         self.userland = self.doc.joinpath("doodle_conf.json")
+        self.setting = self.getString()
+
+    def getString(self):
         if not self.doc.is_dir():
             os.makedirs(doc)
         if not self.userland.is_file():
@@ -46,6 +45,34 @@ class Doodlesetting(QtWidgets.QMainWindow, script.setting.Ui_MainWindow):
         except:
             with codecs.open(self.userland, mode='w', encoding='utf-8') as f:
                 f.write('')
+        return self.setting
+
+
+class DoodlesettingGUI(QtWidgets.QMainWindow, script.setting.Ui_MainWindow, Doodlesetting):
+
+    def __init__(self):
+        super(DoodlesettingGUI, self).__init__()
+        Doodlesetting.__init__(self)
+        QtWidgets.QMainWindow.__init__(self)
+        self.setupUi(self)
+        # if not self.doc.is_dir():
+        #     os.makedirs(doc)
+        # if not self.userland.is_file():
+        #     f = codecs.open(self.userland, mode='w', encoding='utf-8')
+        #     f.write("")
+        #     json.dump(self.setting, f, ensure_ascii=False)
+        #     f.close()
+        # if not self.userland.stat().st_size:
+        #     with codecs.open(self.userland, mode='w', encoding='utf-8') as f:
+        #         json.dump(self.setting, f, ensure_ascii=False)
+        #
+        # try:
+        #     with codecs.open(self.userland, mode='r', encoding='utf-8') as f:
+        #         for key, value in json.load(f).items():
+        #             self.setting[key] = value
+        # except:
+        #     with codecs.open(self.userland, mode='w', encoding='utf-8') as f:
+        #         f.write('')
 
         self.DepartmentTest.setText(self.setting['department'])
         self.DepartmentTest.editingFinished.connect(lambda: self.editconf('department', self.DepartmentTest.text()))
@@ -77,7 +104,7 @@ class Doodlesetting(QtWidgets.QMainWindow, script.setting.Ui_MainWindow):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    w = Doodlesetting()
+    w = DoodlesettingGUI()
     w.show()
 
     sys.exit(app.exec_())
