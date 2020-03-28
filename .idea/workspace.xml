@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9c558dd4-e952-44ae-9286-c83c632ddee1" name="默认更改列表" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="ueFile" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/script/doodle_setting.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/ue_path.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/tools/camBakeAim.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/script/convert.py" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="ProjectId" id="1ZQZbS87uCJ14tkDUYoVqcDZDh3" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/新建临时文件" value="Python" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\ueFile" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\ueFile\tools" />
+      <recent name="D:\ueFile\datas" />
+      <recent name="D:\ueFile\script" />
+      <recent name="D:\ueFile" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.doodle_tray">
+    <configuration name="convert" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ueFile" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/convert.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="doodle_setting" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ueFile" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/doodle_setting.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="doodle_tray" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ueFile" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/doodle_tray.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pyConMYSQL" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ueFile" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pyConMYSQL.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="scratch" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ueFile" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.doodle_tray" />
+        <item itemvalue="Python.doodle_setting" />
+        <item itemvalue="Python.convert" />
+        <item itemvalue="Python.pyConMYSQL" />
+        <item itemvalue="Python.scratch" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9c558dd4-e952-44ae-9286-c83c632ddee1" name="默认更改列表" comment="" />
+      <created>1584773350013</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1584773350013</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="552" y="273" key="#Inspections" timestamp="1585299032729">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state x="552" y="273" key="#Inspections/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585299032729" />
+    <state x="772" y="418" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1585361547476">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state x="772" y="418" key="#com.intellij.fileTypes.FileTypeChooser/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585361547476" />
+    <state x="765" y="331" key="#com.intellij.ide.util.MemberChooser" timestamp="1585026667887">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state x="765" y="331" key="#com.intellij.ide.util.MemberChooser/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585026667887" />
+    <state x="687" y="371" width="848" height="488" key="#com.intellij.tools.ToolEditorDialog" timestamp="1585030753373">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state x="687" y="371" width="848" height="488" key="#com.intellij.tools.ToolEditorDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585030753373" />
+    <state width="1899" height="380" key="GridCell.Tab.0.bottom" timestamp="1585301918619">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state width="1899" height="380" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585301918619" />
+    <state width="1899" height="380" key="GridCell.Tab.0.center" timestamp="1585301918619">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state width="1899" height="380" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585301918619" />
+    <state width="1899" height="380" key="GridCell.Tab.0.left" timestamp="1585301918619">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state width="1899" height="380" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585301918619" />
+    <state width="1899" height="380" key="GridCell.Tab.0.right" timestamp="1585301918619">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state width="1899" height="380" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585301918619" />
+    <state width="1899" height="380" key="GridCell.Tab.1.bottom" timestamp="1585301918620">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state width="1899" height="380" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585301918620" />
+    <state width="1899" height="380" key="GridCell.Tab.1.center" timestamp="1585301918620">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state width="1899" height="380" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585301918620" />
+    <state width="1899" height="380" key="GridCell.Tab.1.left" timestamp="1585301918619">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state width="1899" height="380" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585301918619" />
+    <state width="1899" height="380" key="GridCell.Tab.1.right" timestamp="1585301918620">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state width="1899" height="380" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585301918620" />
+    <state x="461" y="257" key="SettingsEditor" timestamp="1585215089123">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state x="461" y="257" key="SettingsEditor/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585215089123" />
+    <state x="658" y="439" key="com.intellij.ide.util.TipDialog" timestamp="1585360800491">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state x="658" y="439" key="com.intellij.ide.util.TipDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585360800491" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
