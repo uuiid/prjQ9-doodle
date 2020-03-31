@@ -59,7 +59,38 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="DepartmentTest"/>
+            <widget class="QComboBox" name="DepartmentTest">
+             <item>
+              <property name="text">
+               <string>未记录</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Light</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>VFX</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>modle</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>rig</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Aim</string>
+              </property>
+             </item>
+            </widget>
            </item>
           </layout>
          </item>

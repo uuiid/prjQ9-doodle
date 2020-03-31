@@ -1,19 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9c558dd4-e952-44ae-9286-c83c632ddee1" name="默认更改列表" comment="添加xml文件写入功能">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/teXiao.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/script/readServerDiectory.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+    <list default="true" id="9c558dd4-e952-44ae-9286-c83c632ddee1" name="默认更改列表" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doodle.spec" beforeDir="false" afterPath="$PROJECT_DIR$/doodle.spec" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/doodle_tray.py" beforeDir="false" afterPath="$PROJECT_DIR$/doodle_tray.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ffs_xml.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/script/doodle_setting.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/doodle_setting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/script/readServerDiectory.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/readServerDiectory.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/script/setting.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/setting.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/script/setting.ui" beforeDir="false" afterPath="$PROJECT_DIR$/script/setting.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/script/synXml.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/synXml.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/script/test_synXml.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tools/template/temp.ffs_batch" beforeDir="false" afterPath="$PROJECT_DIR$/tools/template/temp.ffs_batch" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,27 +59,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.doodle_tray">
-    <configuration name="convert" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ueFile" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/convert.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="true" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="doodle_setting" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ueFile" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -127,27 +101,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="pyConMYSQL" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ueFile" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pyConMYSQL.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="readServerDiectory" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ueFile" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -166,13 +119,52 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="scratch_1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ueFile" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="scratch_2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ueFile" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.doodle_tray" />
-        <item itemvalue="Python.readServerDiectory" />
-        <item itemvalue="Python.readServerDiectory" />
-        <item itemvalue="Python.readServerDiectory" />
-        <item itemvalue="Python.readServerDiectory" />
+        <item itemvalue="Python.scratch_2" />
+        <item itemvalue="Python.doodle_setting" />
+        <item itemvalue="Python.scratch_1" />
+        <item itemvalue="Python.scratch_1" />
       </list>
     </recent_temporary>
   </component>
@@ -194,7 +186,14 @@
       <option name="project" value="LOCAL" />
       <updated>1585389713444</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="细化syn同步功能">
+      <created>1585629743668</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1585629743668</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -236,7 +235,8 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="添加xml文件写入功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="添加xml文件写入功能" />
+    <MESSAGE value="细化syn同步功能" />
+    <option name="LAST_COMMIT_MESSAGE" value="细化syn同步功能" />
   </component>
   <component name="WindowStateProjectService">
     <state x="978" y="163" key="#Inspections" timestamp="1585619153899">
@@ -267,46 +267,46 @@
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="711" y="469" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585625401812" />
-    <state x="620" y="208" key="CommitChangelistDialog2" timestamp="1585389723067">
+    <state x="620" y="208" key="CommitChangelistDialog2" timestamp="1585629741706">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="620" y="208" key="CommitChangelistDialog2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585389723067" />
-    <state width="1899" height="380" key="GridCell.Tab.0.bottom" timestamp="1585629702738">
+    <state x="620" y="208" key="CommitChangelistDialog2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585629741706" />
+    <state width="1899" height="407" key="GridCell.Tab.0.bottom" timestamp="1585635631973">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="380" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585629702738" />
-    <state width="1899" height="380" key="GridCell.Tab.0.center" timestamp="1585629702738">
+    <state width="1899" height="407" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585635631973" />
+    <state width="1899" height="407" key="GridCell.Tab.0.center" timestamp="1585635631973">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="380" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585629702738" />
-    <state width="1899" height="380" key="GridCell.Tab.0.left" timestamp="1585629702738">
+    <state width="1899" height="407" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585635631973" />
+    <state width="1899" height="407" key="GridCell.Tab.0.left" timestamp="1585635631973">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="380" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585629702738" />
-    <state width="1899" height="380" key="GridCell.Tab.0.right" timestamp="1585629702738">
+    <state width="1899" height="407" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585635631973" />
+    <state width="1899" height="407" key="GridCell.Tab.0.right" timestamp="1585635631973">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="380" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585629702738" />
-    <state width="1899" height="380" key="GridCell.Tab.1.bottom" timestamp="1585629702686">
+    <state width="1899" height="407" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585635631973" />
+    <state width="1899" height="407" key="GridCell.Tab.1.bottom" timestamp="1585635631973">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="380" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585629702686" />
-    <state width="1899" height="380" key="GridCell.Tab.1.center" timestamp="1585629702685">
+    <state width="1899" height="407" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585635631973" />
+    <state width="1899" height="407" key="GridCell.Tab.1.center" timestamp="1585635631973">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="380" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585629702685" />
-    <state width="1899" height="380" key="GridCell.Tab.1.left" timestamp="1585629702685">
+    <state width="1899" height="407" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585635631973" />
+    <state width="1899" height="407" key="GridCell.Tab.1.left" timestamp="1585635631973">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="380" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585629702685" />
-    <state width="1899" height="380" key="GridCell.Tab.1.right" timestamp="1585629702685">
+    <state width="1899" height="407" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585635631973" />
+    <state width="1899" height="407" key="GridCell.Tab.1.right" timestamp="1585635631973">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="380" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585629702685" />
-    <state x="461" y="257" key="SettingsEditor" timestamp="1585367608225">
+    <state width="1899" height="407" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585635631973" />
+    <state x="461" y="257" key="SettingsEditor" timestamp="1585635672677">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="461" y="257" key="SettingsEditor/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585367608225" />
+    <state x="461" y="257" key="SettingsEditor/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585635672677" />
     <state width="968" height="593" key="XDebugger.FullValuePopup" timestamp="1585625905590">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>

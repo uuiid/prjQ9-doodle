@@ -30,4 +30,3 @@ class SeverSetting():
         return self.setting
 
 
-print(SeverSetting().getsever())

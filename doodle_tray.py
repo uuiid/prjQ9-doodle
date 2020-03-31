@@ -25,7 +25,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     timeSyn = 7200000
 
     def __init__(self, icon, parent=None):
-        QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
+        self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
         self.doodleSet = script.doodle_setting.Doodlesetting()
         self.setting = self.doodleSet.getString()
         # print(self.setting)
@@ -47,27 +47,41 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         file_sync = menu.addAction('同步文件')
         file_sync.triggered.connect(self.file_syns)
 
+        setmenu = menu.addAction('设置')
+        setmenu.triggered.connect(self.setGUI)
+
         exit_ = menu.addAction('退出')
-        exit_.triggered.connect(lambda: sys.exit())
+        exit_.triggered.connect(self.myexit)
 
         menu.addSeparator()
         self.setContextMenu(menu)
 
     def file_syns(self):
-        readServerDiectory = script.readServerDiectory.SeverSetting().getsever()
-        synfile_Name = '{}-ep-{}'.format(readServerDiectory["department"], readServerDiectory['ep'])
-        synfile = script.synXml.weiteXml(self.doodleSet.doc,
-                                         readServerDiectory['Synchronization'],
-                                         synfile_Name)
-        program = pathlib.Path('C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe')
-        run('{} "{}"'.format(program, synfile), shell=True)
-        script.debug.debug("同步时间: {}\n".format(time.time()))
+        if self.setting['department'] == 'Light':
+            readServerDiectory = script.readServerDiectory.SeverSetting().getsever()
+            synfile_Name = '{}-ep-{}'.format(readServerDiectory["department"], readServerDiectory['ep'])
+            synfile = script.synXml.weiteXml(self.doodleSet.doc,
+                                             readServerDiectory['Synchronization'],
+                                             synfile_Name)
+            program = pathlib.Path('C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe')
+            run('{} "{}"'.format(program, synfile), shell=True)
+            script.debug.debug("同步时间: {}\n".format(time.asctime(time.localtime(time.time()))))
+
+    def myexit(self):
+        QtWidgets.QSystemTrayIcon.deleteLater(self)
+        # self.tray = None
+        sys.exit()
+
+    def setGUI(self):
+        setwin = script.doodle_setting.DoodlesettingGUI()
+        setwin.show()
 
 
 def main():
     app = QtWidgets.QApplication(sys.argv)
-    w = QtWidgets.QWidget()
-    tray_icon = SystemTrayIcon(QtGui.QIcon('datas/icon.png'), w)
+    QtWidgets.QApplication.setQuitOnLastWindowClosed(False)
+    # w = QtWidgets.QWidget()
+    tray_icon = SystemTrayIcon(QtGui.QIcon('datas/icon.png'), None)
     tray_icon.show()
     tray_icon.showMessage('文件管理', 'hello')
 

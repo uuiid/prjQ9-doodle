@@ -29,7 +29,7 @@ class Doodlesetting():
 
     def getString(self):
         if not self.doc.is_dir():
-            os.makedirs(doc)
+            self.doc.mkdir()
         if not self.userland.is_file():
             f = codecs.open(self.userland, mode='w', encoding='utf-8')
             f.write("")
@@ -51,20 +51,21 @@ class Doodlesetting():
 
 class DoodlesettingGUI(QtWidgets.QMainWindow, script.setting.Ui_MainWindow, Doodlesetting):
 
-    def __init__(self):
+    def __init__(self,parent = None):
         super(DoodlesettingGUI, self).__init__()
         Doodlesetting.__init__(self)
-        QtWidgets.QMainWindow.__init__(self)
+        QtWidgets.QMainWindow.__init__(self,parent =parent)
         self.setupUi(self)
 
-        self.DepartmentTest.setText(self.setting['department'])
-        self.DepartmentTest.editingFinished.connect(lambda: self.editconf('department', self.DepartmentTest.text()))
+        self.DepartmentTest.setCurrentText(self.setting['department'])
+        self.DepartmentTest.currentIndexChanged.connect(lambda: self.editconf('department',
+                                                                              self.DepartmentTest.currentText()))
 
         self.userTest.setText(self.setting['user'])
-        self.userTest.editingFinished.connect(lambda: self.editconf('user', self.userTest.text()))
+        self.userTest.textChanged.connect(lambda: self.editconf('user', self.userTest.text()))
 
         self.synTest.setText(self.setting['syn'])
-        self.synTest.editingFinished.connect(
+        self.synTest.textChanged.connect(
             lambda: self.editConfZhongWen('syn', pathlib.PurePath(self.synTest.text())))
 
         self.synSever.setText(self.setting['synSever'])
