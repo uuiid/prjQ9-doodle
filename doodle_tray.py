@@ -1,14 +1,16 @@
 # -*- coding: UTF-8 -*-
-import codecs
-import os
+import pathlib
 import sys
 import time
-import script.debug
-from pathlib import Path
 from subprocess import run
-import script.doodle_setting
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets, QtGui
+
+import script.debug
+import script.doodle_setting
+import script.readServerDiectory
+import script.synXml
 
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
@@ -20,11 +22,12 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     # go_recursively = True
     # my_event_handler = ''
     setting = {}
+    timeSyn = 7200000
 
     def __init__(self, icon, parent=None):
         QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
-        doodle_setting = script.doodle_setting.Doodlesetting()
-        self.setting = doodle_setting.getString()
+        self.doodleSet = script.doodle_setting.Doodlesetting()
+        self.setting = self.doodleSet.getString()
         # print(self.setting)
         # self.patterns = '*'
         # self.ignore_patterns = ""
@@ -36,9 +39,9 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.timer = QtCore.QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.file_syns)
-        self.timer.start(3600000)
+        self.timer.start(self.timeSyn)
 
-        self.setToolTip('文件管理系统-0.1.1')
+        self.setToolTip('文件管理系统-0.1.2')
         menu = QtWidgets.QMenu(parent)
 
         file_sync = menu.addAction('同步文件')
@@ -50,22 +53,14 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         menu.addSeparator()
         self.setContextMenu(menu)
 
-    # def debug(self, mystr):
-    #     log = Path("{}{}".format(Path.home(), '\\Documents\\doodle\\log.txt'))
-    #     try:
-    #         Path("{}{}".format(Path.home(), '\\Documents\\doodle')).mkdir()
-    #     except:
-    #         pass
-    #     Path.touch(log)
-    #     with codecs.open(log, mode='a', encoding="utf-8") as f:
-    #         f.write(mystr)
-    #     if log.stat().st_size > 1048576:
-    #         log.unlink()
-
     def file_syns(self):
-        program = os.path.abspath('C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe')
-        # os.system('{} W:\\data\\ue_prj\\template.ffs_batch'.format(program))
-        run('{} W:\\data\\ue_prj\\template.ffs_batch'.format(program), shell=True)
+        readServerDiectory = script.readServerDiectory.SeverSetting().getsever()
+        synfile_Name = '{}-ep-{}'.format(readServerDiectory["department"], readServerDiectory['ep'])
+        synfile = script.synXml.weiteXml(self.doodleSet.doc,
+                                         readServerDiectory['Synchronization'],
+                                         synfile_Name)
+        program = pathlib.Path('C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe')
+        run('{} "{}"'.format(program, synfile), shell=True)
         script.debug.debug("同步时间: {}\n".format(time.time()))
 
 

@@ -20,6 +20,7 @@ class Doodlesetting():
         self.setting = {"user": '未记录',
                         "department": '未记录',
                         "syn": "D:\\ue_prj",
+                        "synSever": "W:\\data\\ue_prj",
                         'FreeFileSync': 'C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe'}
 
         self.doc = pathlib.Path("{}{}".format(pathlib.Path.home(), '\\Documents\\doodle'))
@@ -55,24 +56,6 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, script.setting.Ui_MainWindow, Dood
         Doodlesetting.__init__(self)
         QtWidgets.QMainWindow.__init__(self)
         self.setupUi(self)
-        # if not self.doc.is_dir():
-        #     os.makedirs(doc)
-        # if not self.userland.is_file():
-        #     f = codecs.open(self.userland, mode='w', encoding='utf-8')
-        #     f.write("")
-        #     json.dump(self.setting, f, ensure_ascii=False)
-        #     f.close()
-        # if not self.userland.stat().st_size:
-        #     with codecs.open(self.userland, mode='w', encoding='utf-8') as f:
-        #         json.dump(self.setting, f, ensure_ascii=False)
-        #
-        # try:
-        #     with codecs.open(self.userland, mode='r', encoding='utf-8') as f:
-        #         for key, value in json.load(f).items():
-        #             self.setting[key] = value
-        # except:
-        #     with codecs.open(self.userland, mode='w', encoding='utf-8') as f:
-        #         f.write('')
 
         self.DepartmentTest.setText(self.setting['department'])
         self.DepartmentTest.editingFinished.connect(lambda: self.editconf('department', self.DepartmentTest.text()))
@@ -83,6 +66,8 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, script.setting.Ui_MainWindow, Dood
         self.synTest.setText(self.setting['syn'])
         self.synTest.editingFinished.connect(
             lambda: self.editConfZhongWen('syn', pathlib.PurePath(self.synTest.text())))
+
+        self.synSever.setText(self.setting['synSever'])
 
         self.freeFileSyncButton.setText(self.setting['FreeFileSync'])
 
@@ -98,8 +83,8 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, script.setting.Ui_MainWindow, Dood
         self.setting[key] = newValue.as_posix()
 
     def saveset(self):
-        with codecs.open(self.userland, "w", 'utf-8') as f:
-            json.dump(self.setting, f, ensure_ascii=False)
+        self.setting = json.dumps(self.setting, ensure_ascii=False, indent=4, separators=(',', ':'))
+        self.userland.write_text(self.setting, 'utf-8')
 
 
 if __name__ == '__main__':
