@@ -56,8 +56,8 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
 
     def file_syns(self):
         if self.doodleSet.setting['department'] in ['Light','VFX']:
-            readServerDiectory = script.readServerDiectory.SeverSetting().getsever()
-            synfile_Name = '{}-ep-{}'.format(readServerDiectory["department"], readServerDiectory['ep'])
+            readServerDiectory = script.readServerDiectory.SeverSetting().setting
+            synfile_Name = '{}-ep-{}'.format(readServerDiectory['Content'][0]["department"], readServerDiectory['ep'])
             synfile = script.synXml.weiteXml(self.doodleSet.doc,
                                              readServerDiectory['Synchronization'],
                                              synfile_Name)

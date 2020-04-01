@@ -2,16 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9c558dd4-e952-44ae-9286-c83c632ddee1" name="默认更改列表" comment="">
-      <change afterPath="$PROJECT_DIR$/UiFile/ProjectBrowser.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UiFile/ProjectBrowser.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/script/ProjectBrowserGUI.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/randMe.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test.pyx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/doodle.spec" beforeDir="false" afterPath="$PROJECT_DIR$/doodle.spec" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UiFile/setting.py" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/setting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UiFile/setting.ui" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/setting.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/doodle_tray.py" beforeDir="false" afterPath="$PROJECT_DIR$/doodle_tray.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/script/convert.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/convert.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/script/ProjectBrowserGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/ProjectBrowserGUI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/script/doodle_setting.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/doodle_setting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/script/setting.py" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/setting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/script/setting.ui" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/setting.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/script/readServerDiectory.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/readServerDiectory.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +47,7 @@
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/新建临时文件" value="Python" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="run.code.analysis.last.selected.profile" value="aDefault" />
-    <property name="settings.editor.selected.configurable" value="preferences.externalTools" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -62,7 +61,7 @@
       <recent name="D:\ueFile\datas" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.doodle_tray">
+  <component name="RunManager" selected="Python.doodle_setting">
     <configuration name="doodle_setting" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ueFile" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -105,18 +104,21 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="scratch_1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="readServerDiectory" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ueFile" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
-      <option name="IS_MODULE_SDK" value="false" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
+      <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/readServerDiectory.py" />
       <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
@@ -167,11 +169,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.doodle_setting" />
+        <item itemvalue="Python.readServerDiectory" />
         <item itemvalue="Python.doodle_tray" />
         <item itemvalue="Python.scratch_3" />
-        <item itemvalue="Python.doodle_setting" />
         <item itemvalue="Python.scratch_2" />
-        <item itemvalue="Python.scratch_1" />
       </list>
     </recent_temporary>
   </component>
@@ -207,7 +209,14 @@
       <option name="project" value="LOCAL" />
       <updated>1585636129649</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="添加动画部门上传文件和批量导出的UI">
+      <created>1585726661047</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1585726661047</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -251,17 +260,18 @@
     <MESSAGE value="添加xml文件写入功能" />
     <MESSAGE value="细化syn同步功能" />
     <MESSAGE value="灯光部门基本同步功能完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="灯光部门基本同步功能完成" />
+    <MESSAGE value="添加动画部门上传文件和批量导出的UI" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加动画部门上传文件和批量导出的UI" />
   </component>
   <component name="WindowStateProjectService">
     <state x="978" y="163" key="#Inspections" timestamp="1585619153899">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="978" y="163" key="#Inspections/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585619153899" />
-    <state x="772" y="418" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1585703561700">
+    <state x="772" y="418" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1585748862280">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="772" y="418" key="#com.intellij.fileTypes.FileTypeChooser/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585703561700" />
+    <state x="772" y="418" key="#com.intellij.fileTypes.FileTypeChooser/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585748862280" />
     <state x="858" y="233" width="925" height="590" key="#com.intellij.ide.macro.MacrosDialog" timestamp="1585713602617">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
@@ -278,66 +288,66 @@
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="448" y="456" width="848" height="488" key="#com.intellij.tools.ToolEditorDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585713631088" />
-    <state x="678" y="240" width="950" height="750" key="#readServerDiectory" timestamp="1585625500071">
+    <state x="678" y="240" width="950" height="750" key="#readServerDiectory" timestamp="1585746238237">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="678" y="240" width="950" height="750" key="#readServerDiectory/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585625500071" />
+    <state x="678" y="240" width="950" height="750" key="#readServerDiectory/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585746238237" />
     <state x="711" y="469" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1585640616054">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="711" y="469" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585640616054" />
-    <state x="620" y="208" key="CommitChangelistDialog2" timestamp="1585636128389">
+    <state x="620" y="208" key="CommitChangelistDialog2" timestamp="1585726659668">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="620" y="208" key="CommitChangelistDialog2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585636128389" />
+    <state x="620" y="208" key="CommitChangelistDialog2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585726659668" />
     <state x="740" y="370" key="FileChooserDialogImpl" timestamp="1585648086584">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="740" y="370" key="FileChooserDialogImpl/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585648086584" />
-    <state width="1899" height="407" key="GridCell.Tab.0.bottom" timestamp="1585724501905">
+    <state width="1899" height="267" key="GridCell.Tab.0.bottom" timestamp="1585748572229">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="407" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585724501905" />
-    <state width="1899" height="407" key="GridCell.Tab.0.center" timestamp="1585724501905">
+    <state width="1899" height="267" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585748572229" />
+    <state width="1899" height="267" key="GridCell.Tab.0.center" timestamp="1585748572228">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="407" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585724501905" />
-    <state width="1899" height="407" key="GridCell.Tab.0.left" timestamp="1585724501905">
+    <state width="1899" height="267" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585748572228" />
+    <state width="1899" height="267" key="GridCell.Tab.0.left" timestamp="1585748572228">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="407" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585724501905" />
-    <state width="1899" height="407" key="GridCell.Tab.0.right" timestamp="1585724501905">
+    <state width="1899" height="267" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585748572228" />
+    <state width="1899" height="267" key="GridCell.Tab.0.right" timestamp="1585748572228">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="407" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585724501905" />
-    <state width="1899" height="407" key="GridCell.Tab.1.bottom" timestamp="1585724501905">
+    <state width="1899" height="267" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585748572228" />
+    <state width="1899" height="407" key="GridCell.Tab.1.bottom" timestamp="1585748550594">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="407" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585724501905" />
-    <state width="1899" height="407" key="GridCell.Tab.1.center" timestamp="1585724501905">
+    <state width="1899" height="407" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585748550594" />
+    <state width="1899" height="407" key="GridCell.Tab.1.center" timestamp="1585748550594">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="407" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585724501905" />
-    <state width="1899" height="407" key="GridCell.Tab.1.left" timestamp="1585724501905">
+    <state width="1899" height="407" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585748550594" />
+    <state width="1899" height="407" key="GridCell.Tab.1.left" timestamp="1585748550594">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="407" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585724501905" />
-    <state width="1899" height="407" key="GridCell.Tab.1.right" timestamp="1585724501905">
+    <state width="1899" height="407" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585748550594" />
+    <state width="1899" height="407" key="GridCell.Tab.1.right" timestamp="1585748550594">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="407" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585724501905" />
-    <state x="471" y="244" key="SettingsEditor" timestamp="1585713631890">
+    <state width="1899" height="407" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585748550594" />
+    <state x="471" y="244" key="SettingsEditor" timestamp="1585748774234">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="471" y="244" key="SettingsEditor/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585713631890" />
-    <state width="968" height="593" key="XDebugger.FullValuePopup" timestamp="1585625905590">
+    <state x="471" y="244" key="SettingsEditor/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585748774234" />
+    <state width="968" height="593" key="XDebugger.FullValuePopup" timestamp="1585745949829">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="968" height="593" key="XDebugger.FullValuePopup/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585625905590" />
-    <state x="658" y="439" key="com.intellij.ide.util.TipDialog" timestamp="1585559933930">
+    <state width="968" height="593" key="XDebugger.FullValuePopup/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585745949829" />
+    <state x="658" y="439" key="com.intellij.ide.util.TipDialog" timestamp="1585737061045">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="658" y="439" key="com.intellij.ide.util.TipDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585559933930" />
+    <state x="658" y="439" key="com.intellij.ide.util.TipDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585737061045" />
     <state x="623" y="287" width="672" height="678" key="search.everywhere.popup" timestamp="1585369880279">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>

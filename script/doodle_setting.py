@@ -19,11 +19,12 @@ class Doodlesetting():
         # 初始化设置
 
         self.setting = {"user": '未记录',
-                         "department": '未记录',
-                         "syn": "D:\\ue_prj",
-                         "synSever": "W:\\data\\ue_prj",
-                         "project": "W:\\",
-                         'FreeFileSync': 'C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe'}
+                        "department": '未记录',
+                        "syn": "D:\\ue_prj",
+                        "synEp": 1,
+                        "synSever": "W:\\data\\ue_prj",
+                        "project": "W:\\",
+                        'FreeFileSync': 'C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe'}
 
         self.doc = pathlib.Path("{}{}".format(pathlib.Path.home(), '\\Documents\\doodle'))
         self.userland = self.doc.joinpath("doodle_conf.json")
@@ -90,6 +91,10 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow, Dood
         self.synSever.setText(self.setting['synSever'])
 
         # 设置项目目录
+        self.projectTest.setText(self.setting['project'])
+
+        # 设置同步集数
+        self.synEp.setValue(self.setting['synEp'])
 
         # 设置同步软件安装目录
         self.freeFileSyncButton.setText(self.setting['FreeFileSync'])
