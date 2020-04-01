@@ -6,8 +6,14 @@ block_cipher = None
 a = Analysis(['doodle_tray.py'],
              pathex=['D:\\ueFile'],
              binaries=[],
-             datas=[('datas\\icon.png','datas')],
+
+             datas=[('datas\\icon.png','datas'),
+             ('UiFile','UiFile'),
+             ('tools','tools'),
+             ('script','script')],
+
              hiddenimports=[],
+
              hookspath=[],
              runtime_hooks=[],
              excludes=[],
@@ -34,4 +40,4 @@ coll = COLLECT(exe,
                strip=False,
                upx=True,
                upx_exclude=[],
-               name='doodle')
+               name='doodle_tray')

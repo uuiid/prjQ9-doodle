@@ -13,7 +13,7 @@ def isChinese(strs: pathlib.Path):
                 return True
     return False
 
-# print(isChinese(pathlib.Path(strs)))
+
 
 
 def convertToEn(pathStrs: pathlib.Path) -> pathlib.Path:

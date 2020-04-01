@@ -21,13 +21,11 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     # path = ""
     # go_recursively = True
     # my_event_handler = ''
-    setting = {}
     timeSyn = 7200000
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
         self.doodleSet = script.doodle_setting.Doodlesetting()
-        self.setting = self.doodleSet.getString()
         # print(self.setting)
         # self.patterns = '*'
         # self.ignore_patterns = ""
@@ -57,7 +55,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.setContextMenu(menu)
 
     def file_syns(self):
-        if self.setting['department'] == 'Light':
+        if self.doodleSet.setting['department'] in ['Light','VFX']:
             readServerDiectory = script.readServerDiectory.SeverSetting().getsever()
             synfile_Name = '{}-ep-{}'.format(readServerDiectory["department"], readServerDiectory['ep'])
             synfile = script.synXml.weiteXml(self.doodleSet.doc,
@@ -68,8 +66,9 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
             script.debug.debug("同步时间: {}\n".format(time.asctime(time.localtime(time.time()))))
 
     def myexit(self):
-        QtWidgets.QSystemTrayIcon.deleteLater(self)
-        # self.tray = None
+        # QtWidgets.QSystemTrayIcon.deleteLater(self)
+        self.setVisible(False)
+        self.tray = None
         sys.exit()
 
     def setGUI(self):
