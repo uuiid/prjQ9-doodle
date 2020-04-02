@@ -40,7 +40,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listWidget_2"/>
+             <widget class="QListWidget" name="listepisodes"/>
             </item>
            </layout>
           </item>
@@ -54,21 +54,21 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listWidget_3"/>
+             <widget class="QListWidget" name="listshot"/>
             </item>
            </layout>
           </item>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,2">
             <item>
-             <widget class="QLabel" name="label_4">
+             <widget class="QLabel" name="department">
               <property name="text">
                <string>department</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listWidget_4"/>
+             <widget class="QListWidget" name="listdepartment"/>
             </item>
            </layout>
           </item>
@@ -82,7 +82,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listWidget_5"/>
+             <widget class="QListWidget" name="listdepType"/>
             </item>
            </layout>
           </item>
@@ -96,7 +96,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listWidget"/>
+             <widget class="QListWidget" name="listfile"/>
             </item>
            </layout>
           </item>
@@ -126,11 +126,11 @@
  </widget>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>listWidget_2</tabstop>
-  <tabstop>listWidget_3</tabstop>
-  <tabstop>listWidget_4</tabstop>
-  <tabstop>listWidget_5</tabstop>
-  <tabstop>listWidget</tabstop>
+  <tabstop>listepisodes</tabstop>
+  <tabstop>listshot</tabstop>
+  <tabstop>listdepartment</tabstop>
+  <tabstop>listdepType</tabstop>
+  <tabstop>listfile</tabstop>
  </tabstops>
  <resources/>
  <connections/>

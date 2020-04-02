@@ -15,7 +15,7 @@ class Doodlesetting():
     doc = pathlib.Path("{}{}".format(pathlib.Path.home(), '\\Documents\\doodle'))
     userland = doc.joinpath("doodle_conf.json")
 
-    def __init__(self):
+    def __init__(self) -> object:
         # 初始化设置
 
         self.setting = {"user": '未记录',
