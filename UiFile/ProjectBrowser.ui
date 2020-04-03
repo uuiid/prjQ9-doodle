@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>968</width>
-    <height>377</height>
+    <width>1133</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -31,11 +31,11 @@
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1,1,1,5">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,1">
+           <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0">
             <item>
              <widget class="QLabel" name="episodes">
               <property name="text">
-               <string>episodes</string>
+               <string>集数</string>
               </property>
              </widget>
             </item>
@@ -45,11 +45,11 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1">
+           <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0">
             <item>
              <widget class="QLabel" name="shot">
               <property name="text">
-               <string>shot</string>
+               <string>镜头</string>
               </property>
              </widget>
             </item>
@@ -59,11 +59,11 @@
            </layout>
           </item>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,2">
+           <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
             <item>
              <widget class="QLabel" name="department">
               <property name="text">
-               <string>department</string>
+               <string>部门</string>
               </property>
              </widget>
             </item>
@@ -77,7 +77,7 @@
             <item>
              <widget class="QLabel" name="depType">
               <property name="text">
-               <string>depType</string>
+               <string>类型</string>
               </property>
              </widget>
             </item>
@@ -91,12 +91,39 @@
             <item>
              <widget class="QLabel" name="file">
               <property name="text">
-               <string>file</string>
+               <string>文件</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listfile"/>
+             <widget class="QTableWidget" name="listfile">
+              <property name="maximumSize">
+               <size>
+                <width>120000</width>
+                <height>1200</height>
+               </size>
+              </property>
+              <column>
+               <property name="text">
+                <string>版本</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>概述</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>制作人</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>格式</string>
+               </property>
+              </column>
+             </widget>
             </item>
            </layout>
           </item>
@@ -118,7 +145,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>968</width>
+     <width>1133</width>
      <height>23</height>
     </rect>
    </property>
