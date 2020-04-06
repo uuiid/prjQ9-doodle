@@ -3,11 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="9c558dd4-e952-44ae-9286-c83c632ddee1" name="默认更改列表" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UiFile/ProjectBrowser.py" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/ProjectBrowser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UiFile/ProjectBrowser.ui" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/ProjectBrowser.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/anzhuang.iss" beforeDir="false" afterPath="$PROJECT_DIR$/anzhuang.iss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/script/ProjectBrowserGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/ProjectBrowserGUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.pyx" beforeDir="false" afterPath="$PROJECT_DIR$/test.pyx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/script/doodle_setting.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/doodle_setting.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,28 +86,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="doodle_tray" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ueFile" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/doodle_tray.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="readServerDiectory" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="doodle_setting" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ueFile" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -122,7 +98,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/readServerDiectory.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/doodle_setting.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -131,7 +107,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="scratch_4" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="scratch_11" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ueFile" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -143,7 +119,7 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_4.py" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_11.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -152,7 +128,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="scratch_5" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="scratch_13" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ueFile" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -164,7 +140,28 @@
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_5.py" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_13.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="scratch_14" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ueFile" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_14.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -176,10 +173,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.ProjectBrowserGUI" />
-        <item itemvalue="Python.doodle_tray" />
-        <item itemvalue="Python.scratch_5" />
-        <item itemvalue="Python.scratch_4" />
-        <item itemvalue="Python.readServerDiectory" />
+        <item itemvalue="Python.scratch_14" />
+        <item itemvalue="Python.scratch_13" />
+        <item itemvalue="Python.doodle_setting" />
+        <item itemvalue="Python.scratch_11" />
       </list>
     </recent_temporary>
   </component>
@@ -236,7 +233,14 @@
       <option name="project" value="LOCAL" />
       <updated>1585822257988</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="继续修复动画项目管理器">
+      <created>1585899220815</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1585899220815</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -283,13 +287,18 @@
     <MESSAGE value="添加动画部门上传文件和批量导出的UI" />
     <MESSAGE value="修复灯光同步,  添加集数选择" />
     <MESSAGE value="添加ue同步和打开功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="添加ue同步和打开功能" />
+    <MESSAGE value="继续修复动画项目管理器" />
+    <option name="LAST_COMMIT_MESSAGE" value="继续修复动画项目管理器" />
   </component>
   <component name="WindowStateProjectService">
     <state x="978" y="163" key="#Inspections" timestamp="1585619153899">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="978" y="163" key="#Inspections/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585619153899" />
+    <state x="414" y="270" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586167450223">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state x="414" y="270" key="#com.intellij.execution.impl.EditConfigurationsDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586167450223" />
     <state x="772" y="418" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1585748862280">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
@@ -318,62 +327,74 @@
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="814" y="368" key="#xdebugger.XInspectDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585794393759" />
+    <state x="715" y="317" key="#xdebugger.evaluate" timestamp="1586167352422">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state x="715" y="317" key="#xdebugger.evaluate/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586167352422" />
     <state x="711" y="469" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1585640616054">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="711" y="469" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585640616054" />
-    <state x="620" y="208" key="CommitChangelistDialog2" timestamp="1585822256353">
+    <state x="620" y="208" key="CommitChangelistDialog2" timestamp="1585899219571">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="620" y="208" key="CommitChangelistDialog2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585822256353" />
+    <state x="620" y="208" key="CommitChangelistDialog2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585899219571" />
+    <state width="1703" height="466" key="DebuggerActiveHint" timestamp="1586155685325">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state width="1703" height="466" key="DebuggerActiveHint/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586155685325" />
     <state x="740" y="370" key="FileChooserDialogImpl" timestamp="1585648086584">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="740" y="370" key="FileChooserDialogImpl/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585648086584" />
-    <state width="1899" height="422" key="GridCell.Tab.0.bottom" timestamp="1585896877399">
+    <state width="1899" height="351" key="GridCell.Tab.0.bottom" timestamp="1586168151343">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="422" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585896877399" />
-    <state width="1899" height="422" key="GridCell.Tab.0.center" timestamp="1585896877399">
+    <state width="1899" height="351" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586168151343" />
+    <state width="1899" height="351" key="GridCell.Tab.0.center" timestamp="1586168151343">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="422" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585896877399" />
-    <state width="1899" height="422" key="GridCell.Tab.0.left" timestamp="1585896877398">
+    <state width="1899" height="351" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586168151343" />
+    <state width="1899" height="351" key="GridCell.Tab.0.left" timestamp="1586168151343">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="422" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585896877398" />
-    <state width="1899" height="422" key="GridCell.Tab.0.right" timestamp="1585896877399">
+    <state width="1899" height="351" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586168151343" />
+    <state width="1899" height="351" key="GridCell.Tab.0.right" timestamp="1586168151343">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="422" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585896877399" />
-    <state width="1899" height="422" key="GridCell.Tab.1.bottom" timestamp="1585896877400">
+    <state width="1899" height="351" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586168151343" />
+    <state width="1899" height="351" key="GridCell.Tab.1.bottom" timestamp="1586168143435">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="422" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585896877400" />
-    <state width="1899" height="422" key="GridCell.Tab.1.center" timestamp="1585896877400">
+    <state width="1899" height="351" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586168143435" />
+    <state width="1899" height="351" key="GridCell.Tab.1.center" timestamp="1586168143435">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="422" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585896877400" />
-    <state width="1899" height="422" key="GridCell.Tab.1.left" timestamp="1585896877400">
+    <state width="1899" height="351" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586168143435" />
+    <state width="1899" height="351" key="GridCell.Tab.1.left" timestamp="1586168143435">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="422" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585896877400" />
-    <state width="1899" height="422" key="GridCell.Tab.1.right" timestamp="1585896877400">
+    <state width="1899" height="351" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586168143435" />
+    <state width="1899" height="351" key="GridCell.Tab.1.right" timestamp="1586168143435">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="422" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585896877400" />
+    <state width="1899" height="351" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586168143435" />
     <state x="456" y="330" key="SettingsEditor" timestamp="1585822655184">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="456" y="330" key="SettingsEditor/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585822655184" />
+    <state width="498" height="446" key="SwitcherDM" timestamp="1586166360943">
+      <screen x="0" y="30" width="1920" height="1170" />
+    </state>
+    <state width="498" height="446" key="SwitcherDM/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586166360943" />
     <state width="968" height="593" key="XDebugger.FullValuePopup" timestamp="1585888456787">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state width="968" height="593" key="XDebugger.FullValuePopup/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585888456787" />
-    <state x="658" y="439" key="com.intellij.ide.util.TipDialog" timestamp="1585820641826">
+    <state x="658" y="439" key="com.intellij.ide.util.TipDialog" timestamp="1586156223536">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="658" y="439" key="com.intellij.ide.util.TipDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585820641826" />
+    <state x="658" y="439" key="com.intellij.ide.util.TipDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586156223536" />
     <state x="393" y="266" width="421" height="716" key="refactoring.ChangeSignatureDialog" timestamp="1585826063212">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
@@ -387,14 +408,19 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$APPLICATION_CONFIG_DIR$/scratches/scratch_13.py</url>
+          <line>17</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/script/ProjectBrowserGUI.py</url>
-          <line>142</line>
-          <option name="timeStamp" value="12" />
+          <line>227</line>
+          <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/script/ProjectBrowserGUI.py</url>
-          <line>148</line>
-          <option name="timeStamp" value="13" />
+          <line>278</line>
+          <option name="timeStamp" value="14" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -405,5 +431,15 @@
         </breakpoint>
       </default-breakpoints>
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="self.file_department" />
+        <watch expression="self.file_episods" />
+        <watch expression="self.file_path" />
+        <watch expression="self.file_shot" />
+        <watch expression="self.file_type" />
+        <watch expression="self.file_version" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>

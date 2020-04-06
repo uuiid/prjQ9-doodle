@@ -3,7 +3,7 @@ import codecs
 import json
 import pathlib
 import sys
-
+import threading
 from PyQt5 import QtWidgets
 
 import UiFile.setting
@@ -14,6 +14,14 @@ class Doodlesetting():
     _setting = {}
     doc = pathlib.Path("{}{}".format(pathlib.Path.home(), '\\Documents\\doodle'))
     userland = doc.joinpath("doodle_conf.json")
+    _instance_lock = threading.Lock()
+
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(Doodlesetting, '_instance'):
+            with Doodlesetting._instance_lock:
+                if not hasattr(Doodlesetting, '_instance'):
+                    Doodlesetting._instance = object.__new__(cls)
+        return Doodlesetting._instance
 
     def __init__(self) -> object:
         # 初始化设置
@@ -124,6 +132,10 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow, Dood
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     w = DoodlesettingGUI()
+    # obj1 = Doodlesetting()
+    # obj2 = Doodlesetting()
+    # print(obj1,obj2)
+
     w.show()
 
     sys.exit(app.exec_())
