@@ -24,9 +24,10 @@ class SeverSetting:
         """返回服务器上的目录设置"""
         # 读取本地部门类型 以及每集类型
         self.setlocale = script.doodle_setting.Doodlesetting()
-
+        # 获得设置的文件路径
         file = pathlib.Path(self.setlocale.setting['project']).joinpath('configuration', '{}_synFile.json'.format(
             self.setlocale.setting['department']))
+        # 读取文件
         settingtmp = file.read_text(encoding='utf-8')
         settingtmp = json.loads(settingtmp, encoding='utf-8')
         synpath: dict

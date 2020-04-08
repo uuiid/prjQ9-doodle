@@ -12,6 +12,7 @@ import script.debug
 import script.doodle_setting
 import script.readServerDiectory
 import script.synXml
+import script.ProjectBrowserGUI
 
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
@@ -31,6 +32,9 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
 
         file_sync = menu.addAction('同步文件')
         file_sync.triggered.connect(self.file_syns)
+
+        project = menu.addAction('项目管理器')
+        project.triggered.connect(self.openProject)
 
         UEmenu = menu.addMenu('UE动作')
 
@@ -56,7 +60,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     def file_syns(self):
         if self.doodleSet.setting['department'] in ['Light', 'VFX']:
             readServerDiectory = script.readServerDiectory.SeverSetting().setting
-            synfile_Name = '{}-ep-{}'.format(self.doodleSet.setting['department'], readServerDiectory['ep'])
+            synfile_Name = '{}-ep-{}'.format(self.doodleSet.setting['department'], self.doodleSet.setting['synEp'])
             synfile = script.synXml.weiteXml(self.doodleSet.doc,
                                              readServerDiectory['ep{:0>3d}Syn'.format(self.doodleSet.setting['synEp'])],
                                              fileName=synfile_Name)
@@ -85,8 +89,13 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
             program = self.doodleSet.setting['FreeFileSync']
             run('{} "{}"'.format(program, synfile), shell=True)
 
-    def openUE(self):
+    @staticmethod
+    def openUE():
         Popen("D:\\Source\\UnrealEngine\\Engine\\Binaries\\Win64\\UE4Editor.exe")
+
+    def openProject(self):
+        self.project_browser = script.ProjectBrowserGUI.ProjectBrowserGUI()
+        self.project_browser.show()
 
 
 def main():
@@ -94,8 +103,8 @@ def main():
     QtWidgets.QApplication.setQuitOnLastWindowClosed(False)
     # w = QtWidgets.QWidget()
     tray_icon = SystemTrayIcon(QtGui.QIcon('datas/icon.png'), None)
-    tray_icon.show()
     tray_icon.showMessage('文件管理', 'hello')
+    tray_icon.show()
 
     sys.exit(app.exec_())
 

@@ -125,8 +125,8 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow, Dood
 
     def saveset(self):
         # 保存到文档的设置文件中
-        self.setting = json.dumps(self.setting, ensure_ascii=False, indent=4, separators=(',', ':'))
-        self.userland.write_text(self.setting, 'utf-8')
+        my_setting = json.dumps(self.setting, ensure_ascii=False, indent=4, separators=(',', ':'))
+        self.userland.write_text(my_setting, 'utf-8')
 
 
 if __name__ == '__main__':
