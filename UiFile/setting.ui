@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1011</width>
-    <height>555</height>
+    <width>1164</width>
+    <height>547</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,7 +22,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="3,2,2">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="sizeConstraint">
@@ -130,11 +130,32 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <widget class="QLabel" name="sysTestYing">
+          <property name="text">
+           <string>TextLabel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,2,0,2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>服务器目录</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QLabel" name="synSever">
             <property name="text">
              <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>集数</string>
             </property>
            </widget>
           </item>
@@ -165,13 +186,6 @@
          </layout>
         </item>
         <item>
-         <widget class="QLabel" name="sysTestYing">
-          <property name="text">
-           <string>TextLabel</string>
-          </property>
-         </widget>
-        </item>
-        <item>
          <widget class="QLabel" name="freeFileSync">
           <property name="text">
            <string>同步软件安装目录</string>
@@ -185,10 +199,16 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QTextBrowser" name="textBrowser"/>
+        </item>
        </layout>
       </item>
       <item>
-       <widget class="QTextEdit" name="textEdit"/>
+       <widget class="QListWidget" name="pathSynSever"/>
+      </item>
+      <item>
+       <widget class="QListWidget" name="pathSynLocale"/>
       </item>
      </layout>
     </item>
@@ -199,7 +219,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1011</width>
+     <width>1164</width>
      <height>23</height>
     </rect>
    </property>

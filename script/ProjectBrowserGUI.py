@@ -16,6 +16,7 @@ import script.convert
 import script.debug
 import script.doodle_setting
 import script.readServerDiectory
+import script.ProjectAnalysis.PathAnalysis
 
 
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
@@ -25,11 +26,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     file_shot: str = ''
     file_department: str = ''
     file_type: str = ''
+    root: pathlib.Path
+    projectAnalysis: script.ProjectAnalysis.PathAnalysis
 
     def __init__(self, parent=None):
         super(ProjectBrowserGUI, self).__init__()
         self.setlocale = script.doodle_setting.Doodlesetting()
         self.setSour = script.readServerDiectory.SeverSetting()
+
         # 设置UI
         self.setupUi(self)
         # 设置最后的文件编辑器的一些标准动作
@@ -74,14 +78,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 添加文件右键菜单
         self.listfile.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         # 用文件管理器打开文件位置
-        open_explorer = QtWidgets.QAction('打开文件管理器',self)
+        open_explorer = QtWidgets.QAction('打开文件管理器', self)
         open_explorer.triggered.connect(self.openExplorer)
         self.listfile.addAction(open_explorer)
 
         # copy文件名称或者路径到剪切板
-        copy_name_to_clip = QtWidgets.QAction('复制名称',self)
+        copy_name_to_clip = QtWidgets.QAction('复制名称', self)
         copy_name_to_clip.triggered.connect(self.copyNameToClipboard)
-        copy_path_to_clip = QtWidgets.QAction('复制路径',self)
+        copy_path_to_clip = QtWidgets.QAction('复制路径', self)
         copy_path_to_clip.triggered.connect(self.copyPathToClipboard)
         self.listfile.addAction(copy_path_to_clip)
         self.listfile.addAction(copy_name_to_clip)
@@ -111,6 +115,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 获得根目录
         for myP in shot_root_:
             root = root.joinpath(myP)
+        self.root = root
         return root
 
     def getepisodes(self):
@@ -446,6 +451,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             if self.listshot.selectedItems() and self.file_shot:
                 shotname = '{}-{}'.format(self.file_episods, self.file_shot)
                 self.generateShotFolder(shotname, shotAB[0])
+
     def openExplorer(self):
         filePath = self.file_path
         os.startfile(filePath)
@@ -453,9 +459,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def copyNameToClipboard(self):
         pyperclip.copy(str(self.combinationFileName()))
 
-
     def copyPathToClipboard(self):
         pyperclip.copy(str(self.file_path))
+
+
 # 添加右键菜单
 # def contextMenuEvent(self, event: QtGui.QContextMenuEvent) -> None:
 #     menu = QtWidgets.QMenu(self)

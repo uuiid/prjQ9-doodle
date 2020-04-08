@@ -8,7 +8,7 @@ from PyQt5 import QtWidgets
 
 import UiFile.setting
 import script.convert
-
+import script.readServerDiectory
 
 class Doodlesetting():
     _setting = {}
@@ -74,60 +74,90 @@ class Doodlesetting():
         return self.setting
 
 
-class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow, Doodlesetting):
-
+class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
+    sever_setting = ''
+    setlocale :Doodlesetting
     def __init__(self, parent=None):
         super(DoodlesettingGUI, self).__init__()
-        Doodlesetting.__init__(self)
         QtWidgets.QMainWindow.__init__(self, parent=parent)
-        self.setupUi(self)
+        self.setlocale = Doodlesetting()
+        self.sever_setting =script.readServerDiectory.SeverSetting()
 
+        self.setupUi(self)
         # 设置部门显示
-        self.DepartmentTest.setCurrentText(self.setting['department'])
+        self.DepartmentTest.setCurrentText(self.setlocale.setting['department'])
         self.DepartmentTest.currentIndexChanged.connect(lambda: self.editconf('department',
                                                                               self.DepartmentTest.currentText()))
         # 设置人员名称
-        self.userTest.setText(self.setting['user'])
+        self.userTest.setText(self.setlocale.setting['user'])
         self.userTest.textChanged.connect(lambda: self.editconf('user', self.userTest.text()))
 
         # 设置本地同步目录
-        self.synTest.setText(self.setting['syn'])
+        self.synTest.setText(self.setlocale.setting['syn'])
         self.synTest.textChanged.connect(
             lambda: self.editConfZhongWen('syn', pathlib.PurePath(self.synTest.text())))
 
         # 设置服务器同步目录
-        self.synSever.setText(self.setting['synSever'])
+        self.synSever.setText(self.setlocale.setting['synSever'])
 
         # 设置项目目录
-        self.projectTest.setText(self.setting['project'])
+        self.projectTest.setText(self.setlocale.setting['project'])
+        self.projectTest.textChanged.connect(self.projecrEdit)
 
         # 设置同步集数
-        self.synEp.setValue(self.setting['synEp'])
+        self.synEp.setValue(self.setlocale.setting['synEp'])
+        # 链接同步集数更改命令
+        self.synEp.valueChanged.connect(self.editSynEp)
 
         # 设置同步软件安装目录
-        self.freeFileSyncButton.setText(self.setting['FreeFileSync'])
+        self.freeFileSyncButton.setText(self.setlocale.setting['FreeFileSync'])
+
+        # 设置同步目录显示
+        self.synSeverPath()
 
         # 设置保存按钮命令
         self.save.triggered.connect(self.saveset)
 
     def editconf(self, key, newValue):
         # 当设置更改时获得更改
+        self.setlocale.setting[key] = newValue
+        self.synSeverPath()
 
-        self.setting[key] = newValue
+
+    def synSeverPath(self):
+        self.pathSynSever.clear()
+        self.pathSynLocale.clear()
+        syn_sever_path = self.sever_setting.getsever()
+        try:
+            syn_sever_path = syn_sever_path['ep{:0>3d}Syn'.format(self.setlocale.setting['synEp'])]
+            for path in syn_sever_path:
+                self.pathSynSever.addItem(path['Left'])
+                self.pathSynLocale.addItem(path['Right'])
+        except KeyError:
+            self.pathSynSever.clear()
+            self.pathSynLocale.clear()
+        except:
+            pass
 
     def editConfZhongWen(self, key, newValue: pathlib.Path):
         # 有中文时调取这个更改转为拼音
-
         if script.convert.isChinese(newValue):
             newValue = script.convert.convertToEn(newValue)
         self.sysTestYing.setText(newValue.as_posix())
-        self.setting[key] = newValue.as_posix()
+        self.setlocale.setting[key] = newValue.as_posix()
+        self.synSeverPath()
+
+    def editSynEp(self):
+        self.setlocale.setting['synEp'] = self.synEp.value()
+        self.synSeverPath()
 
     def saveset(self):
         # 保存到文档的设置文件中
-        my_setting = json.dumps(self.setting, ensure_ascii=False, indent=4, separators=(',', ':'))
-        self.userland.write_text(my_setting, 'utf-8')
+        my_setting = json.dumps(self.setlocale.setting, ensure_ascii=False, indent=4, separators=(',', ':'))
+        self.setlocale.userland.write_text(my_setting, 'utf-8')
 
+    def projecrEdit(self):
+        self.setlocale.setting['project'] = self.projectTest.text()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

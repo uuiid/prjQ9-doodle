@@ -2,14 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9c558dd4-e952-44ae-9286-c83c632ddee1" name="默认更改列表" comment="">
-      <change afterPath="$PROJECT_DIR$/script/ProjectAnalysis/PathAnalysis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/test_doodle_setting.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UiFile/ProjectBrowser.py" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/ProjectBrowser.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UiFile/ProjectBrowser.ui" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/ProjectBrowser.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UiFile/setting.py" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/setting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UiFile/setting.ui" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/setting.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/doodle_tray.py" beforeDir="false" afterPath="$PROJECT_DIR$/doodle_tray.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/script/ProjectAnalysis/PathAnalysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/ProjectAnalysis/PathAnalysis.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/script/ProjectBrowserGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/ProjectBrowserGUI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/script/doodle_setting.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/doodle_setting.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/script/readServerDiectory.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/readServerDiectory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/template/temp.ffs_batch" beforeDir="false" afterPath="$PROJECT_DIR$/tools/template/temp.ffs_batch" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,6 +94,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="doodle_setting" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ueFile" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/doodle_setting.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="doodle_tray" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ueFile" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -155,34 +178,13 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test_ProjectBrowserGUI" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ueFile" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/test_ProjectBrowserGUI.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.ProjectBrowserGUI" />
         <item itemvalue="Python.doodle_tray" />
+        <item itemvalue="Python.doodle_setting" />
         <item itemvalue="Python.readServerDiectory" />
         <item itemvalue="Python.scratch_15" />
-        <item itemvalue="Python.test_ProjectBrowserGUI" />
       </list>
     </recent_temporary>
   </component>
@@ -253,7 +255,14 @@
       <option name="project" value="LOCAL" />
       <updated>1586168285989</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="动画文件管理器内容基本实现">
+      <created>1586309290130</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1586309290130</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -302,7 +311,8 @@
     <MESSAGE value="添加ue同步和打开功能" />
     <MESSAGE value="继续修复动画项目管理器" />
     <MESSAGE value="添加拖拽上传文件功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="添加拖拽上传文件功能" />
+    <MESSAGE value="动画文件管理器内容基本实现" />
+    <option name="LAST_COMMIT_MESSAGE" value="动画文件管理器内容基本实现" />
   </component>
   <component name="WindowStateProjectService">
     <state x="978" y="163" key="#Inspections" timestamp="1585619153899">
@@ -353,50 +363,50 @@
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="711" y="469" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585640616054" />
-    <state x="620" y="208" key="CommitChangelistDialog2" timestamp="1586168284843">
+    <state x="620" y="208" key="CommitChangelistDialog2" timestamp="1586309288075">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="620" y="208" key="CommitChangelistDialog2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586168284843" />
-    <state width="1703" height="466" key="DebuggerActiveHint" timestamp="1586155685325">
+    <state x="620" y="208" key="CommitChangelistDialog2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586309288075" />
+    <state width="1703" height="466" key="DebuggerActiveHint" timestamp="1586316701496">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1703" height="466" key="DebuggerActiveHint/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586155685325" />
+    <state width="1703" height="466" key="DebuggerActiveHint/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586316701496" />
     <state x="740" y="370" key="FileChooserDialogImpl" timestamp="1585648086584">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="740" y="370" key="FileChooserDialogImpl/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585648086584" />
-    <state width="1899" height="267" key="GridCell.Tab.0.bottom" timestamp="1586308768283">
+    <state width="1899" height="312" key="GridCell.Tab.0.bottom" timestamp="1586324114390">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="267" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586308768283" />
-    <state width="1899" height="267" key="GridCell.Tab.0.center" timestamp="1586308768283">
+    <state width="1899" height="312" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586324114390" />
+    <state width="1899" height="312" key="GridCell.Tab.0.center" timestamp="1586324114390">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="267" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586308768283" />
-    <state width="1899" height="267" key="GridCell.Tab.0.left" timestamp="1586308768283">
+    <state width="1899" height="312" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586324114390" />
+    <state width="1899" height="312" key="GridCell.Tab.0.left" timestamp="1586324114390">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="267" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586308768283" />
-    <state width="1899" height="267" key="GridCell.Tab.0.right" timestamp="1586308768283">
+    <state width="1899" height="312" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586324114390" />
+    <state width="1899" height="312" key="GridCell.Tab.0.right" timestamp="1586324114390">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="267" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586308768283" />
-    <state width="1899" height="351" key="GridCell.Tab.1.bottom" timestamp="1586308713865">
+    <state width="1899" height="312" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586324114390" />
+    <state width="1899" height="312" key="GridCell.Tab.1.bottom" timestamp="1586324116548">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="351" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586308713865" />
-    <state width="1899" height="351" key="GridCell.Tab.1.center" timestamp="1586308713865">
+    <state width="1899" height="312" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586324116548" />
+    <state width="1899" height="312" key="GridCell.Tab.1.center" timestamp="1586324116548">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="351" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586308713865" />
-    <state width="1899" height="351" key="GridCell.Tab.1.left" timestamp="1586308713865">
+    <state width="1899" height="312" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586324116548" />
+    <state width="1899" height="312" key="GridCell.Tab.1.left" timestamp="1586324116548">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="351" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586308713865" />
-    <state width="1899" height="351" key="GridCell.Tab.1.right" timestamp="1586308713865">
+    <state width="1899" height="312" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586324116548" />
+    <state width="1899" height="312" key="GridCell.Tab.1.right" timestamp="1586324116548">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1899" height="351" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586308713865" />
+    <state width="1899" height="312" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586324116548" />
     <state x="456" y="330" key="SettingsEditor" timestamp="1586307962929">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
@@ -432,18 +442,28 @@
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/script/ProjectBrowserGUI.py</url>
-          <line>289</line>
+          <line>294</line>
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/script/ProjectBrowserGUI.py</url>
-          <line>332</line>
+          <line>337</line>
           <option name="timeStamp" value="14" />
+        </line-breakpoint>
+        <line-breakpoint suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/script/readServerDiectory.py</url>
+          <line>56</line>
+          <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/script/doodle_setting.py</url>
-          <line>115</line>
-          <option name="timeStamp" value="30" />
+          <line>151</line>
+          <option name="timeStamp" value="36" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/script/ProjectBrowserGUI.py</url>
+          <line>116</line>
+          <option name="timeStamp" value="39" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
