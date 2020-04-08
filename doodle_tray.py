@@ -27,7 +27,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.timer.timeout.connect(self.file_syns)
         self.timer.start(self.timeSyn)
 
-        self.setToolTip('文件管理系统-0.1.6')
+        self.setToolTip('文件管理系统-0.2.1')
         menu = QtWidgets.QMenu(parent)
 
         file_sync = menu.addAction('同步文件')

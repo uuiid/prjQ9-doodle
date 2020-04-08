@@ -9,7 +9,7 @@
         <Variant>TwoWay</Variant>
         <DetectMovedFiles>false</DetectMovedFiles>
         <DeletionPolicy>Versioning</DeletionPolicy>
-        <VersioningFolder Style="TimeStamp-Folder" MaxAge="10">W:\data\ue_prj\backup</VersioningFolder>
+        <VersioningFolder Style="TimeStamp-Folder" MaxAge="3">W:\data\ue_prj\backup</VersioningFolder>
     </Synchronize>
     <Filter>
         <Include>
