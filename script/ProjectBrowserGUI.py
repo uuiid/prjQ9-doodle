@@ -20,20 +20,34 @@ import script.ProjectAnalysis.PathAnalysis
 
 
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
-    file_version: int = 0
-    file_path: pathlib.Path = ''
+    '''这个类用来实现项目管理的属性和UI操作,  其中会有一个项目分析器在外部, 有每个项目分别配置或者使用默认设置
+
+    '''
+    file_name: str
+    file_version_max: int = 0
+    file_path: pathlib.Path  # 文件所在文件夹
+
     file_episods: str = ''
+    root: pathlib.Path  # 根文件夹,也就是集数所在文件夹
+
     file_shot: str = ''
+    file_shot_path: pathlib.Path  # shot所在的文件夹
+
     file_department: str = ''
-    file_type: str = ''
-    root: pathlib.Path
-    projectAnalysis: script.ProjectAnalysis.PathAnalysis
+    file_department_path: pathlib.Path  # 部门所在的文件夹
+
+    file_Deptype: str = ''
+    file_Deptype_path: pathlib.Path  # 文件类型所在的文件夹
+
+    projectAnalysis: script.ProjectAnalysis  # 路径解析器
 
     def __init__(self, parent=None):
         super(ProjectBrowserGUI, self).__init__()
         self.setlocale = script.doodle_setting.Doodlesetting()
         self.setSour = script.readServerDiectory.SeverSetting()
-
+        self.projectAnalysis = script.ProjectAnalysis.PathAnalysis.DbxyProjectAnalysisShot()
+        # 初始化一些属性
+        # self.root = self.getRoot()
         # 设置UI
         self.setupUi(self)
         # 设置最后的文件编辑器的一些标准动作
@@ -49,10 +63,118 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.setAcceptDrops(True)
         # self.listepisodes.setAcceptDrops
 
+        self.addRightClick()
+        # 首先扫描根目录获得集数
+        self.listepisodes.addItems(self.projectAnalysis.getEpisodesItems(self))
+        # 并链接函数处理下一级
+        self.listepisodes.itemClicked.connect(self.setShotItem)
+        # 在shot文件列表中添加点击事件更改下一级部门列表
+        self.listshot.itemClicked.connect(self.setDepartment)
+        # 在department中添加下一级的更新事件
+        self.listdepartment.itemClicked.connect(self.setdepType)
+        # 在depType中添加点击跟新文件事件
+        self.listdepType.itemClicked.connect(self.setFile)
+
+        # 双击打开文件
+        self.listfile.doubleClicked.connect(self.openFile)
+        # 添加刷新函数
+        self.refresh.triggered.connect(self.setepisodex)
+
+    # <editor-fold desc="集数和根目录的属性操作">
+    @property
+    def root(self) -> pathlib.Path:
+        shot_root_ = self.setSour.getseverPrjBrowser()['shotRoot']
+        root = pathlib.Path(self.setlocale.setting['project'])
+        # 获得根目录
+        for myP in shot_root_:
+            root = root.joinpath(myP)
+        # self.root = root
+        return root
+
+    @property
+    def file_episods(self):
+        try:
+            return self.listepisodes.selectedItems()[0].text()
+        except:
+            return None
+
+    # </editor-fold>
+
+    # <editor-fold desc="关于shot的操作属性">
+    @property
+    def file_shot(self):
+        try:
+            return self.listshot.selectedItems()[0].text()
+        except:
+            return None
+
+    @property
+    def file_shot_path(self) -> pathlib.Path:
+        try:
+            return self.projectAnalysis.getShotPath(self)
+        except:
+            return None
+
+    # </editor-fold>
+
+    # <editor-fold desc="关于部门的操作">
+    @property
+    def file_department(self):
+        try:
+            return self.listdepartment.selectedItems()[0].text()
+        except:
+            return None
+
+    @property
+    def file_department_path(self):
+        try:
+            tmp = self.projectAnalysis.getdepartmentPath(self)
+        except:
+            tmp = None
+        return tmp
+
+    # </editor-fold>
+
+    # <editor-fold desc="部门的下一个类型的操作">
+    @property
+    def file_Deptype(self):
+        # return self.listdepType.selectedItems()[0].text()
+        try:
+            return self.listdepType.selectedItems()[0].text()
+        except:
+            return None
+
+    @property
+    def file_Deptype_path(self):
+        # return self.projectAnalysis.getDepTypePath(self)
+        try:
+            return self.projectAnalysis.getDepTypePath(self)
+        except:
+            return None
+
+    # </editor-fold>
+
+    # <editor-fold desc="关于文件的操作">
+    @property
+    def file_path(self):
+        try:
+            return self.projectAnalysis.getFilePath(self)
+        except:
+            return None
+
+    @property
+    def file_name(self):
+        try:
+            filename = self.projectAnalysis.getFileName(self)
+            return self.projectAnalysis.commFileName(filename)
+        except:
+            return None
+    # </editor-fold>
+
+    def addRightClick(self):
         '''添加右键菜单==================================================='''
         # 添加集数右键菜单
         self.listepisodes.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-
         add_episodes_Folder = QtWidgets.QAction('添加', self)
         add_episodes_Folder.triggered.connect(self.addEpisodesFolder)
         self.listepisodes.addAction(add_episodes_Folder)
@@ -74,14 +196,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         add_depType = QtWidgets.QAction('添加', self)
         add_depType.triggered.connect(self.addTypeFolder)
         self.listdepType.addAction(add_depType)
-
         # 添加文件右键菜单
         self.listfile.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         # 用文件管理器打开文件位置
         open_explorer = QtWidgets.QAction('打开文件管理器', self)
         open_explorer.triggered.connect(self.openExplorer)
         self.listfile.addAction(open_explorer)
-
         # copy文件名称或者路径到剪切板
         copy_name_to_clip = QtWidgets.QAction('复制名称', self)
         copy_name_to_clip.triggered.connect(self.copyNameToClipboard)
@@ -90,23 +210,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listfile.addAction(copy_path_to_clip)
         self.listfile.addAction(copy_name_to_clip)
         '''================================================================='''
-        # 首先扫描根目录获得集数
-        self.listepisodes.addItems(self.getepisodes())
-        # 并链接函数处理下一级
-        self.listepisodes.itemClicked.connect(self.setShotItem)
-        # 在shot文件列表中添加点击事件更改下一级部门列表
-        self.listshot.itemClicked.connect(self.setDepartment)
-        # 在department中添加下一级的更新事件
-        self.listdepartment.itemClicked.connect(self.setdepType)
-        # 在类型中添加文件跟新时间
-
-        # 双击打开文件
-        self.listfile.doubleClicked.connect(self.openFile)
-
-        self.listdepType.itemClicked.connect(self.setFile)
-
-        # 添加刷新函数
-        self.refresh.triggered.connect(self.setepisodex)
 
     def getRoot(self) -> pathlib.Path:
         # 获得项目目录
@@ -115,20 +218,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 获得根目录
         for myP in shot_root_:
             root = root.joinpath(myP)
-        self.root = root
         return root
-
-    def getepisodes(self):
-        '''获得集数'''
-        root = self.getRoot()
-
-        item = []
-        for path in root.iterdir():
-            if path.is_dir():
-                item.append(path.stem.split('-')[0])
-        item = list(set(item))
-        item.sort()
-        return item
 
     def setepisodex(self):
         self.listepisodes.clear()
@@ -137,165 +227,52 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.clearListFile()
         self.listshot.clear()
 
-        self.listepisodes.addItems(self.getepisodes())
-        # print('ok')
+        item = self.projectAnalysis.getEpisodesItems(self)
+        self.listepisodes.addItems(item)
 
-    def getshot(self, item: QtWidgets.QListWidgetItem):
-        '''获得shot镜头'''
-        root = self.getRoot()
-        shot = root
+    def setShotItem(self):
+        mitem = self.projectAnalysis.getShotItems(self)
 
-        return shot
+        self.listdepartment.clear()
+        self.listdepType.clear()
+        self.clearListFile()
 
-    def setShotItem(self, item: QtWidgets.QListWidgetItem):
-
-        try:
-            self.file_episods = self.listepisodes.selectedItems()[0].text()
-        finally:
-            root = self.getshot(item)
-            mitem = []
-            for path in root.iterdir():
-                test = path
-                # if path.match('ep01*'):
-                if path.match('{}*'.format(item.text())):
-                    try:
-                        mitem.append(path.stem.split('-')[1])
-                    except:
-                        pass
-            mitem = list(set(mitem))
-            mitem.sort()
-            mitem = filter(None, mitem)
-
-            self.listdepartment.clear()
-            self.listdepType.clear()
-            self.clearListFile()
-
-            self.listshot.clear()
-            self.listshot.addItems(mitem)
-
-    def getdepartment(self) -> pathlib.Path:
-        '''获得部门文件夹'''
-        # 获得根文件夹
-        root = self.getshot(self.listshot.selectedItems())
-        try:
-            # 获得集数
-            epis = self.listepisodes.selectedItems()[0].text()
-            # 获得镜头号
-            shot = self.listshot.selectedItems()[0].text()
-        except:
-            department = ''
-        else:
-            # 获得部门文件夹
-            department = root.joinpath('{}-{}'.format(epis, shot))
-            department = department.joinpath('Scenefiles')
-
-        # 添加部门文件夹
-
-        return department
+        self.listshot.clear()
+        self.listshot.addItems(mitem)
 
     def setDepartment(self):
-        try:
-            self.file_shot = self.listshot.selectedItems()[0].text()
-        finally:
-            department = self.getdepartment()
-            if department:
-                mitem = []
-                for mi in department.iterdir():
-                    mitem.append(mi.stem)
+        department = self.file_department_path
+        mitem  = self.projectAnalysis.getdepartmentItems(self)
 
-                self.listdepType.clear()
-                self.clearListFile()
+        self.listdepType.clear()
+        self.clearListFile()
 
-                self.listdepartment.clear()
-                self.listdepartment.addItems(mitem)
-
-    def getdepType(self, ):
-        dep = self.getdepartment()
-        if dep:
-            # department = item.text()
-            department = self.listdepartment.selectedItems()[0].text()
-            dep = dep.joinpath(department)
-
-        return dep
+        self.listdepartment.clear()
+        self.listdepartment.addItems(mitem)
 
     def setdepType(self):
-        try:
-            self.file_department = self.listdepartment.selectedItems()[0].text()
-        finally:
-            dep = self.getdepType()
-            mitem = []
-            if dep.iterdir():
-                for mi in dep.iterdir():
-                    if mi.is_dir():
-                        mitem.append(mi.stem)
-            else:
-                return dep
+        mitem = self.projectAnalysis.getDepTypeItems(self)
 
-            self.clearListFile()
+        self.clearListFile()
 
-            self.listdepType.clear()
-            self.listdepType.addItems(mitem)
-
-    def getFile(self):
-        try:
-            depType = self.getdepType()
-            depType = depType.joinpath(self.listdepType.selectedItems()[0].text())
-        except:
-            depType = ''
-
-        return depType
+        self.listdepType.clear()
+        self.listdepType.addItems(mitem)
 
     def setFile(self):
         '''设置文件在GUI中的显示'''
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListFile()
-        self.file_version = 0
-        self.file_path = ''
-        try:
-            self.file_type = self.listdepType.selectedItems()[0].text()
-        finally:
-            # 获得文件路径
-            file_paths = self.getFile()
-            self.file_path = file_paths
-            dep_type_iterdir = file_paths.iterdir()
-            mitem = []
-            if dep_type_iterdir:
-                for mFile in dep_type_iterdir:
-                    if mFile.is_file():
-                        mitem.append({'filename': mFile.stem, 'fileSuffixes': mFile.suffix})
-            else:
-                return None
-            # 迭代获得文件命中包含信息
-            if mitem:
-                mrow = 0
-                for file in mitem:
-                    tmp = file['filename'].split('_')
-                    try:
-                        tmp = {'Type': tmp[0],
-                               'epShot': tmp[1],
-                               'department': tmp[2],
-                               'depType': tmp[3],
-                               'version': tmp[4],
-                               'producer': tmp[6],
-                               'fileSuffixes': file['fileSuffixes']
-                               }
-                    except IndexError:
-                        other = tmp
-                    except:
-                        pass
-                    else:
-                        tmp_version_ = int(tmp['version'][1:])
-                        if tmp_version_ > self.file_version:
-                            self.file_version = tmp_version_
-                        self.listfile.insertRow(mrow)
-                        # version = QtWidgets.QTableWidgetItem(tmp['version'])
-                        # version.setFlags(QtWidgets.Item)
-                        self.listfile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(tmp['version']))
-                        self.listfile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(tmp['producer']))
-                        self.listfile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(tmp['fileSuffixes']))
-                        # self.listfile.setSortingEnabled(True)
-                        # self.listfile.lin
-                        mrow = mrow + 1
+        self.file_version_max = 0
+        for item in self.projectAnalysis.fileNameInformation(self):
+            mrow = 0
+            tmp_version_ = int(item['version'][1:])
+            if tmp_version_ > self.file_version_max:
+                self.file_version_max = tmp_version_
+            self.listfile.insertRow(mrow)
+            self.listfile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(item['version']))
+            self.listfile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item['producer']))
+            self.listfile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item['fileSuffixes']))
+            mrow = mrow + 1
 
     def clearListFile(self):
         mrowtmp = self.listfile.rowCount()
@@ -303,6 +280,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             self.listfile.removeRow(mrowtmp)
             mrowtmp = mrowtmp - 1
 
+    # <editor-fold desc="拖放操作函数">
     def enableBorder(self, enable):
         if enable:
             # self.setStyleSheet("MainWidget{border:3px solid green}")
@@ -331,7 +309,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 # 获得文件路径并进行复制
                 if path.suffix in ['.ma', '.mb', '.fbx', '.hip', '.usd']:
                     # 为防止在没有选择的情况下复制到不知道的位置所以先进行路径测试
-                    if self.listdepType and self.getFile():
+                    if self.listdepType and self.file_path:
                         dstFile = self.getFileName(path.suffix)  # type:pathlib.Path
                         shutil.copy2(str(path), str(dstFile))
                         # print(self.getFileName(path.suffix))
@@ -349,17 +327,20 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 获得本地设置中的制作人名称
         user_ = pypinyin.slug(self.setlocale.setting['user'], pypinyin.NORMAL)
         # 将版本加一复制为新版本
-        self.file_version = self.file_version + 1
+        self.file_version_max = self.file_version_max + 1
         # 格式化文件名称和路径
         path = self.file_path.joinpath('shot_{}-{}_{}_{}_v{:0>4d}__{}_{}'.format(self.file_episods,
                                                                                  self.file_shot,
                                                                                  self.file_department,
-                                                                                 self.file_type,
-                                                                                 self.file_version,
+                                                                                 self.file_Deptype,
+                                                                                 self.file_version_max,
                                                                                  user_,
                                                                                  Suffixes))
         return path
 
+    # </editor-fold>
+
+    # <editor-fold desc="添加文件夹的操作都在这里">
     def addEpisodesFolder(self):
         Episode = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)[0]
         if Episode:
@@ -391,8 +372,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def addDepartmentFolder(self):
         department = self.setlocale.setting['department']
-        if self.listshot.selectedItems():
-            shot_Department = self.getdepartment()
+        if self.file_shot:
+            shot_Department = self.file_department_path
             department = shot_Department.joinpath(department)
             if not department.is_dir():
                 department.mkdir(parents=True, exist_ok=True)
@@ -402,14 +383,17 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         deptype = QtWidgets.QInputDialog.getText(self, '输入镜头', "文件类型(请用英文或拼音)",
                                                  QtWidgets.QLineEdit.Normal)[0]
         if deptype:
-            if self.listdepartment.selectedItems():
-                department_type = self.getdepType()
+            if self.file_department:
+                department_type = self.file_Deptype_path
                 deptype = department_type.joinpath(deptype)
                 if not script.convert.isChinese(deptype):
                     if not deptype.is_dir():
                         deptype.mkdir(parents=True, exist_ok=True)
                         self.setdepType()
 
+    # </editor-fold>
+
+    # <editor-fold desc="各种对于文件的操作">
     def openFile(self):
         filepath = self.combinationFilePath()
         # subprocess.Popen(str(filepath))
@@ -420,29 +404,29 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def combinationFilePath(self):
         # 这个用来组合文件和文件命
-        filename = self.combinationFileName()
+        filename = self.file_name
         filepath = self.file_path.joinpath(filename)
         return filepath
 
-    def combinationFileName(self):
-        # 这个用来组合文件名称
-        indexs = self.listfile.selectedItems()
-        item: Dict[str, str] = {}
-        item['version'] = indexs[0].text()
-        if len(indexs) == 4:
-            item['user'] = indexs[2].text()
-            item['fileSuffixes'] = indexs[3].text()
-        else:
-            item['user'] = indexs[1].text()
-            item['fileSuffixes'] = indexs[2].text()
-        filename = 'shot_{}-{}_{}_{}_{}__{}_{}'.format(self.file_episods,
-                                                       self.file_shot,
-                                                       self.file_department,
-                                                       self.file_type,
-                                                       item['version'],
-                                                       item['user'],
-                                                       item['fileSuffixes'])
-        return filename
+    # def combinationFileName(self):
+    #     # 这个用来组合文件名称
+    #     indexs = self.listfile.selectedItems()
+    #     item: Dict[str, str] = {}
+    #     item['version'] = indexs[0].text()
+    #     if len(indexs) == 4:
+    #         item['user'] = indexs[2].text()
+    #         item['fileSuffixes'] = indexs[3].text()
+    #     else:
+    #         item['user'] = indexs[1].text()
+    #         item['fileSuffixes'] = indexs[2].text()
+    #     filename = 'shot_{}-{}_{}_{}_{}__{}_{}'.format(self.file_episods,
+    #                                                    self.file_shot,
+    #                                                    self.file_department,
+    #                                                    self.file_Deptype,
+    #                                                    item['version'],
+    #                                                    item['user'],
+    #                                                    item['fileSuffixes'])
+    #     return filename
 
     def addABshotFolder(self):
         items = ['B', 'C', 'D', 'E']
@@ -457,10 +441,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         os.startfile(filePath)
 
     def copyNameToClipboard(self):
-        pyperclip.copy(str(self.combinationFileName()))
+        pyperclip.copy(str(self.file_name))
 
     def copyPathToClipboard(self):
         pyperclip.copy(str(self.file_path))
+    # </editor-fold>
 
 
 # 添加右键菜单
