@@ -2,10 +2,7 @@
 import pathlib
 from typing import Iterator, Dict
 
-import pypinyin
-
 import script.ProjectBrowserGUI
-import script.readServerDiectory
 import script.doodle_setting
 
 
@@ -13,6 +10,7 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getEpisodesItems(obj: script.ProjectBrowserGUI.ProjectBrowserGUI) -> list:
+        """获得集数所在的文件夹"""
         root = obj.root
         item = []
         for path in root.iterdir():
@@ -23,10 +21,19 @@ class DbxyProjectAnalysisShot():
         return item
 
     @staticmethod
+    def episodesFolderName(obj: script.ProjectBrowserGUI.ProjectBrowserGUI, episode: int) -> list:
+        """要返回路径对象的列表"""
+        tmp = []
+        name = "ep{:0>2d}".format(episode)
+        name = obj.root.joinpath(name)
+        tmp.append(name)
+        return tmp
+
+    @staticmethod
     def getShotPath(obj: script.ProjectBrowserGUI.ProjectBrowserGUI) -> pathlib.Path:
+        """获得镜头所在的文件夹"""
         root = obj.root
         return pathlib.Path(root)
-        pass
 
     @staticmethod
     def getShotItems(obj: script.ProjectBrowserGUI.ProjectBrowserGUI) -> Iterator[str]:
@@ -45,6 +52,21 @@ class DbxyProjectAnalysisShot():
         mitem.sort()
         mitem = filter(None, mitem)
         return mitem
+
+    @staticmethod
+    def shotFolderName(obj: script.ProjectBrowserGUI.ProjectBrowserGUI, shot: int, ab_shot: str = None) -> list:
+        """获得镜头路径文件夹,路径obj的一个列表"""
+        tmp = []
+        shotname = '{}-sc{:0>4d}'.format(obj.file_episods, shot)
+        root = obj.root
+        if ab_shot:
+            shotname = '{}{}'.format(shotname, ab_shot)
+        shot = root.joinpath(shotname)
+
+        for sub_directory in ['Export', 'Playblasts', 'Rendering', 'Scenefiles']:
+            sub_dir: pathlib.Path = shot.joinpath(sub_directory)
+            tmp.append(sub_dir)
+        return tmp
 
     @staticmethod
     def getdepartmentPath(obj: script.ProjectBrowserGUI.ProjectBrowserGUI) -> pathlib.Path:
@@ -67,6 +89,7 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getdepartmentItems(obj: script.ProjectBrowserGUI.ProjectBrowserGUI) -> list:
+        """获得部门文件夹的内部项数"""
         department = obj.file_department_path
         mitem = []
         if department:
@@ -76,17 +99,17 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getDepTypePath(obj: script.ProjectBrowserGUI.ProjectBrowserGUI) -> pathlib.Path:
+        """获得类型所在文件夹"""
         dep = obj.file_department
         if dep:
             # department = item.text()
             department = obj.file_department_path
             dep = department.joinpath(dep)  # type : pathlib.Paht
-
         return dep
-
 
     @staticmethod
     def getDepTypeItems(obj: script.ProjectBrowserGUI.ProjectBrowserGUI) -> list:
+        """获得类型所在文件夹中的项数"""
         dep = obj.file_Deptype_path
         mitem = []
         if dep.iterdir():
@@ -99,16 +122,17 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getFilePath(obj: script.ProjectBrowserGUI.ProjectBrowserGUI) -> pathlib.Path:
+        """获得文件所在位置文件夹"""
         try:
             depType = obj.file_Deptype_path
             depType = depType.joinpath(obj.file_Deptype)
         except:
             raise
-
         return depType
 
     @staticmethod
     def fileNameInformation(obj: script.ProjectBrowserGUI.ProjectBrowserGUI) -> list:
+        """获得文件名称中的信息, 并以字典返回"""
         dep_type_iterdir = obj.file_path.iterdir()
         mitem = []
         if dep_type_iterdir:
@@ -137,12 +161,11 @@ class DbxyProjectAnalysisShot():
                     pass
                 else:
                     information.append(tmp)
-
         return information
 
     @staticmethod
     def getFileName(obj: script.ProjectBrowserGUI.ProjectBrowserGUI) -> dict:
-        # 这个用来组合文件名称
+        """这个用来组合文件名称"""
         indexs = obj.listfile.selectedItems()
         item: Dict[str, str] = {'version': indexs[0].text()}
         if len(indexs) == 4:
@@ -159,7 +182,8 @@ class DbxyProjectAnalysisShot():
         return item
 
     @staticmethod
-    def commFileName(item: Dict):
+    def commFileName(item: Dict) -> str:
+        """组合字典成为文件名称"""
         filename = 'shot_{}-{}_{}_{}_{}__{}_{}'.format(item['file_episods'],
                                                        item['file_shot'],
                                                        item['file_department'],
@@ -167,6 +191,7 @@ class DbxyProjectAnalysisShot():
                                                        item['version'],
                                                        item['user'],
                                                        item['fileSuffixes'])
+        return filename
 
 
 class DbxyProjectAnalysisAssets():

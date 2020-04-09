@@ -169,6 +169,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             return self.projectAnalysis.commFileName(filename)
         except:
             return None
+
     # </editor-fold>
 
     def addRightClick(self):
@@ -242,7 +243,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def setDepartment(self):
         department = self.file_department_path
-        mitem  = self.projectAnalysis.getdepartmentItems(self)
+        mitem = self.projectAnalysis.getdepartmentItems(self)
 
         self.listdepType.clear()
         self.clearListFile()
@@ -307,7 +308,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 url = a0.mimeData().urls()[0]
                 path = pathlib.Path(url.toLocalFile())
                 # 获得文件路径并进行复制
-                if path.suffix in ['.ma', '.mb', '.fbx', '.hip', '.usd']:
+                if path.suffix in ['.ma', '.mb',  '.hip']:
                     # 为防止在没有选择的情况下复制到不知道的位置所以先进行路径测试
                     if self.listdepType and self.file_path:
                         dstFile = self.getFileName(path.suffix)  # type:pathlib.Path
@@ -316,59 +317,74 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                         # print(str(self.getFile()))
                         script.debug.debug('{} ---> {}'.format(str(path), str(dstFile)))
                         self.setFile()
-                    self.enableBorder(False)
+                        self.enableBorder(False)
                     # print(path)
+                if path.suffix in ['.fbx','.usd']:
+                    if self.listdepType and self.file_path:
+                        dstFile = self.getFileName(path.suffix,True)  # type:pathlib.Path
+                        shutil.copy2(str(path), str(dstFile))
+                        script.debug.debug('{} ---> {}'.format(str(path), str(dstFile)))
+                        self.setFile()
+                        self.enableBorder(False)        
             else:
                 pass
         else:
             a0.ignore()
 
-    def getFileName(self, Suffixes: str):
+    def getFileName(self, Suffixes: str,External:bool = False):
         # 获得本地设置中的制作人名称
         user_ = pypinyin.slug(self.setlocale.setting['user'], pypinyin.NORMAL)
-        # 将版本加一复制为新版本
-        self.file_version_max = self.file_version_max + 1
         # 格式化文件名称和路径
-        path = self.file_path.joinpath('shot_{}-{}_{}_{}_v{:0>4d}__{}_{}'.format(self.file_episods,
-                                                                                 self.file_shot,
-                                                                                 self.file_department,
-                                                                                 self.file_Deptype,
-                                                                                 self.file_version_max,
-                                                                                 user_,
-                                                                                 Suffixes))
+        filename:Dict[str,str]={}
+        filename['file_episods'] = self.file_episods
+        filename['file_shot'] = self.file_shot
+        filename['file_department'] = self.file_department
+        filename['file_Deptype'] = self.file_Deptype
+        filename['user'] = user_
+        filename['fileSuffixes'] = Suffixes
+        # 将版本加一复制为新版本
+        if External:
+            filename['version'] = 'v{:0>4d}'.format(self.file_version_max)
+        else:
+            filename['version'] = 'v{:0>4d}'.format(self.file_version_max + 1)
+        path = self.file_path.joinpath(self.projectAnalysis.commFileName(filename))
         return path
 
     # </editor-fold>
 
     # <editor-fold desc="添加文件夹的操作都在这里">
     def addEpisodesFolder(self):
-        Episode = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)[0]
+        Episode: int = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)[0]
         if Episode:
-            root = self.getRoot()
-            episodesPath = root.joinpath("ep{:0>2d}".format(Episode))
-            if not episodesPath.is_dir():
-                episodesPath.mkdir(parents=True, exist_ok=True)
-                self.setepisodex()
+            # root = self.getRoot()
+            episodesPath = self.projectAnalysis.episodesFolderName(self, Episode)
+            for path in episodesPath:
+                if not path.is_dir():
+                    path.mkdir(parents=True, exist_ok=True)
+            self.setepisodex()
 
     def addShotFolder(self):
         shot = QtWidgets.QInputDialog.getInt(self, '输入镜头', "sc", 1, 1, 999, 1)[0]
         if shot:
-            if self.listepisodes.selectedItems():
-                shotname = '{}-sc{:0>4d}'.format(self.file_episods, shot)
-                self.generateShotFolder(shotname, None)
+            if self.file_episods:
+                for path in self.projectAnalysis.shotFolderName(self, shot):
+                    if not path.is_dir():
+                        path.mkdir(parents=True, exist_ok=True)
+                self.setShotItem()
 
-    def generateShotFolder(self, shot, ABshot=None):
-        """这个函数负责生成shot文件夹名称并并创建"""
-        root = self.getRoot()
-        if ABshot:
-            shot = '{}{}'.format(shot, ABshot)
-        shot = root.joinpath(shot)
-        if not shot.is_dir():
-            shot.mkdir(parents=True, exist_ok=True)
-            self.setShotItem(self.listepisodes.selectedItems()[0])
-            for sub_directory in ['Export', 'Playblasts', 'Rendering', 'Scenefiles']:
-                sub_dir: pathlib.Path = shot.joinpath(sub_directory)
-                sub_dir.mkdir(parents=True, exist_ok=True)
+    def addABshotFolder(self):
+        items = ['B', 'C', 'D', 'E']
+        shotAB = QtWidgets.QInputDialog.getItem(self, '选择AB镜头', '要先选择镜头才可以', items, 0, False)[0]
+        try:
+            shot =int(self.file_shot[2:])
+        except:
+            return
+        if shotAB:
+            if self.file_shot and self.file_episods:
+                for path in self.projectAnalysis.shotFolderName(self, shot, shotAB):
+                    if not path.is_dir():
+                        path.mkdir(parents=True, exist_ok=True)
+                self.setShotItem()
 
     def addDepartmentFolder(self):
         department = self.setlocale.setting['department']
@@ -394,6 +410,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     # </editor-fold>
 
     # <editor-fold desc="各种对于文件的操作">
+
     def openFile(self):
         filepath = self.combinationFilePath()
         # subprocess.Popen(str(filepath))
@@ -407,34 +424,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         filename = self.file_name
         filepath = self.file_path.joinpath(filename)
         return filepath
-
-    # def combinationFileName(self):
-    #     # 这个用来组合文件名称
-    #     indexs = self.listfile.selectedItems()
-    #     item: Dict[str, str] = {}
-    #     item['version'] = indexs[0].text()
-    #     if len(indexs) == 4:
-    #         item['user'] = indexs[2].text()
-    #         item['fileSuffixes'] = indexs[3].text()
-    #     else:
-    #         item['user'] = indexs[1].text()
-    #         item['fileSuffixes'] = indexs[2].text()
-    #     filename = 'shot_{}-{}_{}_{}_{}__{}_{}'.format(self.file_episods,
-    #                                                    self.file_shot,
-    #                                                    self.file_department,
-    #                                                    self.file_Deptype,
-    #                                                    item['version'],
-    #                                                    item['user'],
-    #                                                    item['fileSuffixes'])
-    #     return filename
-
-    def addABshotFolder(self):
-        items = ['B', 'C', 'D', 'E']
-        shotAB = QtWidgets.QInputDialog.getItem(self, '选择AB镜头', '要先选择镜头才可以', items, 0, False)
-        if shotAB:
-            if self.listshot.selectedItems() and self.file_shot:
-                shotname = '{}-{}'.format(self.file_episods, self.file_shot)
-                self.generateShotFolder(shotname, shotAB[0])
 
     def openExplorer(self):
         filePath = self.file_path

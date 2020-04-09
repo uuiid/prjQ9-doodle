@@ -1,9 +1,9 @@
 from unittest import TestCase
-
+import script.ProjectAnalysis.PathAnalysis
 
 class TestDbxyProjectAnalysisShot(TestCase):
     def test_get_episodes_items(self):
-        self.fail()
+        self.assertEqual()
 
     def test_get_shot_path(self):
         self.fail()
@@ -25,3 +25,7 @@ class TestDbxyProjectAnalysisShot(TestCase):
 
     def test_file_name_information(self):
         self.fail()
+
+    def test_shot_folder_name(self):
+        self.fail()
+
