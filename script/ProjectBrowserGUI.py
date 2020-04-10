@@ -17,6 +17,7 @@ import script.debug
 import script.doodle_setting
 import script.readServerDiectory
 import script.ProjectAnalysis.PathAnalysis
+import script.doodleLog
 
 
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
@@ -46,6 +47,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.setlocale = script.doodle_setting.Doodlesetting()
         self.setSour = script.readServerDiectory.SeverSetting()
         self.projectAnalysis = script.ProjectAnalysis.PathAnalysis.DbxyProjectAnalysisShot()
+        self.ta_log = script.doodleLog.get_logger(__name__)
         # 初始化一些属性
         # self.root = self.getRoot()
         # 设置UI
@@ -84,7 +86,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     @property
     def root(self) -> pathlib.Path:
         shot_root_ = self.setSour.getseverPrjBrowser()['shotRoot']
-        root = pathlib.Path(self.setlocale.setting['project'])
+        root = pathlib.Path(self.setlocale.project)
         # 获得根目录
         for myP in shot_root_:
             root = root.joinpath(myP)
@@ -172,6 +174,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     # </editor-fold>
 
+    # <editor-fold desc="更新视图的各种操作">
     def addRightClick(self):
         '''添加右键菜单==================================================='''
         # 添加集数右键菜单
@@ -215,10 +218,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def getRoot(self) -> pathlib.Path:
         # 获得项目目录
         shot_root_ = self.setSour.getseverPrjBrowser()['shotRoot']
-        root = pathlib.Path(self.setlocale.setting['project'])
+        root = pathlib.Path(self.setlocale.project)
         # 获得根目录
         for myP in shot_root_:
             root = root.joinpath(myP)
+        self.ta_log.info('根目录%s', root)
         return root
 
     def setepisodex(self):
@@ -229,6 +233,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listshot.clear()
 
         item = self.projectAnalysis.getEpisodesItems(self)
+        self.ta_log.info('更新集数列表')
         self.listepisodes.addItems(item)
 
     def setShotItem(self):
@@ -239,6 +244,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.clearListFile()
 
         self.listshot.clear()
+        self.ta_log.info('更新shot列表')
         self.listshot.addItems(mitem)
 
     def setDepartment(self):
@@ -249,6 +255,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.clearListFile()
 
         self.listdepartment.clear()
+        self.ta_log.info('更新Department列表')
         self.listdepartment.addItems(mitem)
 
     def setdepType(self):
@@ -257,6 +264,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.clearListFile()
 
         self.listdepType.clear()
+        self.ta_log.info('更新depType列表')
         self.listdepType.addItems(mitem)
 
     def setFile(self):
@@ -274,12 +282,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             self.listfile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item['producer']))
             self.listfile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item['fileSuffixes']))
             mrow = mrow + 1
+        self.ta_log.info('更新文件列表')
 
     def clearListFile(self):
         mrowtmp = self.listfile.rowCount()
         while mrowtmp >= 0:
             self.listfile.removeRow(mrowtmp)
             mrowtmp = mrowtmp - 1
+    # </editor-fold>
 
     # <editor-fold desc="拖放操作函数">
     def enableBorder(self, enable):
@@ -298,7 +308,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def dragLeaveEvent(self, a0: QtGui.QDragLeaveEvent) -> None:
         # 离开时取消高亮
-        print('dragLeaveEvent...')
         self.enableBorder(False)
 
     def dropEvent(self, a0: QtGui.QDropEvent) -> None:
@@ -307,35 +316,34 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             if len(a0.mimeData().urls()) == 1:
                 url = a0.mimeData().urls()[0]
                 path = pathlib.Path(url.toLocalFile())
+                self.ta_log.info('检测到文件%s拖入窗口', path)
                 # 获得文件路径并进行复制
-                if path.suffix in ['.ma', '.mb',  '.hip']:
+                if path.suffix in ['.ma', '.mb', '.hip']:
                     # 为防止在没有选择的情况下复制到不知道的位置所以先进行路径测试
                     if self.listdepType and self.file_path:
                         dstFile = self.getFileName(path.suffix)  # type:pathlib.Path
                         shutil.copy2(str(path), str(dstFile))
-                        # print(self.getFileName(path.suffix))
-                        # print(str(self.getFile()))
-                        script.debug.debug('{} ---> {}'.format(str(path), str(dstFile)))
+                        self.ta_log.info('%s ---> %s',path, dstFile)
                         self.setFile()
                         self.enableBorder(False)
                     # print(path)
-                if path.suffix in ['.fbx','.usd']:
+                if path.suffix in ['.fbx', '.usd']:
                     if self.listdepType and self.file_path:
-                        dstFile = self.getFileName(path.suffix,True)  # type:pathlib.Path
+                        dstFile = self.getFileName(path.suffix, True)  # type:pathlib.Path
                         shutil.copy2(str(path), str(dstFile))
-                        script.debug.debug('{} ---> {}'.format(str(path), str(dstFile)))
+                        self.ta_log.info('%s ---> %s', path, dstFile)
                         self.setFile()
-                        self.enableBorder(False)        
+                        self.enableBorder(False)
             else:
                 pass
         else:
             a0.ignore()
 
-    def getFileName(self, Suffixes: str,External:bool = False):
+    def getFileName(self, Suffixes: str, External: bool = False):
         # 获得本地设置中的制作人名称
-        user_ = pypinyin.slug(self.setlocale.setting['user'], pypinyin.NORMAL)
+        user_ = pypinyin.slug(self.setlocale.user, pypinyin.NORMAL)
         # 格式化文件名称和路径
-        filename:Dict[str,str]={}
+        filename: Dict[str, str] = {}
         filename['file_episods'] = self.file_episods
         filename['file_shot'] = self.file_shot
         filename['file_department'] = self.file_department
@@ -360,6 +368,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             episodesPath = self.projectAnalysis.episodesFolderName(self, Episode)
             for path in episodesPath:
                 if not path.is_dir():
+                    self.ta_log.info('制作%s',path)
                     path.mkdir(parents=True, exist_ok=True)
             self.setepisodex()
 
@@ -369,6 +378,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             if self.file_episods:
                 for path in self.projectAnalysis.shotFolderName(self, shot):
                     if not path.is_dir():
+                        self.ta_log.info('制作%s', path)
                         path.mkdir(parents=True, exist_ok=True)
                 self.setShotItem()
 
@@ -376,22 +386,24 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         items = ['B', 'C', 'D', 'E']
         shotAB = QtWidgets.QInputDialog.getItem(self, '选择AB镜头', '要先选择镜头才可以', items, 0, False)[0]
         try:
-            shot =int(self.file_shot[2:])
+            shot = int(self.file_shot[2:])
         except:
             return
         if shotAB:
             if self.file_shot and self.file_episods:
                 for path in self.projectAnalysis.shotFolderName(self, shot, shotAB):
                     if not path.is_dir():
+                        self.ta_log.info('制作AB镜头%s', path)
                         path.mkdir(parents=True, exist_ok=True)
                 self.setShotItem()
 
     def addDepartmentFolder(self):
-        department = self.setlocale.setting['department']
+        department = self.setlocale.department
         if self.file_shot:
             shot_Department = self.file_department_path
             department = shot_Department.joinpath(department)
             if not department.is_dir():
+                self.ta_log.info('制作%s', department)
                 department.mkdir(parents=True, exist_ok=True)
                 self.setDepartment()
 
@@ -404,6 +416,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 deptype = department_type.joinpath(deptype)
                 if not script.convert.isChinese(deptype):
                     if not deptype.is_dir():
+                        self.ta_log.info('制作%s', deptype)
                         deptype.mkdir(parents=True, exist_ok=True)
                         self.setdepType()
 
@@ -413,9 +426,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def openFile(self):
         filepath = self.combinationFilePath()
-        # subprocess.Popen(str(filepath))
         try:
             os.startfile(str(filepath))
+            self.ta_log.info('打开%s',filepath)
         except:
             pass
 
@@ -427,13 +440,16 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def openExplorer(self):
         filePath = self.file_path
+        self.ta_log.info('打开 %s', filePath)
         os.startfile(filePath)
 
     def copyNameToClipboard(self):
         pyperclip.copy(str(self.file_name))
+        self.ta_log.info('复制 %s 到剪切板', str(self.file_name))
 
     def copyPathToClipboard(self):
         pyperclip.copy(str(self.file_path))
+        self.ta_log.info('复制 %s 到剪切板', str(self.file_path))
     # </editor-fold>
 
 
