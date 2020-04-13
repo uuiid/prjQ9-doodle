@@ -205,7 +205,7 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getFileName(obj) -> dict:
-        """这个用来组合文件名称
+        """这个用来分解文件名称中的信息
         :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
         """
         indexs = obj.listfile.selectedItems()
@@ -278,13 +278,92 @@ class DbxyProjectAnalysisAssets():
         return item
 
     @staticmethod
+    def getAssTypePath(obj) -> pathlib.Path:
+        """
+        获得资产的下一级类型资产所在目录
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
+        possible_path = list(obj.assFamilyPath.glob('{}'.format(obj.asslistSelect)))
+        if possible_path:
+            possible_path = possible_path[0]
+        else:
+            try:
+                possible_path = list(obj.assFamilyPath.glob('*\\{}'.format(obj.asslistSelect)))[0]
+            except:
+                obj.ta_log.error('找不到资产的下一级类型资产文件夹路径?')
+                possible_path = []
+
+        possible_path = possible_path.joinpath('Scenefiles')
+        obj.ta_log.info('获得资产类型所在文件夹 %s', possible_path)
+        return possible_path
+
+    @staticmethod
     def getAssTypeItems(obj) -> list:
         """
         获得资产的下一级类型资产
         :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
         """
-        possible_path = obj.assFamilyPath.glob('*/{}'.format(obj.asslistSelect))
-        if not list(possible_path):
-            pass
-        for path in possible_path:
-            print(path)
+        itmes: list = []
+        ass_type_path = obj.assTypePath
+        for path in ass_type_path.glob('*'):
+            if path.is_dir():
+                tmp = path.stem
+                if tmp == 'tietu':
+                    tmp = 'sourceimages'
+                itmes.append(tmp)
+
+        return itmes
+
+    @staticmethod
+    def getAssFilePath(obj) -> pathlib.Path:
+        """这个用来获得资产类型所在路径
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
+        ass_type_selsct = obj.assTypeSelsct
+        if ass_type_selsct == 'sourceimages':
+            ass_type_selsct = 'tietu'
+        ass_file_path = obj.assTypePath.joinpath(ass_type_selsct)
+        return ass_file_path
+
+    @staticmethod
+    def getAssFileInfo(obj) -> dict:
+        """这个用来组合文件名称
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
+        script.doodleLog.ta_log.info("开始解析文件名称")
+        dep_type_iterdir = obj.assFilePath.iterdir()
+        mitem = []
+        if dep_type_iterdir:
+            for mFile in dep_type_iterdir:
+                if mFile.is_file():
+                    mitem.append({'filename': mFile.stem, 'fileSuffixes': mFile.suffix})
+                else:
+                    script.doodleLog.ta_log.info("他是文件夹?")
+        script.doodleLog.ta_log.info("分离文件名称和后缀: %s", mitem)
+        # 迭代获得文件命中包含信息
+        information: list = []
+        if mitem:
+            for file in mitem:
+                tmp = file['filename'].split('_')
+                try:
+                    tmp = {'name': tmp[0],
+                           'fileType': tmp[1],
+                           'version': tmp[2],
+                           'user': tmp[4],
+                           'fileSuffixes': file['fileSuffixes']
+                           }
+                except IndexError:
+                    script.doodleLog.ta_log.info("资产文件信息变得奇怪了....%s", tmp)
+                except:
+                    script.doodleLog.ta_log.info("(资产)这是什么鬼┏┛墓┗┓...(((m -__-)m....%s", tmp)
+                    pass
+                else:
+                    information.append(tmp)
+        script.doodleLog.ta_log.info("文件信息获取完成")
+        return information
+
+    @staticmethod
+    def seekRigFile(obj):
+        """这个用来寻找绑定文件
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """

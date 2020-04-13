@@ -168,7 +168,28 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listAssFile"/>
+             <widget class="QTableWidget" name="listAssFile">
+              <column>
+               <property name="text">
+                <string>版本</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>概述</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>制作人</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>后缀</string>
+               </property>
+              </column>
+             </widget>
             </item>
             <item>
              <widget class="QLabel" name="label_3">

@@ -41,14 +41,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     file_Deptype_path: pathlib.Path  # 文件类型所在的文件夹
 
     projectAnalysisShot: script.ProjectAnalysis  # 路径解析器
-    projectAnalysisAss: script.ProjectAnalysis #资产路径解析器
+    projectAnalysisAss: script.ProjectAnalysis  # 资产路径解析器
 
     def __init__(self, parent=None):
         super(ProjectBrowserGUI, self).__init__()
         self.setlocale = script.doodle_setting.Doodlesetting()
         self.setSour = script.readServerDiectory.SeverSetting()
         self.projectAnalysisShot = script.ProjectAnalysis.PathAnalysis.DbxyProjectAnalysisShot()
-        self.projectAnalysisAss = script.ProjectAnalysis.PathAnalysis.DbxyProjectAnalysisAssets
+        self.projectAnalysisAss = script.ProjectAnalysis.PathAnalysis.DbxyProjectAnalysisAssets()
         self.ta_log = script.doodleLog.get_logger(__name__)
         # 初始化一些属性
         # self.root = self.getRoot()
@@ -59,8 +59,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listfile.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         # 设置单选
         self.listfile.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        # 设置注释最大
+        # 设置注释最大(资产和镜头都是)
         self.listfile.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        self.listAssFile.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
         # 设置不可编辑
         self.listfile.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         # 开启窗口拖拽事件
@@ -81,7 +82,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepType.itemClicked.connect(self.setFile)
         # </editor-fold>
 
+        # 在listAss中添加点击事件生成Ass资产列表
         self.listAss.itemClicked.connect(self.setlistAssTypeItems)
+        # 在listType中添加点击事件生成file列表
+        self.listAssType.itemClicked.connect(self.setlistAssFileItems)
 
         # 双击打开文件
         self.listfile.doubleClicked.connect(self.openFile)
@@ -89,11 +93,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.refresh.triggered.connect(self.setepisodex)
 
         # 设置ass类型
-        self.scane.clicked.connect(lambda :self.setAssTypeAttr('scane'))
-        self.props.clicked.connect(lambda :self.setAssTypeAttr('props'))
-        self.character.clicked.connect(lambda :self.setAssTypeAttr('character'))
-        self.effects.clicked.connect(lambda :self.setAssTypeAttr('effects'))
-
+        self.scane.clicked.connect(lambda: self.setAssTypeAttr('scane'))
+        self.props.clicked.connect(lambda: self.setAssTypeAttr('props'))
+        self.character.clicked.connect(lambda: self.setAssTypeAttr('character'))
+        self.effects.clicked.connect(lambda: self.setAssTypeAttr('effects'))
 
     # <editor-fold desc="集数和根目录的属性操作">
     @property
@@ -134,7 +137,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     # <editor-fold desc="关于部门的操作">
     @property
-    def file_department(self):
+    def file_department(self) -> str:
         try:
             return self.listdepartment.selectedItems()[0].text()
         except:
@@ -184,8 +187,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             return self.projectAnalysisShot.commFileName(filename)
         except:
             return None
+
     # </editor-fold>
 
+    # <editor-fold desc="属性操作">
     # <editor-fold desc="资产属性">
     @property
     def rootAss(self) -> pathlib.Path:
@@ -204,28 +209,75 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def assFamily(self):
         """选择的资产类型<场景,人物,道具,特效等等>"""
         if not hasattr(self, '_assfamily'):
-            self._assfamily = ''
+            self._assfamily = 'character'
         return self._assfamily
 
     @assFamily.setter
     def assFamily(self, assfamily):
         self._assfamily = assfamily
+
     # endregion
 
     @property
     def assFamilyPath(self) -> pathlib.Path:
         """资产类型所在根目录"""
-        path = self.projectAnalysisAss.getAssFamilyPath(self)
+        if not hasattr(self, '_assFamilyPath'):
+            path = self.setAssFamilyPath()
+        else:
+            path = self._assFamilyPath
         return path
+
+    @assFamilyPath.setter
+    def assFamilyPath(self, ass_family_path):
+        self._assFamilyPath = ass_family_path
 
     @property
     def asslistSelect(self) -> str:
-        tmp = self.listAss.selectedItems()[0].text()
-        return tmp
+        """资产列表中选中的资产"""
+        if not hasattr(self,'_asslistSelect'):
+            self._asslistSelect = ''
+        else:
+            self._asslistSelect = self.listAss.selectedItems()[0].text()
+        return self._asslistSelect
+
+    @property
+    def assTypeSelsct(self) -> str:
+        """资产自己的类型的已选择"""
+        if not hasattr(self, '_assTypeSelsct'):
+            if not self.listdepType.selectedItems():
+                self._assTypeSelsct = ''
+        else:
+            self.assTypeSelsct = self.listAssType.selectedItems()[0].text()
+        return self._assTypeSelsct
+
+    @assTypeSelsct.setter
+    def assTypeSelsct(self, assTypeSelsct):
+        self._assTypeSelsct = assTypeSelsct
+
+    @property
+    def assTypePath(self) -> pathlib.Path:
+        """资产自己的类型所在路径"""
+        if self.listAss.selectedItems():
+            ass_type_path = self.projectAnalysisAss.getAssTypePath(self)
+        else:
+            ass_type_path = None
+        return ass_type_path
+
+    @property
+    def assFilePath(self) ->pathlib.Path:
+        """资产文件所在路径"""
+        if (not hasattr(self, '_assFilePath')) or (not self.listAssType.selectedItems()) :
+            self._assFilePath = ''
+        # else:
+        #     self._assFilePath = self.projectAnalysisAss.getAssFilePath()
+        return self._assFilePath
+
+    @assFilePath.setter
+    def assFilePath(self, assFilePath):
+        self._assFilePath = assFilePath
+
     # </editor-fold>
-
-
-
+    # </editor-fold>
 
     # <editor-fold desc="更新shot视图的各种操作">
     def addRightClick(self):
@@ -342,16 +394,66 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         while mrowtmp >= 0:
             self.listfile.removeRow(mrowtmp)
             mrowtmp = mrowtmp - 1
+
+    def setAssTypeAttr(self, assName: str):
+        self.listAss.clear()
+        self.listAssType.clear()
+        self.clearListAssFile()
+        self.assFamily = assName
+        self.assFamilyPath = self.setAssFamilyPath()
+        self.ta_log.info('将资产类型设置为 %s', assName)
+        self.setListAssItems()
+
     # </editor-fold>
 
     # <editor-fold desc="更新ass的各种操作">
+    def clearListAssFile(self):
+        mrowtmp = self.listAssFile.rowCount()
+        while mrowtmp >= 0:
+            self.listAssFile.removeRow(mrowtmp)
+            mrowtmp = mrowtmp - 1
+
+    def setAssFamilyPath(self):
+        AssFamilyPath = self.projectAnalysisAss.getAssFamilyPath(self)
+        return AssFamilyPath
+
+    def setAssTypeSelet(self):
+        self.assTypeSelsct = self.listAssType.selectedItems()[0].text()
+
+    # def setAssFilePath(self):
+    #     self.assFilePath = self.projectAnalysisAss.getAssFilePath(self)
+
     def setListAssItems(self):
         item = self.projectAnalysisAss.getAssFamilyItems(self)
         self.listAss.addItems(item)
 
     def setlistAssTypeItems(self):
+        self.listAssType.clear()
+        self.ta_log.info('清除资产类型中的项数')
+        self.clearListAssFile()
+        self.ta_log.info('清除资产文件中的项数')
         item = self.projectAnalysisAss.getAssTypeItems(self)
-        # item =
+        self.listAssType.addItems(item)
+
+    def setlistAssFileItems(self):
+        '''设置文件在GUI中的显示'''
+        # 清空上一次文件显示和版本记录和文件路径
+        self.assFilePath = self.projectAnalysisAss.getAssFilePath(self)
+        self.clearListAssFile()
+        self.Ass_version_max = 0
+        for item in self.projectAnalysisAss.getAssFileInfo(self):
+            mrow = 0
+            tmp_version_ = int(item['version'][1:])
+            if tmp_version_ > self.file_version_max:
+                self.file_version_max = tmp_version_
+            self.listAssFile.insertRow(mrow)
+            self.listAssFile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(item['version']))
+            self.listAssFile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item['user']))
+            self.listAssFile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item['fileSuffixes']))
+            mrow = mrow + 1
+        self.ta_log.info('更新文件列表')
+        # return self.projectAnalysisAss.
+
     # </editor-fold>
 
     # <editor-fold desc="拖放操作函数">
@@ -386,7 +488,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                     if self.listdepType and self.file_path:
                         dstFile = self.getFileName(path.suffix)  # type:pathlib.Path
                         shutil.copy2(str(path), str(dstFile))
-                        self.ta_log.info('%s ---> %s',path, dstFile)
+                        self.ta_log.info('%s ---> %s', path, dstFile)
                         self.setFile()
                         self.enableBorder(False)
                     # print(path)
@@ -431,7 +533,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             episodesPath = self.projectAnalysisShot.episodesFolderName(self, Episode)
             for path in episodesPath:
                 if not path.is_dir():
-                    self.ta_log.info('制作%s',path)
+                    self.ta_log.info('制作%s', path)
                     path.mkdir(parents=True, exist_ok=True)
             self.setepisodex()
 
@@ -491,7 +593,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         filepath = self.combinationFilePath()
         try:
             os.startfile(str(filepath))
-            self.ta_log.info('打开%s',filepath)
+            self.ta_log.info('打开%s', filepath)
         except:
             pass
 
@@ -513,13 +615,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def copyPathToClipboard(self):
         pyperclip.copy(str(self.file_path))
         self.ta_log.info('复制 %s 到剪切板', str(self.file_path))
-    # </editor-fold>
-    def setAssTypeAttr(self,assName:str):
-        self.listAss.clear()
-        self.assFamily = assName
-        self.ta_log.info('将资产类型设置为 %s',assName)
-        self.setListAssItems()
 
+    # </editor-fold>
 
 
 if __name__ == '__main__':
