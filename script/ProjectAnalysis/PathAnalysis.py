@@ -4,9 +4,8 @@ from typing import Iterator, Dict, TypeVar
 import typing
 import script.doodleLog
 
-
-
-# import script.doodle_setting
+import script.ProjectBrowserGUI
+import script.doodle_setting
 
 
 class DbxyProjectAnalysisShot():
@@ -15,7 +14,9 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getEpisodesItems(obj) -> list:
-        """获得集数所在的文件夹"""
+        """获得集数所在的文件夹
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         root = obj.root
         item = []
         for path in root.iterdir():
@@ -28,7 +29,9 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def episodesFolderName(obj, episode: int) -> list:
-        """要返回路径对象的列表"""
+        """要返回路径对象的列表
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         tmp = []
         name = "ep{:0>2d}".format(episode)
         name = obj.root.joinpath(name)
@@ -38,14 +41,18 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getShotPath(obj) -> pathlib.Path:
-        """获得镜头所在的文件夹"""
+        """获得镜头所在的文件夹
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         root = obj.root
         script.doodleLog.ta_log.info("获得镜头所在的文件夹")
         return pathlib.Path(root)
 
     @staticmethod
     def getShotItems(obj) -> Iterator[str]:
-        """获得shot列表"""
+        """获得shot列表
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         script.doodleLog.ta_log.info("开始获得镜头所在的文件夹")
         episods = obj.file_episods
         paths = obj.root
@@ -64,7 +71,9 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def shotFolderName(obj, shot: int, ab_shot: str = None) -> list:
-        """获得镜头路径文件夹,路径obj的一个列表"""
+        """获得镜头路径文件夹,路径obj的一个列表
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         script.doodleLog.ta_log.info("开始组合shot文件夹列表")
         tmp = []
         shotname = '{}-sc{:0>4d}'.format(obj.file_episods, shot)
@@ -80,7 +89,9 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getdepartmentPath(obj) -> pathlib.Path:
-        """获得部门文件夹"""
+        """获得部门文件夹
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         script.doodleLog.ta_log.info("开始寻找部门文件夹")
         # 获得根文件夹
         root = obj.root
@@ -100,7 +111,9 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getdepartmentItems(obj) -> list:
-        """获得部门文件夹的内部项数"""
+        """获得部门文件夹的内部项数
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         script.doodleLog.ta_log.info("开始寻找部门文件夹列表")
         department = obj.file_department_path
         mitem = []
@@ -111,7 +124,9 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getDepTypePath(obj) -> pathlib.Path:
-        """获得类型所在文件夹"""
+        """获得类型所在文件夹
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         script.doodleLog.ta_log.info("开始寻找部门文件夹列表")
         dep = obj.file_department
         if dep:
@@ -121,7 +136,9 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getDepTypeItems(obj) -> list:
-        """获得类型所在文件夹中的项数"""
+        """获得类型所在文件夹中的项数
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         script.doodleLog.ta_log.info("开始寻找类型文件夹")
         dep = obj.file_Deptype_path
         mitem = []
@@ -135,7 +152,9 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getFilePath(obj) -> pathlib.Path:
-        """获得文件所在位置文件夹"""
+        """获得文件所在位置文件夹
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         script.doodleLog.ta_log.info("找文件所在文件夹")
         try:
             depType = obj.file_Deptype_path
@@ -146,7 +165,9 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def fileNameInformation(obj) -> list:
-        """获得文件名称中的信息, 并以字典返回"""
+        """获得文件名称中的信息, 并以字典返回
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         script.doodleLog.ta_log.info("开始解析文件名称")
         dep_type_iterdir = obj.file_path.iterdir()
         mitem = []
@@ -173,7 +194,7 @@ class DbxyProjectAnalysisShot():
                            }
                 except IndexError:
                     other = tmp
-                    script.doodleLog.ta_log.info("文件信息变得奇怪了....%s",tmp)
+                    script.doodleLog.ta_log.info("文件信息变得奇怪了....%s", tmp)
                 except:
                     script.doodleLog.ta_log.info("这是什么鬼┏┛墓┗┓...(((m -__-)m....%s", tmp)
                     pass
@@ -184,7 +205,9 @@ class DbxyProjectAnalysisShot():
 
     @staticmethod
     def getFileName(obj) -> dict:
-        """这个用来组合文件名称"""
+        """这个用来组合文件名称
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
         indexs = obj.listfile.selectedItems()
         item: Dict[str, str] = {'version': indexs[0].text()}
         if len(indexs) == 4:
@@ -198,7 +221,7 @@ class DbxyProjectAnalysisShot():
         item['file_shot'] = obj.file_shot
         item['file_department'] = obj.file_department
         item['file_Deptype'] = obj.file_Deptype
-        script.doodleLog.ta_log.info("组合文件名称完成%s",item)
+        script.doodleLog.ta_log.info("组合文件名称完成%s", item)
         return item
 
     @staticmethod
@@ -211,10 +234,57 @@ class DbxyProjectAnalysisShot():
                                                        item['version'],
                                                        item['user'],
                                                        item['fileSuffixes'])
-        script.doodleLog.ta_log.info("真正的文件信息组合完成了....%s",filename)
+        script.doodleLog.ta_log.info("真正的文件信息组合完成了....%s", filename)
         return filename
 
 
 class DbxyProjectAnalysisAssets():
-    def __init__(self):
-        pass
+    @staticmethod
+    def getAssFamilyPath(obj) -> pathlib.Path:
+        """
+        获得各种资产根目录
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
+        if obj.assFamily == 'character':
+            path = obj.rootAss.joinpath('DuBuXiaoYao', 'MoXing', 'Character')
+            obj.ta_log.info('获得文件夹%s', path)
+        elif obj.assFamily == 'scane':
+            path = obj.rootAss.joinpath('DuBuXiaoYao', 'MoXing', 'Scence')
+            obj.ta_log.info('获得文件夹%s', path)
+        elif obj.assFamily == 'props':
+            path = obj.rootAss.joinpath('DuBuXiaoYao', 'MoXing', 'Prop')
+            obj.ta_log.info('获得文件夹%s', path)
+        elif obj.assFamily == 'effects':
+            path = obj.rootAss.joinpath('DuBuXiaoYao', 'MoXing', 'TeXiao')
+            obj.ta_log.info('获得文件夹%s', path)
+        else:
+            path = ''
+            obj.ta_log.info('你干了什么? 这是一片荒漠(o_ _)ﾉ')
+        return path
+
+    @staticmethod
+    def getAssFamilyItems(obj) -> list:
+        """
+        获得各种资产中的项数
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
+        item = []
+        for path in obj.assFamilyPath.iterdir():
+            if path.match('*ep_*'):
+                for children_path in path.iterdir():
+                    item.append(children_path.stem)
+            else:
+                item.append(path.stem)
+        return item
+
+    @staticmethod
+    def getAssTypeItems(obj) -> list:
+        """
+        获得资产的下一级类型资产
+        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
+        possible_path = obj.assFamilyPath.glob('*/{}'.format(obj.asslistSelect))
+        if not list(possible_path):
+            pass
+        for path in possible_path:
+            print(path)

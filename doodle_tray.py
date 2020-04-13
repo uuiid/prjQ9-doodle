@@ -14,6 +14,7 @@ import script.readServerDiectory
 import script.synXml
 import script.ProjectBrowserGUI
 import script.doodleLog
+import qdarkgraystyle
 
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
@@ -61,11 +62,10 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
 
     def file_syns(self):
         if self.doodleSet.department in ['Light', 'VFX']:
-
             self.ta_log.info('进行同步')
             readServerDiectory = script.readServerDiectory.SeverSetting().setting
 
-            self.ta_log.info('读取服务器中同步目录 %s',readServerDiectory)
+            self.ta_log.info('读取服务器中同步目录 %s', readServerDiectory)
             synfile_Name = '{}-ep-{}'.format(self.doodleSet.department, self.doodleSet.synEp)
             synfile = script.synXml.weiteXml(self.doodleSet.doc,
                                              readServerDiectory['ep{:0>3d}Syn'.format(self.doodleSet.synEp)],
@@ -73,7 +73,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
             program = pathlib.Path('C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe')
             run('{} "{}"'.format(program, synfile), shell=True)
 
-            self.ta_log.info('同步时间: %s',time.asctime(time.localtime(time.time())))
+            self.ta_log.info('同步时间: %s', time.asctime(time.localtime(time.time())))
             # script.debug.debug("同步时间: {}\n".format(time.asctime(time.localtime(time.time()))))
 
     def myexit(self):
@@ -114,6 +114,8 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     QtWidgets.QApplication.setQuitOnLastWindowClosed(False)
     # w = QtWidgets.QWidget()
+    app.setStyleSheet(qdarkgraystyle.load_stylesheet())
+
     tray_icon = SystemTrayIcon(QtGui.QIcon('datas/icon.png'), None)
     tray_icon.showMessage('文件管理', 'hello')
     tray_icon.show()

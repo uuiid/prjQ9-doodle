@@ -4,7 +4,7 @@ import pathlib
 import shutil
 import sys
 from typing import Dict
-
+import qdarkgraystyle
 import pyperclip
 import pypinyin
 from PyQt5 import QtCore
@@ -40,13 +40,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     file_Deptype: str = ''
     file_Deptype_path: pathlib.Path  # 文件类型所在的文件夹
 
-    projectAnalysis: script.ProjectAnalysis  # 路径解析器
+    projectAnalysisShot: script.ProjectAnalysis  # 路径解析器
+    projectAnalysisAss: script.ProjectAnalysis #资产路径解析器
 
     def __init__(self, parent=None):
         super(ProjectBrowserGUI, self).__init__()
         self.setlocale = script.doodle_setting.Doodlesetting()
         self.setSour = script.readServerDiectory.SeverSetting()
-        self.projectAnalysis = script.ProjectAnalysis.PathAnalysis.DbxyProjectAnalysisShot()
+        self.projectAnalysisShot = script.ProjectAnalysis.PathAnalysis.DbxyProjectAnalysisShot()
+        self.projectAnalysisAss = script.ProjectAnalysis.PathAnalysis.DbxyProjectAnalysisAssets
         self.ta_log = script.doodleLog.get_logger(__name__)
         # 初始化一些属性
         # self.root = self.getRoot()
@@ -65,9 +67,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.setAcceptDrops(True)
         # self.listepisodes.setAcceptDrops
 
+        # <editor-fold desc="关于shot的更新操作">
         self.addRightClick()
         # 首先扫描根目录获得集数
-        self.listepisodes.addItems(self.projectAnalysis.getEpisodesItems(self))
+        self.listepisodes.addItems(self.projectAnalysisShot.getEpisodesItems(self))
         # 并链接函数处理下一级
         self.listepisodes.itemClicked.connect(self.setShotItem)
         # 在shot文件列表中添加点击事件更改下一级部门列表
@@ -76,11 +79,21 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepartment.itemClicked.connect(self.setdepType)
         # 在depType中添加点击跟新文件事件
         self.listdepType.itemClicked.connect(self.setFile)
+        # </editor-fold>
+
+        self.listAss.itemClicked.connect(self.setlistAssTypeItems)
 
         # 双击打开文件
         self.listfile.doubleClicked.connect(self.openFile)
         # 添加刷新函数
         self.refresh.triggered.connect(self.setepisodex)
+
+        # 设置ass类型
+        self.scane.clicked.connect(lambda :self.setAssTypeAttr('scane'))
+        self.props.clicked.connect(lambda :self.setAssTypeAttr('props'))
+        self.character.clicked.connect(lambda :self.setAssTypeAttr('character'))
+        self.effects.clicked.connect(lambda :self.setAssTypeAttr('effects'))
+
 
     # <editor-fold desc="集数和根目录的属性操作">
     @property
@@ -113,7 +126,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     @property
     def file_shot_path(self) -> pathlib.Path:
         try:
-            return self.projectAnalysis.getShotPath(self)
+            return self.projectAnalysisShot.getShotPath(self)
         except:
             return None
 
@@ -130,7 +143,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     @property
     def file_department_path(self):
         try:
-            tmp = self.projectAnalysis.getdepartmentPath(self)
+            tmp = self.projectAnalysisShot.getdepartmentPath(self)
         except:
             tmp = None
         return tmp
@@ -150,7 +163,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def file_Deptype_path(self):
         # return self.projectAnalysis.getDepTypePath(self)
         try:
-            return self.projectAnalysis.getDepTypePath(self)
+            return self.projectAnalysisShot.getDepTypePath(self)
         except:
             return None
 
@@ -160,21 +173,61 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     @property
     def file_path(self):
         try:
-            return self.projectAnalysis.getFilePath(self)
+            return self.projectAnalysisShot.getFilePath(self)
         except:
             return None
 
     @property
     def file_name(self):
         try:
-            filename = self.projectAnalysis.getFileName(self)
-            return self.projectAnalysis.commFileName(filename)
+            filename = self.projectAnalysisShot.getFileName(self)
+            return self.projectAnalysisShot.commFileName(filename)
         except:
             return None
-
     # </editor-fold>
 
-    # <editor-fold desc="更新视图的各种操作">
+    # <editor-fold desc="资产属性">
+    @property
+    def rootAss(self) -> pathlib.Path:
+        """资产类型的根目录"""
+        if not hasattr(self, '_rootAss'):
+            shot_root_ = self.setSour.getseverPrjBrowser()['assetsRoot']
+            root = pathlib.Path(self.setlocale.project)
+            # 获得根目录
+            for myP in shot_root_:
+                root = root.joinpath(myP)
+            self._rootAss = root
+        return self._rootAss
+
+    # region 选择的资产类型
+    @property
+    def assFamily(self):
+        """选择的资产类型<场景,人物,道具,特效等等>"""
+        if not hasattr(self, '_assfamily'):
+            self._assfamily = ''
+        return self._assfamily
+
+    @assFamily.setter
+    def assFamily(self, assfamily):
+        self._assfamily = assfamily
+    # endregion
+
+    @property
+    def assFamilyPath(self) -> pathlib.Path:
+        """资产类型所在根目录"""
+        path = self.projectAnalysisAss.getAssFamilyPath(self)
+        return path
+
+    @property
+    def asslistSelect(self) -> str:
+        tmp = self.listAss.selectedItems()[0].text()
+        return tmp
+    # </editor-fold>
+
+
+
+
+    # <editor-fold desc="更新shot视图的各种操作">
     def addRightClick(self):
         '''添加右键菜单==================================================='''
         # 添加集数右键菜单
@@ -232,12 +285,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.clearListFile()
         self.listshot.clear()
 
-        item = self.projectAnalysis.getEpisodesItems(self)
+        item = self.projectAnalysisShot.getEpisodesItems(self)
         self.ta_log.info('更新集数列表')
         self.listepisodes.addItems(item)
 
     def setShotItem(self):
-        mitem = self.projectAnalysis.getShotItems(self)
+        mitem = self.projectAnalysisShot.getShotItems(self)
 
         self.listdepartment.clear()
         self.listdepType.clear()
@@ -249,7 +302,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def setDepartment(self):
         department = self.file_department_path
-        mitem = self.projectAnalysis.getdepartmentItems(self)
+        mitem = self.projectAnalysisShot.getdepartmentItems(self)
 
         self.listdepType.clear()
         self.clearListFile()
@@ -259,7 +312,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepartment.addItems(mitem)
 
     def setdepType(self):
-        mitem = self.projectAnalysis.getDepTypeItems(self)
+        mitem = self.projectAnalysisShot.getDepTypeItems(self)
 
         self.clearListFile()
 
@@ -272,7 +325,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListFile()
         self.file_version_max = 0
-        for item in self.projectAnalysis.fileNameInformation(self):
+        for item in self.projectAnalysisShot.fileNameInformation(self):
             mrow = 0
             tmp_version_ = int(item['version'][1:])
             if tmp_version_ > self.file_version_max:
@@ -289,6 +342,16 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         while mrowtmp >= 0:
             self.listfile.removeRow(mrowtmp)
             mrowtmp = mrowtmp - 1
+    # </editor-fold>
+
+    # <editor-fold desc="更新ass的各种操作">
+    def setListAssItems(self):
+        item = self.projectAnalysisAss.getAssFamilyItems(self)
+        self.listAss.addItems(item)
+
+    def setlistAssTypeItems(self):
+        item = self.projectAnalysisAss.getAssTypeItems(self)
+        # item =
     # </editor-fold>
 
     # <editor-fold desc="拖放操作函数">
@@ -355,7 +418,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             filename['version'] = 'v{:0>4d}'.format(self.file_version_max)
         else:
             filename['version'] = 'v{:0>4d}'.format(self.file_version_max + 1)
-        path = self.file_path.joinpath(self.projectAnalysis.commFileName(filename))
+        path = self.file_path.joinpath(self.projectAnalysisShot.commFileName(filename))
         return path
 
     # </editor-fold>
@@ -365,7 +428,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         Episode: int = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)[0]
         if Episode:
             # root = self.getRoot()
-            episodesPath = self.projectAnalysis.episodesFolderName(self, Episode)
+            episodesPath = self.projectAnalysisShot.episodesFolderName(self, Episode)
             for path in episodesPath:
                 if not path.is_dir():
                     self.ta_log.info('制作%s',path)
@@ -376,7 +439,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         shot = QtWidgets.QInputDialog.getInt(self, '输入镜头', "sc", 1, 1, 999, 1)[0]
         if shot:
             if self.file_episods:
-                for path in self.projectAnalysis.shotFolderName(self, shot):
+                for path in self.projectAnalysisShot.shotFolderName(self, shot):
                     if not path.is_dir():
                         self.ta_log.info('制作%s', path)
                         path.mkdir(parents=True, exist_ok=True)
@@ -391,7 +454,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             return
         if shotAB:
             if self.file_shot and self.file_episods:
-                for path in self.projectAnalysis.shotFolderName(self, shot, shotAB):
+                for path in self.projectAnalysisShot.shotFolderName(self, shot, shotAB):
                     if not path.is_dir():
                         self.ta_log.info('制作AB镜头%s', path)
                         path.mkdir(parents=True, exist_ok=True)
@@ -451,18 +514,17 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         pyperclip.copy(str(self.file_path))
         self.ta_log.info('复制 %s 到剪切板', str(self.file_path))
     # </editor-fold>
+    def setAssTypeAttr(self,assName:str):
+        self.listAss.clear()
+        self.assFamily = assName
+        self.ta_log.info('将资产类型设置为 %s',assName)
+        self.setListAssItems()
 
-
-# 添加右键菜单
-# def contextMenuEvent(self, event: QtGui.QContextMenuEvent) -> None:
-#     menu = QtWidgets.QMenu(self)
-#     addFolder = menu.addAction('添加')
-#     addFolder.triggered.connect(self.addFolder)
-#     action = menu.exec_(self.mapToGlobal(event.pos()))
 
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
+    app.setStyleSheet(qdarkgraystyle.load_stylesheet())
     w = ProjectBrowserGUI()
     w.show()
 
