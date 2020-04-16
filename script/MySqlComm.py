@@ -33,9 +33,11 @@ def selsctCommMysql(mybd: str, departmen, password, sql_command):
         cursor.execute(sql_command)
         date = cursor.fetchall()
     except:
-        None
+        date =''
     data_base.close()
     return date
+
+# def MysqlComm(mybd: str, departmen, password, sql_command):
 
 # def inserteMysql(mybd: str,department:str,**args):
 #     my_sql_db = commMysql(mybd,department)

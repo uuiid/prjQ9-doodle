@@ -124,9 +124,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     @property
     def file_episods(self):
         try:
-            return self.listepisodes.selectedItems()[0].text()
+            items__text = self.listepisodes.selectedItems()[0].text()
+            if items__text == 'pv':
+                items__text = 0
+            else:
+                items__text = int(items__text[2:])
+            return items__text
         except:
-            return None
+            return ''
 
     # </editor-fold>
 
@@ -134,7 +139,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     @property
     def file_shot(self):
         try:
-            return self.listshot.selectedItems()[0].text()
+            items__text = self.listshot.selectedItems()[0].text()
+            try:
+                items__text = int(items__text[2:])
+            except:
+                items__text = int(items__text[2:-1])
+            return items__text
         except:
             return None
 
@@ -369,24 +379,39 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepType.clear()
         self.clearListFile()
         self.listshot.clear()
-        # sql = """select * from mainshot"""
-        # data = self.setlocale.getseverPrjBrowser()['mySqlData']
-        # eps = script.MySqlComm.selsctCommMysql(data,
-        #                                        self.setlocale.department,
-        #                                        self.setlocale.department, sql)
-        # item = []
-        # for ep in eps:
-        #     if ep[1] == 0:
-        #         item.append('PV')
-        #     else:
-        #         item.append('ep{:0>3d}'.format(ep[1]))
-        item = self.projectAnalysisShot.getEpisodesItems(self)
+
+        # region 获得服务器上数据,集数数据
+        sql = """select id,episods from mainshot"""
+        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        eps = script.MySqlComm.selsctCommMysql(data,
+                                               self.setlocale.department,
+                                               self.setlocale.department, sql)
+        item = []
+        for ep in eps:
+            if ep[1] == 0:
+                item.append('pv')
+            else:
+                item.append('ep{:0>3d}'.format(ep[1]))
+        # endregion
+
+        # item = self.projectAnalysisShot.getEpisodesItems(self)
         self.ta_log.info('更新集数列表')
 
         self.listepisodes.addItems(item)
 
     def setShotItem(self):
-        mitem = self.projectAnalysisShot.getShotItems(self)
+        # region 获得服务器上数据,镜头数据
+        sql = """select distinct shot,shotab from ep{:0>3d}""".format(self.file_episods)
+        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        eps = script.MySqlComm.selsctCommMysql(data,
+                                               self.setlocale.department,
+                                               self.setlocale.department, sql)
+        item = []
+        for ep in eps:
+            try:
+                item.append('sc{:0>4d}{}'.format(ep[0], ep[1]))
+            except:
+                item.append('sc{:0>4d}'.format(ep[0]))
 
         self.listdepartment.clear()
         self.listdepType.clear()
@@ -394,42 +419,80 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         self.listshot.clear()
         self.ta_log.info('更新shot列表')
-        self.listshot.addItems(mitem)
+        self.listshot.addItems(item)
 
     def setDepartment(self):
-        department = self.file_department_path
-        mitem = self.projectAnalysisShot.getdepartmentItems(self)
+        sql = """select distinct department from ep{:0>3d}
+                 where episodes = {} and shot = {}""".format(self.file_episods,
+                                                             self.file_episods,
+                                                             self.file_shot)
+        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        eps = script.MySqlComm.selsctCommMysql(data,
+                                               self.setlocale.department,
+                                               self.setlocale.department, sql)
+        item = []
+        for department in eps:
+            item.append(department[0])
 
         self.listdepType.clear()
         self.clearListFile()
 
         self.listdepartment.clear()
         self.ta_log.info('更新Department列表')
-        self.listdepartment.addItems(mitem)
+        self.listdepartment.addItems(item)
 
     def setdepType(self):
-        mitem = self.projectAnalysisShot.getDepTypeItems(self)
+        sql = """select distinct Type from ep{:0>3d}
+                 where episodes = {} 
+                 and shot = {} 
+                 and department ='{}'""".format(self.file_episods,
+                                                self.file_episods,
+                                                self.file_shot,
+                                                self.file_department)
+
+        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        eps = script.MySqlComm.selsctCommMysql(data,
+                                               self.setlocale.department,
+                                               self.setlocale.department, sql)
+        item = []
+        for depType in eps:
+            item.append(depType[0])
 
         self.clearListFile()
 
         self.listdepType.clear()
         self.ta_log.info('更新depType列表')
-        self.listdepType.addItems(mitem)
+        self.listdepType.addItems(item)
 
     def setFile(self):
         '''设置文件在GUI中的显示'''
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListFile()
         self.file_version_max = 0
-        for item in self.projectAnalysisShot.fileNameInformation(self):
+
+        sql = """select version, user, fileSuffixes from ep{:0>3d}
+                where episodes = {}
+                and shot = {}
+                and department ='{}'
+                and Type = '{}'""".format(self.file_episods,
+                                          self.file_episods,
+                                          self.file_shot,
+                                          self.file_department,
+                                          self.file_Deptype)
+        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        eps = script.MySqlComm.selsctCommMysql(data,
+                                               self.setlocale.department,
+                                               self.setlocale.department, sql)
+
+        for item in eps:
             mrow = 0
-            tmp_version_ = int(item['version'][1:])
+            tmp_version_ = int(item[0])
             if tmp_version_ > self.file_version_max:
                 self.file_version_max = tmp_version_
             self.listfile.insertRow(mrow)
-            self.listfile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(item['version']))
-            self.listfile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item['producer']))
-            self.listfile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item['fileSuffixes']))
+            self.listfile.setItem(mrow, 0, QtWidgets.QTableWidgetItem('v{:0>4d}'.format(item[0])))
+            self.listfile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item[1]))
+            self.listfile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item[2]))
             mrow = mrow + 1
         self.ta_log.info('更新文件列表')
 
@@ -575,12 +638,25 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def addEpisodesFolder(self):
         Episode: int = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)[0]
         if Episode:
-            # root = self.getRoot()
-            episodesPath = self.projectAnalysisShot.episodesFolderName(self, Episode)
-            for path in episodesPath:
-                if not path.is_dir():
-                    self.ta_log.info('制作%s', path)
-                    path.mkdir(parents=True, exist_ok=True)
+            create_date = """create table {:0>3d}(
+                                          id smallint primary key not null auto_increment,
+                                          episodes smallint,
+                                          shot smallint,
+                                          shotab varchar(8),
+                                          department varchar(128),
+                                          Type varchar(128),
+                                          file varchar(128),
+                                          fileSuffixes varchar(32),
+                                          user varchar(128),
+                                          version smallint,
+                                          filepath varchar(1024)
+                                          );""".format(Episode)
+            script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'], '', '', create_date)
+            # # root = self.getRoot()
+            # episodesPath = self.projectAnalysisShot.episodesFolderName(self, Episode)
+            # for path in episodesPath:
+            #     if not path.is_dir():
+
             self.setepisodex()
 
     def addShotFolder(self):
