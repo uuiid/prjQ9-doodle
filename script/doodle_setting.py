@@ -8,7 +8,6 @@ from PyQt5 import QtWidgets
 
 import UiFile.setting
 import script.convert
-import script.readServerDiectory
 import script.doodleLog
 
 
@@ -25,8 +24,6 @@ class Doodlesetting():
 
     def __init__(self) -> object:
         # 初始化设置
-        # self.doc = pathlib.Path("{}{}".format(pathlib.Path.home(), '\\Documents\\doodle'))
-        # self.userland = self.doc.joinpath("doodle_conf.json")
         self.ta_log = script.doodleLog.get_logger(__name__)
         self.initSetAttr()
 
@@ -91,7 +88,7 @@ class Doodlesetting():
 
     @syn.setter
     def syn(self, syn: pathlib.Path) -> pathlib.Path:
-        self._syn =pathlib.Path(syn)
+        self._syn = pathlib.Path(syn)
 
     @property
     def synEp(self) -> int:
@@ -106,39 +103,70 @@ class Doodlesetting():
     @property
     def synSever(self) -> pathlib.Path:
         if not hasattr(self, '_synSever'):
-            self._syn_sever = 'W:\\data\\ue_prj'
+            self._syn_sever = self.getseverPrjBrowser()['synSever']
         return self._syn_sever
 
     @synSever.setter
     def synSever(self, syn_sever: pathlib.Path):
-        if isinstance(syn_sever,str):
-            self._syn_sever = pathlib.Path(syn_sever)
-        else:
-            self._syn_sever = syn_sever
+        # if isinstance(syn_sever, str):
+        #     self._syn_sever = pathlib.Path(syn_sever)
+        # else:
+        #     self._syn_sever = syn_sever
+        self._syn_sever = self.getseverPrjBrowser()['synSever']
 
     @property
     def project(self) -> pathlib.Path:
         if not hasattr(self, '_project'):
-            self._project = 'W:\\'
+            self._project = pathlib.Path('W:\\')
         return self._project
 
     @project.setter
-    def project(self, project:pathlib.Path):
-        if isinstance(project,str):
+    def project(self, project: pathlib.Path):
+        if isinstance(project, str):
             self.project = pathlib.Path(project)
         else:
             self._project = project
 
+    @property
+    def projectAnalysis(self):
+        if not hasattr(self, '_projectAnalysis'):
+            self._projectAnalysis = self.getseverPrjBrowser()['projectAnalysis']
+        return self._projectAnalysis
+
+    @property
+    def ProgramFolder(self):
+        if not hasattr(self, '_ProgramFolder'):
+            self._ProgramFolder = ['Export', 'Playblasts', 'Rendering', 'Scenefiles']
+        return self._ProgramFolder
+
+    @ProgramFolder.setter
+    def ProgramFolder(self, ProgramFolder):
+        self._ProgramFolder = ProgramFolder
+
+    @property
+    def assTypeFolder(self):
+        if not hasattr(self, '_assTypeFolder'):
+            self._assTypeFolder = ['sourceimages', 'scenes', '{}_UE4', 'rig']
+        return self._assTypeFolder
+
+    @assTypeFolder.setter
+    def assTypeFolder(self, assTypeFolder):
+        self._assTypeFolder = assTypeFolder
+
+    # @projectAnalysis.setter
+    # def projectAnalysis(self, projectAnalysis):
+    #     self._projectAnalysis = projectAnalysis
+
     # region 同步软件所在目录
     @property
-    def FreeFileSync(self) -> pathlib.Path:
+    def FreeFileSync(self) -> str:
         if not hasattr(self, '_FreeFileSync'):
             self._FreeFileSync = 'C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe'
         return self._FreeFileSync
 
     @FreeFileSync.setter
     def FreeFileSync(self, FreeFileSync):
-        self._FreeFileSync =pathlib.Path(FreeFileSync)
+        self._FreeFileSync = pathlib.Path(FreeFileSync)
 
     # endregion
 
@@ -181,23 +209,63 @@ class Doodlesetting():
             'department': self.department,
             "syn": str(self.syn),
             "synEp": self.synEp,
-            "synSever": str(self.synSever),
             "project": str(self.project),
             "FreeFileSync": str(self.FreeFileSync)
         }
         my_setting = json.dumps(doodlelocal_set, ensure_ascii=False, indent=4, separators=(',', ':'))
         self.userland.write_text(my_setting, 'utf-8')
 
+    def getsever(self) -> dict:
+        """返回服务器上的 同步目录设置"""
+        # 读取本地部门类型 以及每集类型
+        # self.setlocale = script.doodle_setting.Doodlesetting()
+        # 获得设置的文件路径
+        file = pathlib.Path(self.project).joinpath('configuration', '{}_synFile.json'.format(
+            self.department))
+        self.ta_log.info('服务器文件路径 %s', file)
+        # 读取文件
+        settingtmp = file.read_text(encoding='utf-8')
+        settingtmp = json.loads(settingtmp, encoding='utf-8')
+        synpath: dict
+        tmp = []
+        # 将服务器上的同步路径和本地链接
+        try:
+            for synpath in settingtmp['ep{:0>3d}Syn'.format(self.synEp)]:
+                for key, value in synpath.items():
+                    if key == 'Left':
+                        synpath[key] = str(pathlib.Path(self.syn).joinpath(value))
+                    else:
+                        synpath[key] = str(pathlib.Path(self.synSever).joinpath(value))
+                tmp.append(synpath)
+        except KeyError as err:
+            self.ta_log.error('服务器文件转为字典时出错 %s', err)
+            return None
+        except:
+            self.ta_log.error('服务器文件不知道为什么出错 %s')
+            return None
+
+        settingtmp['ep{:0>3d}Syn'.format(self.synEp)] = tmp
+        setting = settingtmp
+        # 返回特定部门的同步路径设置
+        return setting
+
+    def getseverPrjBrowser(self) -> dict:
+        '''返回服务器上的project设置'''
+        prj_set_file = pathlib.Path(self.project).joinpath('configuration',
+                                                         'Doodle_Prj_Browser.json')
+        self.ta_log.info('服务器上的项目设置 %s', prj_set_file)
+        prjset = prj_set_file.read_text(encoding='utf-8')
+        prjset = json.loads(prjset, encoding='utf-8')
+        self.ta_log.info('服务器上的项目设置(json) %s', prjset)
+        return prjset
+
 
 class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
-    sever_setting = ''
-    setlocale: Doodlesetting
 
     def __init__(self, parent=None):
         super(DoodlesettingGUI, self).__init__()
         QtWidgets.QMainWindow.__init__(self, parent=parent)
         self.setlocale = Doodlesetting()
-        self.sever_setting = script.readServerDiectory.SeverSetting()
         self.ta_log_GUI = script.doodleLog.get_logger(__name__ + 'GUI')
 
         self.setupUi(self)
@@ -238,15 +306,15 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
     def editconf(self, key, newValue):
         # 当设置更改时获得更改
         # self.setlocale.setting[key] = newValue
-        setattr(self.setlocale,key,newValue)
-        self.ta_log_GUI.info('用户将%s更改为%s',key,newValue)
+        setattr(self.setlocale, key, newValue)
+        self.ta_log_GUI.info('用户将%s更改为%s', key, newValue)
         self.synSeverPath()
 
     def synSeverPath(self):
         # 将同步目录显示出来
         self.pathSynSever.clear()
         self.pathSynLocale.clear()
-        syn_sever_path = self.sever_setting.getsever()
+        syn_sever_path = self.setlocale.getsever()
         try:
             syn_sever_path = syn_sever_path['ep{:0>3d}Syn'.format(self.setlocale.synEp)]
             for path in syn_sever_path:
@@ -266,7 +334,7 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
             newValue = newValue
         self.sysTestYing.setText(newValue.as_posix())
         self.ta_log_GUI.info('中文%s更改为%s', key, newValue)
-        setattr(self.setlocale,key,newValue.as_posix())
+        setattr(self.setlocale, key, newValue.as_posix())
         self.synSeverPath()
 
     def editSynEp(self):

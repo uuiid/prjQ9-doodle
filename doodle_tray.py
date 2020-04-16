@@ -2,15 +2,13 @@
 import pathlib
 import sys
 import time
-from subprocess import run
-from subprocess import Popen
+import subprocess
 
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets, QtGui
 
 import script.debug
 import script.doodle_setting
-import script.readServerDiectory
 import script.synXml
 import script.ProjectBrowserGUI
 import script.doodleLog
@@ -41,11 +39,11 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
 
         UEmenu = menu.addMenu('UE动作')
 
-        UE_sync = UEmenu.addAction('同步UE')
-        UE_sync.triggered.connect(self.UEsync)
-
         UE_open = UEmenu.addAction('打开UE')
         UE_open.triggered.connect(self.openUE)
+
+        UE_sync = UEmenu.addAction('同步UE')
+        UE_sync.triggered.connect(self.UEsync)
 
         setmenu = menu.addAction('设置')
         setmenu.triggered.connect(self.setGUI)
@@ -63,18 +61,17 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     def file_syns(self):
         if self.doodleSet.department in ['Light', 'VFX']:
             self.ta_log.info('进行同步')
-            readServerDiectory = script.readServerDiectory.SeverSetting().setting
+            readServerDiectory = self.doodleSet.getsever()
 
             self.ta_log.info('读取服务器中同步目录 %s', readServerDiectory)
             synfile_Name = '{}-ep-{}'.format(self.doodleSet.department, self.doodleSet.synEp)
             synfile = script.synXml.weiteXml(self.doodleSet.doc,
                                              readServerDiectory['ep{:0>3d}Syn'.format(self.doodleSet.synEp)],
                                              fileName=synfile_Name)
-            program = pathlib.Path('C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe')
-            run('{} "{}"'.format(program, synfile), shell=True)
+            program = self.doodleSet.FreeFileSync
+            subprocess.run('{} "{}"'.format(program, synfile), shell=True)
 
             self.ta_log.info('同步时间: %s', time.asctime(time.localtime(time.time())))
-            # script.debug.debug("同步时间: {}\n".format(time.asctime(time.localtime(time.time()))))
 
     def myexit(self):
         # QtWidgets.QSystemTrayIcon.deleteLater(self)
@@ -94,15 +91,15 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
             synUE = 'UE_syn'
             synfile = script.synXml.weiteXml(self.doodleSet.doc,
                                              synPath,
-                                             Filter={'include': ['\\Engine\\*']},
+                                             Include=['\\Engine\\*'],
                                              fileName=synUE)
             program = self.doodleSet.FreeFileSync
-            run('{} "{}"'.format(program, synfile), shell=True)
+            subprocess.run('{} "{}"'.format(program, synfile), shell=True)
 
     @staticmethod
     def openUE():
         script.doodleLog.ta_log.info('启动UE')
-        Popen("D:\\Source\\UnrealEngine\\Engine\\Binaries\\Win64\\UE4Editor.exe")
+        subprocess.Popen("D:\\Source\\UnrealEngine\\Engine\\Binaries\\Win64\\UE4Editor.exe")
 
     def openProject(self):
         self.project_browser = script.ProjectBrowserGUI.ProjectBrowserGUI()

@@ -3,27 +3,32 @@ import os
 import pathlib
 import shutil
 import sys
+import importlib
+import script.MySqlComm
 from typing import Dict
-import qdarkgraystyle
+
 import pyperclip
 import pypinyin
+import qdarkgraystyle
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
 import UiFile.ProjectBrowser
+
+import script.ProjectAnalysis.PathAnalysis
 import script.convert
 import script.debug
-import script.doodle_setting
-import script.readServerDiectory
-import script.ProjectAnalysis.PathAnalysis
 import script.doodleLog
+import script.doodle_setting
 
 
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
     '''这个类用来实现项目管理的属性和UI操作,  其中会有一个项目分析器在外部, 有每个项目分别配置或者使用默认设置
 
     '''
+    projectAnalysisShot: script.ProjectAnalysis.PathAnalysis.ProjectAnalysisShot
+    projectAnalysisAss: script.ProjectAnalysis.PathAnalysis.ProjectAnalysisAssets
     file_name: str
     file_version_max: int = 0
     file_path: pathlib.Path  # 文件所在文件夹
@@ -40,23 +45,31 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     file_Deptype: str = ''
     file_Deptype_path: pathlib.Path  # 文件类型所在的文件夹
 
-    projectAnalysisShot: script.ProjectAnalysis  # 路径解析器
-    projectAnalysisAss: script.ProjectAnalysis  # 资产路径解析器
+    """ projectAnalysisShot   # 路径解析器
+    projectAnalysisAss  # 资产路径解析器"""
 
     def __init__(self, parent=None):
         super(ProjectBrowserGUI, self).__init__()
+        # 获取设置
         self.setlocale = script.doodle_setting.Doodlesetting()
-        self.setSour = script.readServerDiectory.SeverSetting()
-        self.projectAnalysisShot = script.ProjectAnalysis.PathAnalysis.DbxyProjectAnalysisShot()
-        self.projectAnalysisAss = script.ProjectAnalysis.PathAnalysis.DbxyProjectAnalysisAssets()
+        """======================================================================="""
+        # 导入解析项目模块
+        prj_module = importlib.import_module('script.ProjectAnalysis.{}'.format(self.setlocale.projectAnalysis))
+
+        """======================================================================="""
+        self.projectAnalysisShot = prj_module.ProjectAnalysisShot()
+        self.projectAnalysisAss = prj_module.ProjectAnalysisAssets()
         self.ta_log = script.doodleLog.get_logger(__name__)
         # 初始化一些属性
         # self.root = self.getRoot()
         # 设置UI
         self.setupUi(self)
+
+        # self.setToolTip("Remer")
         # 设置最后的文件编辑器的一些标准动作
         # 设置每行选择
         self.listfile.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.listAssFile.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         # 设置单选
         self.listfile.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         # 设置注释最大(资产和镜头都是)
@@ -71,7 +84,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # <editor-fold desc="关于shot的更新操作">
         self.addRightClick()
         # 首先扫描根目录获得集数
-        self.listepisodes.addItems(self.projectAnalysisShot.getEpisodesItems(self))
+        self.setepisodex()
         # 并链接函数处理下一级
         self.listepisodes.itemClicked.connect(self.setShotItem)
         # 在shot文件列表中添加点击事件更改下一级部门列表
@@ -101,12 +114,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     # <editor-fold desc="集数和根目录的属性操作">
     @property
     def root(self) -> pathlib.Path:
-        shot_root_ = self.setSour.getseverPrjBrowser()['shotRoot']
+        shot_root_ = self.setlocale.getseverPrjBrowser()['shotRoot']
         root = pathlib.Path(self.setlocale.project)
         # 获得根目录
         for myP in shot_root_:
             root = root.joinpath(myP)
-        # self.root = root
         return root
 
     @property
@@ -196,7 +208,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def rootAss(self) -> pathlib.Path:
         """资产类型的根目录"""
         if not hasattr(self, '_rootAss'):
-            shot_root_ = self.setSour.getseverPrjBrowser()['assetsRoot']
+            shot_root_ = self.setlocale.getseverPrjBrowser()['assetsRoot']
             root = pathlib.Path(self.setlocale.project)
             # 获得根目录
             for myP in shot_root_:
@@ -234,7 +246,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     @property
     def asslistSelect(self) -> str:
         """资产列表中选中的资产"""
-        if not hasattr(self,'_asslistSelect'):
+        if not hasattr(self, '_asslistSelect'):
             self._asslistSelect = ''
         else:
             self._asslistSelect = self.listAss.selectedItems()[0].text()
@@ -264,17 +276,22 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return ass_type_path
 
     @property
-    def assFilePath(self) ->pathlib.Path:
+    def assFilePath(self) -> pathlib.Path:
         """资产文件所在路径"""
-        if (not hasattr(self, '_assFilePath')) or (not self.listAssType.selectedItems()) :
-            self._assFilePath = ''
-        # else:
-        #     self._assFilePath = self.projectAnalysisAss.getAssFilePath()
-        return self._assFilePath
+        if self.listAssType.selectedItems():
+            return self.projectAnalysisAss.getAssFilePath(self)
+        else:
+            return None
 
-    @assFilePath.setter
-    def assFilePath(self, assFilePath):
-        self._assFilePath = assFilePath
+    @property
+    def recentlyOpenedFolder(self) -> pathlib.Path:
+        if not hasattr(self, '_recentlyOpenedFolder'):
+            self._recentlyOpenedFolder = ''
+        return self._recentlyOpenedFolder
+
+    @recentlyOpenedFolder.setter
+    def recentlyOpenedFolder(self, recentlyOpenedFolder: pathlib.Path):
+        self._recentlyOpenedFolder = recentlyOpenedFolder
 
     # </editor-fold>
     # </editor-fold>
@@ -318,11 +335,27 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         copy_path_to_clip.triggered.connect(self.copyPathToClipboard)
         self.listfile.addAction(copy_path_to_clip)
         self.listfile.addAction(copy_name_to_clip)
+
+        # 添加资产文件夹右键菜单
+        self.listAss.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        add_ass_folder = QtWidgets.QAction('添加', self)
+        add_ass_folder.triggered.connect(self.addAssFolder)
+        self.listAss.addAction(add_ass_folder)
+        # 添加资产类型右键文件夹
+        self.listAssType.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        add_ass_type_folder = QtWidgets.QAction('添加', self)
+        add_ass_type_folder.triggered.connect(self.addAssTypeFolder)
+        self.listAssType.addAction(add_ass_type_folder)
+        # 添加文件右键菜单
+        self.listAssFile.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        add_ass_file = QtWidgets.QAction('上传文件', self)
+        add_ass_file.triggered.connect(self.uploadFiles)
+        self.listAssFile.addAction(add_ass_file)
         '''================================================================='''
 
     def getRoot(self) -> pathlib.Path:
         # 获得项目目录
-        shot_root_ = self.setSour.getseverPrjBrowser()['shotRoot']
+        shot_root_ = self.setlocale.getseverPrjBrowser()['shotRoot']
         root = pathlib.Path(self.setlocale.project)
         # 获得根目录
         for myP in shot_root_:
@@ -336,9 +369,20 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepType.clear()
         self.clearListFile()
         self.listshot.clear()
-
+        # sql = """select * from mainshot"""
+        # data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        # eps = script.MySqlComm.selsctCommMysql(data,
+        #                                        self.setlocale.department,
+        #                                        self.setlocale.department, sql)
+        # item = []
+        # for ep in eps:
+        #     if ep[1] == 0:
+        #         item.append('PV')
+        #     else:
+        #         item.append('ep{:0>3d}'.format(ep[1]))
         item = self.projectAnalysisShot.getEpisodesItems(self)
         self.ta_log.info('更新集数列表')
+
         self.listepisodes.addItems(item)
 
     def setShotItem(self):
@@ -395,18 +439,16 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             self.listfile.removeRow(mrowtmp)
             mrowtmp = mrowtmp - 1
 
-    def setAssTypeAttr(self, assName: str):
-        self.listAss.clear()
-        self.listAssType.clear()
-        self.clearListAssFile()
-        self.assFamily = assName
-        self.assFamilyPath = self.setAssFamilyPath()
-        self.ta_log.info('将资产类型设置为 %s', assName)
-        self.setListAssItems()
-
     # </editor-fold>
 
     # <editor-fold desc="更新ass的各种操作">
+    def setAssTypeAttr(self, ass_name: str):
+
+        self.assFamily = ass_name
+        self.assFamilyPath = self.setAssFamilyPath()
+        self.ta_log.info('将资产类型设置为 %s', ass_name)
+        self.setListAssItems()
+
     def clearListAssFile(self):
         mrowtmp = self.listAssFile.rowCount()
         while mrowtmp >= 0:
@@ -424,8 +466,13 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #     self.assFilePath = self.projectAnalysisAss.getAssFilePath(self)
 
     def setListAssItems(self):
+        self.listAss.clear()
+        self.listAssType.clear()
+        self.clearListAssFile()
+
         item = self.projectAnalysisAss.getAssFamilyItems(self)
-        self.listAss.addItems(item)
+        if item:
+            self.listAss.addItems(item)
 
     def setlistAssTypeItems(self):
         self.listAssType.clear()
@@ -438,7 +485,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def setlistAssFileItems(self):
         '''设置文件在GUI中的显示'''
         # 清空上一次文件显示和版本记录和文件路径
-        self.assFilePath = self.projectAnalysisAss.getAssFilePath(self)
         self.clearListAssFile()
         self.Ass_version_max = 0
         for item in self.projectAnalysisAss.getAssFileInfo(self):
@@ -525,7 +571,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     # </editor-fold>
 
-    # <editor-fold desc="添加文件夹的操作都在这里">
+    # <editor-fold desc="添加集数文件夹的操作都在这里">
     def addEpisodesFolder(self):
         Episode: int = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)[0]
         if Episode:
@@ -585,6 +631,50 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                         deptype.mkdir(parents=True, exist_ok=True)
                         self.setdepType()
 
+    def addAssFolder(self):
+        """添加资产类型文件夹"""
+        assFolder = QtWidgets.QInputDialog.getText(self, '输入资产类型', "请用英文或拼音",
+                                                   QtWidgets.QLineEdit.Normal)[0]
+        if assFolder:
+            if self.assFamily:
+                assPath = self.projectAnalysisAss.getAssFolder(self, assFolder)
+                for path in assPath:
+                    if not path.is_dir():
+                        self.ta_log.info('制作%s', path)
+                        path.mkdir(parents=True, exist_ok=True)
+                        self.setListAssItems()
+
+    def addAssTypeFolder(self):
+        """添加资产文件夹类型"""
+        items: list[str] = self.setlocale.assTypeFolder.copy()
+        items[2] = items[2].format(self.asslistSelect)
+        ass_type = QtWidgets.QInputDialog.getItem(self, '选择资产类型', '要先选择资产', items, 0, False)[0]
+        if ass_type:
+            if self.assTypePath:
+                path = self.assTypePath.joinpath(ass_type)
+                if not path.is_dir():
+                    self.ta_log.info('制作%s', path)
+                    path.mkdir(parents=True, exist_ok=True)
+                    self.setlistAssTypeItems()
+
+    def uploadFiles(self):
+        """上传资产文件"""
+        file, fileType = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                               "选择上传文件",
+                                                               self.recentlyOpenedFolder,
+                                                               "files (*.mb *.ma *.uproject *.max *.fbx)")
+        self.recentlyOpenedFolder = file
+
+        if file:
+            file = pathlib.Path(file)
+            if file.suffix in ['.mb', '.ma', '.max', '.fbx']:
+                self.projectAnalysisAss.assUploadFileHandle(self, file)
+            elif file.suffix in ['.uproject']:
+                self.projectAnalysisAss.assUploadFileUE4Handle(self, file)
+            else:
+                pass
+        self.setlistAssFileItems()
+
     # </editor-fold>
 
     # <editor-fold desc="各种对于文件的操作">
@@ -623,6 +713,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     app.setStyleSheet(qdarkgraystyle.load_stylesheet())
     w = ProjectBrowserGUI()
+    w.setWindowTitle("Remer")
     w.show()
 
     sys.exit(app.exec_())

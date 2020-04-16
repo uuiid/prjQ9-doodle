@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1133</width>
+    <width>1281</width>
     <height>800</height>
    </rect>
   </property>
@@ -192,11 +192,40 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1">
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,0,1">
+                <item>
+                 <widget class="QPushButton" name="pushButton_2">
+                  <property name="text">
+                   <string>转盘</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton">
+                  <property name="text">
+                   <string>截图</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_3">
+                  <property name="text">
+                   <string>预览</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
            </layout>
           </item>
@@ -322,12 +351,12 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_9">
                 <item>
-                 <widget class="QPushButton" name="upload">
+                 <widget class="QPushButton" name="shot_upload">
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
                   <property name="text">
-                   <string>上传</string>
+                   <string>上传拍屏</string>
                   </property>
                   <property name="checkable">
                    <bool>false</bool>
@@ -341,7 +370,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="screenshots">
+                 <widget class="QPushButton" name="shot_screenshots">
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
@@ -392,7 +421,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1133</width>
+     <width>1281</width>
      <height>23</height>
     </rect>
    </property>

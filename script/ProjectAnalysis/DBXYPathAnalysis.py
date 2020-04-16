@@ -1,18 +1,15 @@
 # -*- coding: UTF-8 -*-
 import pathlib
-import shutil
-import subprocess
-from typing import Iterator, Dict
+from typing import Iterator, Dict, TypeVar
 
+import script.ProjectAnalysis.PathAnalysis
 import script.doodleLog
-import script.synXml
-
 
 # import script.ProjectBrowserGUI
+# import script.doodle_setting
 
-class ProjectAnalysisShot():
-    # import script.ProjectBrowserGUI
-    # pbg = typing.NewType('pbg',script.ProjectBrowserGUI.ProjectBrowserGUI)
+
+class ProjectAnalysisShot(script.ProjectAnalysis.PathAnalysis.ProjectAnalysisShot):
 
     @staticmethod
     def getEpisodesItems(obj) -> list:
@@ -23,7 +20,7 @@ class ProjectAnalysisShot():
         item = []
         for path in root.iterdir():
             if path.is_dir():
-                item.append(path.stem)
+                item.append(path.stem.split('-')[0])
         item = list(set(item))
         item.sort()
         script.doodleLog.ta_log.info("获得集数所在的文件夹")
@@ -46,7 +43,7 @@ class ProjectAnalysisShot():
         """获得镜头所在的文件夹
         :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
         """
-        root = obj.root.joinpath(obj.file_episods)
+        root = obj.root
         script.doodleLog.ta_log.info("获得镜头所在的文件夹")
         return pathlib.Path(root)
 
@@ -57,14 +54,15 @@ class ProjectAnalysisShot():
         """
         script.doodleLog.ta_log.info("开始获得镜头所在的文件夹")
         episods = obj.file_episods
-        paths = obj.file_shot_path
+        paths = obj.root
 
         mitem = []
         for path in paths.iterdir():
-            try:
-                mitem.append(path.stem)
-            except:
-                pass
+            if path.match('{}*'.format(episods)):
+                try:
+                    mitem.append(path.stem.split('-')[1])
+                except:
+                    pass
         mitem = list(set(mitem))
         mitem.sort()
         mitem = filter(None, mitem)
@@ -77,13 +75,13 @@ class ProjectAnalysisShot():
         """
         script.doodleLog.ta_log.info("开始组合shot文件夹列表")
         tmp = []
-        shotname = '{}\\sc{:0>4d}'.format(obj.file_episods, shot)
+        shotname = '{}-sc{:0>4d}'.format(obj.file_episods, shot)
         root = obj.root
         if ab_shot:
             shotname = '{}{}'.format(shotname, ab_shot)
         shot = root.joinpath(shotname)
 
-        for sub_directory in obj.setlocale.ProgramFolder:
+        for sub_directory in ['Export', 'Playblasts', 'Rendering', 'Scenefiles']:
             sub_dir: pathlib.Path = shot.joinpath(sub_directory)
             tmp.append(sub_dir)
         return tmp
@@ -105,7 +103,7 @@ class ProjectAnalysisShot():
             department = ''
         else:
             # 获得部门文件夹
-            department = root.joinpath(epis, shot)
+            department = root.joinpath('{}-{}'.format(epis, shot))
             department = department.joinpath('Scenefiles')
 
         return department
@@ -239,7 +237,7 @@ class ProjectAnalysisShot():
         return filename
 
 
-class ProjectAnalysisAssets():
+class ProjectAnalysisAssets(script.ProjectAnalysis.PathAnalysis.ProjectAnalysisAssets):
     @staticmethod
     def getAssFamilyPath(obj) -> pathlib.Path:
         """
@@ -247,16 +245,16 @@ class ProjectAnalysisAssets():
         :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
         """
         if obj.assFamily == 'character':
-            path = obj.rootAss.joinpath('Character')
+            path = obj.rootAss.joinpath('DuBuXiaoYao', 'MoXing', 'Character')
             obj.ta_log.info('获得文件夹%s', path)
         elif obj.assFamily == 'scane':
-            path = obj.rootAss.joinpath('Scence')
+            path = obj.rootAss.joinpath('DuBuXiaoYao', 'MoXing', 'Scence')
             obj.ta_log.info('获得文件夹%s', path)
         elif obj.assFamily == 'props':
-            path = obj.rootAss.joinpath('Prop')
+            path = obj.rootAss.joinpath('DuBuXiaoYao', 'MoXing', 'Prop')
             obj.ta_log.info('获得文件夹%s', path)
         elif obj.assFamily == 'effects':
-            path = obj.rootAss.joinpath('Effects')
+            path = obj.rootAss.joinpath('DuBuXiaoYao', 'MoXing', 'TeXiao')
             obj.ta_log.info('获得文件夹%s', path)
         else:
             path = ''
@@ -271,7 +269,11 @@ class ProjectAnalysisAssets():
         """
         item = []
         for path in obj.assFamilyPath.iterdir():
-            item.append(path.stem)
+            if path.match('*ep_*'):
+                for children_path in path.iterdir():
+                    item.append(children_path.stem)
+            else:
+                item.append(path.stem)
         return item
 
     @staticmethod
@@ -280,7 +282,17 @@ class ProjectAnalysisAssets():
         获得资产的下一级类型资产所在目录
         :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
         """
-        possible_path = obj.assFamilyPath.joinpath(obj.asslistSelect, 'Scenefiles')
+        possible_path = list(obj.assFamilyPath.glob('{}'.format(obj.asslistSelect)))
+        if possible_path:
+            possible_path = possible_path[0]
+        else:
+            try:
+                possible_path = list(obj.assFamilyPath.glob('*\\{}'.format(obj.asslistSelect)))[0]
+            except:
+                obj.ta_log.error('找不到资产的下一级类型资产文件夹路径?')
+                possible_path = []
+
+        possible_path = possible_path.joinpath('Scenefiles')
         obj.ta_log.info('获得资产类型所在文件夹 %s', possible_path)
         return possible_path
 
@@ -292,14 +304,13 @@ class ProjectAnalysisAssets():
         """
         itmes: list = []
         ass_type_path = obj.assTypePath
-        folder: list[str] = obj.setlocale.assTypeFolder
         for path in ass_type_path.glob('*'):
             if path.is_dir():
                 tmp = path.stem
-                folder_tmp = folder.copy()
-                folder_tmp[2] = folder_tmp[2].format(obj.asslistSelect)
-                if tmp in folder_tmp:
-                    itmes.append(tmp)
+                if tmp == 'tietu':
+                    tmp = 'sourceimages'
+                itmes.append(tmp)
+
         return itmes
 
     @staticmethod
@@ -308,6 +319,8 @@ class ProjectAnalysisAssets():
         :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
         """
         ass_type_selsct = obj.assTypeSelsct
+        if ass_type_selsct == 'sourceimages':
+            ass_type_selsct = 'tietu'
         ass_file_path = obj.assTypePath.joinpath(ass_type_selsct)
         return ass_file_path
 
@@ -317,9 +330,7 @@ class ProjectAnalysisAssets():
         :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
         """
         script.doodleLog.ta_log.info("开始解析文件名称")
-        if not obj.assFilePath.joinpath('backup').is_dir():
-            return []
-        dep_type_iterdir = obj.assFilePath.joinpath('backup').iterdir()
+        dep_type_iterdir = obj.assFilePath.iterdir()
         mitem = []
         if dep_type_iterdir:
             for mFile in dep_type_iterdir:
@@ -335,8 +346,9 @@ class ProjectAnalysisAssets():
                 tmp = file['filename'].split('_')
                 try:
                     tmp = {'name': tmp[0],
-                           'user': None,
-                           'version': tmp[1],
+                           'fileType': tmp[1],
+                           'version': tmp[2],
+                           'user': tmp[4],
                            'fileSuffixes': file['fileSuffixes']
                            }
                 except IndexError:
@@ -346,74 +358,11 @@ class ProjectAnalysisAssets():
                     pass
                 else:
                     information.append(tmp)
-        version = len(information)
-        for i in obj.assFilePath.iterdir():
-            if i.suffix in ['.mb', '.ma', '.max','.fbx', '.uproject']:
-                tmp = i.suffix
-                information.append({'name': obj.asslistSelect,
-                                    'user': None,
-                                    'version': "v{:0>4d}".format(version + 1),
-                                    'fileSuffixes': tmp})
         script.doodleLog.ta_log.info("文件信息获取完成")
         return information
 
     @staticmethod
-    def getAssFolder(obj, ass_folder) -> list:
-        """这个用来获得资产下一级路径,这级路径是程序文件夹
+    def seekRigFile(obj):
+        """这个用来寻找绑定文件
         :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
         """
-        item_path = []
-        family_path: pathlib.Path = obj.assFamilyPath
-        family_path = family_path.joinpath(ass_folder)
-        for it in obj.setlocale.ProgramFolder:
-            item_path.append(family_path.joinpath(it))
-        return item_path
-
-    @staticmethod
-    def assUploadFileHandle(obj, file_path: pathlib.Path):
-        """这个用来获得资产下一级路径,这级路径是程序文件夹
-        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
-        """
-        backup = obj.assFilePath.joinpath('backup')
-        target_file = obj.assFilePath.joinpath('{}{}'.format(obj.asslistSelect, file_path.suffix))
-        version_max: int = 1
-        if not backup.is_dir():
-            backup.mkdir(parents=True, exist_ok=True)
-        if target_file.is_file():
-            backup_match = backup.glob('*{}*{}'.format(obj.asslistSelect, file_path.suffix))
-            for i in backup_match:
-                if i.stem.split('_'):
-                    version = int(i.stem.split('_')[-1][1:])
-                    if version > version_max:
-                        version_max = version
-        if file_path.suffix in ['.mb', '.ma', '.max']:
-            version_max = version_max + 1
-            backup_file = backup.joinpath('{}_v{:0>4d}{}'.format(obj.asslistSelect,
-                                                                 version_max,
-                                                                 file_path.suffix))
-            shutil.move(str(target_file), backup_file)
-            obj.ta_log.info('文件备份%s ---->  %s', target_file, backup_file)
-        shutil.copy2(str(file_path), str(target_file))
-        obj.ta_log.info('文件上传%s ---->  %s', file_path, target_file)
-
-        if file_path.suffix in ['.fbx']:
-            shutil.copy2(str(file_path), str(target_file))
-
-
-    @staticmethod
-    def assUploadFileUE4Handle(obj, file_path: pathlib.Path):
-        """这个用来获得资产下一级路径,这级路径是程序文件夹
-        :type obj: script.ProjectBrowserGUI.ProjectBrowserGUI
-        """
-        backup = obj.assFilePath.joinpath('backup')
-        source = file_path.parent
-        target = obj.assFilePath
-        syn_path = [{'Left':str(source), 'Right':str(target)}]
-        syn_file = script.synXml.weiteXml(obj.setlocale.doc,
-                                          syn_path,
-                                          Include=['*\\Content\\*','*.uproject'],
-                                          Exclude=['*\\backup\\'],
-                                          VersioningFolder=str(backup),
-                                          fileName='UEpriect')
-        program = obj.setlocale.FreeFileSync
-        subprocess.run('{} "{}"'.format(program, syn_file), shell=True)
