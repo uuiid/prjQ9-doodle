@@ -137,7 +137,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     # <editor-fold desc="关于shot的操作属性">
     @property
-    def file_shot(self):
+    def file_shot(self) -> int:
+        # 关于shot的操作属性
         try:
             items__text = self.listshot.selectedItems()[0].text()
             try:
@@ -146,51 +147,65 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 items__text = int(items__text[2:-1])
             return items__text
         except:
-            return None
+            return ''
 
     @property
-    def file_shot_path(self) -> pathlib.Path:
+    def file_shotab(self) -> int:
+        # 关于shot的操作属性
         try:
-            return self.projectAnalysisShot.getShotPath(self)
+            items__text = self.listshot.selectedItems()[0].text()
+            try:
+                items__text = int(items__text[2:])
+            except:
+                items__textab = int(items__text[2:-1])
+            return items__textab
         except:
-            return None
+            return ''
+    # @property
+    # def file_shot_path(self) -> pathlib.Path:
+    #     try:
+    #         return self.projectAnalysisShot.getShotPath(self)
+    #     except:
+    #         return None
 
     # </editor-fold>
 
     # <editor-fold desc="关于部门的操作">
     @property
     def file_department(self) -> str:
+        # 关于部门的操作
         try:
             return self.listdepartment.selectedItems()[0].text()
         except:
             return None
 
-    @property
-    def file_department_path(self):
-        try:
-            tmp = self.projectAnalysisShot.getdepartmentPath(self)
-        except:
-            tmp = None
-        return tmp
+    # @property
+    # def file_department_path(self):
+    #     try:
+    #         tmp = self.projectAnalysisShot.getdepartmentPath(self)
+    #     except:
+    #         tmp = None
+    #     return tmp
 
     # </editor-fold>
 
     # <editor-fold desc="部门的下一个类型的操作">
     @property
     def file_Deptype(self):
+        # 部门的下一个类型的操作
         # return self.listdepType.selectedItems()[0].text()
         try:
             return self.listdepType.selectedItems()[0].text()
         except:
             return None
 
-    @property
-    def file_Deptype_path(self):
-        # return self.projectAnalysis.getDepTypePath(self)
-        try:
-            return self.projectAnalysisShot.getDepTypePath(self)
-        except:
-            return None
+    # @property
+    # def file_Deptype_path(self):
+    #     # return self.projectAnalysis.getDepTypePath(self)
+    #     try:
+    #         return self.projectAnalysisShot.getDepTypePath(self)
+    #     except:
+    #         return None
 
     # </editor-fold>
 
@@ -198,9 +213,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     @property
     def file_path(self):
         try:
-            return self.projectAnalysisShot.getFilePath(self)
+            path = self.root.joinpath(f'ep{self.file_episods:0>3d}',
+                                      f'sc{self.file_shot:0>4d}',
+                                      'Scenefiles',
+                                      self.file_department,
+                                      self.file_Deptype
+                                      )
+            return path
         except:
-            return None
+            return ''
 
     @property
     def file_name(self):
@@ -442,13 +463,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepartment.addItems(item)
 
     def setdepType(self):
-        sql = """select distinct Type from ep{:0>3d}
-                 where episodes = {} 
-                 and shot = {} 
-                 and department ='{}'""".format(self.file_episods,
-                                                self.file_episods,
-                                                self.file_shot,
-                                                self.file_department)
+        sql = f"""select distinct Type from ep{self.file_episods:0>3d}
+                 where episodes = {self.file_episods} 
+                 and shot = {self.file_shot} 
+                 and department ='{self.file_department}'"""
 
         data = self.setlocale.getseverPrjBrowser()['mySqlData']
         eps = script.MySqlComm.selsctCommMysql(data,
@@ -470,15 +488,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.clearListFile()
         self.file_version_max = 0
 
-        sql = """select version, user, fileSuffixes from ep{:0>3d}
-                where episodes = {}
-                and shot = {}
-                and department ='{}'
-                and Type = '{}'""".format(self.file_episods,
-                                          self.file_episods,
-                                          self.file_shot,
-                                          self.file_department,
-                                          self.file_Deptype)
+        sql = f"""select version, user, fileSuffixes from ep{self.file_episods:0>3d}
+                where episodes = {self.file_episods}
+                and shot = {self.file_shot}
+                and department ='{self.file_department}'
+                and Type = '{self.file_Deptype}'"""
         data = self.setlocale.getseverPrjBrowser()['mySqlData']
         eps = script.MySqlComm.selsctCommMysql(data,
                                                self.setlocale.department,
@@ -490,7 +504,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             if tmp_version_ > self.file_version_max:
                 self.file_version_max = tmp_version_
             self.listfile.insertRow(mrow)
-            self.listfile.setItem(mrow, 0, QtWidgets.QTableWidgetItem('v{:0>4d}'.format(item[0])))
+            self.listfile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
             self.listfile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item[1]))
             self.listfile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item[2]))
             mrow = mrow + 1
@@ -594,16 +608,18 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 # 获得文件路径并进行复制
                 if path.suffix in ['.ma', '.mb', '.hip']:
                     # 为防止在没有选择的情况下复制到不知道的位置所以先进行路径测试
-                    if self.listdepType and self.file_path:
+                    if self.file_path:
                         dstFile = self.getFileName(path.suffix)  # type:pathlib.Path
+                        self.file_path.mkdir(parents=True, exist_ok=True)
                         shutil.copy2(str(path), str(dstFile))
                         self.ta_log.info('%s ---> %s', path, dstFile)
                         self.setFile()
                         self.enableBorder(False)
                     # print(path)
                 if path.suffix in ['.fbx', '.usd']:
-                    if self.listdepType and self.file_path:
+                    if self.file_path:
                         dstFile = self.getFileName(path.suffix, True)  # type:pathlib.Path
+                        self.file_path.mkdir(parents=True, exist_ok=True)
                         shutil.copy2(str(path), str(dstFile))
                         self.ta_log.info('%s ---> %s', path, dstFile)
                         self.setFile()
@@ -618,42 +634,62 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         user_ = pypinyin.slug(self.setlocale.user, pypinyin.NORMAL)
         # 格式化文件名称和路径
         filename: Dict[str, str] = {}
-        filename['file_episods'] = self.file_episods
-        filename['file_shot'] = self.file_shot
+        filename['file_episods'] = f'ep{self.file_episods:0>3d}'
+        filename['file_shot'] = f'sc{self.file_shot:0>4d}'
         filename['file_department'] = self.file_department
         filename['file_Deptype'] = self.file_Deptype
         filename['user'] = user_
         filename['fileSuffixes'] = Suffixes
         # 将版本加一复制为新版本
         if External:
-            filename['version'] = 'v{:0>4d}'.format(self.file_version_max)
+            filename['version'] = f'v{self.file_version_max:0>4d}'
         else:
-            filename['version'] = 'v{:0>4d}'.format(self.file_version_max + 1)
+            filename['version'] = f'v{self.file_version_max + 1:0>4d}'
         path = self.file_path.joinpath(self.projectAnalysisShot.commFileName(filename))
         return path
 
     # </editor-fold>
-
+    def subMissionShotInfor(self):
+        shot_data = f"""insert into ep001(episodes, 
+                        shot, 
+                        shotab,
+                        department, 
+                        Type, 
+                        file, 
+                        fileSuffixes, 
+                        user, 
+                        version, 
+                        filepath) VALUE({self.file_episods},
+                        {self.file_shot},
+                        {self.file_shotab},
+                        {self.file_department},
+                        {self.file_Deptype},
+                        {self.}) 
+                        """
     # <editor-fold desc="添加集数文件夹的操作都在这里">
     def addEpisodesFolder(self):
-        Episode: int = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)[0]
-        if Episode:
-            create_date = """create table {:0>3d}(
-                                          id smallint primary key not null auto_increment,
-                                          episodes smallint,
-                                          shot smallint,
-                                          shotab varchar(8),
-                                          department varchar(128),
-                                          Type varchar(128),
-                                          file varchar(128),
-                                          fileSuffixes varchar(32),
-                                          user varchar(128),
-                                          version smallint,
-                                          filepath varchar(1024)
-                                          );""".format(Episode)
+        episode: int = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)[0]
+        if episode:
+            create_date = f"""create table ep{episode:0>3d}(
+                                        id smallint primary key not null auto_increment,
+                                        episodes smallint,
+                                        shot smallint,
+                                        shotab varchar(8),
+                                        department varchar(128),
+                                        Type varchar(128),
+                                        file varchar(128),
+                                        fileSuffixes varchar(32),
+                                        user varchar(128),
+                                        version smallint,
+                                        filepath varchar(1024)
+                                        );"""
+            create_date_insert = f"""insert into mainshot(episods)
+                                        value ({episode})"""
             script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'], '', '', create_date)
+            script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'], '', '',
+                                              create_date_insert)
             # # root = self.getRoot()
-            # episodesPath = self.projectAnalysisShot.episodesFolderName(self, Episode)
+            # episodesPath = self.projectAnalysisShot.episodesFolderName(self, episode)
             # for path in episodesPath:
             #     if not path.is_dir():
 
@@ -662,50 +698,51 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def addShotFolder(self):
         shot = QtWidgets.QInputDialog.getInt(self, '输入镜头', "sc", 1, 1, 999, 1)[0]
         if shot:
-            if self.file_episods:
-                for path in self.projectAnalysisShot.shotFolderName(self, shot):
-                    if not path.is_dir():
-                        self.ta_log.info('制作%s', path)
-                        path.mkdir(parents=True, exist_ok=True)
-                self.setShotItem()
+            self.listshot.addItem('sc{:0>4d}'.format(shot))
+            # if self.file_episods:
+            #     for path in self.projectAnalysisShot.shotFolderName(self, shot):
+            #         if not path.is_dir():
+            #             self.ta_log.info('制作%s', path)
+            #             path.mkdir(parents=True, exist_ok=True)
+            # self.setShotItem()
 
     def addABshotFolder(self):
         items = ['B', 'C', 'D', 'E']
         shotAB = QtWidgets.QInputDialog.getItem(self, '选择AB镜头', '要先选择镜头才可以', items, 0, False)[0]
-        try:
-            shot = int(self.file_shot[2:])
-        except:
-            return
+        shot = self.file_shot
         if shotAB:
-            if self.file_shot and self.file_episods:
-                for path in self.projectAnalysisShot.shotFolderName(self, shot, shotAB):
-                    if not path.is_dir():
-                        self.ta_log.info('制作AB镜头%s', path)
-                        path.mkdir(parents=True, exist_ok=True)
-                self.setShotItem()
+            self.listshot.addItem('sc{:0>4d}{}'.format(shot, shotAB))
+            # if self.file_shot and self.file_episods:
+            #     for path in self.projectAnalysisShot.shotFolderName(self, shot, shotAB):
+            #         if not path.is_dir():
+            #             self.ta_log.info('制作AB镜头%s', path)
+            #             path.mkdir(parents=True, exist_ok=True)
+            #     self.setShotItem()
 
     def addDepartmentFolder(self):
         department = self.setlocale.department
         if self.file_shot:
-            shot_Department = self.file_department_path
-            department = shot_Department.joinpath(department)
-            if not department.is_dir():
-                self.ta_log.info('制作%s', department)
-                department.mkdir(parents=True, exist_ok=True)
-                self.setDepartment()
+            self.listdepartment.addItem(department)
+            # shot_Department = self.file_department_path
+            # department = shot_Department.joinpath(department)
+            # if not department.is_dir():
+            #     self.ta_log.info('制作%s', department)
+            #     department.mkdir(parents=True, exist_ok=True)
+            #     self.setDepartment()
 
     def addTypeFolder(self):
         deptype = QtWidgets.QInputDialog.getText(self, '输入镜头', "文件类型(请用英文或拼音)",
                                                  QtWidgets.QLineEdit.Normal)[0]
         if deptype:
-            if self.file_department:
-                department_type = self.file_Deptype_path
-                deptype = department_type.joinpath(deptype)
-                if not script.convert.isChinese(deptype):
-                    if not deptype.is_dir():
-                        self.ta_log.info('制作%s', deptype)
-                        deptype.mkdir(parents=True, exist_ok=True)
-                        self.setdepType()
+            self.listdepType.addItem(deptype)
+            # if self.file_department:
+            #     department_type = self.file_Deptype_path
+            #     deptype = department_type.joinpath(deptype)
+            #     if not script.convert.isChinese(deptype):
+            #         if not deptype.is_dir():
+            #             self.ta_log.info('制作%s', deptype)
+            #             deptype.mkdir(parents=True, exist_ok=True)
+            #             self.setdepType()
 
     def addAssFolder(self):
         """添加资产类型文件夹"""
