@@ -19,4 +19,4 @@ def Lookingconfig(paths: pathlib.Path):
 
 ta_log = get_logger(__name__)
 if __name__ == '__main__':
-    ta_log = get_logger(__name__)
+    print('asdsa{}',1111111)

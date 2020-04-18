@@ -28,7 +28,8 @@ def weiteXml(doc: pathlib.Path, synFile: list,**syn_parameter) -> pathlib.Path:
     key : fileName Include Exclude Variant VersioningFolder
     Variant(TwoWay,Update)
     这个列表由一个key是Left和Right的字典构成'''
-    tree = Et.parse("tools\\template\\temp.ffs_batch")
+    template_path = pathlib.Path("tools\\template\\temp.ffs_batch")
+    tree = Et.parse(str(template_path))
     # 加入同步目录
     for syn in synFile:
         pair = Et.SubElement(tree.findall('./FolderPairs')[0], 'Pair')

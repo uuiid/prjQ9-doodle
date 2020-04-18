@@ -2,9 +2,11 @@
 import os
 import pathlib
 import shutil
+import subprocess
 import sys
 import importlib
 import script.MySqlComm
+import re
 from typing import Dict
 
 import pyperclip
@@ -27,8 +29,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     '''这个类用来实现项目管理的属性和UI操作,  其中会有一个项目分析器在外部, 有每个项目分别配置或者使用默认设置
 
     '''
-    projectAnalysisShot: script.ProjectAnalysis.PathAnalysis.ProjectAnalysisShot
-    projectAnalysisAss: script.ProjectAnalysis.PathAnalysis.ProjectAnalysisAssets
     file_name: str
     file_version_max: int = 0
     file_path: pathlib.Path  # 文件所在文件夹
@@ -57,8 +57,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         prj_module = importlib.import_module('script.ProjectAnalysis.{}'.format(self.setlocale.projectAnalysis))
 
         """======================================================================="""
-        self.projectAnalysisShot = prj_module.ProjectAnalysisShot()
-        self.projectAnalysisAss = prj_module.ProjectAnalysisAssets()
         self.ta_log = script.doodleLog.get_logger(__name__)
         # 初始化一些属性
         # self.root = self.getRoot()
@@ -133,9 +131,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         except:
             return ''
 
-    # </editor-fold>
-
-    # <editor-fold desc="关于shot的操作属性">
     @property
     def file_shot(self) -> int:
         # 关于shot的操作属性
@@ -161,16 +156,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             return items__textab
         except:
             return ''
-    # @property
-    # def file_shot_path(self) -> pathlib.Path:
-    #     try:
-    #         return self.projectAnalysisShot.getShotPath(self)
-    #     except:
-    #         return None
 
-    # </editor-fold>
-
-    # <editor-fold desc="关于部门的操作">
     @property
     def file_department(self) -> str:
         # 关于部门的操作
@@ -179,17 +165,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         except:
             return None
 
-    # @property
-    # def file_department_path(self):
-    #     try:
-    #         tmp = self.projectAnalysisShot.getdepartmentPath(self)
-    #     except:
-    #         tmp = None
-    #     return tmp
-
-    # </editor-fold>
-
-    # <editor-fold desc="部门的下一个类型的操作">
     @property
     def file_Deptype(self):
         # 部门的下一个类型的操作
@@ -199,17 +174,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         except:
             return None
 
-    # @property
-    # def file_Deptype_path(self):
-    #     # return self.projectAnalysis.getDepTypePath(self)
-    #     try:
-    #         return self.projectAnalysisShot.getDepTypePath(self)
-    #     except:
-    #         return None
-
-    # </editor-fold>
-
-    # <editor-fold desc="关于文件的操作">
     @property
     def file_path(self):
         try:
@@ -225,16 +189,28 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     @property
     def file_name(self):
-        try:
-            filename = self.projectAnalysisShot.getFileName(self)
-            return self.projectAnalysisShot.commFileName(filename)
-        except:
-            return None
+        if not hasattr(self, '_file_name'):
+            self._file_name = ''
+        return self._file_name
+
+    @file_name.setter
+    def file_name(self, file_name):
+        self._file_name = file_name
+
+    @property
+    def file_suffixes(self):
+        if not hasattr(self, '_file_suffixes'):
+            self._file_suffixes = ''
+        return self._file_suffixes
+
+    @file_suffixes.setter
+    def file_suffixes(self, file_suffixes):
+        self._file_suffixes = file_suffixes
 
     # </editor-fold>
 
     # <editor-fold desc="属性操作">
-    # <editor-fold desc="资产属性">
+
     @property
     def rootAss(self) -> pathlib.Path:
         """资产类型的根目录"""
@@ -262,19 +238,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     # endregion
 
     @property
-    def assFamilyPath(self) -> pathlib.Path:
-        """资产类型所在根目录"""
-        if not hasattr(self, '_assFamilyPath'):
-            path = self.setAssFamilyPath()
-        else:
-            path = self._assFamilyPath
-        return path
-
-    @assFamilyPath.setter
-    def assFamilyPath(self, ass_family_path):
-        self._assFamilyPath = ass_family_path
-
-    @property
     def asslistSelect(self) -> str:
         """资产列表中选中的资产"""
         if not hasattr(self, '_asslistSelect'):
@@ -298,22 +261,40 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self._assTypeSelsct = assTypeSelsct
 
     @property
-    def assTypePath(self) -> pathlib.Path:
-        """资产自己的类型所在路径"""
-        if self.listAss.selectedItems():
-            ass_type_path = self.projectAnalysisAss.getAssTypePath(self)
-        else:
-            ass_type_path = None
-        return ass_type_path
-
-    @property
     def assFilePath(self) -> pathlib.Path:
         """资产文件所在路径"""
-        if self.listAssType.selectedItems():
-            return self.projectAnalysisAss.getAssFilePath(self)
+        if not hasattr(self, '_assFilePath'):
+            self._assFilePath = ''
         else:
-            return None
+            self._assFilePath = self.rootAss.joinpath(self.assFamily,
+                                                      self.asslistSelect,
+                                                      'Scenefiles',
+                                                      self.assTypeSelsct,
+                                                      )
+        return self._assFilePath
 
+    @property
+    def assFileVersion(self):
+        if not hasattr(self, '_assFileVersion'):
+            self._assFileVersion = 0
+        return self._assFileVersion
+
+    @assFileVersion.setter
+    def assFileVersion(self, assFileVersion):
+        self._assFileVersion = assFileVersion
+
+    @property
+    def assfilename(self) -> str:
+        if not hasattr(self, "_assfilename"):
+            self._assfilename = ''
+        else:
+            name = self.asslistSelect
+            if self.assTypeSelsct in ['rig']:
+                name = name + '_rig'
+            self._assfilename = name
+        return self._assfilename
+
+    # </editor-fold>
     @property
     def recentlyOpenedFolder(self) -> pathlib.Path:
         if not hasattr(self, '_recentlyOpenedFolder'):
@@ -323,9 +304,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     @recentlyOpenedFolder.setter
     def recentlyOpenedFolder(self, recentlyOpenedFolder: pathlib.Path):
         self._recentlyOpenedFolder = recentlyOpenedFolder
-
-    # </editor-fold>
-    # </editor-fold>
 
     # <editor-fold desc="更新shot视图的各种操作">
     def addRightClick(self):
@@ -379,9 +357,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listAssType.addAction(add_ass_type_folder)
         # 添加文件右键菜单
         self.listAssFile.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        add_ass_file = QtWidgets.QAction('上传文件', self)
+        add_ass_file = QtWidgets.QAction('上传(提交)文件', self)
+        add_ass_file_dow = QtWidgets.QAction('同步UE文件', self)
+        get_ass_path = QtWidgets.QAction('指定文件', self)
         add_ass_file.triggered.connect(self.uploadFiles)
+        add_ass_file_dow.triggered.connect(self.downloadUe4)
+        get_ass_path.triggered.connect(self.appointFilePath)
         self.listAssFile.addAction(add_ass_file)
+        self.listAssFile.addAction(add_ass_file_dow)
+        self.listAssFile.addAction(get_ass_path)
         '''================================================================='''
 
     def getRoot(self) -> pathlib.Path:
@@ -443,10 +427,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listshot.addItems(item)
 
     def setDepartment(self):
-        sql = """select distinct department from ep{:0>3d}
-                 where episodes = {} and shot = {}""".format(self.file_episods,
-                                                             self.file_episods,
-                                                             self.file_shot)
+        sql = f"""select distinct department from ep{self.file_episods:0>3d}
+                where episodes = {self.file_episods} 
+                and shot = {self.file_shot}
+                and shotab = {self.file_shotab}"""
+
         data = self.setlocale.getseverPrjBrowser()['mySqlData']
         eps = script.MySqlComm.selsctCommMysql(data,
                                                self.setlocale.department,
@@ -464,9 +449,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def setdepType(self):
         sql = f"""select distinct Type from ep{self.file_episods:0>3d}
-                 where episodes = {self.file_episods} 
-                 and shot = {self.file_shot} 
-                 and department ='{self.file_department}'"""
+                where episodes = {self.file_episods} 
+                and shot = {self.file_shot}
+                and shotab = {self.file_shotab}
+                and department ='{self.file_department}'"""
 
         data = self.setlocale.getseverPrjBrowser()['mySqlData']
         eps = script.MySqlComm.selsctCommMysql(data,
@@ -491,6 +477,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         sql = f"""select version, user, fileSuffixes from ep{self.file_episods:0>3d}
                 where episodes = {self.file_episods}
                 and shot = {self.file_shot}
+                and shotab = {self.file_shotab}
                 and department ='{self.file_department}'
                 and Type = '{self.file_Deptype}'"""
         data = self.setlocale.getseverPrjBrowser()['mySqlData']
@@ -522,7 +509,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def setAssTypeAttr(self, ass_name: str):
 
         self.assFamily = ass_name
-        self.assFamilyPath = self.setAssFamilyPath()
+        # self.assFamilyPath = self.setAssFamilyPath()
         self.ta_log.info('将资产类型设置为 %s', ass_name)
         self.setListAssItems()
 
@@ -547,7 +534,16 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listAssType.clear()
         self.clearListAssFile()
 
-        item = self.projectAnalysisAss.getAssFamilyItems(self)
+        ass_data_com = f"""select distinct name from `{self.assFamily}`"""
+        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        data = script.MySqlComm.selsctCommMysql(data,
+                                                self.setlocale.department,
+                                                self.setlocale.department,
+                                                ass_data_com)
+        item = []
+        for assitem in data:
+            item.append(assitem[0])
+        # item = self.projectAnalysisAss.getAssFamilyItems(self)
         if item:
             self.listAss.addItems(item)
 
@@ -556,7 +552,18 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.ta_log.info('清除资产类型中的项数')
         self.clearListAssFile()
         self.ta_log.info('清除资产文件中的项数')
-        item = self.projectAnalysisAss.getAssTypeItems(self)
+
+        ass_type_com = f"""select distinct type from `{self.assFamily}`
+                            where name = '{self.asslistSelect}'"""
+        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        data = script.MySqlComm.selsctCommMysql(data,
+                                                self.setlocale.department,
+                                                self.setlocale.department,
+                                                ass_type_com)
+        item = []
+        for asstype in data:
+            item.append(asstype[0])
+        # item = self.projectAnalysisAss.getAssTypeItems(self)
         self.listAssType.addItems(item)
 
     def setlistAssFileItems(self):
@@ -564,15 +571,25 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListAssFile()
         self.Ass_version_max = 0
-        for item in self.projectAnalysisAss.getAssFileInfo(self):
+
+        ass_type_com = f"""select distinct version,infor,user,fileSuffixes from `{self.assFamily}`
+                            where name = '{self.asslistSelect}'
+                            and type = '{self.assTypeSelsct}'"""
+        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        file_data = script.MySqlComm.selsctCommMysql(data,
+                                                     self.setlocale.department,
+                                                     self.setlocale.department,
+                                                     ass_type_com)
+        for item in file_data:
             mrow = 0
-            tmp_version_ = int(item['version'][1:])
+            tmp_version_ = item[0]
             if tmp_version_ > self.file_version_max:
                 self.file_version_max = tmp_version_
             self.listAssFile.insertRow(mrow)
-            self.listAssFile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(item['version']))
-            self.listAssFile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item['user']))
-            self.listAssFile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item['fileSuffixes']))
+            self.listAssFile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
+            self.listAssFile.setItem(mrow, 1, QtWidgets.QTableWidgetItem(item[1]))
+            self.listAssFile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item[2]))
+            self.listAssFile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item[3]))
             mrow = mrow + 1
         self.ta_log.info('更新文件列表')
         # return self.projectAnalysisAss.
@@ -613,8 +630,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                         self.file_path.mkdir(parents=True, exist_ok=True)
                         shutil.copy2(str(path), str(dstFile))
                         self.ta_log.info('%s ---> %s', path, dstFile)
-                        self.setFile()
-                        self.enableBorder(False)
+                        self.subMissionShotInfor(self.file_version_max + 1, path.suffix)
                     # print(path)
                 if path.suffix in ['.fbx', '.usd']:
                     if self.file_path:
@@ -622,8 +638,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                         self.file_path.mkdir(parents=True, exist_ok=True)
                         shutil.copy2(str(path), str(dstFile))
                         self.ta_log.info('%s ---> %s', path, dstFile)
-                        self.setFile()
-                        self.enableBorder(False)
+                        self.subMissionShotInfor(self.file_version_max, path.suffix)
+                self.setFile()
+                self.enableBorder(False)
             else:
                 pass
         else:
@@ -645,12 +662,21 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             filename['version'] = f'v{self.file_version_max:0>4d}'
         else:
             filename['version'] = f'v{self.file_version_max + 1:0>4d}'
-        path = self.file_path.joinpath(self.projectAnalysisShot.commFileName(filename))
+        filename = f'shot_{filename["file_episods"]}' \
+                   f'-{filename["file_shot"]}_' \
+                   f'{filename["file_department"]}_' \
+                   f'{filename["file_Deptype"]}_' \
+                   f'{filename["version"]}__' \
+                   f'{filename["user"]}_' \
+                   f'{filename["fileSuffixes"]}'
+        self.file_name = filename
+        path = self.file_path.joinpath(self.file_name)
         return path
 
     # </editor-fold>
-    def subMissionShotInfor(self):
-        shot_data = f"""insert into ep001(episodes, 
+    def subMissionShotInfor(self, version, file_suffixes):
+        as_posix = self.file_path.joinpath(self.file_name).as_posix()
+        shot_data = f"""insert into ep{self.file_episods:0>3d}(episodes, 
                         shot, 
                         shotab,
                         department, 
@@ -661,11 +687,18 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                         version, 
                         filepath) VALUE({self.file_episods},
                         {self.file_shot},
-                        {self.file_shotab},
-                        {self.file_department},
-                        {self.file_Deptype},
-                        {self.}) 
+                        '{self.file_shotab}',
+                        '{self.file_department}',
+                        '{self.file_Deptype}',
+                        '{self.file_name}',
+                        '{file_suffixes}',
+                        '{self.setlocale.user}',
+                        {version},
+                        '{as_posix}') 
                         """
+        script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'],
+                                          '', '', shot_data)
+
     # <editor-fold desc="添加集数文件夹的操作都在这里">
     def addEpisodesFolder(self):
         episode: int = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)[0]
@@ -681,17 +714,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                         fileSuffixes varchar(32),
                                         user varchar(128),
                                         version smallint,
-                                        filepath varchar(1024)
+                                        filepath varchar(1024),
+                                        itfor varchar(4096),
+                                        filetime datetime default current_timestamp on update current_timestamp not null 
                                         );"""
             create_date_insert = f"""insert into mainshot(episods)
                                         value ({episode})"""
             script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'], '', '', create_date)
             script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'], '', '',
                                               create_date_insert)
-            # # root = self.getRoot()
-            # episodesPath = self.projectAnalysisShot.episodesFolderName(self, episode)
-            # for path in episodesPath:
-            #     if not path.is_dir():
 
             self.setepisodex()
 
@@ -699,12 +730,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         shot = QtWidgets.QInputDialog.getInt(self, '输入镜头', "sc", 1, 1, 999, 1)[0]
         if shot:
             self.listshot.addItem('sc{:0>4d}'.format(shot))
-            # if self.file_episods:
-            #     for path in self.projectAnalysisShot.shotFolderName(self, shot):
-            #         if not path.is_dir():
-            #             self.ta_log.info('制作%s', path)
-            #             path.mkdir(parents=True, exist_ok=True)
-            # self.setShotItem()
 
     def addABshotFolder(self):
         items = ['B', 'C', 'D', 'E']
@@ -712,50 +737,24 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         shot = self.file_shot
         if shotAB:
             self.listshot.addItem('sc{:0>4d}{}'.format(shot, shotAB))
-            # if self.file_shot and self.file_episods:
-            #     for path in self.projectAnalysisShot.shotFolderName(self, shot, shotAB):
-            #         if not path.is_dir():
-            #             self.ta_log.info('制作AB镜头%s', path)
-            #             path.mkdir(parents=True, exist_ok=True)
-            #     self.setShotItem()
 
     def addDepartmentFolder(self):
         department = self.setlocale.department
         if self.file_shot:
             self.listdepartment.addItem(department)
-            # shot_Department = self.file_department_path
-            # department = shot_Department.joinpath(department)
-            # if not department.is_dir():
-            #     self.ta_log.info('制作%s', department)
-            #     department.mkdir(parents=True, exist_ok=True)
-            #     self.setDepartment()
 
     def addTypeFolder(self):
         deptype = QtWidgets.QInputDialog.getText(self, '输入镜头', "文件类型(请用英文或拼音)",
                                                  QtWidgets.QLineEdit.Normal)[0]
         if deptype:
             self.listdepType.addItem(deptype)
-            # if self.file_department:
-            #     department_type = self.file_Deptype_path
-            #     deptype = department_type.joinpath(deptype)
-            #     if not script.convert.isChinese(deptype):
-            #         if not deptype.is_dir():
-            #             self.ta_log.info('制作%s', deptype)
-            #             deptype.mkdir(parents=True, exist_ok=True)
-            #             self.setdepType()
 
     def addAssFolder(self):
         """添加资产类型文件夹"""
         assFolder = QtWidgets.QInputDialog.getText(self, '输入资产类型', "请用英文或拼音",
                                                    QtWidgets.QLineEdit.Normal)[0]
         if assFolder:
-            if self.assFamily:
-                assPath = self.projectAnalysisAss.getAssFolder(self, assFolder)
-                for path in assPath:
-                    if not path.is_dir():
-                        self.ta_log.info('制作%s', path)
-                        path.mkdir(parents=True, exist_ok=True)
-                        self.setListAssItems()
+            self.listAss.addItem(assFolder)
 
     def addAssTypeFolder(self):
         """添加资产文件夹类型"""
@@ -763,30 +762,156 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         items[2] = items[2].format(self.asslistSelect)
         ass_type = QtWidgets.QInputDialog.getItem(self, '选择资产类型', '要先选择资产', items, 0, False)[0]
         if ass_type:
-            if self.assTypePath:
-                path = self.assTypePath.joinpath(ass_type)
-                if not path.is_dir():
-                    self.ta_log.info('制作%s', path)
-                    path.mkdir(parents=True, exist_ok=True)
-                    self.setlistAssTypeItems()
+            self.listAssType.addItem(ass_type)
 
     def uploadFiles(self):
         """上传资产文件"""
         file, fileType = QtWidgets.QFileDialog.getOpenFileName(self,
                                                                "选择上传文件",
                                                                self.recentlyOpenedFolder,
-                                                               "files (*.mb *.ma *.uproject *.max *.fbx)")
+                                                               "files (*.mb *.ma *.uproject *.max *.fbx *.png *.tga *.jpg)")
         self.recentlyOpenedFolder = file
 
         if file:
             file = pathlib.Path(file)
             if file.suffix in ['.mb', '.ma', '.max', '.fbx']:
-                self.projectAnalysisAss.assUploadFileHandle(self, file)
+                self.assUploadFileHandle(file)
             elif file.suffix in ['.uproject']:
-                self.projectAnalysisAss.assUploadFileUE4Handle(self, file)
+                self.assUploadFileUE4Handle(file)
+                self.subMissionAssInfor(self.assFileVersion, '\\.uproject', '')
+            elif file.suffix in ['.png', '.tga', 'jpg']:
+                self.assUploadMapHandle(file)
             else:
                 pass
         self.setlistAssFileItems()
+
+    def assUploadMapHandle(self, file: pathlib.Path):
+        version = self.getAssMaxVersion() + 1
+        file_path = file.parent
+        target_file: pathlib.Path = self.assFilePath
+        file_str = f'^{self.asslistSelect}_.*_(?:Color|Normal|bump|alpha)$'
+
+        sub = False
+        for fi in file_path.iterdir():
+            if re.match(file_str, fi.stem):
+                tar = target_file.joinpath(fi.name)
+                self.backupCopy(fi, tar, version)
+                sub = True
+        if sub:
+            self.subMissionAssInfor(version, file.suffix, '')
+
+    def backupCopy(self, source: pathlib.Path, target: pathlib.Path, version: int):
+        """来源和目标必须时文件 + 路径"""
+        backup = self.assFilePath.joinpath('backup')
+        self.assFilePath.mkdir(parents=True, exist_ok=True)
+        if not backup.is_dir():
+            backup.mkdir(parents=True, exist_ok=True)
+        backup_file = backup.joinpath('{}_v{:0>4d}{}'.format(target.stem,
+                                                             version,
+                                                             target.suffix))
+        if target.is_file():
+            shutil.move(str(target), str(backup_file))
+            self.ta_log.info('文件备份%s ---->  %s', target, backup_file)
+        shutil.copy2(str(source), str(target))
+
+        self.ta_log.info('文件上传%s ---->  %s', source, target)
+
+    def downloadUe4(self):
+        path = QtWidgets.QFileDialog.getExistingDirectory(self,
+                                                          "选择同步目录",
+                                                          self.recentlyOpenedFolder,
+                                                          QtWidgets.QFileDialog.ShowDirsOnly)
+
+    def subMissionAssInfor(self, version, file_suffixes, infor):
+        as_posix = self.assFilePath.joinpath(self.assfilename + file_suffixes).as_posix()
+        ass_data = f"""insert into `{self.assFamily}`( 
+                                name, 
+                                type,
+                                file,
+                                fileSuffixes, 
+                                user, 
+                                version,
+                                infor,
+                                filepath) VALUE('{self.asslistSelect}',
+                                '{self.assTypeSelsct}',
+                                '{self.assfilename}',
+                                '{file_suffixes}',
+                                '{self.setlocale.user}',
+                                {version},
+                                '{infor}',
+                                '{as_posix}'
+                                ) 
+                                """
+        script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'],
+                                          '', '', ass_data)
+
+    def getAssMaxVersion(self):
+        ass_type_com = f"""select distinct version from `{self.assFamily}`
+                            where name = '{self.asslistSelect}'
+                            and type = '{self.assTypeSelsct}'
+                            order by version desc;"""
+        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        file_data = script.MySqlComm.selsctCommMysql(data,
+                                                     self.setlocale.department,
+                                                     self.setlocale.department,
+                                                     ass_type_com)
+        if file_data:
+            version_max: int = file_data[0][0]
+        else:
+            version_max: int = 0
+        return version_max
+
+    def assUploadFileHandle(self, file_path: pathlib.Path):
+        """这个用来获得资产下一级路径,这级路径是程序文件夹
+        :type self: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
+        version_max = self.getAssMaxVersion()
+        target_file: pathlib.Path = self.assFilePath.joinpath('{}{}'.format(self.asslistSelect,
+                                                                            file_path.suffix))
+
+        if file_path.suffix in ['.mb', '.ma', '.max']:
+            version_max = version_max + 1
+            self.backupCopy(file_path, target_file, version_max)
+            self.subMissionAssInfor(version_max, file_path.suffix, '')
+
+        if file_path.suffix in ['.fbx']:
+            self.backupCopy(file_path, target_file, version_max)
+            self.subMissionAssInfor(version_max, file_path.suffix, '')
+
+    def assUploadFileUE4Handle(self, file_path: pathlib.Path):
+        """这个用来获得资产下一级路径,这级路径是程序文件夹
+        :type self: script.ProjectBrowserGUI.ProjectBrowserGUI
+        """
+        version_max = self.getAssMaxVersion() + 1
+        backup = self.assFilePath.joinpath('backup')
+        source = file_path.parent
+        target: pathlib.Path = self.assFilePath
+        syn_path = [{'Left': str(source), 'Right': str(target)}]
+        syn_file = script.synXml.weiteXml(self.setlocale.doc,
+                                          syn_path,
+                                          Include=['*\\Content\\*'],
+                                          Exclude=['*\\backup\\'],
+                                          VersioningFolder=str(backup),
+                                          fileName='UEpriect')
+        program = self.setlocale.FreeFileSync
+        cmd = os.system('{} "{}"'.format(program, syn_file))
+        self.assFileVersion = version_max
+        shutil.copy2(str(file_path), str(self.assFilePath.joinpath(self.assfilename + '.uproject')))
+
+    def appointFilePath(self):
+        """指定文件路径"""
+        file, fileType = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                               "选择上传文件",
+                                                               self.recentlyOpenedFolder,
+                                                               "files (*.mb *.ma *.uproject *.max *.fbx *.png *.tga *.jpg)")
+
+        remarks_info = self.recentlyOpenedFolder = QtWidgets.QInputDialog.getText(self,
+                                                                                  "填写备注(中文)",
+                                                                                  "备注",
+                                                                                  QtWidgets.QLineEdit.Normal)[0]
+        if file:
+            file = pathlib.Path(file)
+            self.subMissionAssInfor(1, file.suffix, remarks_info)
 
     # </editor-fold>
 
@@ -812,6 +937,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         os.startfile(filePath)
 
     def copyNameToClipboard(self):
+        # 这个函数不好用记得改
         pyperclip.copy(str(self.file_name))
         self.ta_log.info('复制 %s 到剪切板', str(self.file_name))
 
