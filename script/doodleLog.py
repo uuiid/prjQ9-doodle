@@ -3,6 +3,7 @@ import logging.config
 import pathlib
 
 
+
 def get_logger(name='root'):
     config_log = pathlib.Path.cwd()
     config_log = Lookingconfig(config_log).joinpath('doodleLogConfig.ini')

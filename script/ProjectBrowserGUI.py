@@ -24,6 +24,7 @@ import script.doodleLog
 import script.doodle_setting
 import script.synXml
 
+
 class ProjectCore():
     @property
     def shot_root(self) -> pathlib.Path:
@@ -104,6 +105,16 @@ class ProjectCore():
     @shot_name.setter
     def shot_name(self, shot_name):
         self._shot_name = shot_name
+
+    @property
+    def shot_user(self):
+        if not hasattr(self, '_shot_user'):
+            self._shot_user = ''
+        return self._shot_user
+
+    @shot_user.setter
+    def shot_user(self, shot_user):
+        self._shot_user = shot_user
 
     @property
     def shot_suffixes(self):
@@ -215,6 +226,26 @@ class ProjectCore():
     def file_version_max(self, file_version_max):
         self._file_version_max = file_version_max
 
+    @property
+    def ass_suffixes(self):
+        if not hasattr(self, '_ass_suffixes'):
+            self._ass_suffixes = ''
+        return self._ass_suffixes
+
+    @ass_suffixes.setter
+    def ass_suffixes(self, ass_suffixes):
+        self._ass_suffixes = ass_suffixes
+
+    @property
+    def ass_user(self):
+        if not hasattr(self, '_ass_user'):
+            self._ass_user = ''
+        return self._ass_user
+
+    @ass_user.setter
+    def ass_user(self, ass_user):
+        self._ass_user = ass_user
+
     def getShotRoot(self):
         """获得镜头根目录"""
         pass
@@ -294,6 +325,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepartment.itemClicked.connect(self.listDepartmenClicked)
         # 在depType中添加点击跟新文件事件
         self.listdepType.itemClicked.connect(self.listDepTypeClicked)
+        # 在文件中添加点击事件
         self.listfile.itemClicked.connect(self.listFileClicked)
         # </editor-fold>
 
@@ -307,191 +339,13 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listAss.itemClicked.connect(self.assClassClicked)
         # 在listType中添加点击事件生成file列表
         self.listAssType.itemClicked.connect(self.assClassTypeClicked)
+        # 在listassfile中获得资产信息
+        self.listAssFile.itemClicked.connect(self.assClassFileClicked)
 
         # 双击打开文件
-        self.listfile.doubleClicked.connect(self.openFile)
+        self.listfile.doubleClicked.connect(self.openShotFile)
         # 添加刷新函数
         self.refresh.triggered.connect(self.setepisodex)
-
-    # <editor-fold desc="集数和根目录的属性操作">
-    # @property
-    # def shot_root(self) -> pathlib.Path:
-    #     shot_root_ = self.setlocale.getseverPrjBrowser()['shotRoot']
-    #     root = pathlib.Path(self.setlocale.project)
-    #     # 获得根目录
-    #     for myP in shot_root_:
-    #         root = root.joinpath(myP)
-    #     return root
-    #
-    # @property
-    # def shot_episods(self):
-    #     try:
-    #         items__text = self.listepisodes.selectedItems()[0].text()
-
-    #
-    # @property
-    # def shot_shot(self) -> int:
-    #     # 关于shot的操作属性
-    #     try:
-    #         items__text = self.listshot.selectedItems()[0].text()
-    #         try:
-    #             items__text = int(items__text[2:])
-    #         except:
-    #             items__text = int(items__text[2:-1])
-    #         return items__text
-    #     except:
-    #         return ''
-    #
-    # @property
-    # def shot_shotab(self) -> int:
-    #     # 关于shot的操作属性
-    #     try:
-    #         items__text = self.listshot.selectedItems()[0].text()
-    #         try:
-    #             items__text = int(items__text[2:])
-    #         except:
-    #             items__textab = int(items__text[2:-1])
-    #         return items__textab
-    #     except:
-    #         return ''
-    #
-    # @property
-    # def shot_department(self) -> str:
-    #     # 关于部门的操作
-    #     try:
-    #         return self.listdepartment.selectedItems()[0].text()
-    #     except:
-    #         return None
-    #
-    # @property
-    # def shot_dep_type(self):
-    #     # 部门的下一个类型的操作
-    #     # return self.listdepType.selectedItems()[0].text()
-    #     try:
-    #         return self.listdepType.selectedItems()[0].text()
-    #     except:
-    #         return None
-    #
-    # @property
-    # def shot_file_path(self):
-
-    #
-    # @property
-    # def shot_name(self):
-    #     if not hasattr(self, '_file_name'):
-    #         self._file_name = ''
-    #     return self._file_name
-    #
-    # @shot_name.setter
-    # def shot_name(self, file_name):
-    #     self._file_name = file_name
-    #
-    # @property
-    # def shot_suffixes(self):
-    #     if not hasattr(self, '_file_suffixes'):
-    #         self._file_suffixes = ''
-    #     return self._file_suffixes
-    #
-    # @shot_suffixes.setter
-    # def shot_suffixes(self, file_suffixes):
-    #     self._file_suffixes = file_suffixes
-    #
-    # # </editor-fold>
-    #
-    # # <editor-fold desc="属性操作">
-    #
-    # @property
-    # def ass_root(self) -> pathlib.Path:
-    #     """资产类型的根目录"""
-    #     if not hasattr(self, '_rootAss'):
-    #         shot_root_ = self.setlocale.getseverPrjBrowser()['assetsRoot']
-    #         root = pathlib.Path(self.setlocale.project)
-    #         # 获得根目录
-    #         for myP in shot_root_:
-    #             root = root.joinpath(myP)
-    #         self._rootAss = root
-    #     return self._rootAss
-    #
-    # # region 选择的资产类型
-    # @property
-    # def ass_class_sort(self):
-    #     """选择的资产类型<场景,人物,道具,特效等等>"""
-    #     if not hasattr(self, '_assfamily'):
-    #         self._assfamily = 'character'
-    #     return self._assfamily
-    #
-    # @ass_class_sort.setter
-    # def ass_class_sort(self, assfamily):
-    #     self._assfamily = assfamily
-    #
-    # # endregion
-    #
-    # @property
-    # def shot_class(self) -> str:
-    #     """资产列表中选中的资产"""
-    #     if not hasattr(self, '_asslistSelect'):
-    #         self._asslistSelect = ''
-    #     else:
-    #         self._asslistSelect = self.listAss.selectedItems()[0].text()
-    #     return self._asslistSelect
-    #
-    # @property
-    # def shot_class_type(self) -> str:
-    #     """资产自己的类型的已选择"""
-    #     if not hasattr(self, '_assTypeSelsct'):
-    #         if not self.listdepType.selectedItems():
-    #             self._assTypeSelsct = ''
-    #     else:
-    #         self.shot_class_type = self.listAssType.selectedItems()[0].text()
-    #     return self._assTypeSelsct
-    #
-    # @shot_class_type.setter
-    # def shot_class_type(self, assTypeSelsct):
-    #     self._assTypeSelsct = assTypeSelsct
-    #
-    # @property
-    # def ass_file_path(self) -> pathlib.Path:
-    #     """资产文件所在路径"""
-
-    #
-    # @property
-    # def ass_file_version(self):
-    #     if not hasattr(self, '_assFileVersion'):
-    #         self._assFileVersion = 0
-    #     return self._assFileVersion
-    #
-    # @ass_file_version.setter
-    # def ass_file_version(self, assFileVersion):
-    #     self._assFileVersion = assFileVersion
-    #
-    # @property
-    # def ass_file_name(self) -> str:
-
-    #
-    # # </editor-fold>
-    # @property
-    # def recentlyOpenedFolder(self) -> pathlib.Path:
-    #     if not hasattr(self, '_recentlyOpenedFolder'):
-    #         self._recentlyOpenedFolder = ''
-    #     return self._recentlyOpenedFolder
-    #
-    # @recentlyOpenedFolder.setter
-    # def recentlyOpenedFolder(self, recentlyOpenedFolder: pathlib.Path):
-    #     self._recentlyOpenedFolder = recentlyOpenedFolder
-
-    # <editor-fold desc="更新shot视图的各种操作">
-
-    # def shot_file_path(self) -> pathlib.Path:
-    #     try:
-    #         path = self.shot_root.joinpath(f'ep{self.shot_episods:0>3d}',
-    #                                        f'sc{self.shot_shot:0>4d}',
-    #                                        'Scenefiles',
-    #                                        self.shot_department,
-    #                                        self.shot_dep_type
-    #                                        )
-    #         return path
-    #     except:
-    #         return ''
 
     def addRightClick(self):
         '''添加右键菜单==================================================='''
@@ -524,7 +378,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listfile.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         # 用文件管理器打开文件位置
         open_explorer = QtWidgets.QAction('打开文件管理器', self)
-        open_explorer.triggered.connect(self.openExplorer)
+        open_explorer.triggered.connect(self.openShotExplorer)
         self.listfile.addAction(open_explorer)
         # copy文件名称或者路径到剪切板
         copy_name_to_clip = QtWidgets.QAction('复制名称', self)
@@ -549,12 +403,17 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         add_ass_file = QtWidgets.QAction('上传(提交)文件', self)
         add_ass_file_dow = QtWidgets.QAction('同步UE文件', self)
         get_ass_path = QtWidgets.QAction('指定文件', self)
+        open_ass_explorer = QtWidgets.QAction('打开文件管理器', self)
+        open_ass_explorer.triggered.connect(self.openShotExplorer)
         add_ass_file.triggered.connect(self.uploadFiles)
         add_ass_file_dow.triggered.connect(self.downloadUe4)
         get_ass_path.triggered.connect(self.appointFilePath)
+        self.listAssFile.addAction(open_ass_explorer)
         self.listAssFile.addAction(add_ass_file)
         self.listAssFile.addAction(add_ass_file_dow)
         self.listAssFile.addAction(get_ass_path)
+
+        self.listfile.addAction(get_ass_path)
         '''================================================================='''
 
     def getShotRoot(self) -> pathlib.Path:
@@ -662,7 +521,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def listFileClicked(self):
         row = self.listfile.currentRow()
         self.shot_version = int(self.listfile.item(row, 0).text()[1:])
-        self.shot_suffixes = self.listfile.item(row, 3)
+        self.shot_suffixes = self.listfile.item(row, 3).text()
 
     def ShotItem(self):
         # region 获得服务器上数据,镜头数据
@@ -711,8 +570,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return item
 
     def fileItem(self):
-        self.file_version_max = 0
-        sql = f"""select version, user, fileSuffixes from ep{self.shot_episods:0>3d}
+        sql = f"""select version, infor, user, fileSuffixes from ep{self.shot_episods:0>3d}
                 where episodes = {self.shot_episods}
                 and shot = {self.shot_shot}
                 and shotab = '{self.shot_shotab}'
@@ -724,17 +582,19 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                self.setlocale.department, sql)
         return eps
 
-    def setFileItem(self, eps):
+    def setFileItem(self, items):
         '''设置文件在GUI中的显示'''
-        for item in eps:
+        self.file_version_max = 0
+        for item in items:
             mrow = 0
             tmp_version_ = int(item[0])
             if tmp_version_ > self.file_version_max:
                 self.file_version_max = tmp_version_
             self.listfile.insertRow(mrow)
             self.listfile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
-            self.listfile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item[1]))
-            self.listfile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item[2]))
+            self.listfile.setItem(mrow, 1, QtWidgets.QTableWidgetItem(item[1]))
+            self.listfile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item[2]))
+            self.listfile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item[3]))
             mrow = mrow + 1
         self.ta_log.info('更新文件列表')
 
@@ -776,15 +636,21 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.ass_class_type = self.listAssType.selectedItems()[0].text()
 
         self.ass_file_name = self.createAssFileName()
-        self.ass_file_path =self.ass_root.joinpath(self.ass_class_sort,
-                                                   self.ass_class,
-                                                  'Scenefiles',
-                                                   self.ass_class_type,
-                                                   )
+        self.ass_file_path = self.ass_root.joinpath(self.ass_class_sort,
+                                                    self.ass_class,
+                                                    'Scenefiles',
+                                                    self.ass_class_type,
+                                                    )
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListAssFile()
         file_data = self.assFileItems()
         self.setAssFileItem(file_data)
+
+    def assClassFileClicked(self):
+        row = self.listAssFile.currentRow()
+        self.ass_version = int(self.listAssFile.item(row, 0).text()[1:])
+        self.ass_user = self.listAssFile.item(row, 2).text()
+        self.ass_suffixes = self.listAssFile.item(row, 3).text()
 
     def createAssFileName(self):
         name = self.ass_class
@@ -936,8 +802,13 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return path
 
     # </editor-fold>
-    def subMissionShotInfor(self, version, file_suffixes):
-        as_posix = self.shot_file_path.joinpath(self.shot_name).as_posix()
+    def subMissionShotInfor(self, version, file_suffixes, shot_file_path='', shot_name="", infor=""):
+        """提交shot信息"""
+        if not shot_file_path:
+            shot_file_path = self.shot_file_path
+        if not shot_name:
+            shot_name = self.shot_name
+        as_posix = shot_file_path.joinpath(shot_name).as_posix()
         shot_data = f"""insert into ep{self.shot_episods:0>3d}(episodes, 
                         shot, 
                         shotab,
@@ -947,7 +818,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                         fileSuffixes, 
                         user, 
                         version, 
-                        filepath) VALUE({self.shot_episods},
+                        filepath,
+                        infor) VALUE({self.shot_episods},
                         {self.shot_shot},
                         '{self.shot_shotab}',
                         '{self.shot_department}',
@@ -956,13 +828,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                         '{file_suffixes}',
                         '{self.setlocale.user}',
                         {version},
-                        '{as_posix}') 
+                        '{as_posix}',
+                        '{infor}') 
                         """
         script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'],
                                           '', '', shot_data)
 
     # <editor-fold desc="添加集数文件夹的操作都在这里">
     def addEpisodesFolder(self):
+        """添加集数文件夹并提交数据库"""
         episode: int = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)[0]
         if episode:
             create_date = f"""create table ep{episode:0>3d}(
@@ -1088,8 +962,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                           self.recentlyOpenedFolder,
                                                           QtWidgets.QFileDialog.ShowDirsOnly)
 
-    def subMissionAssInfor(self, version, file_suffixes, infor):
-        as_posix = self.ass_file_path.joinpath(self.ass_file_name + file_suffixes).as_posix()
+    def subMissionAssInfor(self, version, file_suffixes, ass_file_path="", ass_file_name="", infor=''):
+        if not ass_file_name:
+            ass_file_name = self.ass_file_name
+        if not ass_file_path:
+            ass_file_path = self.ass_file_path
+        as_posix = ass_file_path.joinpath(ass_file_name + file_suffixes).as_posix()
         ass_data = f"""insert into `{self.ass_class_sort}`( 
                                 name, 
                                 type,
@@ -1128,7 +1006,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return version_max
 
     def assUploadFileHandle(self, file_path: pathlib.Path):
-        """这个用来获得资产下一级路径,这级路径是程序文件夹
+        """
         :type self: script.ProjectBrowserGUI.ProjectBrowserGUI
         """
         version_max = self.getAssMaxVersion()
@@ -1145,7 +1023,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             self.subMissionAssInfor(version_max, file_path.suffix, '')
 
     def assUploadFileUE4Handle(self, file_path: pathlib.Path):
-        """这个用来获得资产下一级路径,这级路径是程序文件夹
+        """
         :type self: script.ProjectBrowserGUI.ProjectBrowserGUI
         """
         version_max = self.getAssMaxVersion() + 1
@@ -1177,14 +1055,25 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                                                   QtWidgets.QLineEdit.Normal)[0]
         if file and (self.listAssType.selectedItems() or self.listdepType.selectedItems()):
             file = pathlib.Path(file)
-            self.subMissionAssInfor(1, file.suffix, remarks_info)
+            if self.listfile.selectedItems():
+                self.subMissionShotInfor(self.file_version_max + 1, file.suffix, file, str(file.stem), remarks_info)
+            elif self.listAssFile.selectedItems():
+                self.subMissionAssInfor(self.file_version_max + 1, file.suffix, file, str(file.stem), remarks_info)
 
     # </editor-fold>
 
     # <editor-fold desc="各种对于文件的操作">
 
-    def openFile(self):
-        filepath = self.combinationFilePath()
+    def openShotFile(self):
+        filepath = self.shot_file_path
+        try:
+            os.startfile(str(filepath))
+            self.ta_log.info('打开%s', filepath)
+        except:
+            pass
+
+    def openAssFile(self):
+        filepath = self.ass_file_name
         try:
             os.startfile(str(filepath))
             self.ta_log.info('打开%s', filepath)
@@ -1197,10 +1086,43 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         filepath = self.shot_file_path.joinpath(filename)
         return filepath
 
-    def openExplorer(self):
-        filePath = self.shot_file_path
-        self.ta_log.info('打开 %s', filePath)
-        os.startfile(filePath)
+    def openShotExplorer(self):
+
+        if self.listfile.selectedItems():
+            shot_path_get = f"""select distinct filepath from `ep{self.shot_episods:0>3d}`
+                                where episodes = {self.shot_episods}
+                                and shot = {self.shot_shot}
+                                and shotab = '{self.shot_shotab}'
+                                and department = '{self.shot_department}'
+                                and Type = '{self.shot_dep_type}'
+                                and version = {self.shot_version}
+                                and fileSuffixes = '{self.shot_suffixes}'
+                                """
+            data = self.setlocale.getseverPrjBrowser()['mySqlData']
+            file_data = script.MySqlComm.selsctCommMysql(data,
+                                                         self.setlocale.department,
+                                                         self.setlocale.department,
+                                                         shot_path_get)
+        else:
+            ass_path_get = f"""select distinct filepath from `character`
+                                where name = '{self.ass_class}'
+                                and type = '{self.ass_class_type}'
+                                and version = {self.ass_version}
+                                and user = '{self.ass_user}'
+                                and fileSuffixes = '{self.ass_suffixes}'
+                                """
+            data = self.setlocale.getseverPrjBrowser()['mySqlData']
+            file_data = script.MySqlComm.selsctCommMysql(data,
+                                                         self.setlocale.department,
+                                                         self.setlocale.department,
+                                                         ass_path_get)
+
+        try:
+            filePath = pathlib.Path(file_data[0][0]).parent
+            self.ta_log.info('打开path %s', filePath)
+            os.startfile(str(filePath))
+        except:
+            pass
 
     def copyNameToClipboard(self):
         # 这个函数不好用记得改

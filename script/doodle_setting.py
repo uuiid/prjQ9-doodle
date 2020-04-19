@@ -222,10 +222,14 @@ class Doodlesetting():
         # 获得设置的文件路径
         file = pathlib.Path(self.project).joinpath('configuration', '{}_synFile.json'.format(
             self.department))
+
         self.ta_log.info('服务器文件路径 %s', file)
         # 读取文件
         settingtmp = file.read_text(encoding='utf-8')
-        settingtmp = json.loads(settingtmp, encoding='utf-8')
+        if settingtmp:
+            settingtmp = json.loads(settingtmp, encoding='utf-8')
+        else:
+            return {}
         synpath: dict
         tmp = []
         # 将服务器上的同步路径和本地链接

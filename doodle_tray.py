@@ -1,18 +1,18 @@
 # -*- coding: UTF-8 -*-
 import pathlib
+import subprocess
 import sys
 import time
-import subprocess
 
+import qdarkgraystyle
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets, QtGui
 
-import script.debug
-import script.doodle_setting
-import script.synXml
 import script.ProjectBrowserGUI
+import script.doodle_setting
+import script.debug
 import script.doodleLog
-import qdarkgraystyle
+import script.synXml
 
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
@@ -28,7 +28,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.timer.timeout.connect(self.file_syns)
         self.timer.start(self.timeSyn)
 
-        self.setToolTip('文件管理系统-0.2.2')
+        self.setToolTip('文件管理系统-1.0.2')
         menu = QtWidgets.QMenu(parent)
 
         file_sync = menu.addAction('同步文件')

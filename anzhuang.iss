@@ -46,3 +46,6 @@ LanguageID=$0804
 
 [ThirdParty]
 UseRelativePaths=True
+
+[Dirs]
+Name: "{userdocs}\doodle"
