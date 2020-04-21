@@ -1,8 +1,11 @@
 # -*- coding: UTF-8 -*-
+import os
 import pathlib
 import subprocess
 import sys
+import tempfile
 import time
+import urllib3
 
 import qdarkgraystyle
 from PyQt5 import QtCore
@@ -13,10 +16,12 @@ import script.doodle_setting
 import script.debug
 import script.doodleLog
 import script.synXml
+import script.DoodleUpdata
 
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     timeSyn = 7200000
+    version = 1.041
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
@@ -26,9 +31,11 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.timer = QtCore.QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.file_syns)
+        self.timer.timeout.connect(lambda: self.Updata(self.version))
         self.timer.start(self.timeSyn)
+        self.Updata(self.version)
 
-        self.setToolTip('文件管理系统-1.0.2')
+        self.setToolTip(f'文件管理系统-{self.version}')
         menu = QtWidgets.QMenu(parent)
 
         file_sync = menu.addAction('同步文件')
@@ -47,6 +54,9 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
 
         setmenu = menu.addAction('设置')
         setmenu.triggered.connect(self.setGUI)
+
+        updata = menu.addAction('更新')
+        updata.triggered.connect(lambda: self.Updata(self.version))
 
         exit_ = menu.addAction('退出')
         exit_.triggered.connect(self.myexit)
@@ -105,6 +115,23 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.project_browser = script.ProjectBrowserGUI.ProjectBrowserGUI()
         self.ta_log.info('打开了项目管理器')
         self.project_browser.show()
+
+    def Updata(self, version: float):
+        new_version = float(self.doodleSet.getseverPrjBrowser()['version'])
+        url = "http://192.168.10.213:8000/dist/doodle.exe"
+        tmp_path = pathlib.Path(tempfile.gettempdir()).joinpath('doodle.exe')
+        if new_version > version:
+            try:
+                http = urllib3.PoolManager()
+                resp = http.request("GET",url)
+                tmp_path.write_bytes(resp.data)
+                resp.release_conn()
+            except:
+                pass
+            else:
+                subprocess.Popen(str(tmp_path))
+                sys.exit(self)
+
 
 
 def main():

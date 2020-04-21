@@ -177,6 +177,7 @@ class Doodlesetting():
         for key, value in setDict.items():
             setattr(self, key, value)
 
+
     def getString(self) -> dict:
         if not self.doc.is_dir():
             self.ta_log.info('没有 %s 目录,-->创建', self.doc)
@@ -203,6 +204,7 @@ class Doodlesetting():
             self.ta_log.info('读入失败,  写空文件')
         return itoa
 
+
     def writeDoodlelocalSet(self):
         doodlelocal_set: dict = {
             'user': self.user,
@@ -214,6 +216,7 @@ class Doodlesetting():
         }
         my_setting = json.dumps(doodlelocal_set, ensure_ascii=False, indent=4, separators=(',', ':'))
         self.userland.write_text(my_setting, 'utf-8')
+
 
     def getsever(self) -> dict:
         """返回服务器上的 同步目录设置"""
@@ -256,7 +259,7 @@ class Doodlesetting():
     def getseverPrjBrowser(self) -> dict:
         '''返回服务器上的project设置'''
         prj_set_file = pathlib.Path(self.project).joinpath('configuration',
-                                                         'Doodle_Prj_Browser.json')
+                                                           'Doodle_Prj_Browser.json')
         self.ta_log.info('服务器上的项目设置 %s', prj_set_file)
         prjset = prj_set_file.read_text(encoding='utf-8')
         prjset = json.loads(prjset, encoding='utf-8')

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1281</width>
+    <width>1309</width>
     <height>800</height>
    </rect>
   </property>
@@ -189,6 +189,11 @@
                 <string>后缀</string>
                </property>
               </column>
+              <column>
+               <property name="text">
+                <string>ID</string>
+               </property>
+              </column>
              </widget>
             </item>
             <item>
@@ -340,6 +345,11 @@
                     <string>格式</string>
                    </property>
                   </column>
+                  <column>
+                   <property name="text">
+                    <string>ID</string>
+                   </property>
+                  </column>
                  </widget>
                 </item>
                </layout>
@@ -421,7 +431,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1281</width>
+     <width>1309</width>
      <height>23</height>
     </rect>
    </property>

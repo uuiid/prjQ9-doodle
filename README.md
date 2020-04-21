@@ -4,6 +4,7 @@ pip install -r requirements.txt
 
 pyinstaller doodle.spec
 
+             ('script','script'),
 a = Analysis(['doodle_tray.py'],
              pathex=['D:\\ueFile'],
              binaries=[],

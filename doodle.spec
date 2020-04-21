@@ -10,7 +10,6 @@ a = Analysis(['doodle_tray.py'],
              datas=[('datas\\icon.png','datas'),
              ('UiFile','UiFile'),
              ('tools','tools'),
-             ('script','script'),
              ('config','config')],
 
              hiddenimports=[],

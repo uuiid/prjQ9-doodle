@@ -20,17 +20,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9c558dd4-e952-44ae-9286-c83c632ddee1" name="默认更改列表" comment="">
-      <change afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/ueFile.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/ueFile.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/script/DoodleUpdata.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/script/MayaExportCam.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/script/synchronizeFiles.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Checkout__at_2020_4_13_9_04___.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Checkout_之前未提交的更改_at_2020_4_13_9_04_[默认更改列表]/shelved.patch" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/anzhuang.iss" beforeDir="false" afterPath="$PROJECT_DIR$/anzhuang.iss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UiFile/ProjectBrowser.py" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/ProjectBrowser.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UiFile/ProjectBrowser.ui" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/ProjectBrowser.ui" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UiFile/tmp.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/tmp.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/doodle.spec" beforeDir="false" afterPath="$PROJECT_DIR$/doodle.spec" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/doodle_tray.py" beforeDir="false" afterPath="$PROJECT_DIR$/doodle_tray.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/script/ProjectBrowserGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/ProjectBrowserGUI.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/script/doodleLog.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/doodleLog.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/script/doodle_setting.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/doodle_setting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sync.ffs_db" beforeDir="false" afterPath="$PROJECT_DIR$/sync.ffs_db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,15 +82,15 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\ueFile" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\ueFile\tools" />
       <recent name="D:\ueFile\script\ProjectAnalysis" />
       <recent name="D:\ueFile\Project" />
       <recent name="D:\ueFile\dist\doodle_tray\script" />
       <recent name="D:\ueFile\UiFile" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\ueFile" />
     </key>
   </component>
   <component name="RunManager" selected="Python.ProjectBrowserGUI">
@@ -147,6 +151,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="doodle_setting" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="ueFile" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/doodle_setting.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="doodle_tray" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ueFile" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -169,7 +195,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="scratch_18" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="synchronizeFiles" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="ueFile" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -177,34 +203,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$APPLICATION_CONFIG_DIR$/scratches" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$APPLICATION_CONFIG_DIR$/scratches/scratch_18.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="tmp" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="ueFile" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/UiFile" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/script" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/UiFile/tmp.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/script/synchronizeFiles.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -217,16 +221,16 @@
       <item itemvalue="Python.doodle_tray" />
       <item itemvalue="Python.doodleLog" />
       <item itemvalue="Python.ProjectBrowserGUI" />
-      <item itemvalue="Python.scratch_18" />
-      <item itemvalue="Python.tmp" />
       <item itemvalue="Python Debug Server.Unnamed" />
+      <item itemvalue="Python.doodle_setting" />
+      <item itemvalue="Python.synchronizeFiles" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.ProjectBrowserGUI" />
         <item itemvalue="Python.doodle_tray" />
-        <item itemvalue="Python.tmp" />
-        <item itemvalue="Python.scratch_18" />
+        <item itemvalue="Python.synchronizeFiles" />
+        <item itemvalue="Python.doodle_setting" />
         <item itemvalue="Python.doodleLog" />
       </list>
     </recent_temporary>
@@ -260,7 +264,10 @@
       <workItem from="1587175116893" duration="19297000" />
       <workItem from="1587195649222" duration="3055000" />
       <workItem from="1587200453523" duration="4406000" />
-      <workItem from="1587204876052" duration="11725000" />
+      <workItem from="1587204876052" duration="11821000" />
+      <workItem from="1587271692315" duration="4166000" />
+      <workItem from="1587277407040" duration="1537000" />
+      <workItem from="1587279949945" duration="44624000" />
     </task>
     <task id="LOCAL-00001" summary="添加xml文件写入功能">
       <created>1585389713444</created>
@@ -360,7 +367,14 @@
       <option name="project" value="LOCAL" />
       <updated>1587195315771</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary=" 基本功能的实现">
+      <created>1587271193858</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1587271193858</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -417,7 +431,8 @@
     <MESSAGE value=" 部分数据库完成" />
     <MESSAGE value="数据库部分完成" />
     <MESSAGE value="基本测试已经完成" />
-    <option name="LAST_COMMIT_MESSAGE" value="基本测试已经完成" />
+    <MESSAGE value=" 基本功能的实现" />
+    <option name="LAST_COMMIT_MESSAGE" value=" 基本功能的实现" />
   </component>
   <component name="WindowStateProjectService">
     <state x="1434" y="542" key="#HTTP_Proxy" timestamp="1586947032861">
@@ -444,10 +459,10 @@
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="98" y="102" width="1404" height="993" key="#com.intellij.execution.impl.EditConfigurationsDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587199782354" />
-    <state x="772" y="418" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1586944919492">
+    <state x="772" y="418" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1587351785318">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="772" y="418" key="#com.intellij.fileTypes.FileTypeChooser/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586944919492" />
+    <state x="772" y="418" key="#com.intellij.fileTypes.FileTypeChooser/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587351785318" />
     <state x="858" y="233" width="925" height="590" key="#com.intellij.ide.macro.MacrosDialog" timestamp="1587195854573">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
@@ -472,26 +487,26 @@
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="678" y="240" width="950" height="750" key="#readServerDiectory/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585746238237" />
-    <state x="814" y="368" key="#xdebugger.XInspectDialog" timestamp="1585794393759">
+    <state x="814" y="368" width="934" height="494" key="#xdebugger.XInspectDialog" timestamp="1587277057661">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="814" y="368" key="#xdebugger.XInspectDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585794393759" />
-    <state x="715" y="317" key="#xdebugger.evaluate" timestamp="1586167352422">
+    <state x="814" y="368" width="934" height="494" key="#xdebugger.XInspectDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587277057661" />
+    <state x="715" y="317" key="#xdebugger.evaluate" timestamp="1587277071749">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="715" y="317" key="#xdebugger.evaluate/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586167352422" />
+    <state x="715" y="317" key="#xdebugger.evaluate/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587277071749" />
     <state x="711" y="469" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1585640616054">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="711" y="469" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1585640616054" />
-    <state x="620" y="208" key="CommitChangelistDialog2" timestamp="1587195314824">
+    <state x="620" y="208" key="CommitChangelistDialog2" timestamp="1587271192170">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="620" y="208" key="CommitChangelistDialog2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587195314824" />
-    <state width="1703" height="466" key="DebuggerActiveHint" timestamp="1587212794113">
+    <state x="620" y="208" key="CommitChangelistDialog2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587271192170" />
+    <state width="1703" height="466" key="DebuggerActiveHint" timestamp="1587277271302">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1703" height="466" key="DebuggerActiveHint/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587212794113" />
+    <state width="1703" height="466" key="DebuggerActiveHint/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587277271302" />
     <state x="793" y="240" width="685" height="508" key="EnvironmentVariablesDialog" timestamp="1586947791221">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
@@ -500,38 +515,38 @@
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="740" y="370" key="FileChooserDialogImpl/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587195881306" />
-    <state width="1877" height="245" key="GridCell.Tab.0.bottom" timestamp="1587270946310">
+    <state width="1877" height="203" key="GridCell.Tab.0.bottom" timestamp="1587440127900">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587270946310" />
-    <state width="1877" height="245" key="GridCell.Tab.0.center" timestamp="1587270946310">
+    <state width="1877" height="203" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587440127900" />
+    <state width="1877" height="203" key="GridCell.Tab.0.center" timestamp="1587440127900">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587270946310" />
-    <state width="1877" height="245" key="GridCell.Tab.0.left" timestamp="1587270946310">
+    <state width="1877" height="203" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587440127900" />
+    <state width="1877" height="203" key="GridCell.Tab.0.left" timestamp="1587440127900">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587270946310" />
-    <state width="1877" height="245" key="GridCell.Tab.0.right" timestamp="1587270946310">
+    <state width="1877" height="203" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587440127900" />
+    <state width="1877" height="203" key="GridCell.Tab.0.right" timestamp="1587440127900">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587270946310" />
-    <state width="1877" height="245" key="GridCell.Tab.1.bottom" timestamp="1587270954429">
+    <state width="1877" height="203" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587440127900" />
+    <state width="1877" height="203" key="GridCell.Tab.1.bottom" timestamp="1587440127818">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587270954429" />
-    <state width="1877" height="245" key="GridCell.Tab.1.center" timestamp="1587270954429">
+    <state width="1877" height="203" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587440127818" />
+    <state width="1877" height="203" key="GridCell.Tab.1.center" timestamp="1587440127818">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587270954429" />
-    <state width="1877" height="245" key="GridCell.Tab.1.left" timestamp="1587270954429">
+    <state width="1877" height="203" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587440127818" />
+    <state width="1877" height="203" key="GridCell.Tab.1.left" timestamp="1587440127818">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587270954429" />
-    <state width="1877" height="245" key="GridCell.Tab.1.right" timestamp="1587270954429">
+    <state width="1877" height="203" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587440127818" />
+    <state width="1877" height="203" key="GridCell.Tab.1.right" timestamp="1587440127818">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="1877" height="245" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587270954429" />
+    <state width="1877" height="203" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587440127818" />
     <state width="220" height="477" key="HiddenNamespacesPopup" timestamp="1587030871795">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
@@ -540,18 +555,18 @@
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="184" y="129" key="MergeDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586739853195" />
-    <state x="650" y="307" key="SettingsEditor" timestamp="1587204226271">
+    <state x="650" y="307" key="SettingsEditor" timestamp="1587358973568">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state x="650" y="307" key="SettingsEditor/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587204226271" />
+    <state x="650" y="307" key="SettingsEditor/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587358973568" />
     <state width="498" height="446" key="SwitcherDM" timestamp="1586166360943">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state width="498" height="446" key="SwitcherDM/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586166360943" />
-    <state width="968" height="593" key="XDebugger.FullValuePopup" timestamp="1587270590325">
+    <state width="968" height="593" key="XDebugger.FullValuePopup" timestamp="1587349498070">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
-    <state width="968" height="593" key="XDebugger.FullValuePopup/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587270590325" />
+    <state width="968" height="593" key="XDebugger.FullValuePopup/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587349498070" />
     <state x="842" y="502" width="517" height="356" key="com.intellij.database.actions.DdlActions$DeleteProvider2$1" timestamp="1587019683839">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
@@ -564,10 +579,10 @@
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="948" y="225" key="com.intellij.database.run.ParametersPanel.Standalone/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587094366391" />
-    <state x="-1532" y="213" width="1416" height="891" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog" timestamp="1587095422967">
+    <state x="-1532" y="213" width="1416" height="891" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog" timestamp="1587439725608">
       <screen x="-1920" y="30" width="1920" height="1170" />
     </state>
-    <state x="-1532" y="213" width="1416" height="891" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587095422967" />
+    <state x="-1532" y="213" width="1416" height="891" key="com.intellij.database.view.ui.AbstractDbRefactoringDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587439725608" />
     <state x="437" y="320" key="com.intellij.execution.console.ConsoleHistoryController$MyBrowseAction$1" timestamp="1587108148712">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
@@ -576,10 +591,10 @@
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="658" y="439" key="com.intellij.ide.util.TipDialog/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1586220517161" />
-    <state x="-1187" y="395" width="911" height="625" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1587211695903">
+    <state x="-1187" y="395" width="911" height="625" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1587350237765">
       <screen x="-1920" y="30" width="1920" height="1170" />
     </state>
-    <state x="-1187" y="395" width="911" height="625" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587211695903" />
+    <state x="-1187" y="395" width="911" height="625" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587350237765" />
     <state x="721" y="327" key="git4idea.branch.GitSmartOperationDialog" timestamp="1586739843064">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
@@ -613,18 +628,23 @@
         </line-breakpoint>
         <line-breakpoint suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/script/doodle_setting.py</url>
-          <line>222</line>
-          <option name="timeStamp" value="52" />
+          <line>225</line>
+          <option name="timeStamp" value="61" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/script/ProjectBrowserGUI.py</url>
-          <line>1120</line>
-          <option name="timeStamp" value="55" />
+          <line>673</line>
+          <option name="timeStamp" value="71" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/script/MayaExportCam.py</url>
+          <line>1</line>
+          <option name="timeStamp" value="81" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/script/ProjectBrowserGUI.py</url>
-          <line>1060</line>
-          <option name="timeStamp" value="59" />
+          <line>724</line>
+          <option name="timeStamp" value="83" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -644,7 +664,6 @@
         <watch expression="w.ass_file_path" />
         <watch expression="w.ass_root" />
         <watch expression="w.ass_version" />
-        <watch expression="w.shot" />
         <watch expression="w.shot_dep_type" />
         <watch expression="w.shot_department" />
         <watch expression="w.shot_episods" />
@@ -658,16 +677,18 @@
     </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ueFile$DBXYPathAnalysis.coverage" NAME="DBXYPathAnalysis Coverage Results" MODIFIED="1586784342510" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script/ProjectAnalysis" />
-    <SUITE FILE_PATH="coverage/ueFile$ProjectBrowserGUI.coverage" NAME="ProjectBrowserGUI Coverage Results" MODIFIED="1587270946218" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script" />
-    <SUITE FILE_PATH="coverage/ueFile$pyConMYSQL.coverage" NAME="pyConMYSQL Coverage Results" MODIFIED="1587005826087" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ueFile$doodle_tray.coverage" NAME="doodle_tray Coverage Results" MODIFIED="1587207700430" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ueFile$copyRigFile.coverage" NAME="copyRigFile Coverage Results" MODIFIED="1586781155907" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
-    <SUITE FILE_PATH="coverage/ueFile$doodle_setting.coverage" NAME="doodle_setting Coverage Results" MODIFIED="1586845162206" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script" />
+    <SUITE FILE_PATH="coverage/ueFile$ProjectBrowserGUI.coverage" NAME="ProjectBrowserGUI Coverage Results" MODIFIED="1587440127792" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script" />
+    <SUITE FILE_PATH="coverage/ueFile$doodle_tray.coverage" NAME="doodle_tray Coverage Results" MODIFIED="1587432487573" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ueFile$scratch_18.coverage" NAME="scratch_18 Coverage Results" MODIFIED="1587108064372" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
+    <SUITE FILE_PATH="coverage/ueFile$doodle_setting.coverage" NAME="doodle_setting Coverage Results" MODIFIED="1587346264082" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script" />
     <SUITE FILE_PATH="coverage/ueFile$dbxy_prject_analysis.coverage" NAME="dbxy_prject_analysis Coverage Results" MODIFIED="1587026402712" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/ueFile$tmp.coverage" NAME="tmp Coverage Results" MODIFIED="1587108188450" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/UiFile" />
-    <SUITE FILE_PATH="coverage/ueFile$doodleLog.coverage" NAME="doodleLog Coverage Results" MODIFIED="1587091917808" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script" />
+    <SUITE FILE_PATH="coverage/ueFile$doodleLog.coverage" NAME="doodleLog Coverage Results" MODIFIED="1587278722051" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script" />
+    <SUITE FILE_PATH="coverage/ueFile$DBXYPathAnalysis.coverage" NAME="DBXYPathAnalysis Coverage Results" MODIFIED="1586784342510" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script/ProjectAnalysis" />
+    <SUITE FILE_PATH="coverage/ueFile$tmp__1_.coverage" NAME="tmp (1) Coverage Results" MODIFIED="1587277442296" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
+    <SUITE FILE_PATH="coverage/ueFile$pyConMYSQL.coverage" NAME="pyConMYSQL Coverage Results" MODIFIED="1587005826087" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ueFile$copyRigFile.coverage" NAME="copyRigFile Coverage Results" MODIFIED="1586781155907" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
+    <SUITE FILE_PATH="coverage/ueFile$synchronizeFiles.coverage" NAME="synchronizeFiles Coverage Results" MODIFIED="1587373163241" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script" />
     <SUITE FILE_PATH="coverage/ueFile$DBXYPathAnalysis__1_.coverage" NAME="DBXYPathAnalysis (1) Coverage Results" MODIFIED="1586829102150" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script/ProjectAnalysis" />
   </component>
 </project>

@@ -26,6 +26,29 @@ import script.synXml
 
 
 class ProjectCore():
+
+    @property
+    def id(self):
+        if not hasattr(self, '_id'):
+            self._id = ''
+        return self._id
+
+    @id.setter
+    def id(self, id):
+        if not isinstance(id, int):
+            id = int(id)
+        self._id = id
+
+    @property
+    def mysqlData(self):
+        if not hasattr(self, '_mysqlData'):
+            self._mysqlData = ''
+        return self._mysqlData
+
+    @mysqlData.setter
+    def mysqlData(self, mysqlData):
+        self._mysqlData = mysqlData
+
     @property
     def shot_root(self) -> pathlib.Path:
         if not hasattr(self, '_shot_root'):
@@ -246,6 +269,16 @@ class ProjectCore():
     def ass_user(self, ass_user):
         self._ass_user = ass_user
 
+    @property
+    def Ass_version_max(self):
+        if not hasattr(self, '_Ass_version_max'):
+            self._Ass_version_max = ''
+        return self._Ass_version_max
+
+    @Ass_version_max.setter
+    def Ass_version_max(self, Ass_version_max):
+        self._Ass_version_max = Ass_version_max
+
     def getShotRoot(self):
         """获得镜头根目录"""
         pass
@@ -294,6 +327,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 初始化一些属性
         self.shot_root = self.getShotRoot()
         self.ass_root = self.getAssRoot()
+        self.mysqlData = self.setlocale.getseverPrjBrowser()['mySqlData']
         # 设置UI
         self.setupUi(self)
 
@@ -313,8 +347,40 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.setAcceptDrops(True)
         # self.listepisodes.setAcceptDrops
 
+        self.listepisodes.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listepisodes.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listepisodes.mapToGlobal(pos), 'episodes'))
+
+        self.listshot.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listshot.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listshot.mapToGlobal(pos), "shot"))
+
+        self.listdepartment.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listdepartment.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listdepartment.mapToGlobal(pos), "department"))
+
+        self.listdepType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listdepType.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listdepType.mapToGlobal(pos), "depType"))
+
+        self.listfile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listfile.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listfile.mapToGlobal(pos), "shotFile"))
+
+        self.listAss.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listAss.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listAss.mapToGlobal(pos), "assFolder"))
+
+        self.listAssType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listAssType.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listAssType.mapToGlobal(pos), "assType"))
+
+        self.listAssFile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listAssFile.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listAssFile.mapToGlobal(pos), "assFile"))
+
         # <editor-fold desc="关于shot的更新操作">
-        self.addRightClick()
+        # self.addRightClick()
         # 首先扫描根目录获得集数
         self.setepisodex()
         # 并链接函数处理下一级
@@ -326,7 +392,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 在depType中添加点击跟新文件事件
         self.listdepType.itemClicked.connect(self.listDepTypeClicked)
         # 在文件中添加点击事件
-        self.listfile.itemClicked.connect(self.listFileClicked)
+        self.listfile.itemClicked.connect(self.ClickedUpdataAtt)
         # </editor-fold>
 
         # 设置ass类型
@@ -340,81 +406,103 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 在listType中添加点击事件生成file列表
         self.listAssType.itemClicked.connect(self.assClassTypeClicked)
         # 在listassfile中获得资产信息
-        self.listAssFile.itemClicked.connect(self.assClassFileClicked)
+        self.listAssFile.itemClicked.connect(self.ClickedUpdataAtt)
 
         # 双击打开文件
         self.listfile.doubleClicked.connect(self.openShotFile)
         # 添加刷新函数
         self.refresh.triggered.connect(self.setepisodex)
 
-    def addRightClick(self):
-        '''添加右键菜单==================================================='''
-        # 添加集数右键菜单
-        self.listepisodes.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        add_episodes_Folder = QtWidgets.QAction('添加', self)
-        add_episodes_Folder.triggered.connect(self.addEpisodesFolder)
-        self.listepisodes.addAction(add_episodes_Folder)
-        # 添加镜头右键菜单
-        self.listshot.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        add_shot_Folder = QtWidgets.QAction('添加', self)
-        add_shot_Folder.triggered.connect(self.addShotFolder)
-        add_ABshot_Folder = QtWidgets.QAction('添加AB镜', self)
-        add_ABshot_Folder.triggered.connect(self.addABshotFolder)
-        self.listshot.addAction(add_ABshot_Folder)
-        self.listshot.addAction(add_shot_Folder)
+    @script.doodleLog.erorrDecorator
+    def addRightClickMenu(self, point: QtCore.QPoint, type: str):
+        menu = QtWidgets.QMenu(self)
+        if type == "episodes":  # 添加集数右键菜单
+            add_episodes_Folder = menu.addAction('添加')
+            add_episodes_Folder.triggered.connect(self.addEpisodesFolder)
+        elif type == "shot":  # 添加镜头右键菜单
+            if self.listepisodes.selectedItems():
+                add_shot_Folder = menu.addAction('添加', )
+                add_shot_Folder.triggered.connect(self.addShotFolder)
+                add_ABshot_Folder = menu.addAction('添加AB镜')
+                add_ABshot_Folder.triggered.connect(self.addABshotFolder)
+        elif type == "department":  # 添加部门右键菜单
+            if self.listshot.selectedItems():
+                add_department = menu.addAction('添加')
+                add_department.triggered.connect(self.addDepartmentFolder)
+        elif type == "depType":  # 添加类型右键菜单
+            if self.listdepartment.selectedItems():
+                add_depType = menu.addAction('添加')
+                add_depType.triggered.connect(self.addTypeFolder)
+        elif type == 'shotFile':  # 添加文件右键菜单
+            if self.listfile.selectedItems():
+                open_explorer = menu.addAction('打开文件管理器')  # 用文件管理器打开文件位置
+                open_explorer.triggered.connect(self.openShotExplorer)
+                # copy文件名称或者路径到剪切板
+                copy_name_to_clip = menu.addAction('复制名称')
+                copy_name_to_clip.triggered.connect(self.copyNameToClipboard)
+                copy_path_to_clip = menu.addAction('复制路径')
+                copy_path_to_clip.triggered.connect(self.copyPathToClipboard)
 
-        # self.listshot.action
-        # 添加部门右键菜单
-        self.listdepartment.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        add_department = QtWidgets.QAction('添加', self)
-        add_department.triggered.connect(self.addDepartmentFolder)
-        self.listdepartment.addAction(add_department)
-        # 添加类型右键菜单
-        self.listdepType.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        add_depType = QtWidgets.QAction('添加', self)
-        add_depType.triggered.connect(self.addTypeFolder)
-        self.listdepType.addAction(add_depType)
-        # 添加文件右键菜单
-        self.listfile.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        # 用文件管理器打开文件位置
-        open_explorer = QtWidgets.QAction('打开文件管理器', self)
-        open_explorer.triggered.connect(self.openShotExplorer)
-        self.listfile.addAction(open_explorer)
-        # copy文件名称或者路径到剪切板
-        copy_name_to_clip = QtWidgets.QAction('复制名称', self)
-        copy_name_to_clip.triggered.connect(self.copyNameToClipboard)
-        copy_path_to_clip = QtWidgets.QAction('复制路径', self)
-        copy_path_to_clip.triggered.connect(self.copyPathToClipboard)
-        self.listfile.addAction(copy_path_to_clip)
-        self.listfile.addAction(copy_name_to_clip)
+        elif type == "assFolder":  # 添加资产文件夹右键菜单
+            add_ass_folder = menu.addAction('添加')
+            add_ass_folder.triggered.connect(self.addAssFolder)
+        elif type == "assType":
+            if self.listAss.selectedItems():  # 添加资产类型右键文件夹
+                add_ass_type_folder = menu.addAction('添加')
+                add_ass_type_folder.triggered.connect(self.addAssTypeFolder)
+        elif type == "assFile":  # 添加文件右键菜单
+            if self.listAssType.selectedItems():
+                add_ass_file = menu.addAction('上传(提交)文件')
+                add_ass_file.triggered.connect(self.uploadFiles)
+                get_ass_path = menu.addAction('指定文件')
+                get_ass_path.triggered.connect(self.appointFilePath)
+                if self.listAssFile.selectedItems():
+                    add_ass_file_dow = menu.addAction('同步UE文件')
+                    open_ass_explorer = menu.addAction("打开文件管理器")
+                    open_ass_explorer.triggered.connect(self.openShotExplorer)
+                    add_ass_file_dow.triggered.connect(self.downloadUe4)
+        else:
+            pass
+        menu.exec_(point)
+        # menu.popup(point)
 
-        # 添加资产文件夹右键菜单
-        self.listAss.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        add_ass_folder = QtWidgets.QAction('添加', self)
-        add_ass_folder.triggered.connect(self.addAssFolder)
-        self.listAss.addAction(add_ass_folder)
-        # 添加资产类型右键文件夹
-        self.listAssType.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        add_ass_type_folder = QtWidgets.QAction('添加', self)
-        add_ass_type_folder.triggered.connect(self.addAssTypeFolder)
-        self.listAssType.addAction(add_ass_type_folder)
-        # 添加文件右键菜单
-        self.listAssFile.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        add_ass_file = QtWidgets.QAction('上传(提交)文件', self)
-        add_ass_file_dow = QtWidgets.QAction('同步UE文件', self)
-        get_ass_path = QtWidgets.QAction('指定文件', self)
-        open_ass_explorer = QtWidgets.QAction('打开文件管理器', self)
-        open_ass_explorer.triggered.connect(self.openShotExplorer)
-        add_ass_file.triggered.connect(self.uploadFiles)
-        add_ass_file_dow.triggered.connect(self.downloadUe4)
-        get_ass_path.triggered.connect(self.appointFilePath)
-        self.listAssFile.addAction(open_ass_explorer)
-        self.listAssFile.addAction(add_ass_file)
-        self.listAssFile.addAction(add_ass_file_dow)
-        self.listAssFile.addAction(get_ass_path)
+    @script.doodleLog.erorrDecorator
+    def ClickedUpdataAtt(self, ass_name: str = ''):
+        listfile_selected_items = self.listepisodes.selectedItems()
+        if listfile_selected_items:
+            self.shot_episods = listfile_selected_items[0].text()[2:]
+            if self.listshot.selectedItems():
+                items_shot = self.listshot.selectedItems()[0].text()
+                try:
+                    self.shot_shot = int(items_shot[2:])
+                    self.shot_shotab = ''
+                except:
+                    self.shot_shot = int(items_shot[2:-1])
+                    self.shot_shotab = items_shot[-1:]
+                if self.listdepartment.selectedItems():
+                    self.shot_department = self.listdepartment.selectedItems()[0].text()
+                    if self.listdepType.selectedItems():
+                        self.shot_dep_type = self.listdepType.selectedItems()[0].text()
+                        if self.listfile.selectedItems():
+                            shot_row = self.listfile.currentRow()
+                            self.shot_version = int(self.listfile.item(shot_row, 0).text()[1:])
+                            self.shot_suffixes = self.listfile.item(shot_row, 3).text()
+                            self.id = int(self.listfile.item(shot_row, 4).text())
+        if ass_name and isinstance(ass_name, str):
+            self.ass_class_sort = ass_name
+        if self.listAss.selectedItems():
+            self.ass_class = self.listAss.selectedItems()[0].text()
+            if self.listAssType.selectedItems():
+                self.ass_class_type = self.listAssType.selectedItems()[0].text()
+                if self.listAssFile.selectedItems():
+                    ass_row = self.listAssFile.currentRow()
+                    self.ass_version = int(self.listAssFile.item(ass_row, 0).text()[1:])
+                    self.ass_user = self.listAssFile.item(ass_row, 2).text()
+                    self.ass_suffixes = self.listAssFile.item(ass_row, 3).text()
+                    self.id = int(self.listAssFile.item(ass_row, 4).text())
 
-        self.listfile.addAction(get_ass_path)
-        '''================================================================='''
+    def GetMysqlData(self, table, ):
+        sql_con = f"""select distinct name from `{table}`"""
 
     def getShotRoot(self) -> pathlib.Path:
         # 获得项目目录
@@ -442,7 +530,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         # region 获得服务器上数据,集数数据
         sql = """select id,episods from mainshot"""
-        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        data = self.mysqlData
         eps = script.MySqlComm.selsctCommMysql(data,
                                                self.setlocale.department,
                                                self.setlocale.department, sql)
@@ -518,15 +606,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         eps = self.fileItem()
         self.setFileItem(eps)
 
-    def listFileClicked(self):
-        row = self.listfile.currentRow()
-        self.shot_version = int(self.listfile.item(row, 0).text()[1:])
-        self.shot_suffixes = self.listfile.item(row, 3).text()
-
     def ShotItem(self):
         # region 获得服务器上数据,镜头数据
         sql = """select distinct shot,shotab from ep{:0>3d}""".format(self.shot_episods)
-        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        data = self.mysqlData
         eps = script.MySqlComm.selsctCommMysql(data,
                                                self.setlocale.department,
                                                self.setlocale.department, sql)
@@ -544,7 +627,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 and shot = {self.shot_shot}
                 and shotab = '{self.shot_shotab}'"""
 
-        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        data = self.mysqlData
         eps = script.MySqlComm.selsctCommMysql(data,
                                                self.setlocale.department,
                                                self.setlocale.department, sql)
@@ -560,7 +643,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 and shotab = '{self.shot_shotab}'
                 and department ='{self.shot_department}'"""
 
-        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        data = self.mysqlData
         eps = script.MySqlComm.selsctCommMysql(data,
                                                self.setlocale.department,
                                                self.setlocale.department, sql)
@@ -570,13 +653,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return item
 
     def fileItem(self):
-        sql = f"""select version, infor, user, fileSuffixes from ep{self.shot_episods:0>3d}
+        """获得数据库中"""
+        sql = f"""select version, infor, user, fileSuffixes, id from ep{self.shot_episods:0>3d}
                 where episodes = {self.shot_episods}
                 and shot = {self.shot_shot}
                 and shotab = '{self.shot_shotab}'
                 and department ='{self.shot_department}'
                 and Type = '{self.shot_dep_type}'"""
-        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        data = self.mysqlData
         eps = script.MySqlComm.selsctCommMysql(data,
                                                self.setlocale.department,
                                                self.setlocale.department, sql)
@@ -595,6 +679,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             self.listfile.setItem(mrow, 1, QtWidgets.QTableWidgetItem(item[1]))
             self.listfile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item[2]))
             self.listfile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item[3]))
+            self.listfile.setItem(mrow, 4, QtWidgets.QTableWidgetItem(str(item[4])))
             mrow = mrow + 1
         self.ta_log.info('更新文件列表')
 
@@ -609,7 +694,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     # <editor-fold desc="更新ass的各种操作">
     def assClassSortClicked(self, ass_name: str):
 
-        self.ass_class_sort = ass_name
+        self.ClickedUpdataAtt(ass_name)
         # self.assFamilyPath = self.setAssFamilyPath()
         self.ta_log.info('将资产类型设置为 %s', ass_name)
 
@@ -622,7 +707,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             self.listAss.addItems(item)
 
     def assClassClicked(self):
-        self.ass_class = self.listAss.selectedItems()[0].text()
+        self.ClickedUpdataAtt()
 
         self.listAssType.clear()
         self.ta_log.info('清除资产类型中的项数')
@@ -633,7 +718,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listAssType.addItems(item)
 
     def assClassTypeClicked(self):
-        self.ass_class_type = self.listAssType.selectedItems()[0].text()
+        """资产类别点击事件"""
+        self.ClickedUpdataAtt()
 
         self.ass_file_name = self.createAssFileName()
         self.ass_file_path = self.ass_root.joinpath(self.ass_class_sort,
@@ -646,12 +732,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         file_data = self.assFileItems()
         self.setAssFileItem(file_data)
 
-    def assClassFileClicked(self):
-        row = self.listAssFile.currentRow()
-        self.ass_version = int(self.listAssFile.item(row, 0).text()[1:])
-        self.ass_user = self.listAssFile.item(row, 2).text()
-        self.ass_suffixes = self.listAssFile.item(row, 3).text()
-
     def createAssFileName(self):
         name = self.ass_class
         if self.ass_class_type in ['rig']:
@@ -659,8 +739,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return name
 
     def assClassItem(self):
-        ass_data_com = f"""select distinct name from `{self.ass_class_sort}`"""
-        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        ass_data_com = f"""select distinct name from `{self.ass_class_sort}` order by name"""
+        data = self.mysqlData
         data = script.MySqlComm.selsctCommMysql(data,
                                                 self.setlocale.department,
                                                 self.setlocale.department,
@@ -670,10 +750,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             item.append(assitem[0])
         return item
 
+    """获得资产类别选项"""
+
     def assClassTypeItems(self):
         ass_type_com = f"""select distinct type from `{self.ass_class_sort}`
                             where name = '{self.ass_class}'"""
-        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        data = self.mysqlData
         data = script.MySqlComm.selsctCommMysql(data,
                                                 self.setlocale.department,
                                                 self.setlocale.department,
@@ -684,14 +766,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return item
         # item = self.projectAnalysisAss.getAssTypeItems(self)
 
-    def assFileItems(self):
-        '''设置文件在GUI中的显示'''
-        self.Ass_version_max = 0
+    '''获得ass服务器上的文件信息'''
 
-        ass_type_com = f"""select distinct version,infor,user,fileSuffixes from `{self.ass_class_sort}`
+    def assFileItems(self):
+        '''获得ass服务器上的文件信息'''
+
+        ass_type_com = f"""select distinct version,infor,user,fileSuffixes,id from `{self.ass_class_sort}`
                             where name = '{self.ass_class}'
                             and type = '{self.ass_class_type}'"""
-        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        data = self.mysqlData
         file_data = script.MySqlComm.selsctCommMysql(data,
                                                      self.setlocale.department,
                                                      self.setlocale.department,
@@ -699,19 +782,26 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return file_data
         # return self.projectAnalysisAss.
 
+    """设置资产文件在GUI中的显示"""
+
     def setAssFileItem(self, file_data):
+        """设置资产文件在GUI中的显示"""
+        self.Ass_version_max = 0
         for item in file_data:
             mrow = 0
             tmp_version_ = item[0]
-            if tmp_version_ > self.file_version_max:
-                self.file_version_max = tmp_version_
+            if tmp_version_ > self.Ass_version_max:
+                self.Ass_version_max = tmp_version_
             self.listAssFile.insertRow(mrow)
             self.listAssFile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
             self.listAssFile.setItem(mrow, 1, QtWidgets.QTableWidgetItem(item[1]))
             self.listAssFile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item[2]))
             self.listAssFile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item[3]))
+            self.listAssFile.setItem(mrow, 4, QtWidgets.QTableWidgetItem(str(item[4])))
             mrow = mrow + 1
         self.ta_log.info('更新文件列表')
+
+    """清理资产文件列表"""
 
     def clearListAssFile(self):
         mrowtmp = self.listAssFile.rowCount()
@@ -831,10 +921,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                         '{as_posix}',
                         '{infor}') 
                         """
-        script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'],
+        script.MySqlComm.inserteCommMysql(self.mysqlData,
                                           '', '', shot_data)
 
     # <editor-fold desc="添加集数文件夹的操作都在这里">
+
     def addEpisodesFolder(self):
         """添加集数文件夹并提交数据库"""
         episode: int = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)[0]
@@ -856,8 +947,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                         );"""
             create_date_insert = f"""insert into mainshot(episods)
                                         value ({episode})"""
-            script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'], '', '', create_date)
-            script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'], '', '',
+            script.MySqlComm.inserteCommMysql(self.mysqlData, '', '', create_date)
+            script.MySqlComm.inserteCommMysql(self.mysqlData, '', '',
                                               create_date_insert)
 
             self.setepisodex()
@@ -910,21 +1001,29 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                                "选择上传文件",
                                                                self.recentlyOpenedFolder,
                                                                "files (*.mb *.ma *.uproject *.max *.fbx *.png *.tga *.jpg)")
+        remarks_info = self.recentlyOpenedFolder = QtWidgets.QInputDialog.getText(self,
+                                                                                  "填写备注(中文)",
+                                                                                  "备注",
+                                                                                  QtWidgets.QLineEdit.Normal)[0]
+
         self.recentlyOpenedFolder = file
 
         if file and self.listAssType.selectedItems():
             file = pathlib.Path(file)
             if file.suffix in ['.mb', '.ma', '.max', '.fbx']:
-                self.assUploadFileHandle(file)
+                version_max = self.assUploadFileHandle(file)
+                self.subMissionAssInfor(version_max, file.suffix, infor=remarks_info)
             elif file.suffix in ['.uproject']:
                 self.assUploadFileUE4Handle(file)
-                self.subMissionAssInfor(self.ass_file_version, '\\.uproject', '')
+                self.subMissionAssInfor(self.ass_file_version, '.uproject', infor=remarks_info)
             elif file.suffix in ['.png', '.tga', 'jpg']:
-                self.assUploadMapHandle(file)
+                version_max = self.assUploadMapHandle(file)
+                self.subMissionAssInfor(version_max, file.suffix, infor=remarks_info)
             else:
                 pass
         self.assClassTypeClicked()
 
+    @script.doodleLog.erorrDecorator
     def assUploadMapHandle(self, file: pathlib.Path):
         version = self.getAssMaxVersion() + 1
         file_path = file.parent
@@ -937,9 +1036,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 tar = target_file.joinpath(fi.name)
                 self.backupCopy(fi, tar, version)
                 sub = True
-        if sub:
-            self.subMissionAssInfor(version, file.suffix, '')
+        return version
 
+    @script.doodleLog.erorrDecorator
     def backupCopy(self, source: pathlib.Path, target: pathlib.Path, version: int):
         """来源和目标必须时文件 + 路径"""
         backup = self.ass_file_path.joinpath('backup')
@@ -962,6 +1061,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                           self.recentlyOpenedFolder,
                                                           QtWidgets.QFileDialog.ShowDirsOnly)
 
+    @script.doodleLog.erorrDecorator
     def subMissionAssInfor(self, version, file_suffixes, ass_file_path="", ass_file_name="", infor=''):
         if not ass_file_name:
             ass_file_name = self.ass_file_name
@@ -986,7 +1086,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                 '{as_posix}'
                                 ) 
                                 """
-        script.MySqlComm.inserteCommMysql(self.setlocale.getseverPrjBrowser()['mySqlData'],
+        script.MySqlComm.inserteCommMysql(self.mysqlData,
                                           '', '', ass_data)
 
     def getAssMaxVersion(self):
@@ -994,7 +1094,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                             where name = '{self.ass_class}'
                             and type = '{self.ass_class_type}'
                             order by version desc;"""
-        data = self.setlocale.getseverPrjBrowser()['mySqlData']
+        data = self.mysqlData
         file_data = script.MySqlComm.selsctCommMysql(data,
                                                      self.setlocale.department,
                                                      self.setlocale.department,
@@ -1016,11 +1116,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         if file_path.suffix in ['.mb', '.ma', '.max']:
             version_max = version_max + 1
             self.backupCopy(file_path, target_file, version_max)
-            self.subMissionAssInfor(version_max, file_path.suffix, '')
-
         if file_path.suffix in ['.fbx']:
             self.backupCopy(file_path, target_file, version_max)
-            self.subMissionAssInfor(version_max, file_path.suffix, '')
+        return version_max
 
     def assUploadFileUE4Handle(self, file_path: pathlib.Path):
         """
@@ -1055,30 +1153,16 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                                                   QtWidgets.QLineEdit.Normal)[0]
         if file and (self.listAssType.selectedItems() or self.listdepType.selectedItems()):
             file = pathlib.Path(file)
-            if self.listfile.selectedItems():
-                self.subMissionShotInfor(self.file_version_max + 1, file.suffix, file, str(file.stem), remarks_info)
-            elif self.listAssFile.selectedItems():
-                self.subMissionAssInfor(self.file_version_max + 1, file.suffix, file, str(file.stem), remarks_info)
+            if self.listdepType.selectedItems():
+                self.subMissionShotInfor(self.file_version_max + 1, file.suffix, file.parent, str(file.stem),
+                                         remarks_info)
+            elif self.listAssType.selectedItems():
+                self.subMissionAssInfor(self.Ass_version_max + 1, file.suffix, file.parent, str(file.stem),
+                                        remarks_info)
 
     # </editor-fold>
 
     # <editor-fold desc="各种对于文件的操作">
-
-    def openShotFile(self):
-        filepath = self.shot_file_path
-        try:
-            os.startfile(str(filepath))
-            self.ta_log.info('打开%s', filepath)
-        except:
-            pass
-
-    def openAssFile(self):
-        filepath = self.ass_file_name
-        try:
-            os.startfile(str(filepath))
-            self.ta_log.info('打开%s', filepath)
-        except:
-            pass
 
     def combinationFilePath(self):
         # 这个用来组合文件和文件命
@@ -1088,6 +1172,16 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def openShotExplorer(self):
 
+        filePath = self.getMysqlFileNameAndPath().parent
+        self.ta_log.info('打开path %s', filePath)
+        os.startfile(str(filePath))
+        return None
+
+    def openShotFile(self):
+        filePath = self.getMysqlFileNameAndPath()
+        os.startfile(str(filePath))
+
+    def getMysqlFileNameAndPath(self):
         if self.listfile.selectedItems():
             shot_path_get = f"""select distinct filepath from `ep{self.shot_episods:0>3d}`
                                 where episodes = {self.shot_episods}
@@ -1098,7 +1192,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                 and version = {self.shot_version}
                                 and fileSuffixes = '{self.shot_suffixes}'
                                 """
-            data = self.setlocale.getseverPrjBrowser()['mySqlData']
+            data = self.mysqlData
             file_data = script.MySqlComm.selsctCommMysql(data,
                                                          self.setlocale.department,
                                                          self.setlocale.department,
@@ -1111,26 +1205,26 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                 and user = '{self.ass_user}'
                                 and fileSuffixes = '{self.ass_suffixes}'
                                 """
-            data = self.setlocale.getseverPrjBrowser()['mySqlData']
+            data = self.mysqlData
             file_data = script.MySqlComm.selsctCommMysql(data,
                                                          self.setlocale.department,
                                                          self.setlocale.department,
                                                          ass_path_get)
-
         try:
-            filePath = pathlib.Path(file_data[0][0]).parent
-            self.ta_log.info('打开path %s', filePath)
-            os.startfile(str(filePath))
+            filePath = pathlib.Path(file_data[0][0])
         except:
-            pass
+            filePath = ''
+        return filePath
 
     def copyNameToClipboard(self):
         # 这个函数不好用记得改
-        pyperclip.copy(str(self.shot_name))
+        filePath = self.getMysqlFileNameAndPath().parent
+        pyperclip.copy(str(filePath.name))
         self.ta_log.info('复制 %s 到剪切板', str(self.shot_name))
 
     def copyPathToClipboard(self):
-        pyperclip.copy(str(self.shot_file_path))
+        filePath = self.getMysqlFileNameAndPath().parent
+        pyperclip.copy(str(filePath.parent))
         self.ta_log.info('复制 %s 到剪切板', str(self.shot_file_path))
 
     # </editor-fold>
