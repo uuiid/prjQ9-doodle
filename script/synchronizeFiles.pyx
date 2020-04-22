@@ -1,9 +1,11 @@
 import pathlib
-import os
-import sys
-import numpy
+import subprocess
+import sqlite3
 import filecmp
-class synFile(object):
+import os
+
+
+class fileSyn(object):
     @property
     def left(self) -> pathlib.Path:
         if not hasattr(self, '_left'):
@@ -57,27 +59,43 @@ class synFile(object):
     def __init__(self, left: pathlib.Path, right: pathlib.Path, ignore=''):
         self._left = left
         self._right = right
-        # self._file_db = left.joinpath("Sql_syn_file.db")
-        # if self.file_db.is_file():
-        #     pass
-        # else:
-        #     pass
+        self._file_db = left.joinpath("Sql_syn_file.db")
+        if self.file_db.is_file():
+            pass
+        else:
+            pass
 
-    def getFilePath(self):
-        for l_root,dirs,names in os.walk(str(self.left)):
-            for name in names:
-                r_root = l_root.replace(str(self.left),str(self.right))
-                print(f"""{l_root}\\{name}""")
-                print(f"""{r_root}\\{name}""")
+    def fileComp(self):
+        file_match_list = []
+        file_left_list = []
+        file_right_list = []
+        # for _, _, lift_file in os.walk():
+        #     lift_file = pathlib.Path(lift_file)
+        #     if not lift_file.is_dir():
+        #         right_path_file = self.right.joinpath(lift_file.relative_to(self.left))
+        #         if filecmp.cmp(lift_file, right_path_file.right, True):
+        #             print(lift_file)
+        #             print(right_path_file)
+        #             file_match_list.append(lift_file)
+        #         else:
+        #             file_left_list.append(lift_file)
+        #
+        # for right_file in self.right.glob('**'):
+        #     if not right_file.is_dir():
+        #         if filecmp.cmp(self):
+        #             pass
+        # test = filecmp.cmpfiles(self.left, self.right,['**'], shallow=True)
+        # print(test)
+        # match= filecmp.dircmp(self.left, self.right)
+        # print(file_match_list)
+        # print(file_left_list)
+        # print(errors)
 
-
+cdef class copyFile():
 
 if __name__ == '__main__':
     left = pathlib.Path("D:\\Source\\UnrealEngine\\Engine\\Binaries")
     right = pathlib.Path("W:\\data\\Source\\UnrealEngine\\Engine\\Binaries")
 
-    test = synFile(left, right)
-    test.getFilePath()
-    # path = getFilePath(str(left.stem),str(left.parent),[])
-    # for i in os.walk(str(left)):
-    #     print(i)
+    test = fileSyn(left, right)
+    test.fileComp()

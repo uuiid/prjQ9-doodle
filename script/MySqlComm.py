@@ -1,3 +1,4 @@
+import logging
 import mysql.connector
 import script.doodleLog
 
@@ -16,10 +17,12 @@ def inserteCommMysql(mybd: str, departmen, password, sql_command):
     try:
         cursor.execute(sql_command)
         data_base.commit()
-        log.info('成功%s',sql_command)
+        logging.info('成功%s',sql_command)
     except:
         data_base.rollback()
-        log.info('失败%s', sql_command)
+        logging.exception('失败指令%s', sql_command)
+
+    cursor.close()
     data_base.close()
 
 
@@ -38,6 +41,7 @@ def selsctCommMysql(mybd: str, departmen, password, sql_command):
         date = cursor.fetchall()
     except:
         date =''
+    cursor.close()
     data_base.close()
     return date
 

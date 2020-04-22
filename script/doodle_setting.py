@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+import logging
 import codecs
 import json
 import pathlib
@@ -24,7 +25,7 @@ class Doodlesetting():
 
     def __init__(self) -> object:
         # 初始化设置
-        self.ta_log = script.doodleLog.get_logger(__name__)
+        self.ta_log = logging
         self.initSetAttr()
 
     # <editor-fold desc="属性操作">

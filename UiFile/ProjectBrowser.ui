@@ -201,14 +201,14 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,0,1">
                 <item>
-                 <widget class="QPushButton" name="pushButton_2">
+                 <widget class="QPushButton" name="ass_upload">
                   <property name="text">
                    <string>转盘</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton">
+                 <widget class="QPushButton" name="ass_screenshot">
                   <property name="text">
                    <string>截图</string>
                   </property>
@@ -224,7 +224,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QLabel" name="label">
+               <widget class="QLabel" name="ass_thumbnail">
                 <property name="text">
                  <string>TextLabel</string>
                 </property>
@@ -408,7 +408,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QLabel" name="flipBook">
+               <widget class="QLabel" name="shot_thumbnail">
                 <property name="text">
                  <string>TextLabel</string>
                 </property>

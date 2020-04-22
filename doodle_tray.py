@@ -1,32 +1,32 @@
 # -*- coding: UTF-8 -*-
-import os
+import logging
 import pathlib
 import subprocess
 import sys
 import tempfile
 import time
-import urllib3
 
 import qdarkgraystyle
+import urllib3
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets, QtGui
 
+import script.DoodleUpdata
 import script.ProjectBrowserGUI
-import script.doodle_setting
 import script.debug
 import script.doodleLog
+import script.doodle_setting
 import script.synXml
-import script.DoodleUpdata
 
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     timeSyn = 7200000
-    version = 1.041
+    version = 1.045
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
         self.doodleSet = script.doodle_setting.Doodlesetting()
-        self.ta_log = script.doodleLog.get_logger(__name__)
+        self.ta_log = logging
 
         self.timer = QtCore.QTimer(self)
         self.timer.setSingleShot(True)
@@ -123,15 +123,15 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         if new_version > version:
             try:
                 http = urllib3.PoolManager()
-                resp = http.request("GET",url)
+                resp = http.request("GET", url)
                 tmp_path.write_bytes(resp.data)
                 resp.release_conn()
             except:
                 pass
             else:
+                time.sleep(10)
                 subprocess.Popen(str(tmp_path))
                 sys.exit(self)
-
 
 
 def main():
