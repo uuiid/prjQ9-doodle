@@ -292,6 +292,19 @@
                 <item>
                  <widget class="QListWidget" name="listdepartment"/>
                 </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_10">
+                  <item>
+                   <widget class="QSpinBox" name="start_frame"/>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="end_frame"/>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="fps"/>
+                  </item>
+                 </layout>
+                </item>
                </layout>
               </item>
               <item>

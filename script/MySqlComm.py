@@ -50,3 +50,8 @@ def selsctCommMysql(mybd: str, departmen, password, sql_command):
 # def inserteMysql(mybd: str,department:str,**args):
 #     my_sql_db = commMysql(mybd,department)
 #     sql = """"""
+if __name__ == '__main__':
+    sql ="""create table  `test`(id smallint primary key auto_increment,
+ep smallint);
+insert into ep000(episodes)value (10)"""
+    inserteCommMysql('dubuxiaoyao','','',sql)

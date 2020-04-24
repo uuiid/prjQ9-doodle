@@ -1,8 +1,12 @@
 import pathlib
 import os
+import shutil
 import sys
 import numpy
 import filecmp
+import script.synXml
+import tempfile
+
 class synFile(object):
     @property
     def left(self) -> pathlib.Path:
@@ -54,9 +58,10 @@ class synFile(object):
     def file_db(self, file_db):
         self._file_db = file_db
 
-    def __init__(self, left: pathlib.Path, right: pathlib.Path, ignore=''):
+    def __init__(self, left: pathlib.Path, right: pathlib.Path, version:int, ignore=''):
         self._left = left
         self._right = right
+        self.version = version
         # self._file_db = left.joinpath("Sql_syn_file.db")
         # if self.file_db.is_file():
         #     pass
@@ -64,11 +69,25 @@ class synFile(object):
         #     pass
 
     def getFilePath(self):
-        for l_root,dirs,names in os.walk(str(self.left)):
+        for l_root, dirs, names in os.walk(str(self.left)):
             for name in names:
-                r_root = l_root.replace(str(self.left),str(self.right))
+                r_root = l_root.replace(str(self.left), str(self.right))
                 print(f"""{l_root}\\{name}""")
                 print(f"""{r_root}\\{name}""")
+
+    def copyAndBakeup(self,is_dir:bool):
+        backup = self.right.joinpath("backup")
+        tem = pathlib.Path(tempfile.gettempdir())
+        synlist = [{"Left":str(self.left),"Right":str(self.right)}]
+        if is_dir:
+            if not backup.is_dir():
+                backup.mkdir()
+            script.synXml.weiteXml(tem,synlist,Exclude=["backup"],VersioningFolder=[str(backup)])
+        else:
+            if not backup.is_dir():
+                backup.mkdir()
+            script.synXml.weiteXml(tem, synlist, Exclude=["backup"], VersioningFolder=[str(backup)])
+
 
 
 
