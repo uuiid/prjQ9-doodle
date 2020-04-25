@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1309</width>
-    <height>800</height>
+    <height>723</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -199,7 +199,7 @@
             <item>
              <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1">
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,0,1">
+               <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,0,1,0">
                 <item>
                  <widget class="QPushButton" name="ass_upload">
                   <property name="text">
@@ -218,6 +218,13 @@
                  <widget class="QLabel" name="label_3">
                   <property name="text">
                    <string>预览</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="ass_player">
+                  <property name="text">
+                   <string>播放</string>
                   </property>
                  </widget>
                 </item>
@@ -292,19 +299,6 @@
                 <item>
                  <widget class="QListWidget" name="listdepartment"/>
                 </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_10">
-                  <item>
-                   <widget class="QSpinBox" name="start_frame"/>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="end_frame"/>
-                  </item>
-                  <item>
-                   <widget class="QSpinBox" name="fps"/>
-                  </item>
-                 </layout>
-                </item>
                </layout>
               </item>
               <item>
@@ -322,7 +316,7 @@
                </layout>
               </item>
               <item>
-               <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0">
+               <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0">
                 <item>
                  <widget class="QLabel" name="file">
                   <property name="text">
@@ -364,6 +358,40 @@
                    </property>
                   </column>
                  </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_10">
+                  <item>
+                   <widget class="QSpinBox" name="start_frame">
+                    <property name="minimum">
+                     <number>1001</number>
+                    </property>
+                    <property name="maximum">
+                     <number>2000</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="end_frame">
+                    <property name="minimum">
+                     <number>1000</number>
+                    </property>
+                    <property name="maximum">
+                     <number>2000</number>
+                    </property>
+                    <property name="value">
+                     <number>1250</number>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSpinBox" name="fps">
+                    <property name="value">
+                     <number>25</number>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </item>
@@ -415,6 +443,13 @@
                  <widget class="QLabel" name="label_6">
                   <property name="text">
                    <string>拍屏</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="shot_player">
+                  <property name="text">
+                   <string>播放</string>
                   </property>
                  </widget>
                 </item>

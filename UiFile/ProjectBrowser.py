@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\ueFile\UiFile\ProjectBrowser.ui'
+# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1309, 800)
+        MainWindow.resize(1309, 723)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -117,6 +117,9 @@ class Ui_MainWindow(object):
         self.label_3 = QtWidgets.QLabel(self.tab_2)
         self.label_3.setObjectName("label_3")
         self.verticalLayout_11.addWidget(self.label_3)
+        self.ass_player = QtWidgets.QPushButton(self.tab_2)
+        self.ass_player.setObjectName("ass_player")
+        self.verticalLayout_11.addWidget(self.ass_player)
         self.verticalLayout_11.setStretch(2, 1)
         self.horizontalLayout_8.addLayout(self.verticalLayout_11)
         self.ass_thumbnail = QtWidgets.QLabel(self.tab_2)
@@ -200,6 +203,24 @@ class Ui_MainWindow(object):
         item = QtWidgets.QTableWidgetItem()
         self.listfile.setHorizontalHeaderItem(4, item)
         self.verticalLayout.addWidget(self.listfile)
+        self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_10.setObjectName("horizontalLayout_10")
+        self.start_frame = QtWidgets.QSpinBox(self.Episodes_shot)
+        self.start_frame.setMinimum(1001)
+        self.start_frame.setMaximum(2000)
+        self.start_frame.setObjectName("start_frame")
+        self.horizontalLayout_10.addWidget(self.start_frame)
+        self.end_frame = QtWidgets.QSpinBox(self.Episodes_shot)
+        self.end_frame.setMinimum(1000)
+        self.end_frame.setMaximum(2000)
+        self.end_frame.setProperty("value", 1250)
+        self.end_frame.setObjectName("end_frame")
+        self.horizontalLayout_10.addWidget(self.end_frame)
+        self.fps = QtWidgets.QSpinBox(self.Episodes_shot)
+        self.fps.setProperty("value", 25)
+        self.fps.setObjectName("fps")
+        self.horizontalLayout_10.addWidget(self.fps)
+        self.verticalLayout.addLayout(self.horizontalLayout_10)
         self.horizontalLayout.addLayout(self.verticalLayout)
         self.horizontalLayout.setStretch(0, 1)
         self.horizontalLayout.setStretch(1, 1)
@@ -226,6 +247,9 @@ class Ui_MainWindow(object):
         self.label_6 = QtWidgets.QLabel(self.Episodes_shot)
         self.label_6.setObjectName("label_6")
         self.verticalLayout_9.addWidget(self.label_6)
+        self.shot_player = QtWidgets.QPushButton(self.Episodes_shot)
+        self.shot_player.setObjectName("shot_player")
+        self.verticalLayout_9.addWidget(self.shot_player)
         self.horizontalLayout_4.addLayout(self.verticalLayout_9)
         self.shot_thumbnail = QtWidgets.QLabel(self.Episodes_shot)
         self.shot_thumbnail.setObjectName("shot_thumbnail")
@@ -284,6 +308,7 @@ class Ui_MainWindow(object):
         self.ass_upload.setText(_translate("MainWindow", "转盘"))
         self.ass_screenshot.setText(_translate("MainWindow", "截图"))
         self.label_3.setText(_translate("MainWindow", "预览"))
+        self.ass_player.setText(_translate("MainWindow", "播放"))
         self.ass_thumbnail.setText(_translate("MainWindow", "TextLabel"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "资产"))
         self.episodes.setText(_translate("MainWindow", "集数"))
@@ -304,6 +329,7 @@ class Ui_MainWindow(object):
         self.shot_upload.setText(_translate("MainWindow", "上传拍屏"))
         self.shot_screenshots.setText(_translate("MainWindow", "截屏"))
         self.label_6.setText(_translate("MainWindow", "拍屏"))
+        self.shot_player.setText(_translate("MainWindow", "播放"))
         self.shot_thumbnail.setText(_translate("MainWindow", "TextLabel"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Episodes_shot), _translate("MainWindow", "镜头"))
         self.caoZhuo.setTitle(_translate("MainWindow", "操作"))
