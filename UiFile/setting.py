@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\ueFile\UiFile\setting.ui'
+# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\setting.ui'
 #
 # Created by: PyQt5 UI code generator 5.13.0
 #
@@ -40,6 +40,8 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.Department)
         self.DepartmentTest = QtWidgets.QComboBox(self.centralwidget)
         self.DepartmentTest.setObjectName("DepartmentTest")
+        self.DepartmentTest.addItem("")
+        self.DepartmentTest.addItem("")
         self.DepartmentTest.addItem("")
         self.DepartmentTest.addItem("")
         self.DepartmentTest.addItem("")
@@ -149,6 +151,8 @@ class Ui_MainWindow(object):
         self.DepartmentTest.setItemText(3, _translate("MainWindow", "modle"))
         self.DepartmentTest.setItemText(4, _translate("MainWindow", "rig"))
         self.DepartmentTest.setItemText(5, _translate("MainWindow", "Anm"))
+        self.DepartmentTest.setItemText(6, _translate("MainWindow", "direct"))
+        self.DepartmentTest.setItemText(7, _translate("MainWindow", "paint"))
         self.user.setText(_translate("MainWindow", "用户名"))
         self.syn.setText(_translate("MainWindow", "同步目录"))
         self.sysTestYing.setText(_translate("MainWindow", "TextLabel"))

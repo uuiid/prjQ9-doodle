@@ -119,7 +119,7 @@ if __name__ == '__main__':
     left = pathlib.Path("D:\\image")
     right = pathlib.Path("F:\\image")
 
-    test = synFile(left, right, version=0)
+    test = synFile(left, right)
     test.copyAndBakeup(True)
     # path = getFilePath(str(left.stem),str(left.parent),[])
     # for i in os.walk(str(left)):

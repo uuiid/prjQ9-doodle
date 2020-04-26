@@ -83,6 +83,16 @@
                 <string>Anm</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>direct</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>paint</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>

@@ -17,7 +17,7 @@ DefaultDirName={commonpf64}\doodle
 DisableDirPage=yes
 DefaultGroupName=doodle
 DisableProgramGroupPage=yes
-OutputDir=D:\ueFile\dist
+OutputDir=C:\Users\teXiao\doodle\dist
 OutputBaseFilename=doodle
 Compression=lzma
 SolidCompression=yes
@@ -27,7 +27,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "D:\ueFile\dist\doodle_tray\doodle_tray.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\doodle_tray\doodle_tray.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\doodle_tray\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.pyx,*c,*html"
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

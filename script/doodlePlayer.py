@@ -1,5 +1,6 @@
 import os
 import pathlib
+import re
 import shutil
 import sys
 import time
@@ -103,7 +104,7 @@ def videoToMp4(video: pathlib.Path, mp4_path: pathlib.Path):
     tools_bin_ffmpeg = "tools\\bin\\ffmpeg "
     tools_bin_ffmpeg += " -i " + str(video)
     tools_bin_ffmpeg += " -vcodec h264"
-    tools_bin_ffmpeg += " -acodec mp2 " + str(mp4_path)
+    tools_bin_ffmpeg += " -acodec mp2 -s 1920*1080 " + str(mp4_path)
     if not mp4_path.parent.is_dir():
         mp4_path.parent.mkdir(parents=True, exist_ok=True)
     os.system(tools_bin_ffmpeg)
@@ -112,10 +113,19 @@ def videoToMp4(video: pathlib.Path, mp4_path: pathlib.Path):
 
 def imageToMp4(video_path: pathlib.Path, image_path: pathlib.Path):
     tools_bin_ffmpeg = "tools\\bin\\ffmpeg "
-    image = image_path.stem.split("_")[0:-1]
-    image = "_".join(image) + "_%04d" + image_path.suffix
-    tools_bin_ffmpeg += "-r 25 -f image2 -s 1920*1080 -i " + str(image_path.parent.joinpath(image))
-    tools_bin_ffmpeg += " -vcodec h264 -crf 25 " + str(video_path)
+    list = image_path.parent.joinpath("list.txt")
+    image = ["file '" + i.as_posix() + "'" for i in image_path.parent.iterdir() if i.suffix in ['.png','.exr','jpg']]
+    list.write_text("\n".join(image))
+    # image = re.findall(r"\d+",image_path.stem)
+    # image_split = re.split(r"\d+",image_path.stem)
+    # ge_fr = image.pop()
+    # ge_fr = f"%0{len(ge_fr)}d"
+    # image.append(ge_fr)
+    # image_name = "".join([rv for r in zip(image_split,image) for rv in r]) + image_path.suffix
+
+    tools_bin_ffmpeg += "-r 25 -f concat -safe 0 -i " + str(image_path.parent.joinpath(list))
+    tools_bin_ffmpeg += " -vcodec h264 -crf 25 -s 1920*1080 " + str(video_path)
+    logging.info("命令ffmpeg %s",tools_bin_ffmpeg)
     if not video_path.parent.is_dir():
         video_path.parent.mkdir(parents=True, exist_ok=True)
     os.system(tools_bin_ffmpeg)

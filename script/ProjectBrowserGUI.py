@@ -398,8 +398,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.ass_upload.clicked.connect(self.uploadFlipBook)
 
         # 打开拍屏功能
-        self.ass_player.clicked.connect(self.playerFlipBook)
-        self.shot_player.clicked.connect(self.playerFlipBook)
+        self.ass_player.clicked.connect(lambda: self.playerButtenClicked(one_or_mut="one"))
+        self.shot_player.clicked.connect(lambda: self.playerButtenClicked(one_or_mut="one"))
 
         # <editor-fold desc="关于shot的更新操作">
         # self.addRightClick()
@@ -451,7 +451,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         menu = QtWidgets.QMenu(self)
         if type == "episodes":  # 添加集数右键菜单
             add_episodes_Folder = menu.addAction('添加')
+            add_player = menu.addMenu("播放整集拍屏")
             add_episodes_Folder.triggered.connect(self.addEpisodesFolder)
+            anm_player = add_player.addAction("播放Anm拍屏")
+            vfx_player = add_player.addAction("播放vfx拍屏")
+            light_player = add_player.addAction("播放light拍屏")
+            anm_player.triggered.connect(lambda: self.playerButtenClicked("mut", "Anm"))
+            vfx_player.triggered.connect(lambda: self.playerButtenClicked("mut", "VFX"))
+            light_player.triggered.connect(lambda: self.playerButtenClicked("mut", "Light"))
+
         elif type == "shot":  # 添加镜头右键菜单
             if self.listepisodes.selectedItems():
                 add_shot_Folder = menu.addAction('添加', )
@@ -552,7 +560,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         file_data = [""]
         if modle == "get":
             _query = ','.join(query)
-            sql_com = "SELECT DISTINCT {qu} FROM `{ta}`".format(qu=_query, ta=table_name)
+            sql_com = "SELECT DISTINCT {qu} FROM `{ta}` ".format(qu=_query, ta=table_name)
 
             if limit:
                 _limit = " AND ".join(["{} = {}".format(key, value) if isinstance(value, int)
@@ -1205,21 +1213,24 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.hide()
         screen_shot.exec_()
         self.show()
-        if not path.is_file():
+        if path.is_file():
             if self.listAssType.selectedItems():
-                self.MysqlData(self.ass_class_sort, "set", '', False,
-                               name=self.ass_class, type=self.ass_class_type,
-                               file=self.ass_file_name, fileSuffixes=path.suffix,
-                               user=self.setlocale.user, version=0, infor="这是截图",
-                               filepath=path.as_posix())
-            elif self.listdepType.selectedItems():
-                self.MysqlData(f"ep{self.shot_episods:0>3d}", "set", '', False,
-                               episodes=self.shot_episods, shot=self.shot_shot, shotab=self.shot_shotab,
-                               department=self.shot_department, Type=self.shot_dep_type,
-                               file=path.stem, fileSuffixes=path.suffix, user=self.setlocale.user,
-                               version=0,
-                               filepath=path.as_posix(),
-                               infor="这是截图")
+                if not self.listAssFile.item(0, 3).text() == ".jpg":
+                    self.MysqlData(self.ass_class_sort, "set", '', False,
+                                   name=self.ass_class, type=self.ass_class_type,
+                                   file=self.ass_file_name, fileSuffixes=path.suffix,
+                                   user=self.setlocale.user, version=0, infor="这是截图",
+                                   filepath=path.as_posix())
+            elif self.listfile.selectedItems():
+                if not self.listfile.item(0, 3).text() == ".jpg":
+                    self.MysqlData(f"ep{self.shot_episods:0>3d}", "set", '', False,
+                                   episodes=self.shot_episods, shot=self.shot_shot, shotab=self.shot_shotab,
+                                   department=self.shot_department, Type=self.shot_dep_type,
+                                   file=path.stem, fileSuffixes=path.suffix, user=self.setlocale.user,
+                                   version=0,
+                                   filepath=path.as_posix(),
+                                   infor="这是截图")
+        self.setThumbnail()
 
     def setThumbnail(self):
         file_data: [tuple] = []
@@ -1281,7 +1292,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                 self.ass_class_type,
                                                 f"{self.ass_class}_{self.ass_class_type}_{user_}.mp4")
 
-
         logging.info("获得file %s \n 获得 nmae %s", file, name)
         if file:
             path = pathlib.Path("")
@@ -1293,73 +1303,110 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 script.doodlePlayer.videoToMp4(video=file, mp4_path=path)
             elif file.suffix in [".exr", ".png", ".tga", "jpg"]:
                 try:
-                    file.stem.split("_")[0:-1]
+                    path = pathlib.Path(tempfile.gettempdir()).joinpath("temp.mp4")
+                    if path.is_file():
+                        os.remove(str(path))
+                    script.doodlePlayer.imageToMp4(video_path=path, image_path=file)
                 except:
                     QtWidgets.QMessageBox.warning(self, "图片命名规则:", "test_####.png "
                                                                    "后缀前有四位数字,表示帧号,前面有下划线"
                                                   , QtWidgets.QMessageBox.Yes)
                     return ''
-                else:
-                    path = pathlib.Path(tempfile.gettempdir()).joinpath("temp.mp4")
-                    if path.is_file():
-                        os.remove(str(path))
-                    script.doodlePlayer.imageToMp4(video_path=path, image_path=file)
+
             else:
-                pass
+                path = file
 
             if self.listdepType.selectedItems():
 
                 if not right_path.parent.is_dir():
-                    right_path.mkdir(parents=True, exist_ok=True)
+                    right_path.parent.mkdir(parents=True, exist_ok=True)
 
                 logging.info("复制路径到 %s", right_path)
-
-                shutil.copy2(str(path), str(right_path))
-
-                self.MysqlData(f"ep{self.shot_episods:0>3d}", "set", '', False,
-                               episodes=self.shot_episods, shot=self.shot_shot, shotab=self.shot_shotab,
-                               department=self.shot_department, Type="FB_{}".format(self.shot_dep_type),
-                               file=self.shot_name, fileSuffixes='mp4', user=self.setlocale.user,
-                               version=version,
-                               filepath=right_path.as_posix(),
-                               infor="这是拍屏")
+                try:
+                    shutil.copy2(str(path), str(right_path))
+                except:
+                    QtWidgets.QMessageBox.warning(self, "警告:", "复制未成功 "
+                                                  , QtWidgets.QMessageBox.Yes)
+                else:
+                    self.MysqlData(f"ep{self.shot_episods:0>3d}", "set", '', False,
+                                   episodes=self.shot_episods, shot=self.shot_shot, shotab=self.shot_shotab,
+                                   department=self.shot_department, Type="FB_{}".format(self.shot_dep_type),
+                                   file=self.shot_name, fileSuffixes='.mp4', user=self.setlocale.user,
+                                   version=version,
+                                   filepath=right_path.as_posix(),
+                                   infor="这是拍屏")
             elif self.listAssType.selectedItems():
 
                 if not right_path.parent.is_dir():
-                    right_path.mkdir(parents=True, exist_ok=True)
+                    right_path.parent.mkdir(parents=True, exist_ok=True)
 
                 logging.info("从  %s 复制路径到 %s", path, right_path)
+                try:
+                    shutil.copy2(str(path), str(right_path))
+                except:
+                    QtWidgets.QMessageBox.warning(self, "警告:", "复制未成功 "
+                                                  , QtWidgets.QMessageBox.Yes)
+                else:
+                    self.MysqlData(self.ass_class_sort, "set", '', False,
+                                   name=self.ass_class, type="FB_{}".format(self.ass_class_type),
+                                   file=self.ass_file_name, fileSuffixes='.mp4',
+                                   user=self.setlocale.user, version=version,
+                                   infor="这是拍屏",
+                                   filepath=right_path.as_posix())
+            self.listDepartmenClicked()
 
-                shutil.copy2(str(path), str(right_path))
+    def playerButtenClicked(self, one_or_mut: str, department="Anm"):
+        if one_or_mut == "one":
+            if self.listAssType.selectedItems():
+                if self.ass_class_type[:2] == "FB":
+                    my_ass_type = self.ass_class_type
+                else:
+                    my_ass_type = "FB_" + self.ass_class_type
+                self.playerFlipBook("ass", my_ass_type)
+            elif self.listdepType.selectedItems():
+                if self.shot_dep_type[:2] == "FB":
+                    my_ass_type = self.shot_dep_type
+                else:
+                    my_ass_type = "FB_" + self.shot_dep_type
+                self.playerFlipBook("shot", my_ass_type)
+        else:
+            self.playerFlipBook('', '', one_or_mut="mut", department=department)
 
-                self.MysqlData(self.ass_class_sort, "set", '', False,
-                               name=self.ass_class, type="FB_{}".format(self.ass_class_type),
-                               file=self.ass_file_name, fileSuffixes='mp4',
-                               user=self.setlocale.user, version=version,
-                               infor="这是拍屏",
-                               filepath=right_path.as_posix())
-
-    def playerButtenClicked(self):
-        if self.listAssType.selectedItems():
-            self.playerFlipBook("ass")
-
-    def playerFlipBook(self, ass_or_shot):
+    def playerFlipBook(self, ass_or_shot, ass_type, one_or_mut="one", department="Anm"):
         path = pathlib.Path("")
-        if ass_or_shot == "ass":
-            path = self.MysqlData(self.ass_class_sort, "get", "filetime", True, "filepath",
-                                  name=self.ass_class, type="FB_{}".format(self.ass_class_type),
-                                  fileSuffixes=".png")
-        if ass_or_shot == "shot":
-            path = self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", 'filetime', True,
-                                  episodes=self.shot_episods, shot=self.shot_shot, shotab=self.shot_shotab,
-                                  department=self.shot_department, Type="FB_{}".format(self.shot_dep_type),
-                                  file=self.shot_name, fileSuffixes='.png')
+        if one_or_mut == "one":
+            if ass_or_shot == "ass":
+                path = self.MysqlData(self.ass_class_sort, "get", "filetime", True, "filepath",
+                                      name=self.ass_class, type=ass_type,
+                                      fileSuffixes=".mp4")
+            elif ass_or_shot == "shot":
+                path = self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", 'filetime', True, "filepath",
+                                      episodes=self.shot_episods, shot=self.shot_shot, shotab=self.shot_shotab,
+                                      department=self.shot_department, Type=ass_type,
+                                      file=self.shot_name, fileSuffixes='.mp4')
+            try:
+                if pathlib.Path(path[0][0]).is_file():
+                    self.pot_player.add(path[0][0])
+                    tmp_path = os.path.join(tempfile.gettempdir(), "potplayer_temp.dpl")
+                    self.pot_player.dump(tmp_path)
+                    potplayer.run(tmp_path)
+            except IndexError:
+                pass
+        else:
+            self.pot_player = potplayer.PlayList()
+            for shot in self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", "", False, "shot")[:]:
+                player_video_path = \
+                    self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", "filetime", True, "filepath", shot=shot[0],
+                                   department=department,fileSuffixes=".mp4")[0][0]
+                try:
+                    logging.info("播放文件路径 %s",player_video_path)
+                    self.pot_player.add(player_video_path)
+                except:
+                    pass
+            tmp_path: str = os.path.join(tempfile.gettempdir(), "potplayer_temp_long.dpl")
+            self.pot_player.dump(tmp_path)
+            potplayer.run(tmp_path)
 
-        self.pot_player.add(str(path))
-        tmp_path =os.path.join(tempfile.gettempdir(),"potplayer_temp.dpl")
-        self.pot_player.dump(tmp_path)
-
-        potplayer.run(tmp_path)
     # </editor-fold>
 
 
