@@ -21,7 +21,7 @@ import script.synXml
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     timeSyn = 7200000
-    version = 1.046
+    version = 1.050
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)

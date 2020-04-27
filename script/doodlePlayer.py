@@ -124,7 +124,7 @@ def imageToMp4(video_path: pathlib.Path, image_path: pathlib.Path):
     # image_name = "".join([rv for r in zip(image_split,image) for rv in r]) + image_path.suffix
 
     tools_bin_ffmpeg += "-r 25 -f concat -safe 0 -i " + str(image_path.parent.joinpath(list))
-    tools_bin_ffmpeg += " -vcodec h264 -crf 25 -s 1920*1080 " + str(video_path)
+    tools_bin_ffmpeg += ' -c:v libx264 -vf fps=25 -pix_fmt yuv420p -s 1920*1080 ' + str(video_path)
     logging.info("命令ffmpeg %s",tools_bin_ffmpeg)
     if not video_path.parent.is_dir():
         video_path.parent.mkdir(parents=True, exist_ok=True)

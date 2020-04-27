@@ -60,6 +60,11 @@
               </item>
               <item>
                <property name="text">
+                <string>Executive</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
                 <string>Light</string>
                </property>
               </item>
