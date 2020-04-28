@@ -1,10 +1,27 @@
 import pathlib
 import script.MySqlComm
-import script.doodle_setting
+
+# 定义类型检查
+def Typed(expected_type, cls=None):
+    if cls is None:
+        return lambda cls: Typed(expected_type, cls)
+    super_set = cls.__set__
+
+    def __set__(self, instance, value):
+        if not isinstance(value, expected_type):
+            raise TypeError('expected ' + str(expected_type))
+        super_set(self, instance, value)
+
+    cls.__set__ = __set__
+    return cls
+
+
+class integer(Typed):
+    expected_type = int
 
 
 class PrjCode():
-    id: int
+    id: int = integer(int)
     mysqllib: str
     _root: pathlib.Path
     version: str
@@ -13,8 +30,8 @@ class PrjCode():
         """
         初始化一些属性
         :param mysql_lib: str
-        :param prj_root: pathlib.Path
-        :param set:script.doodle_setting.Doodlesetting
+        :param sort_root: str
+        :param prj_root: str
         """
         self._root = pathlib.Path(sort_root).joinpath(prj_root)
         self.mysqllib = mysql_lib
@@ -60,8 +77,8 @@ class PrjCode():
 
 class PrjShot(PrjCode):
     # <editor-fold desc="Description">
-    episodes: int
-    shot: int
+    episodes: int = integer(int)
+    shot: int = integer(int)
     shotab: str
     department: str
     dep_type: str
@@ -102,7 +119,7 @@ class PrjShot(PrjCode):
 
         return [dep[0] for dep in deps]
 
-    def getDepTYpe(self) -> list:
+    def getDepType(self) -> list:
         """
         获得部门类型列表
         :return: list
@@ -132,14 +149,68 @@ class PrjShot(PrjCode):
                                    )
         return path
 
-    def getFileName(self,version:int,user_:str,suffix:str) -> str:
+    def getFileName(self, version: int, user_: str, suffix: str) -> str:
         name = f"shot_ep{self.episodes:0>3d}_sc{self.shot:0>4d}{self.shotab}_" \
-                                         f"{self.department}" \
-                                         f"{self.dep_type}_v{version:0>4d}" \
-                                         f"__{user_}_{suffix}"
+               f"{self.department}" \
+               f"{self.dep_type}_v{version:0>4d}" \
+               f"__{user_}_{suffix}"
         return name
 
+    def getMaxVersion(self) -> int:
+        try:
+            # 查不到会产生错误
+            file_data = self.MysqlData(f"ep{self.episodes:0>3d}", "get", 'version', True, "version",
+                                       episodes=self.episodes, shot=self.shot, shotab=self.shotab,
+                                       department=self.department, Type=self.dep_type)
+            # 查到为空也会出错
+            version_max: int = int(file_data[0][0])
+            # 出错时直接返回 0
+        except:
+            version_max: int = 0
+        return version_max
 
+    def submitShotInfo(self, filename: str, suffix: str, user: str, version: int, filepathAndname: str, infor=""):
+        """
+        提交文件信息
+        :param filename: str
+        :param suffix:str
+        :param user:str
+        :param version:int
+        :param filepathAndname:str
+        :param infor: str
+        :return:
+        """
+        if not isinstance(version, int):
+            version = int(version)
+        self.MysqlData(f"ep{self.episodes:0>3d}", "set", '', False,
+                       episodes=self.episodes, shot=self.shot, shotab=self.shotab,
+                       department=self.department, Type=self.dep_type,
+                       file=filename, fileSuffixes=suffix, user=user,
+                       version=version,
+                       filepath=filepathAndname,
+                       infor=infor)
+
+    def subEpisodesInfo(self,episodes:int):
+        create_date = f"""create table ep{episodes:0>3d}(
+                                                        id smallint primary key not null auto_increment,
+                                                        episodes smallint,
+                                                        shot smallint,
+                                                        shotab varchar(8),
+                                                        department varchar(128),
+                                                        Type varchar(128),
+                                                        file varchar(128),
+                                                        fileSuffixes varchar(32),
+                                                        user varchar(128),
+                                                        version smallint,
+                                                        filepath varchar(1024),
+                                                        itfor varchar(4096),
+                                                        filetime datetime default current_timestamp on update current_timestamp not null 
+                                                        );"""
+        create_date_insert = f"""insert into mainshot(episods)
+                                                        value ({episodes})"""
+        script.MySqlComm.inserteCommMysql(self.mysqllib, '', '', create_date)
+        script.MySqlComm.inserteCommMysql(self.mysqllib, '', '',
+                                          create_date_insert)
 class PrjAss(PrjCode):
     sort: str
     ass_class: str
@@ -178,8 +249,18 @@ class PrjAss(PrjCode):
                                    )
         return path
 
-    def getFileName(self,suffix) -> pathlib.Path:
+    def getFileName(self, suffix) -> str:
+        add_suffix = ""
         if self.ass_type in ["rig"]:
             add_suffix = "_rig"
-        name = "{cl}{su}".format(cl=self.ass_class,su=add_suffix)
+        name = "{cl}{su}".format(cl=self.ass_class, su=add_suffix)
         return name
+
+    def getMaxVersion(self) -> int:
+        file_data = self.MysqlData(self.sort, "get", "version", True, "version",
+                                   name=self.ass_class, type=self.ass_type)
+        if file_data:
+            version_max: int = int(file_data[0][0])
+        else:
+            version_max: int = 0
+        return version_max
