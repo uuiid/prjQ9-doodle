@@ -5,16 +5,23 @@ import json
 import pathlib
 import sys
 import threading
+import functools
 from PyQt5 import QtWidgets
 
 import UiFile.setting
 import script.convert
 import script.doodleLog
+import script.MySqlComm
 
 
 class Doodlesetting():
     _setting = {}
     _instance_lock = threading.Lock()
+    shotRoot: str
+    assetsRoot: str
+    synSever: str
+    version: str
+    projectname:str
 
     def __new__(cls, *args, **kwargs):
         if not hasattr(Doodlesetting, '_instance'):
@@ -23,10 +30,19 @@ class Doodlesetting():
                     Doodlesetting._instance = object.__new__(cls)
         return Doodlesetting._instance
 
-    def __init__(self) -> object:
+    def __init__(self):
         # 初始化设置
-        self.ta_log = logging
-        self.initSetAttr()
+        self.user = '未记录'
+        self.department = '未记录'
+        self.syn = pathlib.Path('D:/ue_prj')
+        self.synEp: int = 1
+        self.FreeFileSync = 'C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe'
+        self.projectname = 'dubuxiaoyao'
+        self.ProgramFolder = ['Export', 'Playblasts', 'Rendering', 'Scenefiles']
+        self.assTypeFolder = ['sourceimages', 'scenes', '{}_UE4', 'rig']
+        self.project=''
+        self.__initSetAttr(self.__getString())
+        self.__initSetAttr(self.__getseverPrjBrowser())
 
     # <editor-fold desc="属性操作">
 
@@ -44,144 +60,37 @@ class Doodlesetting():
         return self._userland
 
     # endregion
-
     @property
-    def setting(self) -> str:
-        if not hasattr(self, '_setting'):
-            self._setting = {"user": '未记录',
-                             "department": '未记录',
-                             "syn": "D:\\ue_prj",
-                             "synEp": 1,
-                             "synSever": "W:\\data\\ue_prj",
-                             "project": "W:\\",
-                             'FreeFileSync': 'C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe'}
-        return Doodlesetting._setting
-
-    @setting.setter
-    def setting(self, settmp: dict) -> str:
-        Doodlesetting._setting = settmp
-
-    @property
-    def user(self) -> str:
-        if not hasattr(self, '_user'):
-            self._user = '未记录'
-        return self._user
-
-    @user.setter
-    def user(self, user: pathlib.Path):
-        self._user = user
-
-    @property
-    def department(self) -> str:
-        if not hasattr(self, '_department'):
-            self._department = '未记录'
-        return self._department
-
-    @department.setter
-    def department(self, department: str) -> str:
-        self._department = department
-
-    @property
-    def syn(self) -> pathlib.Path:
-        if not hasattr(self, '_syn'):
-            self._syn = 'D:\\ue_prj'
-        return self._syn
-
-    @syn.setter
-    def syn(self, syn: pathlib.Path) -> pathlib.Path:
-        self._syn = pathlib.Path(syn)
-
-    @property
-    def synEp(self) -> int:
+    def synEp(self):
         if not hasattr(self, '_synEp'):
             self._synEp = 1
         return self._synEp
 
     @synEp.setter
-    def synEp(self, synEp: int):
+    def synEp(self, synEp):
+        if not isinstance(synEp,int):
+            synEp= int(synEp)
         self._synEp = synEp
 
     @property
-    def synSever(self) -> pathlib.Path:
-        if not hasattr(self, '_synSever'):
-            self._syn_sever = self.getseverPrjBrowser()['synSever']
-        return self._syn_sever
+    def projectname(self) -> str:
+        return self._projectname
 
-    @synSever.setter
-    def synSever(self, syn_sever: pathlib.Path):
-        # if isinstance(syn_sever, str):
-        #     self._syn_sever = pathlib.Path(syn_sever)
-        # else:
-        #     self._syn_sever = syn_sever
-        self._syn_sever = self.getseverPrjBrowser()['synSever']
-
-    @property
-    def project(self) -> pathlib.Path:
-        if not hasattr(self, '_project'):
-            self._project = pathlib.Path('W:\\')
-        return self._project
-
-    @project.setter
-    def project(self, project: pathlib.Path):
-        if isinstance(project, str):
-            self.project = pathlib.Path(project)
-        else:
-            self._project = project
-
-    @property
-    def projectAnalysis(self):
-        if not hasattr(self, '_projectAnalysis'):
-            self._projectAnalysis = self.getseverPrjBrowser()['projectAnalysis']
-        return self._projectAnalysis
-
-    @property
-    def ProgramFolder(self):
-        if not hasattr(self, '_ProgramFolder'):
-            self._ProgramFolder = ['Export', 'Playblasts', 'Rendering', 'Scenefiles']
-        return self._ProgramFolder
-
-    @ProgramFolder.setter
-    def ProgramFolder(self, ProgramFolder):
-        self._ProgramFolder = ProgramFolder
-
-    @property
-    def assTypeFolder(self):
-        if not hasattr(self, '_assTypeFolder'):
-            self._assTypeFolder = ['sourceimages', 'scenes', '{}_UE4', 'rig']
-        return self._assTypeFolder
-
-    @assTypeFolder.setter
-    def assTypeFolder(self, assTypeFolder):
-        self._assTypeFolder = assTypeFolder
-
-    # @projectAnalysis.setter
-    # def projectAnalysis(self, projectAnalysis):
-    #     self._projectAnalysis = projectAnalysis
-
-    # region 同步软件所在目录
-    @property
-    def FreeFileSync(self) -> str:
-        if not hasattr(self, '_FreeFileSync'):
-            self._FreeFileSync = 'C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe'
-        return self._FreeFileSync
-
-    @FreeFileSync.setter
-    def FreeFileSync(self, FreeFileSync):
-        self._FreeFileSync = pathlib.Path(FreeFileSync)
-
-    # endregion
+    @projectname.setter
+    def projectname(self, projectname: str):
+        if not projectname in ["dubuxiaoyao", "changanhuanjie"]:
+            projectname = "dubuxiaoyao"
+        self._projectname = projectname
 
     # </editor-fold>
 
-    def initSetAttr(self):
-        setDict = self.getString()
+    def __initSetAttr(self, setDict: dict):
         for key, value in setDict.items():
             setattr(self, key, value)
 
-
-    def getString(self) -> dict:
+    def __getString(self) -> dict:
         if not self.doc.is_dir():
-            self.ta_log.info('没有 %s 目录,-->创建', self.doc)
+            logging.info('没有 %s 目录,-->创建', self.doc)
             # 没有目录时创建目录
             self.doc.mkdir()
         if not self.userland.is_file():
@@ -189,22 +98,21 @@ class Doodlesetting():
             self.userland.touch(exist_ok=True)
             self.writeDoodlelocalSet()
 
-            self.ta_log.info('没有 %s 文件,-->写入', self.userland)
+            logging.info('没有 %s 文件,-->写入', self.userland)
         if not self.userland.stat().st_size:
             # 文件为空时写入默认
             self.writeDoodlelocalSet()
 
-            self.ta_log.info('文件 %s 为空时,-->写入', self.userland)
-        itoa = ''
+            logging.info('文件 %s 为空时,-->写入', self.userland)
+        itoa = {}
         try:
-            self.ta_log.info('尝试读取文件')
+            logging.info('尝试读取文件')
             itoa = self.userland.read_text(encoding='utf-8')
             itoa = json.loads(itoa)
         except:
             self.writeDoodlelocalSet()
-            self.ta_log.info('读入失败,  写空文件')
+            logging.info('读入失败,  写空文件')
         return itoa
-
 
     def writeDoodlelocalSet(self):
         doodlelocal_set: dict = {
@@ -212,60 +120,39 @@ class Doodlesetting():
             'department': self.department,
             "syn": str(self.syn),
             "synEp": self.synEp,
-            "project": str(self.project),
+            "project": str(self.projectname),
             "FreeFileSync": str(self.FreeFileSync)
         }
         my_setting = json.dumps(doodlelocal_set, ensure_ascii=False, indent=4, separators=(',', ':'))
         self.userland.write_text(my_setting, 'utf-8')
 
-
-    def getsever(self) -> dict:
+    def getsever(self) -> list:
         """返回服务器上的 同步目录设置"""
         # 读取本地部门类型 以及每集类型
         # self.setlocale = script.doodle_setting.Doodlesetting()
         # 获得设置的文件路径
-        file = pathlib.Path(self.project).joinpath('configuration', '{}_synFile.json'.format(
-            self.department))
+        sql_com = "SELECT DISTINCT value3, value4 FROM `configure` " \
+                  f"WHERE name='synpath' AND value='{self.department}' AND value2 ='{self.synEp:0>3d}'"
+        data = script.MySqlComm.selsctCommMysql(self.projectname, self.department, "", sql_command=sql_com)
+        # {"Left": [value for key, value in data if key == "Left"],
+        #  "Right": [value for key, value in data if key == "Right"]}
+        # tmp = [{key: value} for key, value in data]
+        tmp = [data[i:i + 2] for i in range(0, len(data), 2)]
+        return [{i[0][0]: self.syn+'/' + i[0][1], i[1][0]: self.synSever+'/' + i[1][1]} for i in tmp]
 
-        self.ta_log.info('服务器文件路径 %s', file)
-        # 读取文件
-        settingtmp = file.read_text(encoding='utf-8')
-        if settingtmp:
-            settingtmp = json.loads(settingtmp, encoding='utf-8')
-        else:
-            return {}
-        synpath: dict
-        tmp = []
-        # 将服务器上的同步路径和本地链接
-        try:
-            for synpath in settingtmp['ep{:0>3d}Syn'.format(self.synEp)]:
-                for key, value in synpath.items():
-                    if key == 'Left':
-                        synpath[key] = str(pathlib.Path(self.syn).joinpath(value))
-                    else:
-                        synpath[key] = str(pathlib.Path(self.synSever).joinpath(value))
-                tmp.append(synpath)
-        except KeyError as err:
-            self.ta_log.error('服务器文件转为字典时出错 %s', err)
-            return None
-        except:
-            self.ta_log.error('服务器文件不知道为什么出错 %s')
-            return None
+    # @functools.lru_cache()
+    def __getseverPrjBrowser(self) -> dict:
+        """
+        返回服务器上的project设置
+        :return: dict
+        """
 
-        settingtmp['ep{:0>3d}Syn'.format(self.synEp)] = tmp
-        setting = settingtmp
-        # 返回特定部门的同步路径设置
-        return setting
+        sql_com = "SELECT DISTINCT name,value FROM `configure`"
+        data = script.MySqlComm.selsctCommMysql(self.projectname, self.department, "", sql_command=sql_com)
 
-    def getseverPrjBrowser(self) -> dict:
-        '''返回服务器上的project设置'''
-        prj_set_file = pathlib.Path(self.project).joinpath('configuration',
-                                                           'Doodle_Prj_Browser.json')
-        self.ta_log.info('服务器上的项目设置 %s', prj_set_file)
-        prjset = prj_set_file.read_text(encoding='utf-8')
-        prjset = json.loads(prjset, encoding='utf-8')
-        self.ta_log.info('服务器上的项目设置(json) %s', prjset)
-        return prjset
+        in_data_ = {key: value for key, value in data}
+        logging.info('服务器上的项目设置(json) %s', in_data_)
+        return in_data_
 
 
 class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
@@ -288,14 +175,14 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
         # 设置本地同步目录
         self.synTest.setText(str(self.setlocale.syn))
         self.synTest.textChanged.connect(
-            lambda: self.editConfZhongWen('syn', pathlib.PurePath(self.synTest.text())))
+            lambda: self.editConfZhongWen('syn', pathlib.Path(self.synTest.text())))
 
         # 设置服务器同步目录
         self.synSever.setText(str(self.setlocale.synSever))
 
         # 设置项目目录
-        self.projectTest.setText(str(self.setlocale.project))
-        self.projectTest.textChanged.connect(self.projecrEdit)
+        self.projectCombo.setCurrentText(str(self.setlocale.projectname))
+        self.projectCombo.currentIndexChanged.connect(self.projecrEdit)
 
         # 设置同步集数
         self.synEp.setValue(self.setlocale.synEp)
@@ -324,7 +211,6 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
         self.pathSynLocale.clear()
         syn_sever_path = self.setlocale.getsever()
         try:
-            syn_sever_path = syn_sever_path['ep{:0>3d}Syn'.format(self.setlocale.synEp)]
             for path in syn_sever_path:
                 self.pathSynSever.addItem(path['Left'])
                 self.pathSynLocale.addItem(path['Right'])
@@ -346,7 +232,7 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
         self.synSeverPath()
 
     def editSynEp(self):
-        self.setlocale.synEp = self.synEp.value()
+        self.setlocale.synEp = int(self.synEp.value())
         self.synSeverPath()
 
     def saveset(self):
@@ -354,8 +240,8 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
         self.ta_log_GUI.info('设置保存')
         self.setlocale.writeDoodlelocalSet()
 
-    def projecrEdit(self):
-        self.setlocale.project = self.projectTest.text()
+    def projecrEdit(self, index):
+        self.setlocale.projectname = self.projectCombo.itemText(index)
 
 
 if __name__ == '__main__':

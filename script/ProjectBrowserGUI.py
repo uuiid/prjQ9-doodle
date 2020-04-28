@@ -4,12 +4,7 @@ import os
 import pathlib
 import re
 import shutil
-import subprocess
 import sys
-import time
-from typing import Dict
-import enum
-import ffmpeg
 import tempfile
 import pyperclip
 import pypinyin
@@ -31,34 +26,8 @@ import script.MayaExportCam
 import script.synchronizeFiles
 
 
-@enum.unique
-class DoodlePrjectState(enum.Enum):
-    shot_episodes = "shot_episodes"
-    shot_shot = "shot_shot"
-    shot_department = "shot_department"
-    shot_dep_type = "shot_dep_type"
-    shot_file = "shot_file"
-    shot_thumbnail = "shot_thumbnail"
-    ass_class_sort = "ass_data_sort"
-    ass_class = "ass_class"
-    ass_class_type = "ass_class_type"
-    ass_file = "ass_file"
-    ass_thumbnail = "ass_thumbnail"
-
-
 class ProjectCore():
 
-    @property
-    def id(self):
-        if not hasattr(self, '_id'):
-            self._id = ''
-        return self._id
-
-    @id.setter
-    def id(self, id):
-        if not isinstance(id, int):
-            id = int(id)
-        self._id = id
 
     @property
     def mysqlData(self):
@@ -69,120 +38,6 @@ class ProjectCore():
     @mysqlData.setter
     def mysqlData(self, mysqlData):
         self._mysqlData = mysqlData
-
-    @property
-    def shot_root(self) -> pathlib.Path:
-        if not hasattr(self, '_shot_root'):
-            self._shot_root = pathlib.Path('')
-        return self._shot_root
-
-    @shot_root.setter
-    def shot_root(self, shot_root):
-        self._shot_root = shot_root
-
-    @property
-    def shot_episods(self) -> int:
-        if not hasattr(self, '_shot_episods'):
-            self._shot_episods = 0
-        return self._shot_episods
-
-    @shot_episods.setter
-    def shot_episods(self, shot_episods):
-        if not isinstance(shot_episods, int):
-            shot_episods = int(shot_episods)
-        self._shot_episods = shot_episods
-
-    @property
-    def shot_shot(self) -> int:
-        if not hasattr(self, '_shot_shot'):
-            self._shot_shot = 0
-        return self._shot_shot
-
-    @shot_shot.setter
-    def shot_shot(self, shot_shot):
-        self._shot_shot = shot_shot
-
-    @property
-    def shot_shotab(self) -> str:
-        if not hasattr(self, '_shot_shotab'):
-            self._shot_shotab = ''
-        return self._shot_shotab
-
-    @shot_shotab.setter
-    def shot_shotab(self, shot_shotab):
-        self._shot_shotab = shot_shotab
-
-    @property
-    def shot_department(self) -> str:
-        if not hasattr(self, '_shot_department'):
-            self._shot_department = ''
-        return self._shot_department
-
-    @shot_department.setter
-    def shot_department(self, shot_department):
-        self._shot_department = shot_department
-
-    @property
-    def shot_dep_type(self) -> str:
-        if not hasattr(self, '_shot_dep_type'):
-            self._shot_dep_type = ''
-        return self._shot_dep_type
-
-    @shot_dep_type.setter
-    def shot_dep_type(self, shot_dep_type):
-        self._shot_dep_type = shot_dep_type
-
-    @property
-    def shot_file_path(self) -> pathlib.Path:
-        if not hasattr(self, '_shot_file_path'):
-            self._shot_file_path = pathlib.Path("")
-        return self._shot_file_path
-
-    @shot_file_path.setter
-    def shot_file_path(self, shot_file_path):
-        self._shot_file_path = shot_file_path
-
-    @property
-    def shot_name(self) -> str:
-        if not hasattr(self, '_shot_name'):
-            self._shot_name = ''
-        return self._shot_name
-
-    @shot_name.setter
-    def shot_name(self, shot_name):
-        self._shot_name = shot_name
-
-    @property
-    def shot_user(self):
-        if not hasattr(self, '_shot_user'):
-            self._shot_user = ''
-        return self._shot_user
-
-    @shot_user.setter
-    def shot_user(self, shot_user):
-        self._shot_user = shot_user
-
-    @property
-    def shot_suffixes(self):
-        if not hasattr(self, '_shot_suffixes'):
-            self._shot_suffixes = ''
-        return self._shot_suffixes
-
-    @shot_suffixes.setter
-    def shot_suffixes(self, shot_suffixes):
-        self._shot_suffixes = shot_suffixes
-
-    @property
-    def shot_version(self):
-        if not hasattr(self, '_shot_version'):
-            self._shot_version = ''
-        return self._shot_version
-
-    @shot_version.setter
-    def shot_version(self, shot_version):
-        if not isinstance(shot_version, int):
-            shot_version = int(shot_version)
-        self._shot_version = shot_version
 
     @property
     def ass_root(self) -> pathlib.Path:
@@ -550,60 +405,19 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                     self.ass_suffixes = self.listAssFile.item(ass_row, 3).text()
                     self.id = int(self.listAssFile.item(ass_row, 4).text())
 
-    def MysqlData(self, table_name="", modle="get", sort="", one=False, *query, **limit) -> list:
-        """mysql命令,get需要query set不需要
-
-        """
-
-        data = self.mysqlData
-        sql_com = ""
-        file_data = [""]
-        if modle == "get":
-            _query = ','.join(query)
-            sql_com = "SELECT DISTINCT {qu} FROM `{ta}` ".format(qu=_query, ta=table_name)
-
-            if limit:
-                _limit = " AND ".join(["{} = {}".format(key, value) if isinstance(value, int)
-                                       else "{} = '{}'".format(key, value) for key, value in limit.items()])
-                sql_com += " WHERE {}".format(_limit)
-            if sort:
-                sql_com += " ORDER BY {st}".format(st=sort)
-            if one:
-                sql_com += " LIMIT 1"
-            file_data = script.MySqlComm.selsctCommMysql(data,
-                                                         self.setlocale.department,
-                                                         self.setlocale.department, sql_com)
-        elif modle == "set":
-            tmp = [[key, value] if isinstance(value, int) else [key, "'" + value + "'"] for key, value in limit.items()]
-            _query = ','.join([i[0] for i in tmp])
-            _limit = ",".join([str(i[1]) for i in tmp])
-
-            sql_com = "INSERT INTO `{table}`({clume}) VALUE ({va})".format(table=table_name, clume=_query, va=_limit)
-
-            file_data = script.MySqlComm.inserteCommMysql(data,
-                                                          self.setlocale.department,
-                                                          self.setlocale.department, sql_com)
-        elif modle == "cre":
-            pass
-        elif modle == "updata":
-            pass
-        return file_data
-
     def getShotRoot(self) -> pathlib.Path:
         # 获得项目目录
-        shot_root_ = self.setlocale.getseverPrjBrowser()['shotRoot']
+        shot_root_ = self.setlocale.shotRoot
         root = pathlib.Path(self.setlocale.project)
         # 获得根目录
-        for myP in shot_root_:
-            root = root.joinpath(myP)
+        root.joinpath(shot_root_)
         self.ta_log.info('根目录%s', root)
         return root
 
     def getAssRoot(self):
-        shot_root = self.setlocale.getseverPrjBrowser()['assetsRoot']
+        ass_root = self.setlocale.assetsRoot
         root = pathlib.Path(self.setlocale.project)
-        for myP in shot_root:
-            root = root.joinpath(myP)
+        root.joinpath(ass_root)
         return root
 
     def setepisodex(self):
@@ -1397,9 +1211,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             for shot in self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", "", False, "shot")[:]:
                 player_video_path = \
                     self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", "filetime", True, "filepath", shot=shot[0],
-                                   department=department,fileSuffixes=".mp4")[0][0]
+                                   department=department, fileSuffixes=".mp4")[0][0]
                 try:
-                    logging.info("播放文件路径 %s",player_video_path)
+                    logging.info("播放文件路径 %s", player_video_path)
                     self.pot_player.add(player_video_path)
                 except:
                     pass

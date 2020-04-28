@@ -76,7 +76,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
             self.ta_log.info('读取服务器中同步目录 %s', readServerDiectory)
             synfile_Name = '{}-ep-{}'.format(self.doodleSet.department, self.doodleSet.synEp)
             synfile = script.synXml.weiteXml(self.doodleSet.doc,
-                                             readServerDiectory['ep{:0>3d}Syn'.format(self.doodleSet.synEp)],
+                                             readServerDiectory,
                                              fileName=synfile_Name)
             program = self.doodleSet.FreeFileSync
             subprocess.run('{} "{}"'.format(program, synfile), shell=True)
@@ -117,7 +117,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.project_browser.show()
 
     def Updata(self, version: float):
-        new_version = float(self.doodleSet.getseverPrjBrowser()['version'])
+        new_version = float(self.doodleSet.version)
         url = "http://192.168.10.213:8000/dist/doodle.exe"
         tmp_path = pathlib.Path(tempfile.gettempdir()).joinpath('doodle.exe')
         if new_version > version:

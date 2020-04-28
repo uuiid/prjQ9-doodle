@@ -68,5 +68,5 @@ def weiteXml(doc: pathlib.Path, synFile: list,**syn_parameter) -> pathlib.Path:
     # 获取写入文件路径和文件命
     writePath = doc.joinpath('{}.ffs_batch'.format(syn_parameter['fileName']))
     # 写入文件
-    tree.write(writePath, encoding='utf-8', xml_declaration=True)
+    tree.write(writePath.as_posix(), encoding='utf-8', xml_declaration=True)
     return writePath

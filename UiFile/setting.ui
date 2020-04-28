@@ -196,7 +196,18 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="projectTest"/>
+           <widget class="QComboBox" name="projectCombo">
+            <item>
+             <property name="text">
+              <string>dubuxiaoyao</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>changanhuanjie</string>
+             </property>
+            </item>
+           </widget>
           </item>
          </layout>
         </item>
