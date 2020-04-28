@@ -21,14 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="9c558dd4-e952-44ae-9286-c83c632ddee1" name="默认更改列表" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UiFile/setting.py" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/setting.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UiFile/setting.ui" beforeDir="false" afterPath="$PROJECT_DIR$/UiFile/setting.ui" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/anzhuang.iss" beforeDir="false" afterPath="$PROJECT_DIR$/anzhuang.iss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/doodle_tray.py" beforeDir="false" afterPath="$PROJECT_DIR$/doodle_tray.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/script/ProjectBrowserGUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/ProjectBrowserGUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/script/doodlePlayer.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/doodlePlayer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/script/synchronizeFiles.py" beforeDir="false" afterPath="$PROJECT_DIR$/script/synchronizeFiles.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/temp.py" beforeDir="false" afterPath="$PROJECT_DIR$/temp.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -216,8 +209,8 @@
       <item itemvalue="Python.temp" />
       <item itemvalue="Python.doodle_tray" />
       <item itemvalue="Python.synchronizeFiles" />
-      <item itemvalue="Python Debug Server.Unnamed" />
       <item itemvalue="Python.doodlePlayer" />
+      <item itemvalue="Python Debug Server.Unnamed" />
     </list>
     <recent_temporary>
       <list>
@@ -277,6 +270,7 @@
       <workItem from="1587784875562" duration="874000" />
       <workItem from="1587786887311" duration="13829000" />
       <workItem from="1587809662956" duration="35631000" />
+      <workItem from="1588053441931" duration="1314000" />
     </task>
     <task id="LOCAL-00001" summary="添加xml文件写入功能">
       <created>1585389713444</created>
@@ -556,46 +550,46 @@
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state x="740" y="370" key="FileChooserDialogImpl/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587620044987" />
-    <state width="1877" height="285" key="GridCell.Tab.0.bottom" timestamp="1587896603778">
+    <state width="1877" height="279" key="GridCell.Tab.0.bottom" timestamp="1588054859448">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state width="1877" height="228" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@-1920.30.1920.1170" timestamp="1587536167256" />
-    <state width="1877" height="285" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587896603778" />
-    <state width="1877" height="285" key="GridCell.Tab.0.center" timestamp="1587896603778">
+    <state width="1877" height="279" key="GridCell.Tab.0.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1588054859448" />
+    <state width="1877" height="279" key="GridCell.Tab.0.center" timestamp="1588054859448">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state width="1877" height="228" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@-1920.30.1920.1170" timestamp="1587536167256" />
-    <state width="1877" height="285" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587896603778" />
-    <state width="1877" height="285" key="GridCell.Tab.0.left" timestamp="1587896603778">
+    <state width="1877" height="279" key="GridCell.Tab.0.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1588054859448" />
+    <state width="1877" height="279" key="GridCell.Tab.0.left" timestamp="1588054859448">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state width="1877" height="228" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@-1920.30.1920.1170" timestamp="1587536167255" />
-    <state width="1877" height="285" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587896603778" />
-    <state width="1877" height="285" key="GridCell.Tab.0.right" timestamp="1587896603778">
+    <state width="1877" height="279" key="GridCell.Tab.0.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1588054859448" />
+    <state width="1877" height="279" key="GridCell.Tab.0.right" timestamp="1588054859448">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state width="1877" height="228" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@-1920.30.1920.1170" timestamp="1587536167256" />
-    <state width="1877" height="285" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587896603778" />
-    <state width="1877" height="285" key="GridCell.Tab.1.bottom" timestamp="1587896615497">
+    <state width="1877" height="279" key="GridCell.Tab.0.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1588054859448" />
+    <state width="1877" height="279" key="GridCell.Tab.1.bottom" timestamp="1588054859450">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state width="1877" height="228" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@-1920.30.1920.1170" timestamp="1587536175894" />
-    <state width="1877" height="285" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587896615497" />
-    <state width="1877" height="285" key="GridCell.Tab.1.center" timestamp="1587896615497">
+    <state width="1877" height="279" key="GridCell.Tab.1.bottom/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1588054859450" />
+    <state width="1877" height="279" key="GridCell.Tab.1.center" timestamp="1588054859448">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state width="1877" height="228" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@-1920.30.1920.1170" timestamp="1587536175894" />
-    <state width="1877" height="285" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587896615497" />
-    <state width="1877" height="285" key="GridCell.Tab.1.left" timestamp="1587896615497">
+    <state width="1877" height="279" key="GridCell.Tab.1.center/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1588054859448" />
+    <state width="1877" height="279" key="GridCell.Tab.1.left" timestamp="1588054859448">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state width="1877" height="228" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@-1920.30.1920.1170" timestamp="1587536175894" />
-    <state width="1877" height="285" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587896615497" />
-    <state width="1877" height="285" key="GridCell.Tab.1.right" timestamp="1587896615497">
+    <state width="1877" height="279" key="GridCell.Tab.1.left/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1588054859448" />
+    <state width="1877" height="279" key="GridCell.Tab.1.right" timestamp="1588054859448">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
     <state width="1877" height="228" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@-1920.30.1920.1170" timestamp="1587536175894" />
-    <state width="1877" height="285" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1587896615497" />
+    <state width="1877" height="279" key="GridCell.Tab.1.right/-1920.30.1920.1170/0.30.1920.1170@0.30.1920.1170" timestamp="1588054859448" />
     <state width="220" height="477" key="HiddenNamespacesPopup" timestamp="1587030871795">
       <screen x="0" y="30" width="1920" height="1170" />
     </state>
@@ -667,12 +661,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/script/ProjectBrowserGUI.py</url>
-          <line>1397</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/script/ProjectBrowserGUI.py</url>
-          <line>1215</line>
+          <line>1404</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
       </breakpoints>
@@ -722,7 +711,7 @@
     <SUITE FILE_PATH="coverage/ueFile$DBXYPathAnalysis.coverage" NAME="DBXYPathAnalysis Coverage Results" MODIFIED="1586784342510" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script/ProjectAnalysis" />
     <SUITE FILE_PATH="coverage/ueFile$scratch_17.coverage" NAME="scratch_17 Coverage Results" MODIFIED="1587448764856" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
     <SUITE FILE_PATH="coverage/doodle$doodlePlayer.coverage" NAME="doodlePlayer Coverage Results" MODIFIED="1587885816339" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script" />
-    <SUITE FILE_PATH="coverage/doodle$doodle_tray.coverage" NAME="doodle_tray Coverage Results" MODIFIED="1587896603674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/doodle$doodle_tray.coverage" NAME="doodle_tray Coverage Results" MODIFIED="1588054037722" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ueFile$tmp__1_.coverage" NAME="tmp (1) Coverage Results" MODIFIED="1587277442296" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tools" />
     <SUITE FILE_PATH="coverage/ueFile$pyConMYSQL.coverage" NAME="pyConMYSQL Coverage Results" MODIFIED="1587005826087" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/doodle$synchronizeFiles.coverage" NAME="synchronizeFiles Coverage Results" MODIFIED="1587712384398" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/script" />
