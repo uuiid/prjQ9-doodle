@@ -1209,14 +1209,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         else:
             self.pot_player = potplayer.PlayList()
             for shot in self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", "", False, "shot")[:]:
-                player_video_path = \
-                    self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", "filetime", True, "filepath", shot=shot[0],
-                                   department=department, fileSuffixes=".mp4")[0][0]
                 try:
-                    logging.info("播放文件路径 %s", player_video_path)
-                    self.pot_player.add(player_video_path)
+                    player_video_path = \
+                        self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", "filetime", True, "filepath", shot=shot[0],
+                                       department=department,fileSuffixes=".mp4")[0][0]
                 except:
                     pass
+                else:
+                    logging.info("播放文件路径 %s",player_video_path)
+                    self.pot_player.add(player_video_path)
             tmp_path: str = os.path.join(tempfile.gettempdir(), "potplayer_temp_long.dpl")
             self.pot_player.dump(tmp_path)
             potplayer.run(tmp_path)

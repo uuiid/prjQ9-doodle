@@ -942,1182 +942,2066 @@
     <table id="312" parent="2" name="scane"/>
     <table id="313" parent="2" name="synpath"/>
     <table id="314" parent="2" name="test"/>
+<<<<<<< HEAD
     <table id="315" parent="8" name="tb_tmp"/>
     <column id="316" parent="292" name="id">
+=======
+    <column id="315" parent="292" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="317" parent="292" name="name">
+=======
+    <column id="316" parent="292" name="name">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>varchar(256)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="318" parent="292" name="type">
+=======
+    <column id="317" parent="292" name="type">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="319" parent="292" name="file">
+=======
+    <column id="318" parent="292" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="320" parent="292" name="fileSuffixes">
+=======
+    <column id="319" parent="292" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="321" parent="292" name="user">
+=======
+    <column id="320" parent="292" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="322" parent="292" name="version">
+=======
+    <column id="321" parent="292" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="323" parent="292" name="infor">
+=======
+    <column id="322" parent="292" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="324" parent="292" name="filepath">
+=======
+    <column id="323" parent="292" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="325" parent="292" name="filetime">
+=======
+    <column id="324" parent="292" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="326" parent="292" name="PRIMARY">
+=======
+    <key id="325" parent="292" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="327" parent="293" name="name">
+=======
+    <column id="326" parent="293" name="name">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="328" parent="293" name="value">
+=======
+    <column id="327" parent="293" name="value">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="329" parent="293" name="id">
+=======
+    <column id="328" parent="293" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="330" parent="293" name="value2">
+=======
+    <column id="329" parent="293" name="value2">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="331" parent="293" name="value3">
+=======
+    <column id="330" parent="293" name="value3">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(256)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="332" parent="293" name="value4">
+=======
+    <column id="331" parent="293" name="value4">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <key id="333" parent="293" name="PRIMARY">
+=======
+    <key id="332" parent="293" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="334" parent="294" name="id">
+=======
+    <column id="333" parent="294" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="335" parent="294" name="name">
+=======
+    <column id="334" parent="294" name="name">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>varchar(256)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="336" parent="294" name="type">
+=======
+    <column id="335" parent="294" name="type">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="337" parent="294" name="file">
+=======
+    <column id="336" parent="294" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="338" parent="294" name="fileSuffixes">
+=======
+    <column id="337" parent="294" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="339" parent="294" name="user">
+=======
+    <column id="338" parent="294" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="340" parent="294" name="version">
+=======
+    <column id="339" parent="294" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="341" parent="294" name="infor">
+=======
+    <column id="340" parent="294" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="342" parent="294" name="filepath">
+=======
+    <column id="341" parent="294" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="343" parent="294" name="filetime">
+=======
+    <column id="342" parent="294" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="344" parent="294" name="PRIMARY">
+=======
+    <key id="343" parent="294" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="345" parent="295" name="id">
+=======
+    <column id="344" parent="295" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="346" parent="295" name="episodes">
+=======
+    <column id="345" parent="295" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="347" parent="295" name="shot">
+=======
+    <column id="346" parent="295" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="348" parent="295" name="shotab">
+=======
+    <column id="347" parent="295" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="349" parent="295" name="department">
+=======
+    <column id="348" parent="295" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="350" parent="295" name="Type">
+=======
+    <column id="349" parent="295" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="351" parent="295" name="file">
+=======
+    <column id="350" parent="295" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="352" parent="295" name="fileSuffixes">
+=======
+    <column id="351" parent="295" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="353" parent="295" name="user">
+=======
+    <column id="352" parent="295" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="354" parent="295" name="version">
+=======
+    <column id="353" parent="295" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="355" parent="295" name="filepath">
+=======
+    <column id="354" parent="295" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <key id="356" parent="295" name="PRIMARY">
+=======
+    <key id="355" parent="295" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="357" parent="296" name="id">
+=======
+    <column id="356" parent="296" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="358" parent="296" name="episodes">
+=======
+    <column id="357" parent="296" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="359" parent="296" name="shot">
+=======
+    <column id="358" parent="296" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="360" parent="296" name="shotab">
+=======
+    <column id="359" parent="296" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="361" parent="296" name="department">
+=======
+    <column id="360" parent="296" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="362" parent="296" name="Type">
+=======
+    <column id="361" parent="296" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="363" parent="296" name="file">
+=======
+    <column id="362" parent="296" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="364" parent="296" name="fileSuffixes">
+=======
+    <column id="363" parent="296" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="365" parent="296" name="user">
+=======
+    <column id="364" parent="296" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="366" parent="296" name="version">
+=======
+    <column id="365" parent="296" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="367" parent="296" name="filepath">
+=======
+    <column id="366" parent="296" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="368" parent="296" name="infor">
+=======
+    <column id="367" parent="296" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="369" parent="296" name="filetime">
+=======
+    <column id="368" parent="296" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="370" parent="296" name="PRIMARY">
+=======
+    <key id="369" parent="296" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="371" parent="297" name="id">
+=======
+    <column id="370" parent="297" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="372" parent="297" name="episodes">
+=======
+    <column id="371" parent="297" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="373" parent="297" name="shot">
+=======
+    <column id="372" parent="297" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="374" parent="297" name="shotab">
+=======
+    <column id="373" parent="297" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="375" parent="297" name="department">
+=======
+    <column id="374" parent="297" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="376" parent="297" name="Type">
+=======
+    <column id="375" parent="297" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="377" parent="297" name="file">
+=======
+    <column id="376" parent="297" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="378" parent="297" name="fileSuffixes">
+=======
+    <column id="377" parent="297" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="379" parent="297" name="user">
+=======
+    <column id="378" parent="297" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="380" parent="297" name="version">
+=======
+    <column id="379" parent="297" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="381" parent="297" name="filepath">
+=======
+    <column id="380" parent="297" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="382" parent="297" name="infor">
+=======
+    <column id="381" parent="297" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="383" parent="297" name="filetime">
+=======
+    <column id="382" parent="297" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="384" parent="297" name="PRIMARY">
+=======
+    <key id="383" parent="297" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="385" parent="298" name="id">
+=======
+    <column id="384" parent="298" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="386" parent="298" name="episodes">
+=======
+    <column id="385" parent="298" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="387" parent="298" name="shot">
+=======
+    <column id="386" parent="298" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="388" parent="298" name="shotab">
+=======
+    <column id="387" parent="298" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="389" parent="298" name="department">
+=======
+    <column id="388" parent="298" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="390" parent="298" name="Type">
+=======
+    <column id="389" parent="298" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="391" parent="298" name="file">
+=======
+    <column id="390" parent="298" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="392" parent="298" name="fileSuffixes">
+=======
+    <column id="391" parent="298" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="393" parent="298" name="user">
+=======
+    <column id="392" parent="298" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="394" parent="298" name="version">
+=======
+    <column id="393" parent="298" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="395" parent="298" name="filepath">
+=======
+    <column id="394" parent="298" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="396" parent="298" name="infor">
+=======
+    <column id="395" parent="298" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="397" parent="298" name="filetime">
+=======
+    <column id="396" parent="298" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="398" parent="298" name="PRIMARY">
+=======
+    <key id="397" parent="298" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="399" parent="299" name="id">
+=======
+    <column id="398" parent="299" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="400" parent="299" name="episodes">
+=======
+    <column id="399" parent="299" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="401" parent="299" name="shot">
+=======
+    <column id="400" parent="299" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="402" parent="299" name="shotab">
+=======
+    <column id="401" parent="299" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="403" parent="299" name="department">
+=======
+    <column id="402" parent="299" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="404" parent="299" name="Type">
+=======
+    <column id="403" parent="299" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="405" parent="299" name="file">
+=======
+    <column id="404" parent="299" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="406" parent="299" name="fileSuffixes">
+=======
+    <column id="405" parent="299" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="407" parent="299" name="user">
+=======
+    <column id="406" parent="299" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="408" parent="299" name="version">
+=======
+    <column id="407" parent="299" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="409" parent="299" name="filepath">
+=======
+    <column id="408" parent="299" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="410" parent="299" name="infor">
+=======
+    <column id="409" parent="299" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="411" parent="299" name="filetime">
+=======
+    <column id="410" parent="299" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="412" parent="299" name="PRIMARY">
+=======
+    <key id="411" parent="299" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="413" parent="300" name="id">
+=======
+    <column id="412" parent="300" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="414" parent="300" name="episodes">
+=======
+    <column id="413" parent="300" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="415" parent="300" name="shot">
+=======
+    <column id="414" parent="300" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="416" parent="300" name="shotab">
+=======
+    <column id="415" parent="300" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="417" parent="300" name="department">
+=======
+    <column id="416" parent="300" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="418" parent="300" name="Type">
+=======
+    <column id="417" parent="300" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="419" parent="300" name="file">
+=======
+    <column id="418" parent="300" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="420" parent="300" name="fileSuffixes">
+=======
+    <column id="419" parent="300" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="421" parent="300" name="user">
+=======
+    <column id="420" parent="300" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="422" parent="300" name="version">
+=======
+    <column id="421" parent="300" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="423" parent="300" name="filepath">
+=======
+    <column id="422" parent="300" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="424" parent="300" name="infor">
+=======
+    <column id="423" parent="300" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="425" parent="300" name="filetime">
+=======
+    <column id="424" parent="300" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="426" parent="300" name="PRIMARY">
+=======
+    <key id="425" parent="300" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="427" parent="301" name="id">
+=======
+    <column id="426" parent="301" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="428" parent="301" name="episodes">
+=======
+    <column id="427" parent="301" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="429" parent="301" name="shot">
+=======
+    <column id="428" parent="301" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="430" parent="301" name="shotab">
+=======
+    <column id="429" parent="301" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="431" parent="301" name="department">
+=======
+    <column id="430" parent="301" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="432" parent="301" name="Type">
+=======
+    <column id="431" parent="301" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="433" parent="301" name="file">
+=======
+    <column id="432" parent="301" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="434" parent="301" name="fileSuffixes">
+=======
+    <column id="433" parent="301" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="435" parent="301" name="user">
+=======
+    <column id="434" parent="301" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="436" parent="301" name="version">
+=======
+    <column id="435" parent="301" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="437" parent="301" name="filepath">
+=======
+    <column id="436" parent="301" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="438" parent="301" name="infor">
+=======
+    <column id="437" parent="301" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="439" parent="301" name="filetime">
+=======
+    <column id="438" parent="301" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="440" parent="301" name="PRIMARY">
+=======
+    <key id="439" parent="301" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="441" parent="302" name="id">
+=======
+    <column id="440" parent="302" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="442" parent="302" name="episodes">
+=======
+    <column id="441" parent="302" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="443" parent="302" name="shot">
+=======
+    <column id="442" parent="302" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="444" parent="302" name="shotab">
+=======
+    <column id="443" parent="302" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="445" parent="302" name="department">
+=======
+    <column id="444" parent="302" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="446" parent="302" name="Type">
+=======
+    <column id="445" parent="302" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="447" parent="302" name="file">
+=======
+    <column id="446" parent="302" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="448" parent="302" name="fileSuffixes">
+=======
+    <column id="447" parent="302" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="449" parent="302" name="user">
+=======
+    <column id="448" parent="302" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="450" parent="302" name="version">
+=======
+    <column id="449" parent="302" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="451" parent="302" name="filepath">
+=======
+    <column id="450" parent="302" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="452" parent="302" name="infor">
+=======
+    <column id="451" parent="302" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="453" parent="302" name="filetime">
+=======
+    <column id="452" parent="302" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="454" parent="302" name="PRIMARY">
+=======
+    <key id="453" parent="302" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="455" parent="303" name="id">
+=======
+    <column id="454" parent="303" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="456" parent="303" name="episodes">
+=======
+    <column id="455" parent="303" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="457" parent="303" name="shot">
+=======
+    <column id="456" parent="303" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="458" parent="303" name="shotab">
+=======
+    <column id="457" parent="303" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="459" parent="303" name="department">
+=======
+    <column id="458" parent="303" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="460" parent="303" name="Type">
+=======
+    <column id="459" parent="303" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="461" parent="303" name="file">
+=======
+    <column id="460" parent="303" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="462" parent="303" name="fileSuffixes">
+=======
+    <column id="461" parent="303" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="463" parent="303" name="user">
+=======
+    <column id="462" parent="303" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="464" parent="303" name="version">
+=======
+    <column id="463" parent="303" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="465" parent="303" name="filepath">
+=======
+    <column id="464" parent="303" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="466" parent="303" name="infor">
+=======
+    <column id="465" parent="303" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="467" parent="303" name="filetime">
+=======
+    <column id="466" parent="303" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="468" parent="303" name="PRIMARY">
+=======
+    <key id="467" parent="303" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="469" parent="304" name="id">
+=======
+    <column id="468" parent="304" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="470" parent="304" name="episodes">
+=======
+    <column id="469" parent="304" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="471" parent="304" name="shot">
+=======
+    <column id="470" parent="304" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="472" parent="304" name="shotab">
+=======
+    <column id="471" parent="304" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="473" parent="304" name="department">
+=======
+    <column id="472" parent="304" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="474" parent="304" name="Type">
+=======
+    <column id="473" parent="304" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="475" parent="304" name="file">
+=======
+    <column id="474" parent="304" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="476" parent="304" name="fileSuffixes">
+=======
+    <column id="475" parent="304" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="477" parent="304" name="user">
+=======
+    <column id="476" parent="304" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="478" parent="304" name="version">
+=======
+    <column id="477" parent="304" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="479" parent="304" name="filepath">
+=======
+    <column id="478" parent="304" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="480" parent="304" name="infor">
+=======
+    <column id="479" parent="304" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="481" parent="304" name="filetime">
+=======
+    <column id="480" parent="304" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="482" parent="304" name="PRIMARY">
+=======
+    <key id="481" parent="304" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="483" parent="305" name="id">
+=======
+    <column id="482" parent="305" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="484" parent="305" name="episodes">
+=======
+    <column id="483" parent="305" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="485" parent="305" name="shot">
+=======
+    <column id="484" parent="305" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="486" parent="305" name="shotab">
+=======
+    <column id="485" parent="305" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="487" parent="305" name="department">
+=======
+    <column id="486" parent="305" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="488" parent="305" name="Type">
+=======
+    <column id="487" parent="305" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="489" parent="305" name="file">
+=======
+    <column id="488" parent="305" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="490" parent="305" name="fileSuffixes">
+=======
+    <column id="489" parent="305" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="491" parent="305" name="user">
+=======
+    <column id="490" parent="305" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="492" parent="305" name="version">
+=======
+    <column id="491" parent="305" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="493" parent="305" name="filepath">
+=======
+    <column id="492" parent="305" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="494" parent="305" name="infor">
+=======
+    <column id="493" parent="305" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="495" parent="305" name="filetime">
+=======
+    <column id="494" parent="305" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="496" parent="305" name="PRIMARY">
+=======
+    <key id="495" parent="305" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="497" parent="306" name="id">
+=======
+    <column id="496" parent="306" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="498" parent="306" name="episodes">
+=======
+    <column id="497" parent="306" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="499" parent="306" name="shot">
+=======
+    <column id="498" parent="306" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="500" parent="306" name="shotab">
+=======
+    <column id="499" parent="306" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="501" parent="306" name="department">
+=======
+    <column id="500" parent="306" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="502" parent="306" name="Type">
+=======
+    <column id="501" parent="306" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="503" parent="306" name="file">
+=======
+    <column id="502" parent="306" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="504" parent="306" name="fileSuffixes">
+=======
+    <column id="503" parent="306" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="505" parent="306" name="user">
+=======
+    <column id="504" parent="306" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="506" parent="306" name="version">
+=======
+    <column id="505" parent="306" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="507" parent="306" name="filepath">
+=======
+    <column id="506" parent="306" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="508" parent="306" name="infor">
+=======
+    <column id="507" parent="306" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="509" parent="306" name="filetime">
+=======
+    <column id="508" parent="306" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="510" parent="306" name="PRIMARY">
+=======
+    <key id="509" parent="306" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="511" parent="307" name="id">
+=======
+    <column id="510" parent="307" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="512" parent="307" name="episodes">
+=======
+    <column id="511" parent="307" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="513" parent="307" name="shot">
+=======
+    <column id="512" parent="307" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="514" parent="307" name="shotab">
+=======
+    <column id="513" parent="307" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="515" parent="307" name="department">
+=======
+    <column id="514" parent="307" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="516" parent="307" name="Type">
+=======
+    <column id="515" parent="307" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="517" parent="307" name="file">
+=======
+    <column id="516" parent="307" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="518" parent="307" name="fileSuffixes">
+=======
+    <column id="517" parent="307" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="519" parent="307" name="user">
+=======
+    <column id="518" parent="307" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="520" parent="307" name="version">
+=======
+    <column id="519" parent="307" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="521" parent="307" name="filepath">
+=======
+    <column id="520" parent="307" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="522" parent="307" name="infor">
+=======
+    <column id="521" parent="307" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="523" parent="307" name="filetime">
+=======
+    <column id="522" parent="307" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="524" parent="307" name="PRIMARY">
+=======
+    <key id="523" parent="307" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="525" parent="308" name="id">
+=======
+    <column id="524" parent="308" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="526" parent="308" name="episodes">
+=======
+    <column id="525" parent="308" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="527" parent="308" name="shot">
+=======
+    <column id="526" parent="308" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="528" parent="308" name="shotab">
+=======
+    <column id="527" parent="308" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="529" parent="308" name="department">
+=======
+    <column id="528" parent="308" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="530" parent="308" name="Type">
+=======
+    <column id="529" parent="308" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="531" parent="308" name="file">
+=======
+    <column id="530" parent="308" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="532" parent="308" name="fileSuffixes">
+=======
+    <column id="531" parent="308" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="533" parent="308" name="user">
+=======
+    <column id="532" parent="308" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="534" parent="308" name="version">
+=======
+    <column id="533" parent="308" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="535" parent="308" name="filepath">
+=======
+    <column id="534" parent="308" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="536" parent="308" name="filetime">
+=======
+    <column id="535" parent="308" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>datetime|0s</DataType>
       <NotNull>1</NotNull>
@@ -2125,74 +3009,130 @@
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="537" parent="308" name="PRIMARY">
+=======
+    <key id="536" parent="308" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="538" parent="309" name="id">
+=======
+    <column id="537" parent="309" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="539" parent="309" name="episodes">
+=======
+    <column id="538" parent="309" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="540" parent="309" name="shot">
+=======
+    <column id="539" parent="309" name="shot">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="541" parent="309" name="shotab">
+=======
+    <column id="540" parent="309" name="shotab">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(8)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="542" parent="309" name="department">
+=======
+    <column id="541" parent="309" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="543" parent="309" name="Type">
+=======
+    <column id="542" parent="309" name="Type">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="544" parent="309" name="file">
+=======
+    <column id="543" parent="309" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="545" parent="309" name="fileSuffixes">
+=======
+    <column id="544" parent="309" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="546" parent="309" name="user">
+=======
+    <column id="545" parent="309" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="547" parent="309" name="version">
+=======
+    <column id="546" parent="309" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="548" parent="309" name="filepath">
+=======
+    <column id="547" parent="309" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>11</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="549" parent="309" name="itfor">
+=======
+    <column id="548" parent="309" name="itfor">
+>>>>>>> 修复批量打开时闪退
       <Position>12</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="550" parent="309" name="filetime">
+=======
+    <column id="549" parent="309" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>13</Position>
       <DataType>datetime|0s</DataType>
       <NotNull>1</NotNull>
@@ -2200,195 +3140,336 @@
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="551" parent="309" name="PRIMARY">
+=======
+    <key id="550" parent="309" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="552" parent="310" name="id">
+=======
+    <column id="551" parent="310" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="553" parent="310" name="episods">
+=======
+    <column id="552" parent="310" name="episods">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <key id="554" parent="310" name="PRIMARY">
+=======
+    <key id="553" parent="310" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="555" parent="311" name="id">
+=======
+    <column id="554" parent="311" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="556" parent="311" name="name">
+=======
+    <column id="555" parent="311" name="name">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>varchar(256)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="557" parent="311" name="type">
+=======
+    <column id="556" parent="311" name="type">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="558" parent="311" name="file">
+=======
+    <column id="557" parent="311" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="559" parent="311" name="fileSuffixes">
+=======
+    <column id="558" parent="311" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="560" parent="311" name="user">
+=======
+    <column id="559" parent="311" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="561" parent="311" name="version">
+=======
+    <column id="560" parent="311" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="562" parent="311" name="infor">
+=======
+    <column id="561" parent="311" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="563" parent="311" name="filepath">
+=======
+    <column id="562" parent="311" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="564" parent="311" name="filetime">
+=======
+    <column id="563" parent="311" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="565" parent="311" name="PRIMARY">
+=======
+    <key id="564" parent="311" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="566" parent="312" name="id">
+=======
+    <column id="565" parent="312" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="567" parent="312" name="name">
+=======
+    <column id="566" parent="312" name="name">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>varchar(256)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="568" parent="312" name="type">
+=======
+    <column id="567" parent="312" name="type">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="569" parent="312" name="file">
+=======
+    <column id="568" parent="312" name="file">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="570" parent="312" name="fileSuffixes">
+=======
+    <column id="569" parent="312" name="fileSuffixes">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(32)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="571" parent="312" name="user">
+=======
+    <column id="570" parent="312" name="user">
+>>>>>>> 修复批量打开时闪退
       <Position>6</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="572" parent="312" name="version">
+=======
+    <column id="571" parent="312" name="version">
+>>>>>>> 修复批量打开时闪退
       <Position>7</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="573" parent="312" name="infor">
+=======
+    <column id="572" parent="312" name="infor">
+>>>>>>> 修复批量打开时闪退
       <Position>8</Position>
       <DataType>varchar(4096)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="574" parent="312" name="filepath">
+=======
+    <column id="573" parent="312" name="filepath">
+>>>>>>> 修复批量打开时闪退
       <Position>9</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="575" parent="312" name="filetime">
+=======
+    <column id="574" parent="312" name="filetime">
+>>>>>>> 修复批量打开时闪退
       <Position>10</Position>
       <DataType>datetime|0s</DataType>
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
       <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
     </column>
+<<<<<<< HEAD
     <key id="576" parent="312" name="PRIMARY">
+=======
+    <key id="575" parent="312" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="577" parent="313" name="id">
+=======
+    <column id="576" parent="313" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="578" parent="313" name="department">
+=======
+    <column id="577" parent="313" name="department">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>varchar(128)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="579" parent="313" name="episodes">
+=======
+    <column id="578" parent="313" name="episodes">
+>>>>>>> 修复批量打开时闪退
       <Position>3</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="580" parent="313" name="synleft">
+=======
+    <column id="579" parent="313" name="synleft">
+>>>>>>> 修复批量打开时闪退
       <Position>4</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="581" parent="313" name="synright">
+=======
+    <column id="580" parent="313" name="synright">
+>>>>>>> 修复批量打开时闪退
       <Position>5</Position>
       <DataType>varchar(1024)|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <key id="582" parent="313" name="PRIMARY">
+=======
+    <key id="581" parent="313" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="583" parent="314" name="id">
+=======
+    <column id="582" parent="314" name="id">
+>>>>>>> 修复批量打开时闪退
       <Position>1</Position>
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>1</SequenceIdentity>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <column id="584" parent="314" name="ep">
+=======
+    <column id="583" parent="314" name="ep">
+>>>>>>> 修复批量打开时闪退
       <Position>2</Position>
       <DataType>smallint|0s</DataType>
       <ColumnKind>normal</ColumnKind>
     </column>
+<<<<<<< HEAD
     <key id="585" parent="314" name="PRIMARY">
+=======
+    <key id="584" parent="314" name="PRIMARY">
+>>>>>>> 修复批量打开时闪退
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
+<<<<<<< HEAD
     <column id="586" parent="315" name="id">
       <Position>1</Position>
       <DataType>int|0s</DataType>
@@ -2421,5 +3502,7 @@
       <ColNames>test</ColNames>
       <Primary>1</Primary>
     </key>
+=======
+>>>>>>> 修复批量打开时闪退
   </database-model>
 </dataSource>
