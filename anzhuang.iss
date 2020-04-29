@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{3B2A275E-0B9F-4C34-A5A1-AD540C89F0D0}
 AppName=doodle
-AppVersion=0.1.1
+AppVersion=0.1.5
 ;AppVerName=doodle 0.1.1
 AppPublisher=My Company, Inc.
 AppPublisherURL=http://www.example.com/
@@ -36,6 +36,7 @@ Name: "{group}\doodle"; Filename: "{app}\doodle_tray.exe"
 Name: "{group}\{cm:ProgramOnTheWeb,doodle}"; Filename: "http://www.example.com/"
 Name: "{group}\{cm:UninstallProgram,doodle}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\doodle"; Filename: "{app}\doodle_tray.exe"; Tasks: desktopicon
+Name: "{commondesktop}\maya¿ì½Ýµ¼³ö"; Filename: "{app}\tools\daoChu.cmd"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\doodle"; Filename: "{app}\doodle_tray.exe"; Tasks: quicklaunchicon
 
 [Run]

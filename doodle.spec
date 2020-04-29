@@ -4,16 +4,13 @@ block_cipher = None
 
 
 a = Analysis(['doodle_tray.py'],
-             pathex=['D:\\ueFile'],
+             pathex=['C:\\Users\\teXiao\\doodle'],
              binaries=[],
-
              datas=[('datas\\icon.png','datas'),
              ('UiFile','UiFile'),
              ('tools','tools'),
              ('config','config')],
-
              hiddenimports=[],
-
              hookspath=[],
              runtime_hooks=[],
              excludes=[],

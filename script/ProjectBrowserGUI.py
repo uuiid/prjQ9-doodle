@@ -5,6 +5,10 @@ import pathlib
 import re
 import shutil
 import sys
+import time
+
+import enum
+import ffmpeg
 import tempfile
 import pyperclip
 import pypinyin
@@ -22,9 +26,8 @@ import script.doodleLog
 import script.doodle_setting
 import script.synXml
 import script.doodlePlayer
-import script.MayaExportCam
 import script.synchronizeFiles
-
+import script.MayaExportCam
 
 class ProjectCore():
 
@@ -661,7 +664,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                     if self.listdepType.selectedItems():
                         version += 1
                         self.shot_name = f"shot_ep{self.shot_episods:0>3d}_sc{self.shot_shot:0>4d}_" \
-                                         f"{self.shot_department}" \
+                                         f"{self.shot_department}_" \
                                          f"{self.shot_dep_type}_v{version:0>4d}" \
                                          f"__{user_}_{path.suffix}"
                         dst_file = self.shot_file_path.joinpath(self.shot_name)  # type:pathlib.Path
@@ -674,7 +677,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 if path.suffix in ['.fbx', '.usd']:
                     if self.listAssType.selectedItems():
                         self.shot_name = f"shot_ep{self.shot_episods:0>3d}_sc{self.shot_shot:0>4d}_" \
-                                         f"{self.shot_department}" \
+                                         f"{self.shot_department}_" \
                                          f"{self.shot_dep_type}_v{version:0>4d}" \
                                          f"__{user_}_{path.suffix}"
                         dst_file = self.shot_file_path.joinpath(self.shot_name)  # type:pathlib.Path
@@ -1000,6 +1003,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         else:
             export_maya = script.MayaExportCam.export(file_data)
             export_maya.exportCam()
+            QtWidgets.QMessageBox.warning(self, "点击:", "点击导出 "
+                                                           "请点击桌面maya导出快捷方式"
+                                          , QtWidgets.QMessageBox.Yes)
 
     def Screenshot(self):
         path = pathlib.Path("")
