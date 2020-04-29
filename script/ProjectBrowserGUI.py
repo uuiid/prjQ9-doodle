@@ -40,6 +40,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def __init__(self, parent=None):
         super(ProjectBrowserGUI, self).__init__()
         # 获取设置
+
         self.setlocale = script.doodle_setting.Doodlesetting()
         """======================================================================="""
         # 导入解析项目模块
@@ -52,6 +53,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         """======================================================================="""
         # 初始化一些属性
         self.user = pypinyin.slug(self.setlocale.user, pypinyin.NORMAL)
+        self.recentlyOpenedFolder = ""
         # 设置UI
         self.setupUi(self)
 
@@ -110,11 +112,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # </editor-fold>
 
         # 添加截图功能
-        self.ass_screenshot.clicked.connect(self.Screenshot)
-        self.shot_screenshots.clicked.connect(self.Screenshot)
+        self.ass_screenshot.clicked.connect(lambda: self.Screenshot("ass", self.ass_thumbnail))
+        self.shot_screenshots.clicked.connect(lambda: self.Screenshot("shot", self.shot_thumbnail))
         # 添加上传拍屏功能
-        self.shot_upload.clicked.connect(self.uploadFlipBook)
-        self.ass_upload.clicked.connect(self.uploadFlipBook)
+        self.shot_upload.clicked.connect(lambda: self.uploadFlipBook(self.shot))
+        self.ass_upload.clicked.connect(lambda: self.uploadFlipBook(self.ass))
 
         # 打开拍屏功能
         self.ass_player.clicked.connect(lambda: self.playerButtenClicked(one_or_mut="one"))
@@ -133,7 +135,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 在depType中添加点击跟新文件事件
         self.listdepType.itemClicked.connect(self.listDepTypeClicked)
         # 在文件中添加点击事件
-        self.listfile.itemClicked.connect(self.ClickedUpdataAtt)
+        self.listfile.itemClicked.connect(self.shotFileClicked)
         # </editor-fold>
 
         # 设置ass类型
@@ -147,7 +149,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 在listType中添加点击事件生成file列表
         self.listAssType.itemClicked.connect(self.assClassTypeClicked)
         # 在listassfile中获得资产信息
-        self.listAssFile.itemClicked.connect(self.ClickedUpdataAtt)
+        self.listAssFile.itemClicked.connect(self.assFileClicked)
 
         # 双击打开文件
         self.listfile.doubleClicked.connect(self.openShotFile)
@@ -247,6 +249,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     # </editor-fold>
 
+    # <editor-fold desc="镜头更新事件">
     def setepisodex(self):
         self.listepisodes.clear()
         self.listshot.clear()
@@ -311,18 +314,21 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListFile()
-        self.setThumbnail()
 
         self.setFileItem(self.shot.getFile())
 
-        self.setThumbnail()
+        self.setThumbnail("shot", self.shot_thumbnail)
+
+    def shotFileClicked(self):
+        shot_row = self.listfile.currentRow()
+        self.shot.version = int(self.listfile.item(shot_row, 0).text()[1:])
+        self.shot.suffix = self.listfile.item(shot_row, 3).text()
+        self.shot.id = int(self.listfile.item(shot_row, 4).text())
 
     def setFileItem(self, items):
         '''设置文件在GUI中的显示'''
-
+        mrow = 0
         for item in items:
-            mrow = 0
-
             self.listfile.insertRow(mrow)
             self.listfile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
             self.listfile.setItem(mrow, 1, QtWidgets.QTableWidgetItem(item[1]))
@@ -369,11 +375,18 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def assClassTypeClicked(self):
         """资产类别点击事件"""
         self.ass.ass_type = self.listAssType.selectedItems()[0].text()
-        self.setThumbnail()
+        self.setThumbnail("ass", self.ass_thumbnail)
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListAssFile()
 
-        self.setAssFileItem(self.ass.getFile())
+        self.setAssFileItem(self.ass.getFileInfo())
+
+    def assFileClicked(self):
+        ass_row = self.listAssFile.currentRow()
+        self.ass.version = int(self.listAssFile.item(ass_row, 0).text()[1:])
+        # self.ass.user = self.listAssFile.item(ass_row, 2).text()
+        # self.ass.suffixes = self.listAssFile.item(ass_row, 3).text()
+        self.ass.id = int(self.listAssFile.item(ass_row, 4).text())
 
     def setAssFileItem(self, file_data):
         """设置资产文件在GUI中的显示"""
@@ -441,11 +454,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
                 logging.info('%s ---> %s', path, dst_file)
 
-                self.shot.submitShotInfo(filename=shot_name,
-                                         suffix=path.suffix, user=self.user,
-                                         version=version,
-                                         filepathAndname=dst_file.as_posix(),
-                                         infor="")
+                self.shot.submitInfo(filename=shot_name,
+                                     suffix=path.suffix, user=self.user,
+                                     version=version,
+                                     filepathAndname=dst_file.as_posix(),
+                                     infor="")
                 self.listDepTypeClicked()
                 self.enableBorder(False)
             else:
@@ -511,61 +524,55 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         上传资产文件 弹出选项框
         :return:
         """
-        file, fileType = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                               "选择上传文件",
-                                                               self.recentlyOpenedFolder,
-                                                               "files (*.mb *.ma *.uproject *.max "
-                                                               "*.fbx *.png *.tga *.jpg)")
+        file, file_type = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                                "选择上传文件",
+                                                                self.recentlyOpenedFolder,
+                                                                "files (*.mb *.ma *.uproject *.max "
+                                                                "*.fbx *.png *.tga *.jpg)")
         remarks_info = self.recentlyOpenedFolder = QtWidgets.QInputDialog.getText(self,
                                                                                   "填写备注(中文)",
                                                                                   "备注",
                                                                                   QtWidgets.QLineEdit.Normal)[0]
-
         self.recentlyOpenedFolder = file
-
         if file and self.listAssType.selectedItems():
             file = pathlib.Path(file)
             version_max = self.ass.getMaxVersion() + 1
+            target_file = self.ass.getFilePath().joinpath(self.ass.getFileName(version=version_max,
+                                                                               user_=self.user,
+                                                                               suffix=file.suffix))
 
             if file.suffix in ['.mb', '.ma', '.max']:
-                target_file = self.ass.getFilePath()
-                file_name = self.ass.getFileName()
-                self.assUploadFileHandle(file,version_max)
+                self.backupCopy(file, target_file, version_max)
             elif file.suffix in [".fbx"]:
-                self.assUploadFileHandle(file,version_max)
+                version_max -= 1
+                self.backupCopy(file, target_file, version_max)
             elif file.suffix in ['.uproject']:
-                self.assUploadFileUE4Handle(file)
+                self.assUploadFileUE4Handle(file, target_file)
             elif file.suffix in ['.png', '.tga', 'jpg']:
-                self.assUploadMapHandle(file)
+                self.assUploadMapHandle(file, target_file, version_max)
             else:
                 pass
-            self.MysqlData(self.ass_class_sort, "set", '', False,
-                           name=self.ass_class, type=self.ass_class_type,
-                           file=self.ass_file_name, fileSuffixes=file.suffix,
-                           user=self.setlocale.user, version=version_max, infor=remarks_info,
-                           filepath=file.as_posix())
+            self.ass.submitInfo(target_file.name, target_file.stem, self.user, version_max,
+                                infor=remarks_info, filepath_and_name=target_file.as_posix())
 
         self.assClassTypeClicked()
 
     @script.doodleLog.erorrDecorator
-    def assUploadMapHandle(self, file: pathlib.Path):
+    def assUploadMapHandle(self, soure_file: pathlib.Path, target: pathlib.Path, version: int):
         """
         上传贴图文件
-        :param file: pathlib.Path
+        :param version:
+        :param target:
+        :param soure_file: pathlib.Path
         :return: int
         """
-        version = self.getMaxVersion() + 1
-        file_path = file.parent
-        target_file: pathlib.Path = self.ass_file_path
-        file_str = f'^{self.ass_class}_.*_(?:Color|Normal|bump|alpha)$'
+        file_path = soure_file.parent
+        file_str = f'^{self.ass.ass_class}_.*_(?:Color|Normal|bump|alpha)$'
 
-        sub = False
         for fi in file_path.iterdir():
             if re.match(file_str, fi.stem):
-                tar = target_file.joinpath(fi.name)
+                tar = target.parent.joinpath(fi.name)
                 self.backupCopy(fi, tar, version)
-                sub = True
-        return version
 
     @script.doodleLog.erorrDecorator
     def backupCopy(self, source: pathlib.Path, target: pathlib.Path, version: int):
@@ -576,8 +583,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         :param version: int
         :return: Nore
         """
-        backup = self.ass_file_path.joinpath('backup')
-        self.ass_file_path.mkdir(parents=True, exist_ok=True)
+        target_parent = target.parent
+        backup = target_parent.joinpath('backup')
+        target_parent.mkdir(parents=True, exist_ok=True)
         if not backup.is_dir():
             backup.mkdir(parents=True, exist_ok=True)
         backup_file = backup.joinpath('{}_v{:0>4d}{}'.format(target.stem,
@@ -585,40 +593,25 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                              target.suffix))
         if target.is_file():
             shutil.move(str(target), str(backup_file))
-            self.ta_log.info('文件备份%s ---->  %s', target, backup_file)
+            logging.info('文件备份%s ---->  %s', target, backup_file)
         shutil.copy2(str(source), str(target))
 
-        self.ta_log.info('文件上传%s ---->  %s', source, target)
+        logging.info('文件上传%s ---->  %s', source, target)
 
     def downloadUe4(self):
-        path = QtWidgets.QFileDialog.getExistingDirectory(self,
-                                                          "选择同步目录",
-                                                          self.recentlyOpenedFolder,
-                                                          QtWidgets.QFileDialog.ShowDirsOnly)
+        pass
+        # path = QtWidgets.QFileDialog.getExistingDirectory(self,
+        #                                                   "选择同步目录",
+        #                                                   self.recentlyOpenedFolder,
+        #                                                   QtWidgets.QFileDialog.ShowDirsOnly)
 
-    def assUploadFileHandle(self, file_path: pathlib.Path, version_max):
-        """
-        上传普通文件
-        :param file_path: pathli.Path
-        :return: int
-        """
-        target_file: pathlib.Path = self.ass_file_path.joinpath('{}{}'.format(self.ass_class,
-                                                                              file_path.suffix))
-
-        if file_path.suffix in ['.mb', '.ma', '.max']:
-            self.backupCopy(file_path, target_file, version_max)
-        if file_path.suffix in ['.fbx']:
-            self.backupCopy(file_path, target_file, version_max)
-        return version_max
-
-    def assUploadFileUE4Handle(self, file_path: pathlib.Path):
+    def assUploadFileUE4Handle(self, source_path: pathlib.Path, target_file: pathlib.Path):
         """
         上传ue4项目
         """
-        version_max = self.getMaxVersion() + 1
-        backup = self.ass_file_path.joinpath('backup')
-        source = file_path.parent
-        target: pathlib.Path = self.ass_file_path
+        target: pathlib.Path = target_file.parent
+        backup = target.joinpath('backup')
+        source = source_path.parent
         syn_path = [{'Left': str(source), 'Right': str(target)}]
         syn_file = script.synXml.weiteXml(self.setlocale.doc,
                                           syn_path,
@@ -628,7 +621,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                           fileName='UEpriect')
         program = self.setlocale.FreeFileSync
         os.system('{} "{}"'.format(program, syn_file))
-        shutil.copy2(str(file_path), str(self.ass_file_path.joinpath(self.ass_file_name + '.uproject')))
+        shutil.copy2(str(source_path), str(target_file.stem + '.uproject'))
 
     def appointFilePath(self):
         """指定文件路径"""
@@ -638,110 +631,60 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                                 "files (*.mb *.ma *.uproject"
                                                                 " *.max *.fbx *.png *.tga *.jpg)")
 
-        remarks_info = self.recentlyOpenedFolder = QtWidgets.QInputDialog.getText(self,
-                                                                                  "填写备注(中文)",
-                                                                                  "备注",
-                                                                                  QtWidgets.QLineEdit.Normal)[0]
+        remarks_info = QtWidgets.QInputDialog.getText(self,
+                                                      "填写备注(中文)",
+                                                      "备注",
+                                                      QtWidgets.QLineEdit.Normal)[0]
         if file and (self.listAssType.selectedItems() or self.listdepType.selectedItems()):
             file = pathlib.Path(file)
-            version: int = self.getMaxVersion()
-            if self.listdepType.selectedItems():
 
-                self.MysqlData(f"ep{self.shot_episods:0>3d}", "set", '', False,
-                               episodes=self.shot_episods, shot=self.shot_shot, shotab=self.shot_shotab,
-                               department=self.shot_department, Type=self.shot_dep_type,
-                               file=self.shot_name, fileSuffixes=file.suffix, user=self.setlocale.user,
-                               version=version + 1,
-                               filepath=file.as_posix(),
-                               infor=remarks_info)
+            if self.listdepType.selectedItems():
+                version: int = self.shot.getMaxVersion() + 1
+                self.shot.submitInfo(file.name, file.suffix, self.user, version, file.as_posix(), remarks_info)
 
             elif self.listAssType.selectedItems():
-                self.MysqlData(self.ass_class_sort, "set", '', False,
-                               name=self.ass_class, type=self.ass_class_type,
-                               file=self.ass_file_name, fileSuffixes=file.suffix,
-                               user=self.setlocale.user, version=version + 1,
-                               infor=remarks_info,
-                               filepath=file.as_posix())
+                version: int = self.ass.getMaxVersion() + 1
+                self.ass.submitInfo(file.name, file.suffix, self.user, version,
+                                    filepath_and_name=file.as_posix(), infor=remarks_info)
 
     # </editor-fold>
 
     # <editor-fold desc="各种对于文件的操作">
-
-    def combinationFilePath(self):
-        # 这个用来组合文件和文件命
-        filename = self.shot_name
-        filepath = self.shot_file_path.joinpath(filename)
-        return filepath
-
     def openShotExplorer(self):
-        file_path = self.getMysqlFileNameAndPath().parent
-        self.ta_log.info('打开path %s', file_path)
+        file_path = self.shot.queryFileName(self.shot.id).parent
+        logging.info('打开path %s', file_path)
         os.startfile(str(file_path))
         return None
 
     def openShotFile(self):
-        file_path = self.getMysqlFileNameAndPath()
+        file_path = self.shot.queryFileName(self.shot.id)
         os.startfile(str(file_path))
-
-    def getMysqlFileNameAndPath(self):
-        if self.listfile.selectedItems():
-            table = f"ep{self.shot_episods:0>3d}"
-        else:
-            table = self.ass_class_sort
-        file_data = self.MysqlData(table, "get", '', True, "filepath",
-                                   id=self.id)
-        try:
-            file_path = pathlib.Path(file_data[0][0])
-        except:
-            file_path = pathlib.Path('')
-        return file_path
 
     def copyNameToClipboard(self):
         #
-        file_path = self.getMysqlFileNameAndPath().parent
+        file_path = self.shot.queryFileName(self.shot.id)
         pyperclip.copy(str(file_path.name))
-        self.ta_log.info('复制 %s 到剪切板', str(self.shot_name))
+        logging.info('复制 %s 到剪切板', str(file_path.name))
 
     def copyPathToClipboard(self):
-        file_path = self.getMysqlFileNameAndPath().parent
+        file_path = self.shot.queryFileName(self.shot.id)
         pyperclip.copy(str(file_path.parent))
-        self.ta_log.info('复制 %s 到剪切板', str(self.shot_file_path))
+        logging.info('复制 %s 到剪切板', str(file_path.parent))
 
     def exportMaya(self):
-        file_data = self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", '', True, "filepath",
-                                   id=self.id)
+        file_data = self.shot.queryFileName(self.shot.id)
 
         logging.info(file_data)
-        try:
-            file_data = file_data[0][0]
-        except:
-            pass
-        else:
+        if file_data:
             export_maya = script.MayaExportCam.export(file_data)
             export_maya.exportCam()
             QtWidgets.QMessageBox.warning(self, "点击:", "点击导出 "
                                                            "请点击桌面maya导出快捷方式"
                                           , QtWidgets.QMessageBox.Yes)
 
-    def Screenshot(self):
-        path = pathlib.Path("")
-        if self.listAssType.selectedItems():
-            path: pathlib.Path = self.ass_root.joinpath(self.ass_class_sort,
-                                                        self.ass_class,
-                                                        'Playblasts',
-                                                        self.ass_class_type,
-                                                        "Screenshot",
-                                                        f"{self.ass_class}_{self.ass_class_type}.jpg"
-                                                        )
-        elif self.listdepType.selectedItems():
-            path: pathlib.Path = self.shot_root.joinpath(f'ep{self.shot_episods:0>3d}',
-                                                         f'sc{self.shot_shot:0>4d}',
-                                                         'Playblasts',
-                                                         self.shot_department,
-                                                         self.shot_dep_type,
-                                                         "Screenshot",
-                                                         f"ep{self.shot_episods:0>3d}_sc{self.shot_shot:0>4d}.jpg"
-                                                         )
+    def Screenshot(self, type: str, thumbnail: QtWidgets.QLabel):
+        core = getattr(self, type)
+        path = core.getScreenshot()
         if not path.parent.is_dir():
             path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -750,50 +693,17 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         screen_shot.exec_()
         self.show()
         if path.is_file():
-            if self.listAssType.selectedItems():
-                if not self.listAssFile.item(0, 3).text() == ".jpg":
-                    self.MysqlData(self.ass_class_sort, "set", '', False,
-                                   name=self.ass_class, type=self.ass_class_type,
-                                   file=self.ass_file_name, fileSuffixes=path.suffix,
-                                   user=self.setlocale.user, version=0, infor="这是截图",
-                                   filepath=path.as_posix())
-            elif self.listfile.selectedItems():
-                if not self.listfile.item(0, 3).text() == ".jpg":
-                    self.MysqlData(f"ep{self.shot_episods:0>3d}", "set", '', False,
-                                   episodes=self.shot_episods, shot=self.shot_shot, shotab=self.shot_shotab,
-                                   department=self.shot_department, Type=self.shot_dep_type,
-                                   file=path.stem, fileSuffixes=path.suffix, user=self.setlocale.user,
-                                   version=0,
-                                   filepath=path.as_posix(),
-                                   infor="这是截图")
-        self.setThumbnail()
+            core.submitInfo(path.name, path.suffix, self.user, 0, path.as_posix(), "这是截图")
+        self.setThumbnail(type, thumbnail)
 
-    def setThumbnail(self):
-        file_data: [tuple] = []
-        if self.listAssType.selectedItems():
-            file_data = self.MysqlData(self.ass_class_sort, "get", '', True, 'filepath',
-                                       name=self.ass_class, type=self.ass_class_type,
-                                       fileSuffixes='.jpg', user=self.setlocale.user)
-        elif self.listdepType.selectedItems():
-            file_data = self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", '', True, 'filepath',
-                                       episodes=self.shot_episods, shot=self.shot_shot, shotab=self.shot_shotab,
-                                       department=self.shot_department, Type=self.shot_dep_type,
-                                       fileSuffixes='.jpg')
-        try:
-            path: pathlib.Path = file_data[0][0]
-        except IndexError:
-            pass
-        else:
-            pixmap = QtGui.QPixmap(str(path))
+    def setThumbnail(self, type: str, thumbnail: QtWidgets.QLabel):
+        core = getattr(self, type)
+        path = core.getScreenshotPath()
+        pixmap = QtGui.QPixmap(str(path))
+        pixmap = pixmap.scaled(thumbnail.geometry().size(), QtCore.Qt.KeepAspectRatio)
+        thumbnail.setPixmap(pixmap)
 
-            if self.listAssType.selectedItems():
-                pixmap = pixmap.scaled(self.ass_thumbnail.geometry().size(), QtCore.Qt.KeepAspectRatio)
-                self.ass_thumbnail.setPixmap(pixmap)
-            elif self.listdepType.selectedItems():
-                pixmap = pixmap.scaled(self.shot_thumbnail.geometry().size(), QtCore.Qt.KeepAspectRatio)
-                self.shot_thumbnail.setPixmap(pixmap)
-
-    def uploadFlipBook(self):
+    def uploadFlipBook(self, code: script.DooDlePrjCode.PrjCode):
         """
         上传拍屏 多线程
         :return: None
@@ -806,27 +716,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         self.recentlyOpenedFolder = file
 
-        version: int = self.getMaxVersion() + 1
-        user_ = pypinyin.slug(self.setlocale.user, pypinyin.NORMAL)
-        name = f"ep{self.shot_episods:0>3d}_" \
-               f"sc{self.shot_shot:0>4d}" \
-               f"_{self.shot_department}_" \
-               f"{self.shot_dep_type}_" \
-               f"{user_}_v{version:0>4d}.mp4"
-        right_path = pathlib.Path("")
-        if self.listdepType.selectedItems():
-            right_path = self.shot_root.joinpath(f'ep{self.shot_episods:0>3d}',
-                                                 f'sc{self.shot_shot:0>4d}',
-                                                 'FlipBook',
-                                                 self.shot_department,
-                                                 self.shot_dep_type,
-                                                 f"ep{self.shot_episods:0>3d}_sc{self.shot_shot:0>4d}_{user_}.mp4")
-        elif self.listAssType.selectedItems():
-            right_path = self.ass_root.joinpath(self.ass_class_sort,
-                                                self.ass_class,
-                                                'FlipBook',
-                                                self.ass_class_type,
-                                                f"{self.ass_class}_{self.ass_class_type}_{user_}.mp4")
+        version: int = code.getMaxVersion()
+        name = code.getFileName(version, self.user, ".mp4", prefix="FB_")
+        right_path = code.getFilePath("FlipBook")
 
         logging.info("获得file %s \n 获得 nmae %s", file, name)
         if file:
@@ -852,97 +744,49 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             else:
                 path = file
 
-            if self.listdepType.selectedItems():
+            if not right_path.parent.is_dir():
+                right_path.parent.mkdir(parents=True, exist_ok=True)
 
-                if not right_path.parent.is_dir():
-                    right_path.parent.mkdir(parents=True, exist_ok=True)
+            logging.info("复制路径到 %s", right_path)
 
-                logging.info("复制路径到 %s", right_path)
-                try:
-                    shutil.copy2(str(path), str(right_path))
-                except:
-                    QtWidgets.QMessageBox.warning(self, "警告:", "复制未成功 "
-                                                  , QtWidgets.QMessageBox.Yes)
-                else:
-                    self.MysqlData(f"ep{self.shot_episods:0>3d}", "set", '', False,
-                                   episodes=self.shot_episods, shot=self.shot_shot, shotab=self.shot_shotab,
-                                   department=self.shot_department, Type="FB_{}".format(self.shot_dep_type),
-                                   file=self.shot_name, fileSuffixes='.mp4', user=self.setlocale.user,
-                                   version=version,
-                                   filepath=right_path.as_posix(),
-                                   infor="这是拍屏")
-            elif self.listAssType.selectedItems():
-
-                if not right_path.parent.is_dir():
-                    right_path.parent.mkdir(parents=True, exist_ok=True)
-
-                logging.info("从  %s 复制路径到 %s", path, right_path)
-                try:
-                    shutil.copy2(str(path), str(right_path))
-                except:
-                    QtWidgets.QMessageBox.warning(self, "警告:", "复制未成功 "
-                                                  , QtWidgets.QMessageBox.Yes)
-                else:
-                    self.MysqlData(self.ass_class_sort, "set", '', False,
-                                   name=self.ass_class, type="FB_{}".format(self.ass_class_type),
-                                   file=self.ass_file_name, fileSuffixes='.mp4',
-                                   user=self.setlocale.user, version=version,
-                                   infor="这是拍屏",
-                                   filepath=right_path.as_posix())
+            self.ass.submitInfo(path.name, path.suffix, self.user,
+                                version=version, filepath_and_name=path.as_posix(), infor="这是拍屏")
             self.listDepartmenClicked()
 
     def playerButtenClicked(self, one_or_mut: str, department="Anm"):
+        tmp_path = os.path.join(tempfile.gettempdir(), "potplayer_temp.dpl")
+        self.pot_player = potplayer.PlayList()
         if one_or_mut == "one":
+            path = pathlib.Path("")
             if self.listAssType.selectedItems():
-                if self.ass_class_type[:2] == "FB":
-                    my_ass_type = self.ass_class_type
+                if self.ass.ass_type[:2] == "FB":
+                    my_ass_type = self.ass.ass_type
                 else:
-                    my_ass_type = "FB_" + self.ass_class_type
-                self.playerFlipBook("ass", my_ass_type)
-            elif self.listdepType.selectedItems():
-                if self.shot_dep_type[:2] == "FB":
-                    my_ass_type = self.shot_dep_type
-                else:
-                    my_ass_type = "FB_" + self.shot_dep_type
-                self.playerFlipBook("shot", my_ass_type)
-        else:
-            self.playerFlipBook('', '', one_or_mut="mut", department=department)
+                    my_ass_type = "FB_" + self.ass.ass_type
+                path = self.ass.queryFlipBook(my_ass_type)
+                # self.playerFlipBook("ass", my_ass_type)
 
-    def playerFlipBook(self, ass_or_shot, ass_type, one_or_mut="one", department="Anm"):
-        path = pathlib.Path("")
-        if one_or_mut == "one":
-            if ass_or_shot == "ass":
-                path = self.MysqlData(self.ass_class_sort, "get", "filetime", True, "filepath",
-                                      name=self.ass_class, type=ass_type,
-                                      fileSuffixes=".mp4")
-            elif ass_or_shot == "shot":
-                path = self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", 'filetime', True, "filepath",
-                                      episodes=self.shot_episods, shot=self.shot_shot, shotab=self.shot_shotab,
-                                      department=self.shot_department, Type=ass_type,
-                                      file=self.shot_name, fileSuffixes='.mp4')
-            try:
-                if pathlib.Path(path[0][0]).is_file():
-                    self.pot_player.add(path[0][0])
-                    tmp_path = os.path.join(tempfile.gettempdir(), "potplayer_temp.dpl")
-                    self.pot_player.dump(tmp_path)
-                    potplayer.run(tmp_path)
-            except IndexError:
-                pass
-        else:
-            self.pot_player = potplayer.PlayList()
-            for shot in self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", "", False, "shot")[:]:
-                try:
-                    player_video_path = \
-                        self.MysqlData(f"ep{self.shot_episods:0>3d}", "get", "filetime", True, "filepath", shot=shot[0],
-                                       department=department, fileSuffixes=".mp4")[0][0]
-                except:
-                    pass
+            elif self.listdepType.selectedItems():
+                if self.shot.dep_type[:2] == "FB":
+                    my_shot_type = self.shot.dep_type
                 else:
-                    logging.info("播放文件路径 %s", player_video_path)
-                    self.pot_player.add(player_video_path)
-            tmp_path: str = os.path.join(tempfile.gettempdir(), "potplayer_temp_long.dpl")
-            self.pot_player.dump(tmp_path)
-            potplayer.run(tmp_path)
+                    my_shot_type = "FB_" + self.shot.dep_type
+                path = self.shot.queryFlipBook(my_shot_type)
+                # self.playerFlipBook("shot", my_shot_type)
+            if path:
+                self.pot_player.add(path.as_posix())
+        else:
+            shots = self.shot.getShot()[:]
+            shots_ = [int(s[2:-1]) if s[6:] else int(s[2:]) for s in shots]
+            for shot in shots_:
+                path = self.shot.queryFlipBookShot(shot)
+                if path.as_posix() != '.':
+                    logging.info("播放文件路径 %s", path)
+                    self.pot_player.add(path)
+            # self.playerFlipBook('', '', one_or_mut="mut", department=department)
+
+        self.pot_player.dump(tmp_path)
+        potplayer.run(tmp_path)
 
     # </editor-fold>
 

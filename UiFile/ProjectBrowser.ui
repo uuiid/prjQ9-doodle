@@ -272,7 +272,7 @@
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0">
             <item>
-             <widget class="QLabel" name="shot">
+             <widget class="QLabel" name="shot_shot">
               <property name="text">
                <string>镜头</string>
               </property>

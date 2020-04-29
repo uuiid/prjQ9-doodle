@@ -1,30 +1,32 @@
 import pathlib
 import script.MySqlComm
 
-# 定义类型检查
-def Typed(expected_type, cls=None):
-    if cls is None:
-        return lambda cls: Typed(expected_type, cls)
-    super_set = cls.__set__
 
-    def __set__(self, instance, value):
-        if not isinstance(value, expected_type):
-            raise TypeError('expected ' + str(expected_type))
-        super_set(self, instance, value)
-
-    cls.__set__ = __set__
-    return cls
-
-
-class integer(Typed):
-    expected_type = int
+# # 定义类型检查
+# def Typed(expected_type, cls=None):
+#     if cls is None:
+#         return lambda cls: Typed(expected_type, cls)
+#     super_set = cls.__set__
+#
+#     def __set__(self, instance, value):
+#         if not isinstance(value, expected_type):
+#             raise TypeError('expected ' + str(expected_type))
+#         super_set(self, instance, value)
+#
+#     cls.__set__ = __set__
+#     return cls
+#
+#
+# @Typed(int)
+# class integer():
+#     pass
 
 
 class PrjCode():
-    id: int = integer(int)
+    id: int  # = integer(int)
     mysqllib: str
     _root: pathlib.Path
-    version: str
+    version: int
 
     def __init__(self, mysql_lib: str, sort_root: str, prj_root: str):
         """
@@ -43,7 +45,7 @@ class PrjCode():
         data = self.mysqllib
         sql_com = ""
         file_data = [""]
-        if modle == "get":
+        if modle in ["get", 'like']:
             _query = ','.join(query)
             sql_com = "SELECT DISTINCT {qu} FROM `{ta}` ".format(qu=_query, ta=table_name)
 
@@ -51,6 +53,8 @@ class PrjCode():
                 _limit = " AND ".join(["{} = {}".format(key, value) if isinstance(value, int)
                                        else "{} = '{}'".format(key, value) for key, value in limit.items()])
                 sql_com += " WHERE {}".format(_limit)
+            # if modle == "like":
+            #     pass
             if sort:
                 sql_com += " ORDER BY {st}".format(st=sort)
             if one:
@@ -74,11 +78,32 @@ class PrjCode():
             pass
         return file_data
 
+    def submitInfo(self, filename: str, suffix: str, user: str, version: int, filepathAndname: str, infor=""):
+        pass
+
+    def getScreenshot(self):
+        pass
+
+    def getScreenshotPath(self):
+        pass
+
+    def getFileName(self, version: int, user_: str, suffix: str, prefix: str = "") -> str:
+        pass
+
+    def getFilePath(self, folder_type: str = "Scenefiles") -> pathlib.Path:
+        pass
+
+    def getMaxVersion(self) -> int:
+        pass
+
+    def queryFlipBook(self, ass_type: str) -> pathlib.Path:
+        pass
+
 
 class PrjShot(PrjCode):
     # <editor-fold desc="Description">
-    episodes: int = integer(int)
-    shot: int = integer(int)
+    episodes: int  # = integer(int)
+    shot: int  # = integer(int)
     shotab: str
     department: str
     dep_type: str
@@ -93,12 +118,12 @@ class PrjShot(PrjCode):
         eps = self.MysqlData("mainshot", "get", "", False, "id", "episods")
         return ['ep{:0>3d}'.format(ep[1]) for ep in eps]
 
-    def getShot(self) -> list:
+    def getShot(self, sort: str = "shot") -> list:
         """
         获得shot列表
         :return: list
         """
-        shots = self.MysqlData(f"ep{self.episodes:0>3d}", "get", '', False, "shot", "shotab",
+        shots = self.MysqlData(f"ep{self.episodes:0>3d}", "get", sort, False, "shot", "shotab",
                                episodes=self.episodes)
         # item = []
         # for ep in shots:
@@ -140,17 +165,17 @@ class PrjShot(PrjCode):
                                department=self.department, Type=self.dep_type)
         return files
 
-    def getFilePath(self) -> pathlib.Path:
+    def getFilePath(self, folder_type: str = "Scenefiles") -> pathlib.Path:
         path = self._root.joinpath(f'ep{self.episodes:0>3d}',
                                    f'sc{self.shot:0>4d}',
-                                   'Scenefiles',
+                                   folder_type,
                                    self.department,
                                    self.dep_type
                                    )
         return path
 
-    def getFileName(self, version: int, user_: str, suffix: str) -> str:
-        name = f"shot_ep{self.episodes:0>3d}_sc{self.shot:0>4d}{self.shotab}_" \
+    def getFileName(self, version: int, user_: str, suffix: str, prefix: str = "") -> str:
+        name = f"{prefix}shot_ep{self.episodes:0>3d}_sc{self.shot:0>4d}{self.shotab}_" \
                f"{self.department}" \
                f"{self.dep_type}_v{version:0>4d}" \
                f"__{user_}_{suffix}"
@@ -169,7 +194,7 @@ class PrjShot(PrjCode):
             version_max: int = 0
         return version_max
 
-    def submitShotInfo(self, filename: str, suffix: str, user: str, version: int, filepathAndname: str, infor=""):
+    def submitInfo(self, filename: str, suffix: str, user: str, version: int, filepathAndname: str, infor=""):
         """
         提交文件信息
         :param filename: str
@@ -190,27 +215,79 @@ class PrjShot(PrjCode):
                        filepath=filepathAndname,
                        infor=infor)
 
-    def subEpisodesInfo(self,episodes:int):
+    def subEpisodesInfo(self, episodes: int):
         create_date = f"""create table ep{episodes:0>3d}(
-                                                        id smallint primary key not null auto_increment,
-                                                        episodes smallint,
-                                                        shot smallint,
-                                                        shotab varchar(8),
-                                                        department varchar(128),
-                                                        Type varchar(128),
-                                                        file varchar(128),
-                                                        fileSuffixes varchar(32),
-                                                        user varchar(128),
-                                                        version smallint,
-                                                        filepath varchar(1024),
-                                                        itfor varchar(4096),
-                                                        filetime datetime default current_timestamp on update current_timestamp not null 
-                                                        );"""
+                      id smallint primary key not null auto_increment,
+                      episodes smallint,
+                      shot smallint,
+                      shotab varchar(8),
+                      department varchar(128),
+                      Type varchar(128),
+                      file varchar(128),
+                      fileSuffixes varchar(32),
+                      user varchar(128),
+                      version smallint,
+                      filepath varchar(1024),
+                      itfor varchar(4096),
+                      filetime datetime default current_timestamp on update current_timestamp not null 
+                      );"""
         create_date_insert = f"""insert into mainshot(episods)
                                                         value ({episodes})"""
         script.MySqlComm.inserteCommMysql(self.mysqllib, '', '', create_date)
         script.MySqlComm.inserteCommMysql(self.mysqllib, '', '',
                                           create_date_insert)
+
+    def queryFileName(self, query_id: int) -> pathlib.Path:
+        file_data = self.MysqlData(f"ep{self.episodes:0>3d}", "get", '', True, "filepath",
+                                   id=query_id)
+        try:
+            file_data = file_data[0][0]
+        except:
+            file_data = ""
+        return pathlib.Path(file_data)
+
+    def getScreenshot(self) -> pathlib.Path:
+        path: pathlib.Path = self._root.joinpath(f'ep{self.episodes:0>3d}',
+                                                 f'sc{self.shot:0>4d}{self.shotab}',
+                                                 'Playblasts',
+                                                 self.department,
+                                                 self.dep_type,
+                                                 "Screenshot",
+                                                 f"ep{self.episodes:0>3d}_sc{self.shot:0>4d}{self.shotab}.jpg"
+                                                 )
+        return path
+
+    def getScreenshotPath(self) -> pathlib.Path:
+        file_data = self.MysqlData(f"ep{self.episodes:0>3d}", "get", '', True, 'filepath',
+                                   episodes=self.episodes, shot=self.shot, shotab=self.shotab,
+                                   department=self.department, Type=self.dep_type,
+                                   fileSuffixes='.jpg')
+        try:
+            file_data = pathlib.Path(file_data[0][0])
+        except:
+            file_data = pathlib.Path("")
+        return file_data
+
+    def queryFlipBook(self, ass_type: str) -> pathlib.Path:
+        path = self.MysqlData(f"ep{self.episodes:0>3d}", "get", 'filetime', True, "filepath",
+                              episodes=self.episodes, shot=self.shot, shotab=self.shotab,
+                              department=self.department, Type=ass_type, fileSuffixes='.mp4')
+        try:
+            path = pathlib.Path(path[0][0])
+        except:
+            path = pathlib.Path("")
+        return path
+
+    def queryFlipBookShot(self, shot: int) -> pathlib.Path:
+        path = self.MysqlData(f"ep{self.episodes:0>3d}", "get", 'filetime', True, "filepath",
+                              episodes=self.episodes, shot=shot, fileSuffixes='.mp4')
+        try:
+            path = pathlib.Path(path[0][0])
+        except:
+            path = pathlib.Path("")
+        return path
+
+
 class PrjAss(PrjCode):
     sort: str
     ass_class: str
@@ -232,7 +309,7 @@ class PrjAss(PrjCode):
         datas = self.MysqlData(self.sort, "get", '', False, "type", name=self.ass_class)
         return [data[0] for data in datas]
 
-    def getFile(self) -> list:
+    def getFileInfo(self) -> list:
         """
         获得文件信息(版本,评论,制作人,后缀)
         :return:
@@ -241,19 +318,20 @@ class PrjAss(PrjCode):
                                    "id", name=self.ass_class, type=self.ass_type)
         return file_data
 
-    def getFilePath(self) -> pathlib.Path:
+    def getFilePath(self, folder_type: str = "Scenefiles") -> pathlib.Path:
         path = self._root.joinpath(self.sort,
                                    self.ass_class,
-                                   'Scenefiles',
+                                   folder_type,
                                    self.ass_type
                                    )
         return path
 
-    def getFileName(self, suffix) -> str:
+    def getFileName(self, version: int, user_: str, suffix: str, prefix: str = "") -> str:
         add_suffix = ""
         if self.ass_type in ["rig"]:
             add_suffix = "_rig"
-        name = "{cl}{su}".format(cl=self.ass_class, su=add_suffix)
+        name = "{prefix}{cl}{su}{suffix}".format(cl=self.ass_class, su=add_suffix,
+                                                 suffix=suffix, prefix=prefix)
         return name
 
     def getMaxVersion(self) -> int:
@@ -264,3 +342,50 @@ class PrjAss(PrjCode):
         else:
             version_max: int = 0
         return version_max
+
+    def submitInfo(self, file_name: str, suffix: str, user: str, version: int,
+                   filepath_and_name: str, infor: str = ""):
+        self.MysqlData(self.sort, "set", '', False,
+                       name=self.ass_class, type=self.ass_type,
+                       file=file_name, fileSuffixes=suffix,
+                       user=user, version=version, infor=infor,
+                       filepath=filepath_and_name)
+
+    def queryFileName(self, id: int) -> pathlib.Path:
+        file_data = self.MysqlData(self.sort, "get", '', True, "filepath",
+                                   id=id)
+        try:
+            file_data = file_data[0][0]
+        except:
+            file_data = ""
+        return pathlib.Path(file_data)
+
+    def getScreenshot(self) -> pathlib.Path:
+        path: pathlib.Path = self._root.joinpath(self.sort,
+                                                 self.ass_class,
+                                                 'Playblasts',
+                                                 self.ass_type,
+                                                 "Screenshot",
+                                                 f"{self.ass_class}_{self.ass_type}.jpg"
+                                                 )
+        return path
+
+    def getScreenshotPath(self) -> pathlib.Path:
+        file_data = self.MysqlData(self.sort, "get", '', True, 'filepath',
+                                   name=self.ass_class, type=self.ass_type,
+                                   fileSuffixes='.jpg')
+        try:
+            file_data = pathlib.Path(file_data[0][0])
+        except:
+            file_data = pathlib.Path("")
+        return file_data
+
+    def queryFlipBook(self, ass_type: str) -> pathlib.Path:
+        path = self.MysqlData(self.sort, "get", "filetime", True, "filepath",
+                              name=self.ass_class, type=ass_type,
+                              fileSuffixes=".mp4")
+        try:
+            path = pathlib.Path(path[0][0])
+        except:
+            path = pathlib.Path("")
+        return path
