@@ -1,0 +1,4 @@
+[submodule "studiolibrary"]
+	path = studiolibrary
+	url = https://github.com/krathjen/studiolibrary.git
+	branch = master
