@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
-import pypinyin
 import pathlib
+
+import pypinyin
 
 
 def isChinese(strs: pathlib.Path):

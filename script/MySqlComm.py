@@ -1,8 +1,15 @@
 import logging
 import mysql.connector
-import script.doodleLog
+import sqlalchemy.ext.declarative
+import sqlalchemy.orm
 
-log = script.doodleLog.get_logger(__name__)
+engine = sqlalchemy.create_engine("mysql+mysqlconnector://Effects:Effects@192.168.10.213:3306/dubuxiaoyao",
+                                  encoding='utf-8')
+
+Base = sqlalchemy.ext.declarative.declarative_base()
+session_class = sqlalchemy.orm.sessionmaker(bind=engine)
+my_session: sqlalchemy.orm.session.Session = session_class()
+
 
 def inserteCommMysql(mybd: str, departmen, password, sql_command):
     data_base = mysql.connector.connect(
@@ -17,7 +24,7 @@ def inserteCommMysql(mybd: str, departmen, password, sql_command):
     try:
         cursor.execute(sql_command)
         data_base.commit()
-        logging.info('成功%s',sql_command)
+        logging.info('成功%s', sql_command)
     except:
         data_base.rollback()
         logging.exception('失败指令%s', sql_command)
@@ -40,18 +47,7 @@ def selsctCommMysql(mybd: str, departmen, password, sql_command):
         cursor.execute(sql_command)
         date = cursor.fetchall()
     except:
-        date =''
+        date = ''
     cursor.close()
     data_base.close()
     return date
-
-# def MysqlComm(mybd: str, departmen, password, sql_command):
-
-# def inserteMysql(mybd: str,department:str,**args):
-#     my_sql_db = commMysql(mybd,department)
-#     sql = """"""
-if __name__ == '__main__':
-    sql ="""create table  `test`(id smallint primary key auto_increment,
-ep smallint);
-insert into ep000(episodes)value (10)"""
-    inserteCommMysql('dubuxiaoyao','','',sql)

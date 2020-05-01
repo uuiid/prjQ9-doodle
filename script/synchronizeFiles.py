@@ -1,15 +1,11 @@
 import logging
-import pathlib
 import os
+import pathlib
 import shutil
-import subprocess
-import sys
-import numpy
-import filecmp
-import script.synXml
 import tempfile
-import multiprocessing
+
 import script.doodle_setting
+import script.synXml
 
 
 class synFile(object):

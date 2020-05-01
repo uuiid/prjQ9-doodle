@@ -1,5 +1,5 @@
 import pathlib
-from typing import List, Any
+from typing import List
 
 soure = pathlib.Path(r'W:\03_Workflow\Assets\DuBuXiaoYao\BangDing')
 ten_MoXing = pathlib.Path(r'W:\03_Workflow\Assets\DuBuXiaoYao\MoXing')

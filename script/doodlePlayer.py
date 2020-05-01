@@ -1,11 +1,9 @@
+import logging
 import os
 import pathlib
-import re
-import shutil
-import sys
-import time
-import logging
 import subprocess
+import time
+
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
