@@ -1,7 +1,6 @@
 import numpy as np
 from math import exp 
 from libc.math cimport exp as c_exp
-
 def array_f(X):
     
     Y = np.zeros(X.shape)
