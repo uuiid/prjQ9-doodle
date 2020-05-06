@@ -212,7 +212,7 @@ class PrjShot(PrjCode, sqlalchemy.ext.declarative.declarative_base()):
 
     def getFileName(self, version: int, user_: str, suffix: str, prefix: str = "") -> str:
         name = f"{prefix}shot_ep{self.episodes:0>3d}_sc{self.shot:0>4d}{self.shotab}_" \
-               f"{self.department}"_ \
+               f"{self.department}" \
                f"{self.Type}_v{version:0>4d}" \
                f"__{user_}_{suffix}"
         return name
