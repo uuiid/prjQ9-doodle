@@ -28,7 +28,7 @@ import script.synXml
 import script.doodlePlayer
 import script.synchronizeFiles
 import script.DooDlePrjCode
-
+import script.MayaExportCam
 
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
     '''
