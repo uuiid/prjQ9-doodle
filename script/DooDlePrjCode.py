@@ -176,7 +176,7 @@ class PrjShot(PrjCode):
 
     def getFileName(self, version: int, user_: str, suffix: str, prefix: str = "") -> str:
         name = f"{prefix}shot_ep{self.episodes:0>3d}_sc{self.shot:0>4d}{self.shotab}_" \
-               f"{self.department}" \
+               f"{self.department}_" \
                f"{self.dep_type}_v{version:0>4d}" \
                f"__{user_}_{suffix}"
         return name
