@@ -1,15 +1,18 @@
 import logging
+import threading
+import contextlib
 import mysql.connector
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 
-engine = sqlalchemy.create_engine("mysql+mysqlconnector://Effects:Effects@192.168.10.213:3306/dubuxiaoyao",
-                                  encoding='utf-8')
 
-Base = sqlalchemy.ext.declarative.declarative_base()
-session_class = sqlalchemy.orm.sessionmaker(bind=engine)
-my_session: sqlalchemy.orm.session.Session = session_class()
-
+# engine = sqlalchemy.create_engine("mysql+mysqlconnector://Effects:Effects@192.168.10.213:3306/dubuxiaoyao",
+#                                   encoding='utf-8')
+#
+# Base = sqlalchemy.ext.declarative.declarative_base()
+# session_class = sqlalchemy.orm.sessionmaker(bind=engine)
+# my_session: sqlalchemy.orm.session.Session = session_class()
+# my_session.close()
 
 def inserteCommMysql(mybd: str, departmen, password, sql_command):
     data_base = mysql.connector.connect(
@@ -51,3 +54,33 @@ def selsctCommMysql(mybd: str, departmen, password, sql_command):
     cursor.close()
     data_base.close()
     return date
+
+
+class commMysql(object):
+    _setting = {}
+    _instance_lock = threading.Lock()
+
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(commMysql, '_instance'):
+            with commMysql._instance_lock:
+                if not hasattr(commMysql, '_instance'):
+                    commMysql._instance = object.__new__(cls)
+        return commMysql._instance
+
+    def __init__(self, mybd: str = '', departmen='', password=''):
+        com_lur = "mysql+mysqlconnector" \
+                  "://{_departmen}:{_password}@" \
+                  "192.168.10.213:3306/{_mybd}".format(_departmen="Effects", _password="Effects", _mybd=mybd)
+        self.engine = sqlalchemy.create_engine(com_lur, encoding='utf-8')
+
+    @contextlib.contextmanager
+    def session(self):
+        tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
+        session: sqlalchemy.orm.session.Session = tmp_session()
+        try:
+            yield session
+            session.commit()
+        except:
+            session.rollback()
+        finally:
+            session.close()

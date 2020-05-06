@@ -1,4 +1,8 @@
 import pathlib
+
+import sqlalchemy
+import sqlalchemy.ext.declarative
+
 import script.MySqlComm
 
 
@@ -100,9 +104,10 @@ class PrjCode():
         pass
 
 
-class PrjShot(PrjCode):
+class PrjShot(PrjCode,sqlalchemy.ext.declarative.declarative_base()):
     # <editor-fold desc="Description">
-    episodes: int  # = integer(int)
+
+    episodes: int # =sqlalchemy.Column(sqlalchemy.SMALLINT)
     shot: int  # = integer(int)
     shotab: str
     department: str

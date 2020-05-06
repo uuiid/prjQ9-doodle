@@ -2,7 +2,7 @@
 #coding=utf-8
 import os
 
-ROOT = "D:/ueFile"
+ROOT = "D:/"
 section = ['Light','Ren','Checkpoint']
 content = ['VFX','Light']
 keyPath = {'01shot':['shot'],'02works':['Ep'],'03scene':'Sc','04section':section,'05Content':content}
@@ -48,7 +48,7 @@ def shengChengPath(work,scene,root):
 
     return paths
 
-work = 4
-scene = 111
+work = 9
+scene = 140
 path =  shengChengPath(work,scene,ROOT)
 mkemyFile(path)
