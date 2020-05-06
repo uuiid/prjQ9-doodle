@@ -30,6 +30,7 @@ import script.synchronizeFiles
 import script.DooDlePrjCode
 import script.MayaExportCam
 
+
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
     '''
     这个类用来实现项目管理的属性和UI操作,  其中会有一个项目分析器在外部, 有每个项目分别配置或者使用默认设置
@@ -679,7 +680,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             export_maya = script.MayaExportCam.export(file_data)
             export_maya.exportCam()
             QtWidgets.QMessageBox.warning(self, "点击:", "点击导出 "
-                                                           "请点击桌面maya导出快捷方式"
+                                                       "请点击桌面maya导出快捷方式"
                                           , QtWidgets.QMessageBox.Yes)
 
     def Screenshot(self, type: str, thumbnail: QtWidgets.QLabel):
@@ -748,9 +749,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 right_path.parent.mkdir(parents=True, exist_ok=True)
 
             logging.info("复制路径到 %s", right_path)
-
-            self.ass.submitInfo(path.name, path.suffix, self.user,
-                                version=version, filepath_and_name=path.as_posix(), infor="这是拍屏")
+            self.shot.dep_type = "FB_" + self.shot.dep_type
+            self.shot.submitInfo(path.name, path.suffix, self.user,
+                                 version=version, filepathAndname=path.as_posix(), infor="这是拍屏")
             self.listDepartmenClicked()
 
     def playerButtenClicked(self, one_or_mut: str, department="Anm"):
