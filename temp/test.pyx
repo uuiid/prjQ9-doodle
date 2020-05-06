@@ -1,24 +1,57 @@
-import numpy as np
-from math import exp 
-from libc.math cimport exp as c_exp
-def array_f(X):
-    
-    Y = np.zeros(X.shape)
-    index = X > 0.5
-    Y[index] = np.exp(X[index])
+import os
+import shutil
+import sqlite3
+import pathlib
+import sqlalchemy
+import sqlalchemy.ext.declarative
+import sqlalchemy.orm
 
-    return Y
+Base = sqlalchemy.ext.declarative.declarative_base()
 
-def c_array_f(double[:] X):
 
-    cdef int N = X.shape[0]
-    cdef double[:] Y = np.zeros(N)
-    cdef int i
+class fileinfo():
+    id = sqlalchemy.Column(sqlalchemy.INT, primary_key=True)
+    filepath = sqlalchemy.Column(sqlalchemy.TEXT, unique=True)
+    filesize = sqlalchemy.Column(sqlalchemy.FLOAT)
+    file_m_time = sqlalchemy.Column(sqlalchemy.FLOAT)
+    direction = sqlalchemy.Column(sqlalchemy.TEXT)
+    synTime = sqlalchemy.Column(sqlalchemy.FLOAT)
 
-    for i in range(N):
-        if X[i] > 0.5:
-            Y[i] = c_exp(X[i])
-        else:
-            Y[i] = 0
+class sourefileinfo(Base,fileinfo):
+    __tablename__ = "sourefileinfo"
 
-    return Y
+
+class trangefileinfo(Base,fileinfo):
+    __tablename__ = "trangefileinfo"
+
+def copyfile(str soure, str trange):
+    cdef str join, path
+    cdef object cursor, db_
+    cdef object my_session
+    for path in [soure, trange]:
+        join = os.path.join(path, "stn_py.db")
+        if os.path.isfile(join):
+            break
+    else:
+        join = os.path.join(soure, "stn_py.db")
+
+    engine = sqlalchemy.create_engine('sqlite+pysqlcipher:///{}stn_py.db'.format(join))
+    session_class = sqlalchemy.orm.sessionmaker(bind=engine)
+    my_session = session_class()
+
+
+    cdef str root, dirs, files, file, f_path, path_join
+    cdef double st_mtime, st_size
+    cdef object sql_value
+    for root, dirs, files in os.walk(soure):
+        for file in files:
+            path_join = os.path.join(root, file)
+            st_mtime = os.stat(path_join).st_mtime
+            st_size = os.stat(path_join).st_size
+            f_path = path_join.replace(soure, '')
+            sql_value = sourefileinfo(filepath=f_path,filesize=st_size,file_m_time=st_mtime)
+            my_session.add(sql_value)
+
+    my_session.commit()
+
+    # print(join)
