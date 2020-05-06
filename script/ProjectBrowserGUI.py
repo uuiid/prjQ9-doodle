@@ -310,7 +310,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepType.addItems(self.shot.getDepType())
 
     def listDepTypeClicked(self):
-        self.shot.dep_type = self.listdepType.selectedItems()[0].text()
+        self.shot.Type = self.listdepType.selectedItems()[0].text()
 
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListFile()
@@ -362,7 +362,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listAss.addItems(self.ass.getAssClass())
 
     def assClassClicked(self):
-        self.ass.ass_class = self.listAssType.selectedItems()[0].text()
+        self.ass.name = self.listAssType.selectedItems()[0].text()
 
         self.listAssType.clear()
         logging.info('清除资产类型中的项数')
@@ -374,7 +374,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def assClassTypeClicked(self):
         """资产类别点击事件"""
-        self.ass.ass_type = self.listAssType.selectedItems()[0].text()
+        self.ass.type = self.listAssType.selectedItems()[0].text()
         self.setThumbnail("ass", self.ass_thumbnail)
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListAssFile()
@@ -454,11 +454,18 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
                 logging.info('%s ---> %s', path, dst_file)
 
-                self.shot.submitInfo(filename=shot_name,
-                                     suffix=path.suffix, user=self.user,
-                                     version=version,
-                                     filepathAndname=dst_file.as_posix(),
-                                     infor="")
+                self.shot.file = shot_name
+                self.shot.fileSuffixes = path.suffix
+                self.shot.user = self.user
+                self.shot.version = version
+                self.shot.filepath = dst_file.as_posix()
+                self.shot.infor = ""
+                self.shot.submitInfo()
+                # self.shot.submitInfo(filename=shot_name,
+                #                      suffix=path.suffix, user=self.user,
+                #                      version=version,
+                #                      filepathAndname=dst_file.as_posix(),
+                #                      infor="")
                 self.listDepTypeClicked()
                 self.enableBorder(False)
             else:
@@ -514,7 +521,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def addAssTypeFolder(self):
         """添加资产文件夹类型"""
         items: list[str] = self.setlocale.assTypeFolder.copy()
-        items[2] = items[2].format(self.ass.ass_class)
+        items[2] = items[2].format(self.ass.name)
         ass_type = QtWidgets.QInputDialog.getItem(self, '选择资产类型', '要先选择资产', items, 0, False)[0]
         if ass_type and self.listAss.selectedItems():
             self.listAssType.addItem(ass_type)
@@ -567,7 +574,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         :return: int
         """
         file_path = soure_file.parent
-        file_str = f'^{self.ass.ass_class}_.*_(?:Color|Normal|bump|alpha)$'
+        file_str = f'^{self.ass.name}_.*_(?:Color|Normal|bump|alpha)$'
 
         for fi in file_path.iterdir():
             if re.match(file_str, fi.stem):
@@ -759,18 +766,18 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         if one_or_mut == "one":
             path = pathlib.Path("")
             if self.listAssType.selectedItems():
-                if self.ass.ass_type[:2] == "FB":
-                    my_ass_type = self.ass.ass_type
+                if self.ass.type[:2] == "FB":
+                    my_ass_type = self.ass.type
                 else:
-                    my_ass_type = "FB_" + self.ass.ass_type
+                    my_ass_type = "FB_" + self.ass.type
                 path = self.ass.queryFlipBook(my_ass_type)
                 # self.playerFlipBook("ass", my_ass_type)
 
             elif self.listdepType.selectedItems():
-                if self.shot.dep_type[:2] == "FB":
-                    my_shot_type = self.shot.dep_type
+                if self.shot.Type[:2] == "FB":
+                    my_shot_type = self.shot.Type
                 else:
-                    my_shot_type = "FB_" + self.shot.dep_type
+                    my_shot_type = "FB_" + self.shot.Type
                 path = self.shot.queryFlipBook(my_shot_type)
                 # self.playerFlipBook("shot", my_shot_type)
             if path:

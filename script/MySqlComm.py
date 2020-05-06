@@ -74,13 +74,14 @@ class commMysql(object):
         self.engine = sqlalchemy.create_engine(com_lur, encoding='utf-8')
 
     @contextlib.contextmanager
-    def session(self):
+    def session(self) -> sqlalchemy.orm.session.Session:
         tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
         session: sqlalchemy.orm.session.Session = tmp_session()
         try:
             yield session
             session.commit()
-        except:
+        except BaseException as err:
+            logging.info("%s",err)
             session.rollback()
         finally:
             session.close()

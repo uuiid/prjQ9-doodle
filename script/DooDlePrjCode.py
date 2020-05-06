@@ -1,10 +1,11 @@
+import copy
 import pathlib
 
 import sqlalchemy
 import sqlalchemy.ext.declarative
-
+import sqlalchemy.orm
 import script.MySqlComm
-
+import sqlalchemy.sql
 
 # # 定义类型检查
 # def Typed(expected_type, cls=None):
@@ -27,10 +28,18 @@ import script.MySqlComm
 
 
 class PrjCode():
-    id: int  # = integer(int)
     mysqllib: str
     _root: pathlib.Path
-    version: int
+    id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True)
+    file: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+    fileSuffixes: str = sqlalchemy.Column(sqlalchemy.VARCHAR(32))
+    user: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+    version: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
+    filepath: str = sqlalchemy.Column(sqlalchemy.VARCHAR(1024))
+    infor: str = sqlalchemy.Column(sqlalchemy.VARCHAR(4096))
+    filetime = sqlalchemy.Column(sqlalchemy.DATETIME,
+                                 server_default=sqlalchemy.sql.func.now(),
+                                 server_onupdate=sqlalchemy.sql.func.now())
 
     def __init__(self, mysql_lib: str, sort_root: str, prj_root: str):
         """
@@ -41,6 +50,7 @@ class PrjCode():
         """
         self._root = pathlib.Path(sort_root).joinpath(prj_root)
         self.mysqllib = mysql_lib
+        self.comsql = script.MySqlComm.commMysql(mysql_lib)
 
     def MysqlData(self, table_name="", modle="get", sort="", one=False, *query, **limit) -> list:
         """mysql命令,get需要query set不需要
@@ -104,14 +114,14 @@ class PrjCode():
         pass
 
 
-class PrjShot(PrjCode,sqlalchemy.ext.declarative.declarative_base()):
+class PrjShot(PrjCode, sqlalchemy.ext.declarative.declarative_base()):
     # <editor-fold desc="Description">
-
-    episodes: int # =sqlalchemy.Column(sqlalchemy.SMALLINT)
-    shot: int  # = integer(int)
-    shotab: str
-    department: str
-    dep_type: str
+    __tablename__ = ""
+    episodes: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
+    shot: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
+    shotab: str = sqlalchemy.Column(sqlalchemy.VARCHAR(8))
+    department: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+    Type: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
 
     # </editor-fold>
 
@@ -120,22 +130,29 @@ class PrjShot(PrjCode,sqlalchemy.ext.declarative.declarative_base()):
         获得镜头列表
         :return: list
         """
-        eps = self.MysqlData("mainshot", "get", "", False, "id", "episods")
-        return ['ep{:0>3d}'.format(ep[1]) for ep in eps]
+
+        PrjShot.__table__.name = "mainshot"
+        eps = []
+
+        with self.comsql.session() as session:  # Type:sqlalchemy.orm.session.Session
+            # assert isinstance(session, sqlalchemy.orm.session.Session)
+            eps = session.query(PrjShot.episodes).all()
+
+        return ['ep{:0>3d}'.format(ep[0]) for ep in eps]
 
     def getShot(self, sort: str = "shot") -> list:
         """
         获得shot列表
         :return: list
         """
-        shots = self.MysqlData(f"ep{self.episodes:0>3d}", "get", sort, False, "shot", "shotab",
-                               episodes=self.episodes)
-        # item = []
-        # for ep in shots:
-        #     try:
-        #         item.append('sc{:0>4d}{}'.format(ep[0], ep[1]))
-        #     except:
-        #         item.append('sc{:0>4d}'.format(ep[0]))
+        PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        shots = []
+        with self.comsql.session() as session:
+            # assert isinstance(session, sqlalchemy.orm.session.Session)
+            shots = session.query(PrjShot.shot, PrjShot.shotab). \
+                order_by(PrjShot.shot). \
+                filter_by(episodes=self.episodes). \
+                distinct().all()
         return ['sc{:0>4d}'.format(shot[0]) if shot[1] == ''
                 else 'sc{:0>4d}{}'.format(shot[0], shot[1]) for shot in shots]
 
@@ -144,9 +161,14 @@ class PrjShot(PrjCode,sqlalchemy.ext.declarative.declarative_base()):
         获得部门列表
         :return: lsit
         """
-        deps = self.MysqlData(f"ep{self.episodes:0>3d}", "get", '', False, "department",
-                              episodes=self.episodes, shot=self.shot, shotab=self.shotab)
-
+        PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        deps = []
+        with self.comsql.session() as session:
+            # assert isinstance(session, sqlalchemy.orm.session.Session)
+            deps = session.query(PrjShot.department). \
+                order_by(PrjShot.department). \
+                filter_by(episodes=self.episodes, shot=self.shot, shotab=self.shotab). \
+                distinct().all()
         return [dep[0] for dep in deps]
 
     def getDepType(self) -> list:
@@ -154,9 +176,14 @@ class PrjShot(PrjCode,sqlalchemy.ext.declarative.declarative_base()):
         获得部门类型列表
         :return: list
         """
-        dep_types = self.MysqlData(f"ep{self.episodes:0>3d}", "get", '', False, "Type",
-                                   episodes=self.episodes, shot=self.shot, shotab=self.shotab,
-                                   department=self.department)
+        PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        dep_types = []
+        with self.comsql.session() as session:
+            # assert isinstance(session, sqlalchemy.orm.session.Session)
+            dep_types = session.query(PrjShot.Type). \
+                order_by(PrjShot.Type). \
+                filter_by(episodes=self.episodes, shot=self.shot, shotab=self.shotab, department=self.department). \
+                distinct().all()
         return [dep_type[0] for dep_type in dep_types]
 
     def getFile(self) -> list:
@@ -164,10 +191,14 @@ class PrjShot(PrjCode,sqlalchemy.ext.declarative.declarative_base()):
         获得文件信息(版本,评论,上传者,后缀,id)
         :return:
         """
-        files = self.MysqlData(f"ep{self.episodes:0>3d}", "get", '', False, "version", " infor", " user",
-                               " fileSuffixes", "id",
-                               episodes=self.episodes, shot=self.shot, shotab=self.shotab,
-                               department=self.department, Type=self.dep_type)
+        files = []
+        PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        with self.comsql.session() as session:
+            # assert isinstance(session, sqlalchemy.orm.session.Session)
+            files = session.query(PrjShot.version, PrjShot.infor, PrjShot.user, PrjShot.fileSuffixes, PrjShot.id). \
+                filter_by(episodes=self.episodes, shot=self.shot,
+                          shotab=self.shotab, department=self.department, Type=self.Type). \
+                distinct().all()
         return files
 
     def getFilePath(self, folder_type: str = "Scenefiles") -> pathlib.Path:
@@ -175,31 +206,44 @@ class PrjShot(PrjCode,sqlalchemy.ext.declarative.declarative_base()):
                                    f'sc{self.shot:0>4d}',
                                    folder_type,
                                    self.department,
-                                   self.dep_type
+                                   self.Type
                                    )
         return path
 
     def getFileName(self, version: int, user_: str, suffix: str, prefix: str = "") -> str:
         name = f"{prefix}shot_ep{self.episodes:0>3d}_sc{self.shot:0>4d}{self.shotab}_" \
-               f"{self.department}" \
-               f"{self.dep_type}_v{version:0>4d}" \
+               f"{self.department}"_ \
+               f"{self.Type}_v{version:0>4d}" \
                f"__{user_}_{suffix}"
         return name
 
     def getMaxVersion(self) -> int:
-        try:
-            # 查不到会产生错误
-            file_data = self.MysqlData(f"ep{self.episodes:0>3d}", "get", 'version', True, "version",
-                                       episodes=self.episodes, shot=self.shot, shotab=self.shotab,
-                                       department=self.department, Type=self.dep_type)
-            # 查到为空也会出错
-            version_max: int = int(file_data[0][0])
-            # 出错时直接返回 0
-        except:
-            version_max: int = 0
+        PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        with self.comsql.session() as session:
+            # assert isinstance(session, sqlalchemy.orm.session.Session)
+            file_data = session.query(PrjShot.version). \
+                order_by(PrjShot.version). \
+                filter_by(episodes=self.episodes, shot=self.shot,
+                          shotab=self.shotab, department=self.department, Type=self.Type). \
+                distinct().first()
+        if file_data:
+            version_max: int = int(file_data[0])
+        else:
+            version_max: int = 1
+        # try:
+        #     # 查不到会产生错误
+        #     file_data = self.MysqlData(f"ep{self.episodes:0>3d}", "get", 'version', True, "version",
+        #                                episodes=self.episodes, shot=self.shot, shotab=self.shotab,
+        #                                department=self.department, Type=self.Type)
+        #     # 查到为空也会出错
+        #     version_max: int = int(file_data[0][0])
+        #     # 出错时直接返回 0
+        # except:
+        #     version_max: int = 0
         return version_max
 
-    def submitInfo(self, filename: str, suffix: str, user: str, version: int, filepathAndname: str, infor=""):
+    def submitInfo(self, filename: str = '', suffix: str = '', user: str = '', version: int = 0,
+                   filepathAndname: str = '', infor=""):
         """
         提交文件信息
         :param filename: str
@@ -210,15 +254,22 @@ class PrjShot(PrjCode,sqlalchemy.ext.declarative.declarative_base()):
         :param infor: str
         :return:
         """
-        if not isinstance(version, int):
-            version = int(version)
-        self.MysqlData(f"ep{self.episodes:0>3d}", "set", '', False,
-                       episodes=self.episodes, shot=self.shot, shotab=self.shotab,
-                       department=self.department, Type=self.dep_type,
-                       file=filename, fileSuffixes=suffix, user=user,
-                       version=version,
-                       filepath=filepathAndname,
-                       infor=infor)
+        # if not isinstance(version, int):
+        #     version = int(version)
+        # self.MysqlData(f"ep{self.episodes:0>3d}", "set", '', False,
+        #                episodes=self.episodes, shot=self.shot, shotab=self.shotab,
+        #                department=self.department, Type=self.Type,
+        #                file=filename, fileSuffixes=suffix, user=user,
+        #                version=version,
+        #                filepath=filepathAndname,
+        #                infor=infor)
+        with self.comsql.session() as session:
+            assert isinstance(session, sqlalchemy.orm.session.Session)
+            session.add(copy.deepcopy(self))
+
+        with self.comsql.session() as session:
+            assert isinstance(session, sqlalchemy.orm.session.Session)
+            session.commit()
 
     def subEpisodesInfo(self, episodes: int):
         create_date = f"""create table ep{episodes:0>3d}(
@@ -256,7 +307,7 @@ class PrjShot(PrjCode,sqlalchemy.ext.declarative.declarative_base()):
                                                  f'sc{self.shot:0>4d}{self.shotab}',
                                                  'Playblasts',
                                                  self.department,
-                                                 self.dep_type,
+                                                 self.Type,
                                                  "Screenshot",
                                                  f"ep{self.episodes:0>3d}_sc{self.shot:0>4d}{self.shotab}.jpg"
                                                  )
@@ -265,7 +316,7 @@ class PrjShot(PrjCode,sqlalchemy.ext.declarative.declarative_base()):
     def getScreenshotPath(self) -> pathlib.Path:
         file_data = self.MysqlData(f"ep{self.episodes:0>3d}", "get", '', True, 'filepath',
                                    episodes=self.episodes, shot=self.shot, shotab=self.shotab,
-                                   department=self.department, Type=self.dep_type,
+                                   department=self.department, Type=self.Type,
                                    fileSuffixes='.jpg')
         try:
             file_data = pathlib.Path(file_data[0][0])
@@ -294,9 +345,10 @@ class PrjShot(PrjCode,sqlalchemy.ext.declarative.declarative_base()):
 
 
 class PrjAss(PrjCode):
+    __tablename__ = ""
     sort: str
-    ass_class: str
-    ass_type: str
+    name: str = sqlalchemy.Column(sqlalchemy.VARCHAR(256))
+    type: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
 
     def getAssClass(self) -> list:
         """
@@ -311,7 +363,7 @@ class PrjAss(PrjCode):
         获得资产类型细分
         :return:
         """
-        datas = self.MysqlData(self.sort, "get", '', False, "type", name=self.ass_class)
+        datas = self.MysqlData(self.sort, "get", '', False, "type", name=self.name)
         return [data[0] for data in datas]
 
     def getFileInfo(self) -> list:
@@ -320,28 +372,28 @@ class PrjAss(PrjCode):
         :return:
         """
         file_data = self.MysqlData(self.sort, "get", '', False, "version", "infor", "user", "fileSuffixes",
-                                   "id", name=self.ass_class, type=self.ass_type)
+                                   "id", name=self.name, type=self.type)
         return file_data
 
     def getFilePath(self, folder_type: str = "Scenefiles") -> pathlib.Path:
         path = self._root.joinpath(self.sort,
-                                   self.ass_class,
+                                   self.name,
                                    folder_type,
-                                   self.ass_type
+                                   self.type
                                    )
         return path
 
     def getFileName(self, version: int, user_: str, suffix: str, prefix: str = "") -> str:
         add_suffix = ""
-        if self.ass_type in ["rig"]:
+        if self.type in ["rig"]:
             add_suffix = "_rig"
-        name = "{prefix}{cl}{su}{suffix}".format(cl=self.ass_class, su=add_suffix,
+        name = "{prefix}{cl}{su}{suffix}".format(cl=self.name, su=add_suffix,
                                                  suffix=suffix, prefix=prefix)
         return name
 
     def getMaxVersion(self) -> int:
         file_data = self.MysqlData(self.sort, "get", "version", True, "version",
-                                   name=self.ass_class, type=self.ass_type)
+                                   name=self.name, type=self.type)
         if file_data:
             version_max: int = int(file_data[0][0])
         else:
@@ -351,7 +403,7 @@ class PrjAss(PrjCode):
     def submitInfo(self, file_name: str, suffix: str, user: str, version: int,
                    filepath_and_name: str, infor: str = ""):
         self.MysqlData(self.sort, "set", '', False,
-                       name=self.ass_class, type=self.ass_type,
+                       name=self.name, type=self.type,
                        file=file_name, fileSuffixes=suffix,
                        user=user, version=version, infor=infor,
                        filepath=filepath_and_name)
@@ -367,17 +419,17 @@ class PrjAss(PrjCode):
 
     def getScreenshot(self) -> pathlib.Path:
         path: pathlib.Path = self._root.joinpath(self.sort,
-                                                 self.ass_class,
+                                                 self.name,
                                                  'Playblasts',
-                                                 self.ass_type,
+                                                 self.type,
                                                  "Screenshot",
-                                                 f"{self.ass_class}_{self.ass_type}.jpg"
+                                                 f"{self.name}_{self.type}.jpg"
                                                  )
         return path
 
     def getScreenshotPath(self) -> pathlib.Path:
         file_data = self.MysqlData(self.sort, "get", '', True, 'filepath',
-                                   name=self.ass_class, type=self.ass_type,
+                                   name=self.name, type=self.type,
                                    fileSuffixes='.jpg')
         try:
             file_data = pathlib.Path(file_data[0][0])
@@ -387,7 +439,7 @@ class PrjAss(PrjCode):
 
     def queryFlipBook(self, ass_type: str) -> pathlib.Path:
         path = self.MysqlData(self.sort, "get", "filetime", True, "filepath",
-                              name=self.ass_class, type=ass_type,
+                              name=self.name, type=ass_type,
                               fileSuffixes=".mp4")
         try:
             path = pathlib.Path(path[0][0])
