@@ -146,7 +146,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.effects.clicked.connect(lambda: self.assClassSortClicked('effects'))
 
         # 在listAss中添加点击事件生成Ass资产列表
-        self.listAss.itemClicked.connect(self.assClassClicked)
+        self.listAss.itemClicked.connect(lambda item: self.assClassClicked(item))
         # 在listType中添加点击事件生成file列表
         self.listAssType.itemClicked.connect(self.assClassTypeClicked)
         # 在listassfile中获得资产信息
@@ -202,7 +202,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def menuShotfile(self, menu):
         if self.listfile.selectedItems():
             open_explorer = menu.addAction('打开文件管理器')  # 用文件管理器打开文件位置
-            open_explorer.triggered.connect(self.openShotExplorer)
+            open_explorer.triggered.connect(lambda: self.openShotExplorer(self.shot))
             # copy文件名称或者路径到剪切板
             copy_name_to_clip = menu.addAction('复制名称')
             copy_name_to_clip.triggered.connect(self.copyNameToClipboard)
@@ -232,7 +232,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             if self.listAssFile.selectedItems():
                 add_ass_file_dow = menu.addAction('同步UE文件')
                 open_ass_explorer = menu.addAction("打开文件管理器")
-                open_ass_explorer.triggered.connect(self.openShotExplorer)
+                open_ass_explorer.triggered.connect(lambda: self.openShotExplorer(self.ass))
                 add_ass_file_dow.triggered.connect(self.downloadUe4)
         return menu
 
@@ -362,8 +362,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 通过mySql命令获得数据
         self.listAss.addItems(self.ass.getAssClass())
 
-    def assClassClicked(self):
-        self.ass.ass_class = self.listAssType.selectedItems()[0].text()
+    def assClassClicked(self, item):
+        self.ass.ass_class = item.text()  # self.listAssType.selectedItems()[0].text()
 
         self.listAssType.clear()
         logging.info('清除资产类型中的项数')
@@ -651,8 +651,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     # </editor-fold>
 
     # <editor-fold desc="各种对于文件的操作">
-    def openShotExplorer(self):
-        file_path = self.shot.queryFileName(self.shot.id).parent
+    def openShotExplorer(self,core:script.DooDlePrjCode.PrjCode):
+        shot = core
+        file_path = shot.queryFileName(shot.id).parent
         logging.info('打开path %s', file_path)
         os.startfile(str(file_path))
         return None
