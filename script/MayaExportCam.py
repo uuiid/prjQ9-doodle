@@ -50,22 +50,6 @@ class export(object):
         out = """
 import sys
 import os
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python\Lib\site-packages")
-
-
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python\lib\site-packages\setuptools-0.6c9-py2.6.egg")
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python\lib\site-packages\pymel-1.0.0-py2.6.egg")
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python\lib\site-packages\ipython-0.10.1-py2.6.egg")
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python\lib\site-packages\ply-3.3-py2.6.egg")                         
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\\bin\python26.zip")
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python\DLLs")
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python\lib")
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python\lib\plat-win")
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python\lib\lib-tk")
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\\bin")
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python")
-sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python\lib\site-packages")
-
 
 import maya.standalone
 maya.standalone.initialize( name='python' )
@@ -92,7 +76,7 @@ for export in exports:
     maya.cmds.select(export)
     mystr = '_'
     log = log + 'ming Lin'+ 'FBXExport -f "{path}/{name}_{{suex=export.split(mystr)[0]}}.fbx" -s' + '\\n'
-    mel_name = "{path}/{name}_{{}}.fbx".format(export.split("_")[0])
+    mel_name = "{path}/{name}_{{}}.fbx".format(export.split(":")[0].split("_")[0])
     maya.cmds.bakeResults(simulation=True,t=(start,end),hierarchy="below",sampleBy=1,disableImplicitControl=True,preserveOutsideKeys=False, sparseAnimCurveBake=False)
     maya.mel.eval("FBXExportBakeComplexAnimation -v true")
     maya.mel.eval('FBXExport -f "%s" -s' %mel_name)

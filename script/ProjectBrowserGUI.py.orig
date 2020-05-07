@@ -711,8 +711,13 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             export_maya = script.MayaExportCam.export(file_data)
             export_maya.exportCam()
             QtWidgets.QMessageBox.warning(self, "点击:", "点击导出 "
+<<<<<<< HEAD
                                                        "请点击桌面maya导出快捷方式",
                                           QtWidgets.QMessageBox.Yes)
+=======
+                                                       "请点击桌面maya导出快捷方式"
+                                          , QtWidgets.QMessageBox.Yes)
+>>>>>>> master
 
     def Screenshot(self, my_type: str, thumbnail: QtWidgets.QLabel):
         core:script.DooDlePrjCode.PrjCode = getattr(self, my_type)
@@ -785,18 +790,21 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 right_path.parent.mkdir(parents=True, exist_ok=True)
 
             logging.info("复制路径到 %s", right_path)
+<<<<<<< HEAD
 
-            # self.ass.file = path.name
-            # self.ass.fileSuffixes = path.suffix
-            # self.ass.user = self.user
-            # self.ass.version = version
-            # self.ass.filepath = path.as_posix()
-            # self.ass.infor = "这是拍屏"
-            # self.ass.submitInfo(path.name, path.suffix, self.user,
-            #                     version=version, filepath_and_name=path.as_posix(), infor="这是拍屏")
+            self.ass.file = path.name
+            self.ass.fileSuffixes = path.suffix
+            self.ass.user = self.user
+            self.ass.version = version
+            self.ass.filepath = path.as_posix()
+            self.ass.infor = "这是拍屏"
+            self.ass.submitInfo(path.name, path.suffix, self.user,
+                                version=version, filepath_and_name=path.as_posix(), infor="这是拍屏")
+=======
             self.shot.dep_type = "FB_" + self.shot.dep_type
             self.shot.submitInfo(path.name, path.suffix, self.user,
                                  version=version, filepathAndname=path.as_posix(), infor="这是拍屏")
+>>>>>>> master
             self.listDepartmenClicked()
 
     def playerButtenClicked(self, one_or_mut: str, department="Anm"):
