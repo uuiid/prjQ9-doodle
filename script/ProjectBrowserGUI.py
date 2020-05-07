@@ -5,30 +5,28 @@ import pathlib
 import re
 import shutil
 import sys
-import time
-
-import enum
-import ffmpeg
 import tempfile
+import typing
+
+import potplayer
 import pyperclip
 import pypinyin
 import qdarkgraystyle
-import potplayer
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
 
 import UiFile.ProjectBrowser
+import script.DooDlePrjCode
+import script.MayaExportCam
 import script.MySqlComm
 import script.convert
 import script.debug
 import script.doodleLog
+import script.doodlePlayer
 import script.doodle_setting
 import script.synXml
-import script.doodlePlayer
 import script.synchronizeFiles
-import script.DooDlePrjCode
-import script.MayaExportCam
 
 
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
@@ -146,7 +144,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.effects.clicked.connect(lambda: self.assClassSortClicked('effects'))
 
         # 在listAss中添加点击事件生成Ass资产列表
-        self.listAss.itemClicked.connect(self.assClassClicked)
+        self.listAss.itemClicked.connect(lambda item: self.assClassClicked(item))
         # 在listType中添加点击事件生成file列表
         self.listAssType.itemClicked.connect(self.assClassTypeClicked)
         # 在listassfile中获得资产信息
@@ -202,7 +200,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def menuShotfile(self, menu):
         if self.listfile.selectedItems():
             open_explorer = menu.addAction('打开文件管理器')  # 用文件管理器打开文件位置
-            open_explorer.triggered.connect(self.openShotExplorer)
+            open_explorer.triggered.connect(lambda: self.openShotExplorer(self.shot))
             # copy文件名称或者路径到剪切板
             copy_name_to_clip = menu.addAction('复制名称')
             copy_name_to_clip.triggered.connect(self.copyNameToClipboard)
@@ -232,7 +230,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             if self.listAssFile.selectedItems():
                 add_ass_file_dow = menu.addAction('同步UE文件')
                 open_ass_explorer = menu.addAction("打开文件管理器")
-                open_ass_explorer.triggered.connect(self.openShotExplorer)
+                open_ass_explorer.triggered.connect(lambda: self.openShotExplorer(self.ass))
                 add_ass_file_dow.triggered.connect(self.downloadUe4)
         return menu
 
@@ -324,19 +322,19 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         shot_row = self.listfile.currentRow()
         self.shot.version = int(self.listfile.item(shot_row, 0).text()[1:])
         self.shot.suffix = self.listfile.item(shot_row, 3).text()
-        self.shot.id = int(self.listfile.item(shot_row, 4).text())
+        self.shot.query_id = int(self.listfile.item(shot_row, 4).text())
 
     def setFileItem(self, items):
-        '''设置文件在GUI中的显示'''
-        mrow = 0
-        for item in items:
-            self.listfile.insertRow(mrow)
-            self.listfile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
-            self.listfile.setItem(mrow, 1, QtWidgets.QTableWidgetItem(item[1]))
-            self.listfile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item[2]))
-            self.listfile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item[3]))
-            self.listfile.setItem(mrow, 4, QtWidgets.QTableWidgetItem(str(item[4])))
-            mrow = mrow + 1
+        """
+        设置文件在GUI中的显示
+        """
+        for index, item in enumerate(items):
+            self.listfile.insertRow(index)
+            self.listfile.setItem(index, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
+            self.listfile.setItem(index, 1, QtWidgets.QTableWidgetItem(item[1]))
+            self.listfile.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))
+            self.listfile.setItem(index, 3, QtWidgets.QTableWidgetItem(item[3]))
+            self.listfile.setItem(index, 4, QtWidgets.QTableWidgetItem(str(item[4])))
         logging.info('更新文件列表')
 
     def clearListFile(self):
@@ -362,9 +360,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 通过mySql命令获得数据
         self.listAss.addItems(self.ass.getAssClass())
 
-    def assClassClicked(self):
-        self.ass.name = self.listAssType.selectedItems()[0].text()
-
+    def assClassClicked(self, item):
+        temp = self.listAssType.selectedItems()
+        # self.ass.name = self.listAssType.selectedItems()[0].text()
+        self.ass.name = item.text()
         self.listAssType.clear()
         logging.info('清除资产类型中的项数')
         self.clearListAssFile()
@@ -387,20 +386,19 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.ass.version = int(self.listAssFile.item(ass_row, 0).text()[1:])
         # self.ass.user = self.listAssFile.item(ass_row, 2).text()
         # self.ass.suffixes = self.listAssFile.item(ass_row, 3).text()
-        self.ass.id = int(self.listAssFile.item(ass_row, 4).text())
+        self.ass.query_id = int(self.listAssFile.item(ass_row, 4).text())
 
     def setAssFileItem(self, file_data):
         """设置资产文件在GUI中的显示"""
-        for item in file_data:
-            mrow = 0
-            self.listAssFile.insertRow(mrow)
+        for index, item in enumerate(file_data):
+            self.listAssFile.insertRow(index)
 
-            self.listAssFile.setItem(mrow, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
-            self.listAssFile.setItem(mrow, 1, QtWidgets.QTableWidgetItem(item[1]))
-            self.listAssFile.setItem(mrow, 2, QtWidgets.QTableWidgetItem(item[2]))
-            self.listAssFile.setItem(mrow, 3, QtWidgets.QTableWidgetItem(item[3]))
-            self.listAssFile.setItem(mrow, 4, QtWidgets.QTableWidgetItem(str(item[4])))
-            mrow = mrow + 1
+            self.listAssFile.setItem(index, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
+            self.listAssFile.setItem(index, 1, QtWidgets.QTableWidgetItem(item[1]))
+            self.listAssFile.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))
+            self.listAssFile.setItem(index, 3, QtWidgets.QTableWidgetItem(item[3]))
+            self.listAssFile.setItem(index, 4, QtWidgets.QTableWidgetItem(str(item[4])))
+
         logging.info('更新文件列表')
 
     """清理资产文件列表"""
@@ -514,14 +512,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def addAssFolder(self):
         """添加资产类型文件夹"""
-        assFolder = QtWidgets.QInputDialog.getText(self, '输入资产类型', "请用英文或拼音",
-                                                   QtWidgets.QLineEdit.Normal)[0]
-        if assFolder:
-            self.listAss.addItem(assFolder)
+        ass_folder = QtWidgets.QInputDialog.getText(self, '输入资产类型', "请用英文或拼音",
+                                                    QtWidgets.QLineEdit.Normal)[0]
+        if ass_folder:
+            self.listAss.addItem(ass_folder)
 
     def addAssTypeFolder(self):
         """添加资产文件夹类型"""
-        items: list[str] = self.setlocale.assTypeFolder.copy()
+
+        items: typing.List[str] = self.setlocale.assTypeFolder.copy()
         items[2] = items[2].format(self.ass.name)
         ass_type = QtWidgets.QInputDialog.getItem(self, '选择资产类型', '要先选择资产', items, 0, False)[0]
         if ass_type and self.listAss.selectedItems():
@@ -560,6 +559,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 self.assUploadMapHandle(file, target_file, version_max)
             else:
                 pass
+            self.ass.file = target_file.name
+            self.ass.fileSuffixes = target_file.suffix
+            self.ass.user = self.user
+            self.ass.version = version_max
+            self.ass.filepath = target_file.as_posix()
+            self.ass.infor = remarks_info
             self.ass.submitInfo(target_file.name, target_file.stem, self.user, version_max,
                                 infor=remarks_info, filepath_and_name=target_file.as_posix())
 
@@ -648,50 +653,68 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
             if self.listdepType.selectedItems():
                 version: int = self.shot.getMaxVersion() + 1
+                self.shot.file = file.name
+                self.shot.fileSuffixes = file.suffix
+                self.shot.user = self.user
+                self.shot.version = version
+                self.shot.filepath = file.as_posix()
+                self.shot.infor = remarks_info
                 self.shot.submitInfo(file.name, file.suffix, self.user, version, file.as_posix(), remarks_info)
 
             elif self.listAssType.selectedItems():
                 version: int = self.ass.getMaxVersion() + 1
+
+                self.ass.file = file.name
+                self.ass.fileSuffixes = file.suffix
+                self.ass.user = self.user
+                self.ass.version = version
+                self.ass.filepath = file.as_posix()
+                self.ass.infor = remarks_info
+
                 self.ass.submitInfo(file.name, file.suffix, self.user, version,
                                     filepath_and_name=file.as_posix(), infor=remarks_info)
 
     # </editor-fold>
 
     # <editor-fold desc="各种对于文件的操作">
-    def openShotExplorer(self):
-        file_path = self.shot.queryFileName(self.shot.id).parent
+    def openShotExplorer(self,core:script.DooDlePrjCode.PrjCode):
+        p = core
+        file_path = p.queryFileName(p.query_id).parent
         logging.info('打开path %s', file_path)
-        os.startfile(str(file_path))
+        try:
+            os.startfile(str(file_path))
+        except BaseException as err:
+            logging.error("%s", err)
         return None
 
     def openShotFile(self):
-        file_path = self.shot.queryFileName(self.shot.id)
+        file_path = self.shot.queryFileName(self.shot.query_id)
         os.startfile(str(file_path))
 
     def copyNameToClipboard(self):
         #
-        file_path = self.shot.queryFileName(self.shot.id)
+        file_path = self.shot.queryFileName(self.shot.query_id)
         pyperclip.copy(str(file_path.name))
         logging.info('复制 %s 到剪切板', str(file_path.name))
 
     def copyPathToClipboard(self):
-        file_path = self.shot.queryFileName(self.shot.id)
+        file_path = self.shot.queryFileName(self.shot.query_id)
         pyperclip.copy(str(file_path.parent))
         logging.info('复制 %s 到剪切板', str(file_path.parent))
 
     def exportMaya(self):
-        file_data = self.shot.queryFileName(self.shot.id)
+        file_data = self.shot.queryFileName(self.shot.query_id)
 
         logging.info(file_data)
         if file_data:
             export_maya = script.MayaExportCam.export(file_data)
             export_maya.exportCam()
             QtWidgets.QMessageBox.warning(self, "点击:", "点击导出 "
-                                                       "请点击桌面maya导出快捷方式"
-                                          , QtWidgets.QMessageBox.Yes)
+                                                       "请点击桌面maya导出快捷方式",
+                                          QtWidgets.QMessageBox.Yes)
 
-    def Screenshot(self, type: str, thumbnail: QtWidgets.QLabel):
-        core = getattr(self, type)
+    def Screenshot(self, my_type: str, thumbnail: QtWidgets.QLabel):
+        core:script.DooDlePrjCode.PrjCode = getattr(self, my_type)
         path = core.getScreenshot()
         if not path.parent.is_dir():
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -701,11 +724,16 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         screen_shot.exec_()
         self.show()
         if path.is_file():
+            core.file = path.name
+            core.fileSuffixes = path.suffix
+            core.version = 1
+            core.filepath = path.as_posix()
+            core.infor = "这是截图"
             core.submitInfo(path.name, path.suffix, self.user, 0, path.as_posix(), "这是截图")
-        self.setThumbnail(type, thumbnail)
+        self.setThumbnail(my_type, thumbnail)
 
-    def setThumbnail(self, type: str, thumbnail: QtWidgets.QLabel):
-        core = getattr(self, type)
+    def setThumbnail(self, type_: str, thumbnail: QtWidgets.QLabel):
+        core = getattr(self, type_)
         path = core.getScreenshotPath()
         pixmap = QtGui.QPixmap(str(path))
         pixmap = pixmap.scaled(thumbnail.geometry().size(), QtCore.Qt.KeepAspectRatio)
@@ -745,8 +773,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                     script.doodlePlayer.imageToMp4(video_path=path, image_path=file)
                 except:
                     QtWidgets.QMessageBox.warning(self, "图片命名规则:", "test_####.png "
-                                                                   "后缀前有四位数字,表示帧号,前面有下划线"
-                                                  , QtWidgets.QMessageBox.Yes)
+                                                                   "后缀前有四位数字,表示帧号,前面有下划线",
+                                                  QtWidgets.QMessageBox.Yes)
                     return ''
 
             else:
@@ -757,6 +785,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
             logging.info("复制路径到 %s", right_path)
 
+            self.ass.file = path.name
+            self.ass.fileSuffixes = path.suffix
+            self.ass.user = self.user
+            self.ass.version = version
+            self.ass.filepath = path.as_posix()
+            self.ass.infor = "这是拍屏"
             self.ass.submitInfo(path.name, path.suffix, self.user,
                                 version=version, filepath_and_name=path.as_posix(), infor="这是拍屏")
             self.listDepartmenClicked()
