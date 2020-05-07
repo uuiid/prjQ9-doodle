@@ -362,9 +362,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listAss.addItems(self.ass.getAssClass())
 
     def assClassClicked(self, item):
-        temp = self.listAssType.selectedItems()
-        # self.ass.name = self.listAssType.selectedItems()[0].text()
-        self.ass.name = item.text()
+        self.ass.ass_class = item.text()  # self.listAssType.selectedItems()[0].text()
+
         self.listAssType.clear()
         logging.info('清除资产类型中的项数')
         self.clearListAssFile()
