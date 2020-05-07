@@ -30,6 +30,7 @@ import script.synchronizeFiles
 import script.DooDlePrjCode
 import script.MayaExportCam
 
+
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
     '''
     这个类用来实现项目管理的属性和UI操作,  其中会有一个项目分析器在外部, 有每个项目分别配置或者使用默认设置
@@ -317,7 +318,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         self.setFileItem(self.shot.getFile())
 
-        self.setThumbnail("shot", self.shot_thumbnail)
+        # self.setThumbnail("shot", self.shot_thumbnail)
 
     def shotFileClicked(self):
         shot_row = self.listfile.currentRow()
@@ -686,7 +687,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             export_maya = script.MayaExportCam.export(file_data)
             export_maya.exportCam()
             QtWidgets.QMessageBox.warning(self, "点击:", "点击导出 "
-                                                           "请点击桌面maya导出快捷方式"
+                                                       "请点击桌面maya导出快捷方式"
                                           , QtWidgets.QMessageBox.Yes)
 
     def Screenshot(self, type: str, thumbnail: QtWidgets.QLabel):

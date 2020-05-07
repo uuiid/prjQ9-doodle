@@ -5,6 +5,8 @@ import mysql.connector
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 
+Base = sqlalchemy.ext.declarative.declarative_base()
+
 
 # engine = sqlalchemy.create_engine("mysql+mysqlconnector://Effects:Effects@192.168.10.213:3306/dubuxiaoyao",
 #                                   encoding='utf-8')
@@ -59,6 +61,7 @@ def selsctCommMysql(mybd: str, departmen, password, sql_command):
 class commMysql(object):
     _setting = {}
     _instance_lock = threading.Lock()
+    engine: sqlalchemy
 
     def __new__(cls, *args, **kwargs):
         if not hasattr(commMysql, '_instance'):
@@ -72,6 +75,8 @@ class commMysql(object):
                   "://{_departmen}:{_password}@" \
                   "192.168.10.213:3306/{_mybd}".format(_departmen="Effects", _password="Effects", _mybd=mybd)
         self.engine = sqlalchemy.create_engine(com_lur, encoding='utf-8')
+        # tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
+        # self.session: sqlalchemy.orm.session.Session = tmp_session
 
     @contextlib.contextmanager
     def session(self) -> sqlalchemy.orm.session.Session:
@@ -81,7 +86,21 @@ class commMysql(object):
             yield session
             session.commit()
         except BaseException as err:
-            logging.info("%s",err)
+            logging.error("%s", err)
             session.rollback()
         finally:
             session.close()
+
+    @contextlib.contextmanager
+    def sessionOne(self) -> sqlalchemy.orm.session.Session:
+        tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
+        session: sqlalchemy.orm.session.Session = sqlalchemy.orm.scoped_session(tmp_session)()
+        try:
+            yield session
+            session.commit()
+        except BaseException as err:
+            logging.info("%s", err)
+            session.rollback()
+        finally:
+            pass
+            # session.close()

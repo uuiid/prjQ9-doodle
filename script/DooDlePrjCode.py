@@ -7,6 +7,7 @@ import sqlalchemy.orm
 import script.MySqlComm
 import sqlalchemy.sql
 
+
 # # 定义类型检查
 # def Typed(expected_type, cls=None):
 #     if cls is None:
@@ -114,7 +115,7 @@ class PrjCode():
         pass
 
 
-class PrjShot(PrjCode, sqlalchemy.ext.declarative.declarative_base()):
+class PrjShot(PrjCode, script.MySqlComm.Base):
     # <editor-fold desc="Description">
     __tablename__ = ""
     episodes: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
@@ -147,9 +148,11 @@ class PrjShot(PrjCode, sqlalchemy.ext.declarative.declarative_base()):
         """
         PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
         shots = []
+        #                 options(sqlalchemy.orm.joinedload_all). \
         with self.comsql.session() as session:
-            # assert isinstance(session, sqlalchemy.orm.session.Session)
+            assert isinstance(session, sqlalchemy.orm.session.Session)
             shots = session.query(PrjShot.shot, PrjShot.shotab). \
+                options(sqlalchemy.orm.joinedload(PrjShot.shot)). \
                 order_by(PrjShot.shot). \
                 filter_by(episodes=self.episodes). \
                 distinct().all()
@@ -161,7 +164,7 @@ class PrjShot(PrjCode, sqlalchemy.ext.declarative.declarative_base()):
         获得部门列表
         :return: lsit
         """
-        PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        # PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
         deps = []
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
@@ -176,7 +179,7 @@ class PrjShot(PrjCode, sqlalchemy.ext.declarative.declarative_base()):
         获得部门类型列表
         :return: list
         """
-        PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        # PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
         dep_types = []
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
@@ -192,7 +195,7 @@ class PrjShot(PrjCode, sqlalchemy.ext.declarative.declarative_base()):
         :return:
         """
         files = []
-        PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        # PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             files = session.query(PrjShot.version, PrjShot.infor, PrjShot.user, PrjShot.fileSuffixes, PrjShot.id). \
@@ -212,24 +215,24 @@ class PrjShot(PrjCode, sqlalchemy.ext.declarative.declarative_base()):
 
     def getFileName(self, version: int, user_: str, suffix: str, prefix: str = "") -> str:
         name = f"{prefix}shot_ep{self.episodes:0>3d}_sc{self.shot:0>4d}{self.shotab}_" \
-               f"{self.department}" \
+               f"{self.department}_" \
                f"{self.Type}_v{version:0>4d}" \
                f"__{user_}_{suffix}"
         return name
 
     def getMaxVersion(self) -> int:
-        PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        # PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             file_data = session.query(PrjShot.version). \
-                order_by(PrjShot.version). \
+                order_by(sqlalchemy.desc(PrjShot.version)). \
                 filter_by(episodes=self.episodes, shot=self.shot,
                           shotab=self.shotab, department=self.department, Type=self.Type). \
                 distinct().first()
         if file_data:
             version_max: int = int(file_data[0])
         else:
-            version_max: int = 1
+            version_max: int = 0
         # try:
         #     # 查不到会产生错误
         #     file_data = self.MysqlData(f"ep{self.episodes:0>3d}", "get", 'version', True, "version",
@@ -263,39 +266,32 @@ class PrjShot(PrjCode, sqlalchemy.ext.declarative.declarative_base()):
         #                version=version,
         #                filepath=filepathAndname,
         #                infor=infor)
-        with self.comsql.session() as session:
-            assert isinstance(session, sqlalchemy.orm.session.Session)
-            session.add(copy.deepcopy(self))
 
-        with self.comsql.session() as session:
+        with self.comsql.sessionOne() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            session.commit()
+            session.add(self)
 
     def subEpisodesInfo(self, episodes: int):
-        create_date = f"""create table ep{episodes:0>3d}(
-                      id smallint primary key not null auto_increment,
-                      episodes smallint,
-                      shot smallint,
-                      shotab varchar(8),
-                      department varchar(128),
-                      Type varchar(128),
-                      file varchar(128),
-                      fileSuffixes varchar(32),
-                      user varchar(128),
-                      version smallint,
-                      filepath varchar(1024),
-                      itfor varchar(4096),
-                      filetime datetime default current_timestamp on update current_timestamp not null 
-                      );"""
-        create_date_insert = f"""insert into mainshot(episods)
-                                                        value ({episodes})"""
-        script.MySqlComm.inserteCommMysql(self.mysqllib, '', '', create_date)
-        script.MySqlComm.inserteCommMysql(self.mysqllib, '', '',
-                                          create_date_insert)
+        PrjShot.__table__.name = f"ep{episodes:0>3d}"
+        PrjShot.__table__.create(self.comsql.engine)
+
+        self.episodes = episodes
+
+        class epsTable(script.MySqlComm.Base):
+            __tablename__ = "mainshot"
+            id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True)
+            episodes: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
+
+        with self.comsql.sessionOne() as session:
+            session.add(epsTable(episodes=self.episodes))
 
     def queryFileName(self, query_id: int) -> pathlib.Path:
-        file_data = self.MysqlData(f"ep{self.episodes:0>3d}", "get", '', True, "filepath",
-                                   id=query_id)
+
+        with self.comsql.session() as session:
+            file_data = session.query(PrjShot.filepath).get(query_id)
+
+        # file_data = self.MysqlData(f"ep{self.episodes:0>3d}", "get", '', True, "filepath",
+        #                            id=query_id)
         try:
             file_data = file_data[0][0]
         except:
@@ -318,6 +314,8 @@ class PrjShot(PrjCode, sqlalchemy.ext.declarative.declarative_base()):
                                    episodes=self.episodes, shot=self.shot, shotab=self.shotab,
                                    department=self.department, Type=self.Type,
                                    fileSuffixes='.jpg')
+        with self.comsql.session() as session:
+            file_data = session.query(PrjShot.filepath)
         try:
             file_data = pathlib.Path(file_data[0][0])
         except:
