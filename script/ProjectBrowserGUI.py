@@ -634,7 +634,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                           fileName='UEpriect')
         program = self.setlocale.FreeFileSync
         os.system('{} "{}"'.format(program, syn_file))
-        shutil.copy2(str(source_path), str(target_file.stem + '.uproject'))
+        shutil.copy2(str(source_path), str(target_file.as_posix()))
 
     def appointFilePath(self):
         """指定文件路径"""
@@ -785,16 +785,20 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
             logging.info("复制路径到 %s", right_path)
 
-            # self.ass.file = path.name
-            # self.ass.fileSuffixes = path.suffix
-            # self.ass.user = self.user
-            # self.ass.version = version
-            # self.ass.filepath = path.as_posix()
-            # self.ass.infor = "这是拍屏"
+            code.file = path.name
+            code.fileSuffixes = path.suffix
+            code.user = self.user
+            code.version = version
+            code.filepath = path.as_posix()
+            code.infor = "这是拍屏"
             # self.ass.submitInfo(path.name, path.suffix, self.user,
             #                     version=version, filepath_and_name=path.as_posix(), infor="这是拍屏")
-            self.shot.dep_type = "FB_" + self.shot.dep_type
-            self.shot.submitInfo(path.name, path.suffix, self.user,
+            if isinstance(code,script.DooDlePrjCode.PrjAss):
+                code.type = "FB_" + code.type
+            else:
+                code.Type = "FB_" + code.Type
+
+            code.submitInfo(path.name, path.suffix, self.user,
                                  version=version, filepathAndname=path.as_posix(), infor="这是拍屏")
             self.listDepartmenClicked()
 
