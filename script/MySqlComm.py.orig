@@ -58,6 +58,7 @@ def selsctCommMysql(mybd: str, departmen, password, sql_command):
     data_base.close()
     return date
 
+<<<<<<< HEAD
 
 class commMysql(object):
     _setting = {}
@@ -105,3 +106,13 @@ class commMysql(object):
         finally:
             pass
             # session.close()
+=======
+
+# def MysqlComm(mybd: str, departmen, password, sql_command):
+
+# def inserteMysql(mybd: str,department:str,**args):
+#     my_sql_db = commMysql(mybd,department)
+#     sql = """"""
+if __name__ == '__main__':
+    pass
+>>>>>>> master

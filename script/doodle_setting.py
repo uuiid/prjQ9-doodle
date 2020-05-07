@@ -6,12 +6,24 @@ import pathlib
 import sys
 import threading
 import functools
+import sqlalchemy
+import sqlalchemy.ext.declarative
 from PyQt5 import QtWidgets
 
 import UiFile.setting
 import script.convert
 import script.doodleLog
 import script.MySqlComm
+
+
+class srverSetting(sqlalchemy.ext.declarative.declarative_base()):
+    __tablename__ = "configure"
+    id = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True)
+    name = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+    value = sqlalchemy.Column(sqlalchemy.VARCHAR(1024))
+    value2 = sqlalchemy.Column(sqlalchemy.VARCHAR(32))
+    value3 = sqlalchemy.Column(sqlalchemy.VARCHAR(256))
+    value4 = sqlalchemy.Column(sqlalchemy.VARCHAR(1024))
 
 
 class Doodlesetting():
@@ -21,7 +33,7 @@ class Doodlesetting():
     assetsRoot: str
     synSever: str
     version: str
-    projectname:str
+    projectname: str
 
     def __new__(cls, *args, **kwargs):
         if not hasattr(Doodlesetting, '_instance'):
@@ -40,9 +52,11 @@ class Doodlesetting():
         self.projectname = 'dubuxiaoyao'
         self.ProgramFolder = ['Export', 'Playblasts', 'Rendering', 'Scenefiles']
         self.assTypeFolder = ['sourceimages', 'scenes', '{}_UE4', 'rig']
-        self.project=''
+        self.project = ''
         self.__initSetAttr(self.__getString())
         self.__initSetAttr(self.__getseverPrjBrowser())
+        self.my_sql = script.MySqlComm.commMysql(self.projectname, "", "")
+        self.sever_con = srverSetting()
 
     # <editor-fold desc="属性操作">
 
@@ -68,8 +82,8 @@ class Doodlesetting():
 
     @synEp.setter
     def synEp(self, synEp):
-        if not isinstance(synEp,int):
-            synEp= int(synEp)
+        if not isinstance(synEp, int):
+            synEp = int(synEp)
         self._synEp = synEp
 
     @property
@@ -138,7 +152,7 @@ class Doodlesetting():
         #  "Right": [value for key, value in data if key == "Right"]}
         # tmp = [{key: value} for key, value in data]
         tmp = [data[i:i + 2] for i in range(0, len(data), 2)]
-        return [{i[0][0]: self.syn+'/' + i[0][1], i[1][0]: self.synSever+'/' + i[1][1]} for i in tmp]
+        return [{i[0][0]: self.syn + '/' + i[0][1], i[1][0]: self.synSever + '/' + i[1][1]} for i in tmp]
 
     # @functools.lru_cache()
     def __getseverPrjBrowser(self) -> dict:

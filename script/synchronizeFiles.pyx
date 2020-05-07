@@ -1,8 +1,4 @@
 import pathlib
-import subprocess
-import sqlite3
-import filecmp
-import os
 
 
 class fileSyn(object):

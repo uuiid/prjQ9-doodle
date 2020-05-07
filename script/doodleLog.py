@@ -1,8 +1,10 @@
 # import logging
+import functools
 import logging.config
 import pathlib
 import traceback
-import functools
+
+
 def get_logger(name='root'):
     config_log = pathlib.Path.cwd()
     config_log = Lookingconfig(config_log).joinpath('doodleLogConfig.ini')

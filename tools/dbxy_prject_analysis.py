@@ -1,6 +1,8 @@
-import script.ProjectAnalysis.DBXYPathAnalysis
-import script.MySqlComm
 import pathlib
+
+import script.ProjectAnalysis.DBXYPathAnalysis
+
+import script.MySqlComm
 
 shot = pathlib.Path(r"W:\03_Workflow\Shots")
 data = 'dubuxiaoyao'
