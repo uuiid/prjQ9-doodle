@@ -27,6 +27,34 @@ import sqlalchemy.sql
 # class integer():
 #     pass
 
+class _root(script.MySqlComm.Base):
+    __abstract__ = True
+    id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True)
+    file: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+    fileSuffixes: str = sqlalchemy.Column(sqlalchemy.VARCHAR(32))
+    user: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+    version: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
+    filepath: str = sqlalchemy.Column(sqlalchemy.VARCHAR(1024))
+    infor: str = sqlalchemy.Column(sqlalchemy.VARCHAR(4096))
+    filetime = sqlalchemy.Column(sqlalchemy.DATETIME,
+                                 server_default=sqlalchemy.sql.func.now(),
+                                 server_onupdate=sqlalchemy.sql.func.now())
+
+
+class _shot(_root):
+    __tablename__ = "mainshot"
+    episodes: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
+    shot: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
+    shotab: str = sqlalchemy.Column(sqlalchemy.VARCHAR(8))
+    department: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+    Type: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+
+
+class _ass(_root):
+    __tablename__ = "props"
+    name: str = sqlalchemy.Column(sqlalchemy.VARCHAR(256))
+    type: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+
 
 class PrjCode():
     mysqllib: str
@@ -136,12 +164,12 @@ class PrjShot(PrjCode, script.MySqlComm.Base):
         :return: list
         """
 
-        PrjShot.__table__.name = "mainshot"
+        _shot.__table__.name = "mainshot"
         eps = []
 
         with self.comsql.session() as session:  # Type:sqlalchemy.orm.session.Session
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            eps = session.query(PrjShot.episodes).all()
+            eps = session.query(_shot.episodes).all()
 
         return ['ep{:0>3d}'.format(ep[0]) for ep in eps]
 
@@ -150,13 +178,13 @@ class PrjShot(PrjCode, script.MySqlComm.Base):
         获得shot列表
         :return: list
         """
-        PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        _shot.__table__.name = f"ep{self.episodes:0>3d}"
         shots = []
         #                 options(sqlalchemy.orm.joinedload_all). \
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            shots = session.query(PrjShot.shot, PrjShot.shotab). \
-                order_by(PrjShot.shot). \
+            shots = session.query(_shot.shot, _shot.shotab). \
+                order_by(_shot.shot). \
                 filter_by(episodes=self.episodes). \
                 distinct().all()
         return ['sc{:0>4d}'.format(shot[0]) if shot[1] == ''
@@ -167,12 +195,12 @@ class PrjShot(PrjCode, script.MySqlComm.Base):
         获得部门列表
         :return: lsit
         """
-        # PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        # _shot.__table__.name = f"ep{self.episodes:0>3d}"
         deps = []
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            deps = session.query(PrjShot.department). \
-                order_by(PrjShot.department). \
+            deps = session.query(_shot.department). \
+                order_by(_shot.department). \
                 filter_by(episodes=self.episodes, shot=self.shot, shotab=self.shotab). \
                 distinct().all()
         return [dep[0] for dep in deps]
@@ -182,12 +210,12 @@ class PrjShot(PrjCode, script.MySqlComm.Base):
         获得部门类型列表
         :return: list
         """
-        # PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        # _shot.__table__.name = f"ep{self.episodes:0>3d}"
         dep_types = []
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            dep_types = session.query(PrjShot.Type). \
-                order_by(PrjShot.Type). \
+            dep_types = session.query(_shot.Type). \
+                order_by(_shot.Type). \
                 filter_by(episodes=self.episodes, shot=self.shot, shotab=self.shotab, department=self.department). \
                 distinct().all()
         return [dep_type[0] for dep_type in dep_types]
@@ -198,10 +226,10 @@ class PrjShot(PrjCode, script.MySqlComm.Base):
         :return:
         """
         files = []
-        # PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        # _shot.__table__.name = f"ep{self.episodes:0>3d}"
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            files = session.query(PrjShot.version, PrjShot.infor, PrjShot.user, PrjShot.fileSuffixes, PrjShot.id). \
+            files = session.query(_shot.version, _shot.infor, _shot.user, _shot.fileSuffixes, _shot.id). \
                 filter_by(episodes=self.episodes, shot=self.shot,
                           shotab=self.shotab, department=self.department, Type=self.Type). \
                 distinct().all()
@@ -224,11 +252,11 @@ class PrjShot(PrjCode, script.MySqlComm.Base):
         return name
 
     def getMaxVersion(self) -> int:
-        # PrjShot.__table__.name = f"ep{self.episodes:0>3d}"
+        # _shot.__table__.name = f"ep{self.episodes:0>3d}"
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            file_data = session.query(PrjShot.version). \
-                order_by(sqlalchemy.desc(PrjShot.version)). \
+            file_data = session.query(_shot.version). \
+                order_by(sqlalchemy.desc(_shot.version)). \
                 filter_by(episodes=self.episodes, shot=self.shot,
                           shotab=self.shotab, department=self.department, Type=self.Type). \
                 distinct().first()
@@ -260,23 +288,18 @@ class PrjShot(PrjCode, script.MySqlComm.Base):
         :param infor: str
         :return:
         """
-        # if not isinstance(version, int):
-        #     version = int(version)
-        # self.MysqlData(f"ep{self.episodes:0>3d}", "set", '', False,
-        #                episodes=self.episodes, shot=self.shot, shotab=self.shotab,
-        #                department=self.department, Type=self.Type,
-        #                file=filename, fileSuffixes=suffix, user=user,
-        #                version=version,
-        #                filepath=filepathAndname,
-        #                infor=infor)
-
+        sub = _shot(episodes=self.episodes, shot=self.shot, shotab=self.shotab,
+                    department=self.department, Type=self.Type, file=self.file, fileSuffixes=self.fileSuffixes,
+                    user=self.user, version=self.version, filepath=self.filepath, infor=self.infor)
+        sub.__table__.name = self.__table__.name
         with self.comsql.sessionOne() as session:
-            # assert isinstance(session, sqlalchemy.orm.session.Session)
-            session.add(self)
+            assert isinstance(session, sqlalchemy.orm.session.Session)
+            # session.expire_on_commit = False
+            session.add(sub)
 
     def subEpisodesInfo(self, episodes: int):
-        PrjShot.__table__.name = f"ep{episodes:0>3d}"
-        PrjShot.__table__.create(self.comsql.engine)
+        _shot.__table__.name = f"ep{episodes:0>3d}"
+        _shot.__table__.create(self.comsql.engine)
 
         self.episodes = episodes
 
@@ -292,7 +315,7 @@ class PrjShot(PrjCode, script.MySqlComm.Base):
 
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            file_data = session.query(PrjShot.filepath).filter(PrjShot.id == id__).one()
+            file_data = session.query(_shot.filepath).filter(_shot.id == id__).one()
 
         # file_data = self.MysqlData(f"ep{self.episodes:0>3d}", "get", '', True, "filepath",
         #                            id=query_id)
@@ -320,13 +343,13 @@ class PrjShot(PrjCode, script.MySqlComm.Base):
         #                            fileSuffixes='.jpg')
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            file_data = session.query(PrjShot.filepath). \
+            file_data = session.query(_shot.filepath). \
                 filter_by(episodes=self.episodes, shot=self.shot, shotab=self.shotab,
                           department=self.department, Type=self.Type,
                           fileSuffixes='.jpg'). \
-                order_by(PrjShot.filetime).first()
+                order_by(_shot.filetime).first()
         try:
-            file_data = pathlib.Path(file_data[0][0])
+            file_data = pathlib.Path(file_data[0])
         except:
             file_data = pathlib.Path("")
         return file_data
@@ -337,13 +360,13 @@ class PrjShot(PrjCode, script.MySqlComm.Base):
         #                       department=self.department, Type=ass_type, fileSuffixes='.mp4')
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            path = session.query(PrjShot.filepath). \
+            path = session.query(_shot.filepath). \
                 filter_by(episodes=self.episodes, shot=self.shot, shotab=self.shotab,
                           department=self.department, Type=ass_type,
                           fileSuffixes='.mp4'). \
-                order_by(PrjShot.filetime).first()
+                order_by(_shot.filetime).first()
         try:
-            path = pathlib.Path(path[0][0])
+            path = pathlib.Path(path[0])
         except:
             path = pathlib.Path("")
         return path
@@ -353,11 +376,11 @@ class PrjShot(PrjCode, script.MySqlComm.Base):
         #                       episodes=self.episodes, shot=shot, fileSuffixes='.mp4')
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            path = session.query(PrjShot.filepath). \
+            path = session.query(_shot.filepath). \
                 filter_by(episodes=self.episodes, shot=shot, fileSuffixes='.mp4'). \
-                order_by(PrjShot.filetime).first()
+                order_by(_shot.filetime).first()
         try:
-            path = pathlib.Path(path[0][0])
+            path = pathlib.Path(path[0])
         except:
             path = pathlib.Path("")
         return path
@@ -374,10 +397,10 @@ class PrjAss(PrjCode, script.MySqlComm.Base):
         获得资产类型
         :return: list
         """
-        PrjAss.__table__.name = self.sort
+        _ass.__table__.name = self.sort
         datas = []
         with self.comsql.session() as session:
-            datas = session.query(PrjAss.name).distinct().order_by(PrjAss.name)
+            datas = session.query(_ass.name).distinct().order_by(_ass.name)
         # datas = self.MysqlData(self.sort, "get", '', False, "name")
         return [data[0] for data in datas]
 
@@ -389,7 +412,7 @@ class PrjAss(PrjCode, script.MySqlComm.Base):
         datas = []
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            datas = session.query(PrjAss.type).filter_by(name=self.name).distinct()
+            datas = session.query(_ass.type).filter_by(name=self.name).distinct()
         # datas = self.MysqlData(self.sort, "get", '', False, "type", name=self.name)
         return [data[0] for data in datas]
 
@@ -401,8 +424,8 @@ class PrjAss(PrjCode, script.MySqlComm.Base):
         file_data = []
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            file_data = session.query(PrjAss.version, PrjAss.infor, PrjAss.user, PrjAss.fileSuffixes,
-                                      PrjAss.id).filter_by(name=self.name, type=self.type).distinct().all()
+            file_data = session.query(_ass.version, _ass.infor, _ass.user, _ass.fileSuffixes,
+                                      _ass.id).filter_by(name=self.name, type=self.type).distinct().all()
         # file_data = self.MysqlData(self.sort, "get", '', False, "version", "infor", "user", "fileSuffixes",
         #                            "id", name=self.name, type=self.type)
         return file_data
@@ -424,12 +447,12 @@ class PrjAss(PrjCode, script.MySqlComm.Base):
         return name
 
     def getMaxVersion(self) -> int:
-        # PrjAss.__table__.name = self.sort
+        # _ass.__table__.name = self.sort
         file_data = []
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            file_data = session.query(PrjAss.version). \
-                order_by(sqlalchemy.desc(PrjAss.version)). \
+            file_data = session.query(_ass.version). \
+                order_by(sqlalchemy.desc(_ass.version)). \
                 filter_by(name=self.name, type=self.type). \
                 distinct().first()
 
@@ -443,8 +466,11 @@ class PrjAss(PrjCode, script.MySqlComm.Base):
 
     def submitInfo(self, file_name: str, suffix: str, user: str, version: int,
                    filepath_and_name: str, infor: str = ""):
+        sub = _ass(name=self.name, type=self.type, file=self.file, fileSuffixes=self.fileSuffixes,
+                   user=self.user, version=self.version, filepath=self.filepath, infor=self.infor)
+        sub.__table__.name = self.__table__.name
         with self.comsql.sessionOne() as session:
-            session.add(self)
+            session.add(sub)
         # self.MysqlData(self.sort, "set", '', False,
         #                name=self.name, type=self.type,
         #                file=file_name, fileSuffixes=suffix,
@@ -454,7 +480,7 @@ class PrjAss(PrjCode, script.MySqlComm.Base):
     def queryFileName(self, id__: int) -> pathlib.Path:
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            file_data = session.query(PrjAss.filepath).filter(PrjAss.id == id__).one()
+            file_data = session.query(_ass.filepath).filter(_ass.id == id__).one()
         # file_data = self.MysqlData(self.sort, "get", '', True, "filepath",
         #                            id=id)
         try:
@@ -475,14 +501,14 @@ class PrjAss(PrjCode, script.MySqlComm.Base):
 
     def getScreenshotPath(self) -> pathlib.Path:
         with self.comsql.session() as session:
-            file_data = session.query(PrjAss.filepath). \
+            file_data = session.query(_ass.filepath). \
                 filter_by(name=self.name, type=self.type, fileSuffixes='.jpg'). \
-                order_by(PrjAss.filetime).first()
+                order_by(_ass.filetime).first()
         # file_data = self.MysqlData(self.sort, "get", '', True, 'filepath',
         #                            name=self.name, type=self.type,
         #                            fileSuffixes='.jpg')
         try:
-            file_data = pathlib.Path(file_data[0][0])
+            file_data = pathlib.Path(file_data[0])
         except:
             file_data = pathlib.Path("")
         return file_data
@@ -490,14 +516,14 @@ class PrjAss(PrjCode, script.MySqlComm.Base):
     def queryFlipBook(self, ass_type: str) -> pathlib.Path:
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            path = session.query(PrjShot.filepath). \
+            path = session.query(_ass.filepath). \
                 filter_by(name=self.name, type=ass_type, fileSuffixes=".mp4"). \
-                order_by(PrjAss.filetime).first()
+                order_by(_ass.filetime).first()
         # path = self.MysqlData(self.sort, "get", "filetime", True, "filepath",
         #                       name=self.name, type=ass_type,
         #                       fileSuffixes=".mp4")
         try:
-            path = pathlib.Path(path[0][0])
+            path = pathlib.Path(path[0])
         except:
             path = pathlib.Path("")
         return path

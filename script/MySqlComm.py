@@ -76,13 +76,15 @@ class commMysql(object):
                   "://{_departmen}:{_password}@" \
                   "192.168.10.213:3306/{_mybd}".format(_departmen="Effects", _password="Effects", _mybd=mybd)
         self.engine = sqlalchemy.create_engine(com_lur, encoding='utf-8')
+        tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
+        self.sessionclass = sqlalchemy.orm.scoped_session(tmp_session)
         # tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
         # self.session: sqlalchemy.orm.session.Session = tmp_session
 
     @contextlib.contextmanager
     def session(self) -> sqlalchemy.orm.session.Session:
         tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
-        session: sqlalchemy.orm.session.Session = tmp_session()
+        session: sqlalchemy.orm.session.Session = self.sessionclass()
         try:
             yield session
             session.commit()
@@ -91,17 +93,19 @@ class commMysql(object):
             session.rollback()
         finally:
             session.close()
+            self.sessionclass().close()
 
     @contextlib.contextmanager
     def sessionOne(self) -> sqlalchemy.orm.session.Session:
-        tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
-        session: sqlalchemy.orm.session.Session = sqlalchemy.orm.scoped_session(tmp_session)()
+        # self.sessionclass.registry
+        session: sqlalchemy.orm.session.Session = self.sessionclass()
         try:
             yield session
+            # session.add(self,)
             session.commit()
         except BaseException as err:
             logging.info("%s", err)
             session.rollback()
         finally:
             pass
-            # session.close()
+            session.close()

@@ -64,52 +64,52 @@ maya.cmds.file(new=True, force=True)
 maya.cmds.file('{paths}',o=True)
 
 def camBakeAim():
-    cam = pm.ls(sl=True)[0]
+    cam = pymel.core.ls(sl=True)[0]
     # print cam.nodeName()
     # print type(cam)
     if (cam):
         # focalLen = cam.getFocalLength()
         try:
-            camloa = pm.spaceLocator()
+            camloa = pymel.core.spaceLocator()
             # print camloa
             # print type(camloa)
-            pm.parent(camloa, cam)
+            pymel.core.parent(camloa, cam)
 
             camloa.setTranslation([0, 0, 0])
             camloa.setRotation([0, 0, 0])
 
-            newCam = pm.createNode('camera').getParent()
+            newCam = pymel.core.createNode('camera').getParent()
             newCam.setDisplayResolution(True)
             newCam.setDisplayGateMask(True)
-            mel.eval('setAttr "{{}}.displayGateMaskOpacity" 1;'.format(cam.getShape().longName()))
+            maya.mel.eval('setAttr "{{}}.displayGateMaskOpacity" 1;'.format(cam.getShape().longName()))
             newCam.setOverscan(1)
-            pm.rename(newCam, cam.nodeName())
+            pymel.core.rename(newCam, cam.nodeName())
             # try:
             #     newCam.setOverscan(1)
             # except:
             #     pass
             # newCam.setFocalLength(focalLen)
 
-            pointCon = pm.pointConstraint(camloa, newCam)
-            orientCon = pm.orientConstraint(camloa, newCam)
+            pointCon = pymel.core.pointConstraint(camloa, newCam)
+            orientCon = pymel.core.orientConstraint(camloa, newCam)
 
-            start = pm.playbackOptions(query=True, min=True)
-            end = pm.playbackOptions(query=True, max=True)
+            start = pymel.core.playbackOptions(query=True, min=True)
+            end = pymel.core.playbackOptions(query=True, max=True)
 
-            pm.copyKey(cam, attribute='focalLength', option='curve')
+            pymel.core.copyKey(cam, attribute='focalLength', option='curve')
             try:
-                pm.copyKey(cam, attribute='focalLength', option='curve')
+                pymel.core.copyKey(cam, attribute='focalLength', option='curve')
             except:
                 focalLen = cam.getFocalLength()
             else:
                 try:
-                    pm.pasteKey(newCam, attribute='focalLength')
+                    pymel.core.pasteKey(newCam, attribute='focalLength')
                 except:
                     focalLen = cam.getFocalLength()
                     newCam.setFocalLength(focalLen)
-            pm.bakeResults(newCam, sm=True, t=(start, end))
+            pymel.core.bakeResults(newCam, sm=True, t=(start, end))
 
-            pm.delete(pointCon, orientCon, camloa)
+            pymel.core.delete(pointCon, orientCon, camloa)
         except:
             print
             "shi_Bai"
@@ -149,7 +149,8 @@ for camer in cameras:
     if ex == True:
         exportCamera = maya.cmds.listRelatives(camer,parent = True,fullPath=True)[0]
         maya.cmds.select(exportCamera)
-        camBakeAim()
+        if len(exportCamera.split("|")) >2:
+            camBakeAim()
         maya.cmds.FBXExport("-file", "{path}/{name}_camera_{{}}-{{}}.fbx".format(int(start),int(end)), "-s")
 
 with open(myfile,"a") as f:

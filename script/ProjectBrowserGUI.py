@@ -29,7 +29,6 @@ import script.synXml
 import script.synchronizeFiles
 
 
-
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
     '''
     这个类用来实现项目管理的属性和UI操作,  其中会有一个项目分析器在外部, 有每个项目分别配置或者使用默认设置
@@ -214,6 +213,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         elif type == "assFolder":  # 添加资产文件夹右键菜单
             add_ass_folder = menu.addAction('添加')
             add_ass_folder.triggered.connect(self.addAssFolder)
+        return menu
+
+    def menuAssfolder(self, menu):
+        add_ass_folder = menu.addAction('添加')
+        add_ass_folder.triggered.connect(self.addAssFolder)
         return menu
 
     def menuAsstype(self, menu):
@@ -677,7 +681,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     # </editor-fold>
 
     # <editor-fold desc="各种对于文件的操作">
-    def openShotExplorer(self,core:script.DooDlePrjCode.PrjCode):
+    def openShotExplorer(self, core: script.DooDlePrjCode.PrjCode):
         p = core
         file_path = p.queryFileName(p.query_id).parent
         logging.info('打开path %s', file_path)
@@ -714,7 +718,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                           QtWidgets.QMessageBox.Yes)
 
     def Screenshot(self, my_type: str, thumbnail: QtWidgets.QLabel):
-        core:script.DooDlePrjCode.PrjCode = getattr(self, my_type)
+        core: script.DooDlePrjCode.PrjCode = getattr(self, my_type)
         path = core.getScreenshot()
         if not path.parent.is_dir():
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -767,7 +771,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 script.doodlePlayer.videoToMp4(video=file, mp4_path=path)
             elif file.suffix in [".exr", ".png", ".tga", "jpg"]:
                 try:
-                    path = pathlib.Path(tempfile.gettempdir()).joinpath("temp.mp4")
+                    path = pathlib.Path(tempfile.gettempdir()).joinpath(name)
                     if path.is_file():
                         os.remove(str(path))
                     script.doodlePlayer.imageToMp4(video_path=path, image_path=file)
@@ -780,26 +784,26 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             else:
                 path = file
 
-            if not right_path.parent.is_dir():
-                right_path.parent.mkdir(parents=True, exist_ok=True)
-
+            if not right_path.is_dir():
+                right_path.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(str(path), str(right_path.joinpath(name)))
             logging.info("复制路径到 %s", right_path)
 
             code.file = path.name
             code.fileSuffixes = path.suffix
             code.user = self.user
             code.version = version
-            code.filepath = path.as_posix()
+            code.filepath = right_path.joinpath(path.name).as_posix()
             code.infor = "这是拍屏"
             # self.ass.submitInfo(path.name, path.suffix, self.user,
             #                     version=version, filepath_and_name=path.as_posix(), infor="这是拍屏")
-            if isinstance(code,script.DooDlePrjCode.PrjAss):
+            if isinstance(code, script.DooDlePrjCode.PrjAss):
                 code.type = "FB_" + code.type
             else:
                 code.Type = "FB_" + code.Type
 
-            code.submitInfo(path.name, path.suffix, self.user,
-                                 version=version, filepathAndname=path.as_posix(), infor="这是拍屏")
+            code.submitInfo(right_path.name, right_path.suffix, self.user,
+                            version=version, filepathAndname=right_path.as_posix(), infor="这是拍屏")
             self.listDepartmenClicked()
 
     def playerButtenClicked(self, one_or_mut: str, department="Anm"):
@@ -841,8 +845,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
 
 if __name__ == '__main__':
-    # department = DoodlePrjectState.shot_department.value
-    # print(department)
     app = QtWidgets.QApplication(sys.argv)
     app.setStyleSheet(qdarkgraystyle.load_stylesheet())
     w = ProjectBrowserGUI()
