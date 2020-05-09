@@ -757,7 +757,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.recentlyOpenedFolder = file
 
         version: int = code.getMaxVersion()
-        name = code.getFileName(version, self.user, ".mp4", prefix="FB_")
+
+        if re.match("^FB_.*", code.Type):
+            prefix_ = ''
+        else:
+            prefix_ = "FB_"
+            code.Type = f"FB_{code.Type}"
+
+        name = code.getFileName(version, self.user, ".mp4", prefix=prefix_)
         right_path = code.getFilePath("FlipBook")
 
         logging.info("获得file %s \n 获得 nmae %s", file, name)
@@ -789,19 +796,13 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             shutil.copy2(str(path), str(right_path.joinpath(name)))
             logging.info("复制路径到 %s", right_path)
 
+
             code.file = path.name
             code.fileSuffixes = path.suffix
             code.user = self.user
             code.version = version
             code.filepath = right_path.joinpath(path.name).as_posix()
             code.infor = "这是拍屏"
-            # self.ass.submitInfo(path.name, path.suffix, self.user,
-            #                     version=version, filepath_and_name=path.as_posix(), infor="这是拍屏")
-            if isinstance(code, script.DooDlePrjCode.PrjAss):
-                code.Type = "FB_" + code.Type
-            else:
-                code.Type = "FB_" + code.Type
-
             code.submitInfo(right_path.name, right_path.suffix, self.user,
                             version=version, filepathAndname=right_path.as_posix(), infor="这是拍屏")
             self.listDepartmenClicked()

@@ -114,13 +114,6 @@ def imageToMp4(video_path: pathlib.Path, image_path: pathlib.Path):
     list = image_path.parent.joinpath("list.txt")
     image = ["file '" + i.as_posix() + "'" for i in image_path.parent.iterdir() if i.suffix in ['.png','.exr','jpg']]
     list.write_text("\n".join(image))
-    # image = re.findall(r"\d+",image_path.stem)
-    # image_split = re.split(r"\d+",image_path.stem)
-    # ge_fr = image.pop()
-    # ge_fr = f"%0{len(ge_fr)}d"
-    # image.append(ge_fr)
-    # image_name = "".join([rv for r in zip(image_split,image) for rv in r]) + image_path.suffix
-
     tools_bin_ffmpeg += "-r 25 -f concat -safe 0 -i " + str(image_path.parent.joinpath(list))
     tools_bin_ffmpeg += ' -c:v libx264 -vf fps=25 -pix_fmt yuv420p -s 1920*1080 ' + str(video_path)
     logging.info("命令ffmpeg %s",tools_bin_ffmpeg)
@@ -129,10 +122,6 @@ def imageToMp4(video_path: pathlib.Path, image_path: pathlib.Path):
     os.system(tools_bin_ffmpeg)
 
 
-
-# def doodleShot():
-#     window = doodleScreenshot()
-#     window.exec_()
 if __name__ == '__main__':
     in_filename = pathlib.Path(r'D:\EP01_4.3.mp4')
     file = pathlib.Path(r"D:\test\EP01_.png")
