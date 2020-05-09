@@ -149,6 +149,7 @@ for camer in cameras:
     if ex == True:
         exportCamera = maya.cmds.listRelatives(camer,parent = True,fullPath=True)[0]
         maya.cmds.select(exportCamera)
+        maya.cmds.bakeResults(simulation=True,t=(start,end),hierarchy="below",sampleBy=1,disableImplicitControl=True,preserveOutsideKeys=False, sparseAnimCurveBake=False)
         if len(exportCamera.split("|")) >2:
             camBakeAim()
         maya.cmds.FBXExport("-file", "{path}/{name}_camera_{{}}-{{}}.fbx".format(int(start),int(end)), "-s")

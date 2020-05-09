@@ -21,7 +21,7 @@ import script.synXml
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     timeSyn = 7200000
-    version = 1.050
+    version = 1.052
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
@@ -71,12 +71,16 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     def file_syns(self):
         if self.doodleSet.department in ['Light', 'VFX']:
             self.ta_log.info('进行同步')
+            include_ = [""]
+            if self.doodleSet.department in ["VFX"]:
+                include_ = ["*\\VFX\\*"]
             readServerDiectory = self.doodleSet.getsever()
 
             self.ta_log.info('读取服务器中同步目录 %s', readServerDiectory)
             synfile_Name = '{}-ep-{}'.format(self.doodleSet.department, self.doodleSet.synEp)
             synfile = script.synXml.weiteXml(self.doodleSet.doc,
                                              readServerDiectory,
+                                             Include=include_,
                                              fileName=synfile_Name)
             program = self.doodleSet.FreeFileSync
             subprocess.run('{} "{}"'.format(program, synfile), shell=True)

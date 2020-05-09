@@ -378,7 +378,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def assClassTypeClicked(self):
         """资产类别点击事件"""
-        self.ass.type = self.listAssType.selectedItems()[0].text()
+        self.ass.Type = self.listAssType.selectedItems()[0].text()
         self.setThumbnail("ass", self.ass_thumbnail)
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListAssFile()
@@ -798,7 +798,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             # self.ass.submitInfo(path.name, path.suffix, self.user,
             #                     version=version, filepath_and_name=path.as_posix(), infor="这是拍屏")
             if isinstance(code, script.DooDlePrjCode.PrjAss):
-                code.type = "FB_" + code.type
+                code.Type = "FB_" + code.Type
             else:
                 code.Type = "FB_" + code.Type
 
@@ -812,10 +812,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         if one_or_mut == "one":
             path = pathlib.Path("")
             if self.listAssType.selectedItems():
-                if self.ass.type[:2] == "FB":
-                    my_ass_type = self.ass.type
+                if self.ass.Type[:2] == "FB":
+                    my_ass_type = self.ass.Type
                 else:
-                    my_ass_type = "FB_" + self.ass.type
+                    my_ass_type = "FB_" + self.ass.Type
                 path = self.ass.queryFlipBook(my_ass_type)
                 # self.playerFlipBook("ass", my_ass_type)
 
