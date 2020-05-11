@@ -1,10 +1,12 @@
 # -*- coding: UTF-8 -*-
 import logging
+import os
 import pathlib
 import subprocess
 import sys
 import tempfile
 import time
+import urllib.request
 
 import qdarkgraystyle
 import urllib3
@@ -31,9 +33,8 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.timer = QtCore.QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.file_syns)
-        self.timer.timeout.connect(lambda: self.Updata(self.version))
+        self.timer.timeout.connect(lambda: self.Updata(lambda: float(self.doodleSet.version) > self.version))
         self.timer.start(self.timeSyn)
-        self.Updata(self.version)
 
         self.setToolTip(f'文件管理系统-{self.version}')
         menu = QtWidgets.QMenu(parent)
@@ -56,7 +57,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         setmenu.triggered.connect(self.setGUI)
 
         updata = menu.addAction('更新')
-        updata.triggered.connect(lambda: self.Updata(self.version))
+        updata.triggered.connect(lambda: self.Updata(True))
 
         exit_ = menu.addAction('退出')
         exit_.triggered.connect(self.myexit)
@@ -71,7 +72,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     def file_syns(self):
         if self.doodleSet.department in ['Light', 'VFX']:
             self.ta_log.info('进行同步')
-            include_ = [""]
+            include_ = ["*"]
             if self.doodleSet.department in ["VFX"]:
                 include_ = ["*\\VFX\\*"]
             readServerDiectory = self.doodleSet.getsever()
@@ -120,22 +121,35 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.ta_log.info('打开了项目管理器')
         self.project_browser.show()
 
-    def Updata(self, version: float):
-        new_version = float(self.doodleSet.version)
+    def Updata(self, unpdata_=True):
+        # new_version = float(self.doodleSet.version)
         url = "http://192.168.10.213:8000/dist/doodle.exe"
         tmp_path = pathlib.Path(tempfile.gettempdir()).joinpath('doodle.exe')
-        if new_version > version:
+        if unpdata_:
             try:
-                http = urllib3.PoolManager()
-                resp = http.request("GET", url)
-                tmp_path.write_bytes(resp.data)
-                resp.release_conn()
+                if tmp_path.is_file():
+                    os.remove(tmp_path.as_posix())
+
+                self.undata_progress = QtWidgets.QProgressDialog("下载文件", "...", 0, 100)
+                self.undata_progress.show()
+                urllib.request.urlretrieve(url=url, filename=tmp_path.as_posix(), reporthook=self.updataProgress)
+                # http = urllib3.PoolManager()
+                # resp = http.request("GET", url)
+                # tmp_path.write_bytes(resp.data)
+                # resp.release_conn()
             except:
                 pass
             else:
                 time.sleep(10)
                 subprocess.Popen(str(tmp_path))
                 sys.exit(self)
+
+    def updataProgress(self, num, size, zhong):
+        per = 100 * num * size / zhong
+        if per > 99:
+            per = 100
+        print(per)
+        self.undata_progress.setValue(per)
 
 
 def main():

@@ -61,41 +61,7 @@ class doodleScreenshot(QtWidgets.QDialog):
             outputRegion.save(self.savePath, format="JPG", quality=100)
             self.close()
 
-
-class videoConvert(object):
-    def __init__(self, video_path: pathlib.Path, image_path: pathlib.Path):
-        self.video_path = video_path
-        self.image_path = image_path
-
-    def videoToImage(self):
-        tools_bin_ffmpeg = "tools\\bin\\ffmpeg "
-        tools_bin_ffmpeg += "-i " + str(self.video_path) + " "
-        tools_bin_ffmpeg += "-f fps=25 -f image2 -c:v png -s 1920*1080 "
-        image_path_parent = self.image_path.parent
-        tools_bin_ffmpeg += str(image_path_parent.joinpath(self.image_path.stem + "_%04d" + ".png"))
-        logging.info(tools_bin_ffmpeg)
-        print(tools_bin_ffmpeg)
-        if not image_path_parent.is_dir():
-            image_path_parent.mkdir(parents=True, exist_ok=True)
-        else:
-            for file in image_path_parent.iterdir():
-                os.remove(str(file))
-        ffmpeg_std = subprocess.run(tools_bin_ffmpeg, stdout=subprocess.PIPE)
-        while True:
-            line = ffmpeg_std.stdout.readline()
-            if not line:
-                break
-            return line
-
-    def imageToMp4(self):
-        tools_bin_ffmpeg = "tools\\bin\\ffmpeg "
-        image = self.image_path.stem.split("_")[0:-1]
-        image = "_".join(image) + "%04d" + self.image_path.suffix
-        tools_bin_ffmpeg += "-r 25 -f image2 -s 1920*1080 -i " + str(self.image_path.parent.joinpath(image))
-        tools_bin_ffmpeg += " --vcodec libx264 -crf 25 " + str(self.video_path)
-        if not self.video_path.parent.is_dir():
-            self.video_path.parent.mkdir(parents=True, exist_ok=True)
-        subprocess.run(tools_bin_ffmpeg, stdout=subprocess.PIPE)
+# class
 
 
 def videoToMp4(video: pathlib.Path, mp4_path: pathlib.Path):
@@ -123,12 +89,4 @@ def imageToMp4(video_path: pathlib.Path, image_path: pathlib.Path):
 
 
 if __name__ == '__main__':
-    in_filename = pathlib.Path(r'D:\EP01_4.3.mp4')
-    file = pathlib.Path(r"D:\test\EP01_.png")
-    test = videoConvert(in_filename, file)
-    test.videoToImage()
-    # file.write_bytes(out)
-    # app = QtWidgets.QApplication(sys.argv)
-    # win = doodleScreenshot()
-    # win.show()
-    # app.exec_()
+    pass

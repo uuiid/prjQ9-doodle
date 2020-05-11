@@ -30,9 +30,9 @@ import script.synchronizeFiles
 
 
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
-    '''
+    """
     这个类用来实现项目管理的属性和UI操作,  其中会有一个项目分析器在外部, 有每个项目分别配置或者使用默认设置
-    '''
+    """
 
     user: str
 
@@ -193,8 +193,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return menu
 
     def menuDeptype(self, menu):
-        add_depType = menu.addAction('添加')
-        add_depType.triggered.connect(self.addTypeFolder)
+        add_dep_type = menu.addAction('添加')
+        add_dep_type.triggered.connect(self.addTypeFolder)
         return menu
 
     def menuShotfile(self, menu):
@@ -240,11 +240,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return menu
 
     @script.doodleLog.erorrDecorator
-    def addRightClickMenu(self, point: QtCore.QPoint, type: str):
+    def addRightClickMenu(self, point: QtCore.QPoint, _type: str):
         """添加右键菜单功能"""
         menu = QtWidgets.QMenu(self)
         try:
-            menu = getattr(self, "menu" + type.capitalize())(menu)
+            menu = getattr(self, "menu" + _type.capitalize())(menu)
         except AttributeError as err:
             logging.info("寻找不到属性了 %s", err)
         menu.exec_(point)
@@ -331,7 +331,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def setFileItem(self, items):
         """
+
         设置文件在GUI中的显示
+
         """
         for index, item in enumerate(items):
             self.listfile.insertRow(index)
@@ -682,6 +684,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     # <editor-fold desc="各种对于文件的操作">
     def openShotExplorer(self, core: script.DooDlePrjCode.PrjCode):
+        """
+        打开文件管理器
+        """
         p = core
         file_path = p.queryFileName(p.query_id).parent
         logging.info('打开path %s', file_path)
@@ -796,7 +801,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             shutil.copy2(str(path), str(right_path.joinpath(name)))
             logging.info("复制路径到 %s", right_path)
 
-
             code.file = path.name
             code.fileSuffixes = path.suffix
             code.user = self.user
@@ -840,7 +844,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             # self.playerFlipBook('', '', one_or_mut="mut", department=department)
 
         self.pot_player.dump(tmp_path)
-        potplayer.run(tmp_path)
+        try:
+            potplayer.run(tmp_path)
+        except:
+            QtWidgets.QMessageBox.warning(self, "警告:", "警告:"
+                                          "请关闭360后重新打开本软件",
+                                          QtWidgets.QMessageBox.Yes)
 
     # </editor-fold>
 
