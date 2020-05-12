@@ -12,36 +12,44 @@
 # subdirectory that contains the files needed to run the application
 
 import sys
-import script
-import sqlalchemy.sql.default_comparator
-import sqlalchemy.ext.baked
+import pathlib
 from cx_Freeze import setup, Executable
+
+
+def toolspy() -> list:
+    path = pathlib.Path("tools")
+    # infil = []
+    # for p in path.iterdir():
+    #     if p.is_file():
+    #         infil.append(p)
+    return [(p.as_posix(), p.as_posix()) for p in path.iterdir() if p.is_file()]
+
 
 base = None
 if sys.platform == 'win32':
     base = 'Win32GUI'
-includefiles = ["UiFile", "tools", "datas", "config"]
+includefiles = ["UiFile", ("tools/template", "tools/template"), "datas", "config"] + toolspy()
 includes = ['urllib3',
             "multiprocessing",
-            "script/convert.py",
-            "script/doodle_setting.py",
-            "script/doodleLog.py",
-            "script/doodlePlayer.py",
-            "script/DooDlePrjCode.py",
-            "script/DoodleUpdata.py",
-            "script/MayaExportCam.py",
-            "script/MySqlComm.py",
-            "script/ProjectBrowserGUI.py",
-            "script/synchronizeFiles.py",
-            "script/synXml.py",
+            "script.convert",
+            "script.doodle_setting",
+            "script.doodleLog",
+            "script.doodlePlayer",
+            "script.DooDlePrjCode",
+            "script.DoodleUpdata",
+            "script.MayaExportCam",
+            "script.MySqlComm",
+            "script.ProjectBrowserGUI",
+            "script.synchronizeFiles",
+            "script.synXml",
             "sqlalchemy",
             "sqlalchemy.ext.declarative",
             "sqlalchemy.sql",
-            "sqlalchemy.sql.default_comparator.py",
-            "sqlalchemy.ext.baked.py"]
+            "sqlalchemy.sql.default_comparator",
+            "sqlalchemy.ext.baked"]
 options = {
     'build_exe': {
-        "build_exe":"dist/doodle_tray",
+        "build_exe": "dist/doodle_tray",
         'includes': includes,
         "include_files": includefiles
     }

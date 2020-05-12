@@ -103,6 +103,9 @@ class Doodlesetting():
             setattr(self, key, value)
 
     def __getString(self) -> dict:
+        """
+        获得本地设置
+        """
         if not self.doc.is_dir():
             logging.info('没有 %s 目录,-->创建', self.doc)
             # 没有目录时创建目录
@@ -130,6 +133,10 @@ class Doodlesetting():
         return itoa
 
     def writeDoodlelocalSet(self):
+        """
+        写入本地设置
+
+        """
         doodlelocal_set: dict = {
             'user': self.user,
             'department': self.department,
@@ -142,7 +149,9 @@ class Doodlesetting():
         self.userland.write_text(my_setting, 'utf-8')
 
     def getsever(self) -> list:
-        """返回服务器上的 同步目录设置"""
+        """
+        返回服务器上的 同步目录设置
+        """
         # 读取本地部门类型 以及每集类型
         # self.setlocale = script.doodle_setting.Doodlesetting()
         # 获得设置的文件路径

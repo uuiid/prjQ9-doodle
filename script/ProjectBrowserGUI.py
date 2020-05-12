@@ -150,7 +150,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 在listassfile中获得资产信息
         self.listAssFile.itemClicked.connect(self.assFileClicked)
 
-
         # 双击打开文件
         self.listfile.doubleClicked.connect(self.openShotFile)
         # 添加刷新函数
@@ -234,6 +233,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             if self.listAssFile.selectedItems():
                 open_ass_explorer = menu.addAction("打开文件管理器")
                 open_ass_explorer.triggered.connect(lambda: self.openShotExplorer(self.ass))
+                add_info = menu.addAction("更新概述")
+                add_info.triggered.connect(lambda: self.subInfo(self.ass))
                 add_ass_file_dow = menu.addAction('同步UE文件')
                 add_ass_file_dow.triggered.connect(self.downloadUe4)
             add_ass_file = menu.addAction('上传(提交)文件')
@@ -258,6 +259,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     # <editor-fold desc="镜头更新事件">
     def setepisodex(self):
+        """
+        更新集数
+        """
         self.listepisodes.clear()
         self.listshot.clear()
         self.listdepartment.clear()
@@ -271,6 +275,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listepisodes.addItems(self.shot.getEpsodes())
 
     def listEpisodesClicked(self):
+        """
+        集数点击事件
+        """
         items__text = self.listepisodes.selectedItems()[0].text()
         if items__text == 'pv':
             items__text = 0
@@ -290,6 +297,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listshot.addItems(self.shot.getShot())
 
     def listshotClicked(self):
+        """
+        镜头点击事件
+        """
         items_shot = self.listshot.selectedItems()[0].text()
         try:
             self.shot.shot = int(items_shot[2:])
@@ -308,6 +318,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepartment.addItems(self.shot.getDepartment())
 
     def listDepartmenClicked(self):
+        """
+        部门点击事件
+        """
         self.shot.department = self.listdepartment.selectedItems()[0].text()
 
         self.clearListFile()
@@ -317,38 +330,25 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepType.addItems(self.shot.getDepType())
 
     def listDepTypeClicked(self):
+        """
+        部门类型点击事件
+        """
         self.shot.Type = self.listdepType.selectedItems()[0].text()
 
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListFile()
+        self._setItem(self.shot.getFile(), self.listfile)
 
-        self.setFileItem(self.shot.getFile())
-
-        # self.setThumbnail("shot", self.shot_thumbnail)
 
     def shotFileClicked(self):
+        """
+        镜头文件点击事件
+        """
         shot_row = self.listfile.currentRow()
         self.shot.version = int(self.listfile.item(shot_row, 0).text()[1:])
-        self.shot.infor = self.listfile.item(shot_row,1).text()
+        self.shot.infor = self.listfile.item(shot_row, 1).text()
         self.shot.fileSuffixes = self.listfile.item(shot_row, 3).text()
         self.shot.query_id = int(self.listfile.item(shot_row, 4).text())
-
-    def setFileItem(self, items):
-        """
-
-        设置文件在GUI中的显示
-
-        """
-        for index, item in enumerate(items):
-            self.listfile.insertRow(index)
-            self.listfile.setItem(index, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
-            file_infor = re.split(r"\|",item[1])
-            self.listfile.setItem(index, 1, QtWidgets.QTableWidgetItem(file_infor[-1]))
-            self.listfile.item(index, 1).setToolTip("\n".join(file_infor))
-            self.listfile.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))
-            self.listfile.setItem(index, 3, QtWidgets.QTableWidgetItem(item[3]))
-            self.listfile.setItem(index, 4, QtWidgets.QTableWidgetItem(str(item[4])))
-        logging.info('更新文件列表')
 
     def clearListFile(self):
         mrowtmp = self.listfile.rowCount()
@@ -357,6 +357,21 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             mrowtmp = mrowtmp - 1
 
     # </editor-fold>
+
+    def _setItem(self, items: list, table: QtWidgets.QTableWidget):
+        """
+        设置资产文件在GUI中的显示
+        """
+        for index, item in enumerate(items):
+            table.insertRow(index)
+            table.setItem(index, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
+            file_infor = re.split(r"\|", item[1])
+            table.setItem(index, 1, QtWidgets.QTableWidgetItem(file_infor[-1]))
+            table.item(index, 1).setToolTip("\n".join(file_infor))
+            table.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))
+            table.setItem(index, 3, QtWidgets.QTableWidgetItem(item[3]))
+            table.setItem(index, 4, QtWidgets.QTableWidgetItem(str(item[4])))
+        logging.info('更新文件列表')
 
     # <editor-fold desc="更新ass的各种操作">
     def assClassSortClicked(self, ass_name: str):
@@ -390,30 +405,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.setThumbnail("ass", self.ass_thumbnail)
         # 清空上一次文件显示和版本记录和文件路径
         self.clearListAssFile()
-
-        self.setAssFileItem(self.ass.getFileInfo())
+        self._setItem(self.ass.getFileInfo(), self.listAssFile)
 
     def assFileClicked(self):
         ass_row = self.listAssFile.currentRow()
         self.ass.version = int(self.listAssFile.item(ass_row, 0).text()[1:])
-        self.ass.infor = self.listAssFile.item(ass_row,1).text()
-        self.ass.fileSuffixes = self.listAssFile.item(ass_row,3).text()
+        self.ass.infor = self.listAssFile.item(ass_row, 1).text()
+        self.ass.fileSuffixes = self.listAssFile.item(ass_row, 3).text()
         self.ass.query_id = int(self.listAssFile.item(ass_row, 4).text())
-
-    def setAssFileItem(self, file_data):
-        """设置资产文件在GUI中的显示"""
-        for index, item in enumerate(file_data):
-            self.listAssFile.insertRow(index)
-
-            self.listAssFile.setItem(index, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
-            file_infor = re.split(r"\|", item[1])
-            self.listAssFile.setItem(index, 1, QtWidgets.QTableWidgetItem(file_infor[-1]))
-            self.listAssFile.item(index,1).setToolTip("\n".join(file_infor))
-            self.listAssFile.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))
-            self.listAssFile.setItem(index, 3, QtWidgets.QTableWidgetItem(item[3]))
-            self.listAssFile.setItem(index, 4, QtWidgets.QTableWidgetItem(str(item[4])))
-
-        logging.info('更新文件列表')
 
     """清理资产文件列表"""
 
@@ -562,26 +561,27 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             target_file = self.ass.getFilePath().joinpath(self.ass.getFileName(version=version_max,
                                                                                user_=self.user,
                                                                                suffix=file.suffix))
-
+            success = False
             if file.suffix in ['.mb', '.ma', '.max']:
-                self.backupCopy(file, target_file, version_max)
+                success = self.backupCopy(file, target_file, version_max)
             elif file.suffix in [".fbx"]:
                 version_max -= 1
-                self.backupCopy(file, target_file, version_max)
+                success = self.backupCopy(file, target_file, version_max)
             elif file.suffix in ['.uproject']:
-                self.assUploadFileUE4Handle(file, target_file)
+                success = self.assUploadFileUE4Handle(file, target_file)
             elif file.suffix in ['.png', '.tga', 'jpg']:
-                self.assUploadMapHandle(file, target_file, version_max)
+                success = self.assUploadMapHandle(file, target_file, version_max)
             else:
                 pass
-            self.ass.file = target_file.name
-            self.ass.fileSuffixes = target_file.suffix
-            self.ass.user = self.user
-            self.ass.version = version_max
-            self.ass.filepath = target_file.as_posix()
-            self.ass.infor = remarks_info
-            self.ass.submitInfo(target_file.name, target_file.stem, self.user, version_max,
-                                infor=remarks_info, filepath_and_name=target_file.as_posix())
+            if success:
+                self.ass.file = target_file.name
+                self.ass.fileSuffixes = target_file.suffix
+                self.ass.user = self.user
+                self.ass.version = version_max
+                self.ass.filepath = target_file.as_posix()
+                self.ass.infor = remarks_info
+                self.ass.submitInfo(target_file.name, target_file.stem, self.user, version_max,
+                                    infor=remarks_info, filepath_and_name=target_file.as_posix())
 
         self.assClassTypeClicked()
 
@@ -592,15 +592,17 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         :param version:
         :param target:
         :param soure_file: pathlib.Path
-        :return: int
+        :return: Bool
         """
         file_path = soure_file.parent
         file_str = f'^{self.ass.name}_.*_(?:Color|Normal|bump|alpha)$'
-
+        success = False
         for fi in file_path.iterdir():
             if re.match(file_str, fi.stem):
                 tar = target.parent.joinpath(fi.name)
                 self.backupCopy(fi, tar, version)
+                success = True
+        return success
 
     @script.doodleLog.erorrDecorator
     def backupCopy(self, source: pathlib.Path, target: pathlib.Path, version: int):
@@ -609,7 +611,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         :param source: pathlib.Path
         :param target: pathlib.Path
         :param version: int
-        :return: Nore
+        :return: Bool
         """
         target_parent = target.parent
         backup = target_parent.joinpath('backup')
@@ -622,9 +624,13 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         if target.is_file():
             shutil.move(str(target), str(backup_file))
             logging.info('文件备份%s ---->  %s', target, backup_file)
-        shutil.copy2(str(source), str(target))
+        file = shutil.copy2(str(source), str(target))
 
         logging.info('文件上传%s ---->  %s', source, target)
+        success = False
+        if os.path.isfile(file):
+            success = True
+        return success
 
     def downloadUe4(self):
         pass
@@ -650,6 +656,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         program = self.setlocale.FreeFileSync
         os.system('{} "{}"'.format(program, syn_file))
         shutil.copy2(str(source_path), str(target_file.as_posix()))
+        return True
 
     def appointFilePath(self):
         """指定文件路径"""
@@ -665,18 +672,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                       QtWidgets.QLineEdit.Normal)[0]
         if file and (self.listAssType.selectedItems() or self.listdepType.selectedItems()):
             file = pathlib.Path(file)
-
-            if self.listdepType.selectedItems():
-                version: int = self.shot.getMaxVersion() + 1
-                self.shot.file = file.name
-                self.shot.fileSuffixes = file.suffix
-                self.shot.user = self.user
-                self.shot.version = version
-                self.shot.filepath = file.as_posix()
-                self.shot.infor = remarks_info
-                self.shot.submitInfo(file.name, file.suffix, self.user, version, file.as_posix(), remarks_info)
-
-            elif self.listAssType.selectedItems():
+            if self.listAssType.selectedItems():
                 version: int = self.ass.getMaxVersion() + 1
 
                 self.ass.file = file.name
@@ -822,6 +818,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             self.listDepartmenClicked()
 
     def playerButtenClicked(self, one_or_mut: str, department="Anm"):
+        """
+        打开拍屏
+        """
         tmp_path = os.path.join(tempfile.gettempdir(), "potplayer_temp.dpl")
         self.pot_player = potplayer.PlayList()
         if one_or_mut == "one":
@@ -862,7 +861,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                           QtWidgets.QMessageBox.Yes)
 
     def subInfo(self, code: script.DooDlePrjCode.PrjCode):
-        info,is_input = QtWidgets.QInputDialog.getText(self, "输入信息", "", QtWidgets.QLineEdit.Normal)
+        """
+        修改评论
+        """
+        info, is_input = QtWidgets.QInputDialog.getText(self, "输入信息", "", QtWidgets.QLineEdit.Normal)
         if is_input:
             if not re.findall(r"\|", info):
                 code.infor += "|" + info

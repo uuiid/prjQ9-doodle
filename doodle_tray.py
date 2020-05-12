@@ -18,6 +18,7 @@ import script.ProjectBrowserGUI
 import script.doodleLog
 import script.doodle_setting
 import script.synXml
+import script.DoodleUpdata
 
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
@@ -28,6 +29,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
         self.doodleSet = script.doodle_setting.Doodlesetting()
         self.ta_log = logging
+        self.par = parent
 
         self.timer = QtCore.QTimer(self)
         self.timer.setSingleShot(True)
@@ -116,39 +118,36 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         subprocess.Popen("D:\\Source\\UnrealEngine\\Engine\\Binaries\\Win64\\UE4Editor.exe")
 
     def openProject(self):
-        self.project_browser = script.ProjectBrowserGUI.ProjectBrowserGUI()
+        project_browser = script.ProjectBrowserGUI.ProjectBrowserGUI()
         self.ta_log.info('打开了项目管理器')
-        self.project_browser.show()
+        project_browser.show()
 
     def Updata(self, unpdata_=True):
-        # new_version = float(self.doodleSet.version)
-        url = "http://192.168.10.213:8000/dist/doodle.exe"
-        tmp_path = pathlib.Path(tempfile.gettempdir()).joinpath('doodle.exe')
+        doodle = "http://192.168.10.213:8000/dist/doodle.exe"
+        # djv = "http://192.168.10.213:8000/dist/DJV.zip"
+        # ffmpeg = "http://192.168.10.213:8000/dist/ffmpeg.zip"
+        # urls = [doodle, djv, ffmpeg]
+        tmp_path = pathlib.Path(tempfile.gettempdir())
         if unpdata_:
             try:
                 if tmp_path.is_file():
                     os.remove(tmp_path.as_posix())
-
-                self.undata_progress = QtWidgets.QProgressDialog("下载文件", "...", 0, 100)
-                self.undata_progress.show()
-                urllib.request.urlretrieve(url=url, filename=tmp_path.as_posix(), reporthook=self.updataProgress)
-                # http = urllib3.PoolManager()
-                # resp = http.request("GET", url)
-                # tmp_path.write_bytes(resp.data)
-                # resp.release_conn()
-            except:
-                pass
+                undata_progress = QtWidgets.QProgressDialog("下载文件", "...", 0, 100)
+                dow = script.DoodleUpdata.downloadThread(doodle, tmp_path.joinpath(doodle.split("/")[-1]), 10240)
+                undata_progress.setWindowModality(QtCore.Qt.WindowModal)
+                dow.start()
+                dow.dowload_proes_signal.connect(undata_progress.setValue)
+                # undata_progress.setWindowFlags(QtCore.Qt.Main)
+                undata_progress.show()
+                # undata_progress.setValue(dow.jindu)
+            except BaseException as err:
+                logging.error("%s", err)
             else:
-                time.sleep(10)
-                subprocess.Popen(str(tmp_path))
+                time.sleep(3)
+                subprocess.Popen(str(tmp_path.joinpath(doodle.split("/")[-1])))
                 sys.exit(self)
 
-    def updataProgress(self, num, size, zhong):
-        per = 100 * num * size / zhong
-        if per > 99:
-            per = 100
-        print(per)
-        self.undata_progress.setValue(per)
+
 
 
 def main():

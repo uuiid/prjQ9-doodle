@@ -28,7 +28,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "dist\doodle_tray\doodle_tray.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dist\doodle_tray\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "*.pyx,*c,*html"
+Source: "dist\doodle_tray\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

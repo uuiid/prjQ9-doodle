@@ -32,6 +32,6 @@ for dep in ["Light", "VFX"]:
 
 # print(it)
 sql_com = f"INSERT INTO `configure` (name, value, value2, value3, value4) VALUES {','.join(it)}"
-# print(sql_com)
+
 script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 # </editor-fold>

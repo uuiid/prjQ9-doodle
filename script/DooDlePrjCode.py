@@ -36,6 +36,8 @@ class _root(script.MySqlComm.Base):
     version: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
     filepath: str = sqlalchemy.Column(sqlalchemy.VARCHAR(1024))
     infor: str = sqlalchemy.Column(sqlalchemy.VARCHAR(4096))
+    problem = sqlalchemy.Column(sqlalchemy.VARCHAR(64))
+    filestate = sqlalchemy.Column(sqlalchemy.VARCHAR(64))
     filetime = sqlalchemy.Column(sqlalchemy.DATETIME,
                                  server_default=sqlalchemy.sql.func.now(),
                                  server_onupdate=sqlalchemy.sql.func.now())
@@ -114,7 +116,8 @@ class PrjCode():
     def undataInformation(self, query_id: int):
         pass
 
-
+    def getFileState(self,department) -> list:
+        pass
 class PrjShot(PrjCode):
     # <editor-fold desc="Description">
     episodes: int
@@ -131,21 +134,18 @@ class PrjShot(PrjCode):
         """
 
         _shot.__table__.name = "mainshot"
-        eps = []
-
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             eps = session.query(_shot.episodes).all()
 
         return ['ep{:0>3d}'.format(ep[0]) for ep in eps]
 
-    def getShot(self, sort: str = "shot") -> list:
+    def getShot(self) -> list:
         """
         获得shot列表
         :return: list
         """
         _shot.__table__.name = f"ep{self.episodes:0>3d}"
-        shots = []
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
             shots = session.query(_shot.shot, _shot.shotab). \
