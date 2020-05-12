@@ -15,7 +15,6 @@ from PyQt5 import QtWidgets, QtGui
 
 import script.DoodleUpdata
 import script.ProjectBrowserGUI
-import script.debug
 import script.doodleLog
 import script.doodle_setting
 import script.synXml
@@ -23,7 +22,7 @@ import script.synXml
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     timeSyn = 7200000
-    version = 1.052
+    version = 1.054
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)

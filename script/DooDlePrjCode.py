@@ -87,46 +87,6 @@ class PrjCode():
         self.mysqllib = mysql_lib
         self.comsql = script.MySqlComm.commMysql(mysql_lib)
 
-    def MysqlData(self, table_name="", modle="get", sort="", one=False, *query, **limit) -> list:
-        """mysql命令,get需要query set不需要
-
-        """
-        data = self.mysqllib
-        sql_com = ""
-        file_data = [""]
-        if modle in ["get", 'like']:
-            _query = ','.join(query)
-            sql_com = "SELECT DISTINCT {qu} FROM `{ta}` ".format(qu=_query, ta=table_name)
-
-            if limit:
-                _limit = " AND ".join(["{} = {}".format(key, value) if isinstance(value, int)
-                                       else "{} = '{}'".format(key, value) for key, value in limit.items()])
-                sql_com += " WHERE {}".format(_limit)
-            # if modle == "like":
-            #     pass
-            if sort:
-                sql_com += " ORDER BY {st}".format(st=sort)
-            if one:
-                sql_com += " LIMIT 1"
-            file_data = script.MySqlComm.selsctCommMysql(data,
-                                                         "",
-                                                         "", sql_com)
-        elif modle == "set":
-            tmp = [[key, value] if isinstance(value, int) else [key, "'" + value + "'"] for key, value in limit.items()]
-            _query = ','.join([i[0] for i in tmp])
-            _limit = ",".join([str(i[1]) for i in tmp])
-
-            sql_com = "INSERT INTO `{table}`({clume}) VALUE ({va})".format(table=table_name, clume=_query, va=_limit)
-
-            file_data = script.MySqlComm.inserteCommMysql(data,
-                                                          "self.setlocale.department",
-                                                          "self.setlocale.department", sql_com)
-        elif modle == "cre":
-            pass
-        elif modle == "updata":
-            pass
-        return file_data
-
     def submitInfo(self, filename: str, suffix: str, user: str, version: int, filepathAndname: str, infor=""):
         pass
 
@@ -149,6 +109,9 @@ class PrjCode():
         pass
 
     def queryFlipBook(self, ass_type: str) -> pathlib.Path:
+        pass
+
+    def undataInformation(self, query_id: int):
         pass
 
 
@@ -356,6 +319,12 @@ class PrjShot(PrjCode):
         except:
             path = pathlib.Path("")
         return path
+
+    def undataInformation(self, query_id: int):
+        with self.comsql.session() as session:
+            # assert isinstance(session, sqlalchemy.orm.session.Session)
+            data:_shot = session.query(_shot).get(query_id)
+            data.infor = self.infor
 
 
 class PrjAss(PrjCode):

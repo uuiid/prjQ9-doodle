@@ -14,3 +14,4 @@ FreeFileSync C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe
 
 build_ext --inplace
 setup(name="test", ext_modules=cythonize('temp/test.pyx', annotate=True),)
+python.exe -m pip install --upgrade pip

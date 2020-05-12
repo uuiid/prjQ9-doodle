@@ -21,7 +21,6 @@ import script.DooDlePrjCode
 import script.MayaExportCam
 import script.MySqlComm
 import script.convert
-import script.debug
 import script.doodleLog
 import script.doodlePlayer
 import script.doodle_setting
@@ -52,6 +51,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         """======================================================================="""
         # 初始化一些属性
         self.user = pypinyin.slug(self.setlocale.user, pypinyin.NORMAL)
+        # 最近打开的文件夹
         self.recentlyOpenedFolder = ""
         # 设置UI
         self.setupUi(self)
@@ -150,6 +150,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 在listassfile中获得资产信息
         self.listAssFile.itemClicked.connect(self.assFileClicked)
 
+
         # 双击打开文件
         self.listfile.doubleClicked.connect(self.openShotFile)
         # 添加刷新函数
@@ -202,6 +203,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             open_explorer = menu.addAction('打开文件管理器')  # 用文件管理器打开文件位置
             open_explorer.triggered.connect(lambda: self.openShotExplorer(self.shot))
             # copy文件名称或者路径到剪切板
+            add_info = menu.addAction("更新概述")
+            add_info.triggered.connect(lambda: self.subInfo(self.shot))
             copy_name_to_clip = menu.addAction('复制名称')
             copy_name_to_clip.triggered.connect(self.copyNameToClipboard)
             copy_path_to_clip = menu.addAction('复制路径')
@@ -228,15 +231,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def menuAssfile(self, menu):
         if self.listAssType.selectedItems():
+            if self.listAssFile.selectedItems():
+                open_ass_explorer = menu.addAction("打开文件管理器")
+                open_ass_explorer.triggered.connect(lambda: self.openShotExplorer(self.ass))
+                add_ass_file_dow = menu.addAction('同步UE文件')
+                add_ass_file_dow.triggered.connect(self.downloadUe4)
             add_ass_file = menu.addAction('上传(提交)文件')
             add_ass_file.triggered.connect(self.uploadFiles)
             get_ass_path = menu.addAction('指定文件')
             get_ass_path.triggered.connect(self.appointFilePath)
-            if self.listAssFile.selectedItems():
-                add_ass_file_dow = menu.addAction('同步UE文件')
-                open_ass_explorer = menu.addAction("打开文件管理器")
-                open_ass_explorer.triggered.connect(lambda: self.openShotExplorer(self.ass))
-                add_ass_file_dow.triggered.connect(self.downloadUe4)
         return menu
 
     @script.doodleLog.erorrDecorator
@@ -291,7 +294,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         try:
             self.shot.shot = int(items_shot[2:])
             self.shot.shotab = ''
-        except:
+        except ValueError:
             self.shot.shot = int(items_shot[2:-1])
             self.shot.shotab = items_shot[-1:]
 
@@ -326,7 +329,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def shotFileClicked(self):
         shot_row = self.listfile.currentRow()
         self.shot.version = int(self.listfile.item(shot_row, 0).text()[1:])
-        self.shot.suffix = self.listfile.item(shot_row, 3).text()
+        self.shot.infor = self.listfile.item(shot_row,1).text()
+        self.shot.fileSuffixes = self.listfile.item(shot_row, 3).text()
         self.shot.query_id = int(self.listfile.item(shot_row, 4).text())
 
     def setFileItem(self, items):
@@ -338,7 +342,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         for index, item in enumerate(items):
             self.listfile.insertRow(index)
             self.listfile.setItem(index, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
-            self.listfile.setItem(index, 1, QtWidgets.QTableWidgetItem(item[1]))
+            file_infor = re.split(r"\|",item[1])
+            self.listfile.setItem(index, 1, QtWidgets.QTableWidgetItem(file_infor[-1]))
+            self.listfile.item(index, 1).setToolTip("\n".join(file_infor))
             self.listfile.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))
             self.listfile.setItem(index, 3, QtWidgets.QTableWidgetItem(item[3]))
             self.listfile.setItem(index, 4, QtWidgets.QTableWidgetItem(str(item[4])))
@@ -390,8 +396,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     def assFileClicked(self):
         ass_row = self.listAssFile.currentRow()
         self.ass.version = int(self.listAssFile.item(ass_row, 0).text()[1:])
-        # self.ass.user = self.listAssFile.item(ass_row, 2).text()
-        # self.ass.suffixes = self.listAssFile.item(ass_row, 3).text()
+        self.ass.infor = self.listAssFile.item(ass_row,1).text()
+        self.ass.fileSuffixes = self.listAssFile.item(ass_row,3).text()
         self.ass.query_id = int(self.listAssFile.item(ass_row, 4).text())
 
     def setAssFileItem(self, file_data):
@@ -400,7 +406,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             self.listAssFile.insertRow(index)
 
             self.listAssFile.setItem(index, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
-            self.listAssFile.setItem(index, 1, QtWidgets.QTableWidgetItem(item[1]))
+            file_infor = re.split(r"\|", item[1])
+            self.listAssFile.setItem(index, 1, QtWidgets.QTableWidgetItem(file_infor[-1]))
+            self.listAssFile.item(index,1).setToolTip("\n".join(file_infor))
             self.listAssFile.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))
             self.listAssFile.setItem(index, 3, QtWidgets.QTableWidgetItem(item[3]))
             self.listAssFile.setItem(index, 4, QtWidgets.QTableWidgetItem(str(item[4])))
@@ -527,7 +535,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         """添加资产文件夹类型"""
 
         items: typing.List[str] = self.setlocale.assTypeFolder.copy()
-        items[2] = items[2].format(self.ass.name)
+        items = [i.format(self.ass.name) for i in items]
+
         ass_type = QtWidgets.QInputDialog.getItem(self, '选择资产类型', '要先选择资产', items, 0, False)[0]
         if ass_type and self.listAss.selectedItems():
             self.listAssType.addItem(ass_type)
@@ -683,7 +692,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     # </editor-fold>
 
     # <editor-fold desc="各种对于文件的操作">
-    def openShotExplorer(self, core: script.DooDlePrjCode.PrjCode):
+    @staticmethod
+    def openShotExplorer(core: script.DooDlePrjCode.PrjCode):
         """
         打开文件管理器
         """
@@ -761,7 +771,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         self.recentlyOpenedFolder = file
 
-        version: int = code.getMaxVersion()
+        version: int = code.getMaxVersion() + 1
 
         if re.match("^FB_.*", code.Type):
             prefix_ = ''
@@ -774,7 +784,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         logging.info("获得file %s \n 获得 nmae %s", file, name)
         if file:
-            path = pathlib.Path("")
+
             file = pathlib.Path(file)
             if file.suffix in ['.mov', '.avi']:
                 path = file.parent.joinpath("convert", name)
@@ -848,8 +858,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             potplayer.run(tmp_path)
         except:
             QtWidgets.QMessageBox.warning(self, "警告:", "警告:"
-                                          "请关闭360后重新打开本软件",
+                                                       "请关闭360后重新打开本软件",
                                           QtWidgets.QMessageBox.Yes)
+
+    def subInfo(self, code: script.DooDlePrjCode.PrjCode):
+        info,is_input = QtWidgets.QInputDialog.getText(self, "输入信息", "", QtWidgets.QLineEdit.Normal)
+        if is_input:
+            if not re.findall(r"\|", info):
+                code.infor += "|" + info
+                code.undataInformation(code.query_id)
 
     # </editor-fold>
 

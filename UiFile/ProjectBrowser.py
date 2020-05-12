@@ -327,6 +327,7 @@ class Ui_MainWindow(object):
         item = self.listfile.horizontalHeaderItem(4)
         item.setText(_translate("MainWindow", "ID"))
         self.shot_upload.setText(_translate("MainWindow", "上传拍屏"))
+        self.shot_screenshots.setToolTip(_translate("MainWindow", "<html><head/><body><p>这个按钮按下时可以截屏</p></body></html>"))
         self.shot_screenshots.setText(_translate("MainWindow", "截屏"))
         self.label_6.setText(_translate("MainWindow", "拍屏"))
         self.shot_player.setText(_translate("MainWindow", "播放"))

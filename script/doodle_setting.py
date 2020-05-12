@@ -51,7 +51,7 @@ class Doodlesetting():
         self.FreeFileSync = 'C:\\PROGRA~1\\FREEFI~1\\FreeFileSync.exe'
         self.projectname = 'dubuxiaoyao'
         self.ProgramFolder = ['Export', 'Playblasts', 'Rendering', 'Scenefiles']
-        self.assTypeFolder = ['sourceimages', 'scenes', '{}_UE4', 'rig']
+        self.assTypeFolder = ['sourceimages', 'scenes', '{}_UE4', 'rig', "{}_low"]
         self.project = ''
         self.__initSetAttr(self.__getString())
         self.__initSetAttr(self.__getseverPrjBrowser())
@@ -123,6 +123,7 @@ class Doodlesetting():
             logging.info('尝试读取文件')
             itoa = self.userland.read_text(encoding='utf-8')
             itoa = json.loads(itoa)
+            logging.info("%s", itoa)
         except:
             self.writeDoodlelocalSet()
             logging.info('读入失败,  写空文件')
@@ -134,7 +135,7 @@ class Doodlesetting():
             'department': self.department,
             "syn": str(self.syn),
             "synEp": self.synEp,
-            "project": str(self.projectname),
+            "projectname": str(self.projectname),
             "FreeFileSync": str(self.FreeFileSync)
         }
         my_setting = json.dumps(doodlelocal_set, ensure_ascii=False, indent=4, separators=(',', ':'))

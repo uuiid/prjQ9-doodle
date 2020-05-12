@@ -422,6 +422,9 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="shot_screenshots">
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;这个按钮按下时可以截屏&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>

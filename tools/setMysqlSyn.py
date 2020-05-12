@@ -20,9 +20,9 @@ import script.MySqlComm
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-synfile = ['YanJiaDaDian_New2']
+synfile = ['QingYangCheng3']
 LR = ["Left", "Right"]
-ep = 2
+ep = 11
 it = []
 for dep in ["Light", "VFX"]:
     for key in synfile:
