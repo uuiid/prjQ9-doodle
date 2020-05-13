@@ -257,7 +257,23 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     # </editor-fold>
 
+    def listItemStateError(self):
+        pass
+
+    def listItemStateAmend(self):
+        pass
+
+    def listItemStateComplete(self):
+        pass
+
     # <editor-fold desc="镜头更新事件">
+    def _setQlistItem(self, q_list: QtWidgets.QListWidget, info: list):
+        for i in info:
+            item = QtWidgets.QListWidgetItem(i[0])
+            item.setBackground()
+
+        q_list.addItem()
+
     def setepisodex(self):
         """
         更新集数
@@ -273,6 +289,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         logging.info('更新集数列表')
 
         self.listepisodes.addItems(self.shot.getEpsodes())
+        self.listepisodes.findItems()
 
     def listEpisodesClicked(self):
         """
@@ -339,7 +356,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.clearListFile()
         self._setItem(self.shot.getFile(), self.listfile)
 
-
     def shotFileClicked(self):
         """
         镜头文件点击事件
@@ -362,10 +378,13 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         """
         设置资产文件在GUI中的显示
         """
+
         for index, item in enumerate(items):
             table.insertRow(index)
             table.setItem(index, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
-            file_infor = re.split(r"\|", item[1])
+            file_infor = [""]
+            if item[1]:
+                file_infor = re.split(r"\|", item[1])
             table.setItem(index, 1, QtWidgets.QTableWidgetItem(file_infor[-1]))
             table.item(index, 1).setToolTip("\n".join(file_infor))
             table.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))

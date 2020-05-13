@@ -6,5 +6,5 @@ tables = [t[0] for t in tables]
 for table in tables:
     if table in ['configure', "mainshot"]:
         continue
-    sql_com = f"""ALTER TABLE `{table}` ADD filestate varchar(64)"""
+    sql_com = f"""ALTER TABLE `{table}` DROP COLUMN problem"""
     script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)

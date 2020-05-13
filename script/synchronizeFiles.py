@@ -3,10 +3,81 @@ import os
 import pathlib
 import shutil
 import tempfile
+import multiprocessing
+import sqlalchemy
+import sqlalchemy.ext.declarative
+import sqlalchemy.orm
+
+Base = sqlalchemy.ext.declarative.declarative_base()
 
 import script.doodle_setting
 import script.synXml
 
+
+class fileinfo(Base):
+    __abstract__ = True
+    id = sqlalchemy.Column(sqlalchemy.INT, primary_key=True)
+    filepath = sqlalchemy.Column(sqlalchemy.TEXT, unique=True)
+    filesize = sqlalchemy.Column(sqlalchemy.FLOAT)
+    file_m_time = sqlalchemy.Column(sqlalchemy.FLOAT)
+    direction = sqlalchemy.Column(sqlalchemy.TEXT)
+    synTime = sqlalchemy.Column(sqlalchemy.FLOAT)
+
+
+class sourefileinfo(fileinfo):
+    __tablename__ = "sourefileinfo"
+
+
+class trangefileinfo(fileinfo):
+    __tablename__ = "trangefileinfo"
+
+
+class findFiles(multiprocessing.Process):
+    findpath: str
+    session: sqlalchemy.orm.Session
+    table: fileinfo
+
+    def __init__(self, findpath, session, table: fileinfo):
+        super().__init__()
+        self.findpath = findpath
+        self.session = session()
+        self.table = table
+
+    def run(self) -> None:
+        for root, dirs, files in os.walk(self.findpath):
+            for file in files:
+                path_join = os.path.join(root, file)
+                f_path = path_join.replace(self.findpath, '')
+                sql_value = self.session.query(fileinfo).filter_by(filepath=f_path).first()
+                if not sql_value:
+                    sql_value = self.table(filepath=f_path)
+                    sql_value.file_m_time = os.stat(path_join).st_mtime
+                    sql_value.filesize = os.stat(path_join).st_size
+                    sql_value.direction = "to_trange"
+                    self.session.add(sql_value)
+                sql_value.file_m_time = os.stat(path_join).st_mtime
+                sql_value.filesize = os.stat(path_join).st_size
+                self.session.flush()
+            self.session.commit()
+            print(f"子进程执行中  path ->>> {root}")
+
+
+def copyfile(soure, trange):
+    for path in [soure, trange]:
+        join = os.path.join(path, "stn_py.db")
+        if os.path.isfile(join):
+            break
+    else:
+        join = os.path.join(soure, "stn_py.db")
+
+    engine = sqlalchemy.create_engine('sqlite:///{}'.format(join))
+    session_class = sqlalchemy.orm.sessionmaker(bind=engine)
+    # my_session: sqlalchemy.orm.Session = session_class()
+    if not os.path.isfile(join):
+        Base.metadata.create_all(engine)
+
+    sour = findFiles(soure, session_class, sourefileinfo)
+    sour.start()
 
 class synFile(object):
     @property
@@ -87,7 +158,7 @@ class synFile(object):
                     left_file = os.path.join(root, file)
                     right_file = left_file.replace(str(self.left), str(self.right))
                     shutil.copy2(left_file, right_file)
-                    logging.info( "%s-------%s",left_file,right_file)
+                    logging.info("%s-------%s", left_file, right_file)
                     # pool.apply(_copyfile, (left_file, right_file))
             # pool.close()
             # pool.join()
@@ -100,23 +171,7 @@ class synFile(object):
         # subprocess.run('{} "{}"'.format(program, synfile), shell=True)
 
 
-def _copyfile(left: str, right: str):
-    """
-    复制文件的多线程函数
-    :param left: str
-    :param right: str
-    :return:
-    """
-    print(left + '--------' + right)
-    shutil.copy2(left, right)
-
-
 if __name__ == '__main__':
-    left = pathlib.Path("D:\\image")
-    right = pathlib.Path("F:\\image")
-
-    test = synFile(left, right)
-    test.copyAndBakeup(True)
-    # path = getFilePath(str(left.stem),str(left.parent),[])
-    # for i in os.walk(str(left)):
-    #     print(i)
+    left = pathlib.Path("D:\\ue_project")
+    right = pathlib.Path("F:\\ue_project")
+    copyfile(left,right)
