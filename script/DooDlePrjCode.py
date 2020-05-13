@@ -36,7 +36,6 @@ class _root(script.MySqlComm.Base):
     version: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
     filepath: str = sqlalchemy.Column(sqlalchemy.VARCHAR(1024))
     infor: str = sqlalchemy.Column(sqlalchemy.VARCHAR(4096))
-    problem = sqlalchemy.Column(sqlalchemy.VARCHAR(64))
     filestate = sqlalchemy.Column(sqlalchemy.VARCHAR(64))
     filetime = sqlalchemy.Column(sqlalchemy.DATETIME,
                                  server_default=sqlalchemy.sql.func.now(),
