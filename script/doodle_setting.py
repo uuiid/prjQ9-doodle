@@ -52,6 +52,7 @@ class Doodlesetting():
         self.projectname = 'dubuxiaoyao'
         self.ProgramFolder = ['Export', 'Playblasts', 'Rendering', 'Scenefiles']
         self.assTypeFolder = ['sourceimages', 'scenes', '{}_UE4', 'rig', "{}_low"]
+        self.filestate = ["Error","Amend","Complete"]
         self.project = ''
         self.__initSetAttr(self.__getString())
         self.__initSetAttr(self.__getseverPrjBrowser())
