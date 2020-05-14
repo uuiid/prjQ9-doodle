@@ -1,4 +1,5 @@
 import copy
+import logging
 import pathlib
 
 import sqlalchemy
@@ -75,6 +76,7 @@ class PrjCode():
     version: int
     filepath: str
     infor: str
+    filestate: str
     filetime: float
 
     def __init__(self, mysql_lib: str, sort_root: str, prj_root: str):
@@ -115,7 +117,7 @@ class PrjCode():
     def undataInformation(self, query_id: int):
         pass
 
-    def getFileState(self) -> list:
+    def getFileState(self, flag) -> sqlalchemy.orm.query.Query:
         pass
 
 
@@ -137,9 +139,9 @@ class PrjShot(PrjCode):
         _shot.__table__.name = "mainshot"
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            eps = session.query(_shot.episodes,_shot.filestate).all()
+            eps = session.query(_shot.episodes).all()
 
-        return [('ep{:0>3d}'.format(ep[0]),ep[1]) for ep in eps]
+        return ['ep{:0>3d}'.format(ep[0]) for ep in eps]
 
     def getShot(self) -> list:
         """
@@ -326,6 +328,32 @@ class PrjShot(PrjCode):
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             data: _shot = session.query(_shot).get(query_id)
             data.infor = self.infor
+            data.filestate = self.filestate
+
+    def getFileState(self, flag) -> sqlalchemy.orm.query.Query:
+        with self.comsql.session() as session:
+            # assert isinstance(session, sqlalchemy.orm.session.Session)
+            data = session.query(_shot).filter(_shot.filestate.isnot(None))
+            try:
+                data = getattr(self, f"_getFileState{flag}")(data)
+            except BaseException as err:
+                logging.info("%s", err)
+        return data
+
+    def _getFileStateShot(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+        return data.filter(_shot.episodes == self.episodes)
+
+    def _getFileStateDep(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+        data = self._getFileStateShot(data).filter(_shot.shot == self.shot).filter(_shot.shotab == self.shotab)
+        return data
+
+    def _getFileStateDepType(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+        data = self._getFileStateDep(data).filter(_shot.department == self.department)
+        return data
+
+    def _getFileStateFile(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+        data = self._getFileStateDepType(data).filter(_shot.Type == self.Type)
+        return data
 
 
 class PrjAss(PrjCode):
@@ -447,3 +475,32 @@ class PrjAss(PrjCode):
         except:
             path = pathlib.Path("")
         return path
+
+    def undataInformation(self, query_id: int):
+        with self.comsql.session() as session:
+            # assert isinstance(session, sqlalchemy.orm.session.Session)
+            data: _ass = session.query(_ass).get(query_id)
+            data.infor = self.infor
+            data.filestate = self.filestate
+
+    def getFileState(self, flag) -> sqlalchemy.orm.query.Query:
+        with self.comsql.session() as session:
+            # assert isinstance(session, sqlalchemy.orm.session.Session)
+            data = session.query(_ass).filter(_ass.filestate.isnot(None))
+            try:
+                data = getattr(self, f"_getFileState{flag}")(data)
+            except BaseException as err:
+                logging.info("%s", err)
+        return data
+
+    # def _getFileStateClass(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+    #     data = data
+    #     return data
+
+    def _getFileStateType(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+        data = data.filter(_ass.name == self.name)
+        return data
+
+    def _getFileStateFile(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+        data = self._getFileStateType(data).filter(_ass.type == self.Type)
+        return data
