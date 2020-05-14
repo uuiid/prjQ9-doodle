@@ -532,11 +532,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 self.shot.filepath = dst_file.as_posix()
                 self.shot.infor = ""
                 self.shot.submitInfo()
-                # self.shot.submitInfo(filename=shot_name,
-                #                      suffix=path.suffix, user=self.user,
-                #                      version=version,
-                #                      filepathAndname=dst_file.as_posix(),
-                #                      infor="")
                 self.listDepTypeClicked(self.listdepType.selectedItems()[0])
                 self.enableBorder(False)
             else:
