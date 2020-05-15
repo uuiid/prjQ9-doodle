@@ -6,6 +6,8 @@ import subprocess
 import sys
 import tempfile
 import time
+import threading
+import queue
 import urllib.request
 
 import qdarkgraystyle
@@ -132,21 +134,39 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
             try:
                 if tmp_path.is_file():
                     os.remove(tmp_path.as_posix())
-                undata_progress = QtWidgets.QProgressDialog("下载文件", "...", 0, 100)
-                dow = script.DoodleUpdata.downloadThread(doodle, tmp_path.joinpath(doodle.split("/")[-1]), 10240)
+                undata_progress = QtWidgets.QProgressDialog("下载文件", "...", 0, 99, parent=None)
                 undata_progress.setWindowModality(QtCore.Qt.WindowModal)
-                dow.start()
-                dow.dowload_proes_signal.connect(undata_progress.setValue)
+                undata_progress.setMinimumDuration(100)
+                undata_progress.forceShow()
+                my_q = queue.Queue()
+                my_th = threading.Thread(
+                    target=script.DoodleUpdata.undataDoodle,
+                    args=(my_q, doodle, tmp_path.joinpath(doodle.split("/")[-1]).as_posix()))
+                my_th.start()
+
+                # dow = script.DoodleUpdata.downloadThread(doodle, tmp_path.joinpath(doodle.split("/")[-1]), 10240)
+                # dow.dowload_proes_signal.connect(self._updata)
+                # dow.start()
+                while True:
+                    try:
+                        i = my_q.get(block=True, timeout=1)
+                        if i > 99: break
+                    except queue.Empty:
+                        break
+                    else:
+                        undata_progress.setValue(i)
+                undata_progress.close()
+                # for i in range(100):
+                #     self.undata_progress.setValue(i)
+                #     time.sleep(0.1)
                 # undata_progress.setWindowFlags(QtCore.Qt.Main)
-                undata_progress.show()
                 # undata_progress.setValue(dow.jindu)
             except BaseException as err:
                 logging.error("%s", err)
             else:
-                time.sleep(3)
+                time.sleep(1)
                 subprocess.Popen(str(tmp_path.joinpath(doodle.split("/")[-1])))
                 sys.exit(self)
-
 
 
 
