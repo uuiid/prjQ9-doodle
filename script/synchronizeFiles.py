@@ -2,32 +2,48 @@ import logging
 import os
 import pathlib
 import shutil
+import sys
 import tempfile
 import multiprocessing
+import subprocess
 import threading
 import queue
+import time
+
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 import sqlalchemy.pool
 import datetime
+import concurrent.futures as cf
 
 Base = sqlalchemy.ext.declarative.declarative_base()
 
 import script.doodle_setting
 import script.synXml
 
+_path_my_ = set()
+
+
+class synInfo(Base):
+    __tablename__ = "synInfo"
+    id = sqlalchemy.Column(sqlalchemy.INT, primary_key=True)
+    synTime: datetime.datetime = sqlalchemy.Column(sqlalchemy.DATETIME)
+    sourepath = sqlalchemy.Column(sqlalchemy.TEXT, unique=True)
+    trangepath = sqlalchemy.Column(sqlalchemy.TEXT, unique=True)
+
 
 class fileAction(Base):
     __tablename__ = "fileaction"
     id = sqlalchemy.Column(sqlalchemy.INT, primary_key=True)
-    soure_id = sqlalchemy.Column(sqlalchemy.INT, sqlalchemy.ForeignKey('sourefileinfo.id'))
-    trange_id = sqlalchemy.Column(sqlalchemy.INT, sqlalchemy.ForeignKey('trangefileinfo.id'))
-    sourefileinfo = sqlalchemy.orm.relationship("sourefileinfo", back_populates="Action")
-    trangefileinfo = sqlalchemy.orm.relationship("trangefileinfo", back_populates="Action")
+
+    filepath = sqlalchemy.Column(sqlalchemy.TEXT, unique=True)
 
     direction = sqlalchemy.Column(sqlalchemy.TEXT)
-    synTime = sqlalchemy.Column(sqlalchemy.FLOAT)
+
+    # synTime: datetime.datetime = sqlalchemy.Column(sqlalchemy.DATETIME)
+
+    conflict = sqlalchemy.Column(sqlalchemy.DATETIME)
 
 
 class fileinfo(Base):
@@ -35,18 +51,16 @@ class fileinfo(Base):
     # __tablename__ = "fileinfo"
     id = sqlalchemy.Column(sqlalchemy.INT, primary_key=True)
     filepath = sqlalchemy.Column(sqlalchemy.TEXT, unique=True)
-    file_m_time = sqlalchemy.Column(sqlalchemy.FLOAT)
-    filesize = sqlalchemy.Column(sqlalchemy.FLOAT)
+    file_m_time: datetime.datetime = sqlalchemy.Column(sqlalchemy.DATETIME)
+    filesize = sqlalchemy.Column(sqlalchemy.TEXT)
 
 
 class sourefileinfo(fileinfo):
     __tablename__ = "sourefileinfo"
-    Action = sqlalchemy.orm.relationship("fileAction", back_populates="sourefileinfo")
 
 
 class trangefileinfo(fileinfo):
     __tablename__ = "trangefileinfo"
-    Action = sqlalchemy.orm.relationship("fileAction", back_populates="trangefileinfo")
 
 
 class findFiles(threading.Thread):
@@ -66,8 +80,9 @@ class findFiles(threading.Thread):
                 path_join = os.path.join(root, file)
                 f_path = path_join.replace(self.findpath.__str__(), '')
                 stat = os.stat(path_join)
-                # time = datetime.datetime.fromtimestamp(stat.st_mtime)
-                self.queue.put((self.flag, f_path, stat.st_mtime, stat.st_size), block=True, timeout=1000)
+                time = datetime.datetime.fromtimestamp(stat.st_mtime)
+                self.queue.put((self.flag, f_path, time, stat.st_size), block=True, timeout=1000)
+
             # print(f"子进程执行中  path ->>> {root}")
 
 
@@ -104,24 +119,33 @@ class changeSql(threading.Thread):
                 else:
                     sql_value.file_m_time = task[2]
                     sql_value.filesize = task[3]
-
-                # logging.info("提交数据 %s",task)
+            _path_my_.add(task[1])
+            # logging.info("提交数据 %s",task)
         t_session.commit()
+        t_session.close()
 
 
-def comFile(soure_id, soure_time, soure_size, trange_id, trange_time, trange_size):
-    size_equal = soure_size == trange_size
-    time_equal = soure_time == trange_time
+def FileNotEqual(soure: sourefileinfo, trange: trangefileinfo):
+    size_equal = trange.filesize == soure.filesize
+    time_equal = trange.file_m_time == soure.file_m_time
+
     if size_equal and time_equal:
-        return True, soure_id
+        return False, None
     else:
-        if soure_time > trange_time:
-            return False, soure_id
+        if soure.file_m_time > trange.file_m_time:
+            return True, soure
         else:
-            return False, trange_id
+            return True, trange
 
 
-def copyfile(soure, trange):
+def exceedSyn(time, syn_time):
+    if time > syn_time:
+        return True
+    else:
+        return False
+
+
+def inspectfile(soure, trange):
     for path in [soure, trange]:
         join = os.path.join(path, "stn_py.db")
         if os.path.isfile(join):
@@ -132,117 +156,128 @@ def copyfile(soure, trange):
     engine = sqlalchemy.create_engine('sqlite:///{}'.format(join), connect_args={'check_same_thread': False},
                                       poolclass=sqlalchemy.pool.StaticPool)
     session_class = sqlalchemy.orm.sessionmaker(bind=engine)
-    my_session: sqlalchemy.orm.Session = session_class()
+
     my_session_class = sqlalchemy.orm.scoped_session(session_class)
     if not os.path.isfile(join):
         Base.metadata.create_all(engine)
+        my_session: sqlalchemy.orm.Session = my_session_class()
+        syn = synInfo(sourepath=soure.as_posix(), trangepath=trange.as_posix())
+        my_session.add(syn)
+        my_session.commit()
+
     my_queue = queue.Queue(1000000)
 
     sour = findFiles(soure, my_queue, sourefileinfo)
     trange_t = findFiles(trange, my_queue, trangefileinfo)
-    subinfo = changeSql(my_queue, session_class)
+    subinfo = changeSql(my_queue, my_session_class)
     sour.start()
     trange_t.start()
     subinfo.start()
     subinfo.join()
 
-    # if not (sour.is_alive() and trange_t.is_alive()):
-    #     my_session_class().commit()
+    my_session: sqlalchemy.orm.Session = my_session_class()
+
+    writeSyncFileInfor(my_session)
+
+    my_session.commit()
+    syn_info = my_session.query(synInfo).one()
+
+    fileTestConfict(my_session, syn_info)
+    return my_session
 
 
-class synFile(object):
-    @property
-    def left(self) -> pathlib.Path:
-        if not hasattr(self, '_left'):
-            self._left = ''
-        return self._left
+def fileTestConfict(my_session, syn_info):
+    if syn_info.synTime:
+        t_path = my_session.query(trangefileinfo.filepath).filter(trangefileinfo.file_m_time > syn_info.synTime).all()
+        s_path = my_session.query(sourefileinfo.filepath).filter(sourefileinfo.file_m_time > syn_info.synTime).all()
+        com = {i[0] for i in t_path + s_path}
+        if com:
+            for _p_ in com:
+                data_action = my_session.query(fileAction).filter(fileAction.filepath == _p_).one()
+                data_action.direction = "com"
+    my_session.commit()
 
-    @left.setter
-    def left(self, left):
-        self._left = left
 
-    @property
-    def right(self) -> pathlib.Path:
-        if not hasattr(self, '_right'):
-            self._right = ''
-        return self._right
+def writeSyncFileInfor(my_session):
+    for _p_ in _path_my_:
+        data_t = my_session.query(trangefileinfo).filter(trangefileinfo.filepath == _p_).all()
+        data_s = my_session.query(sourefileinfo).filter(sourefileinfo.filepath == _p_).all()
+        data_action = my_session.query(fileAction).filter(fileAction.filepath == _p_).all()
+        if not data_action:
+            if not data_t:  # 目标路径是空,从来源复制
+                action = fileAction(filepath=_p_, direction="s")
 
-    @right.setter
-    def right(self, right):
-        self._right = right
+            elif not data_s:  # 来源路径是空,从目标复制
+                action = fileAction(filepath=_p_, direction="t")
 
-    @property
-    def file_db(self) -> pathlib.Path:
-        if not hasattr(self, '_file_db'):
-            self._file_db = ''
-        return self._file_db
+            else:
+                data_t = data_t[0]
+                data_s = data_s[0]
+                not_qeual, file_copy = FileNotEqual(data_s, data_t)
+                if not_qeual:
+                    action = fileAction(filepath=_p_, direction=file_copy.__class__.__name__[:1])
+                else:
+                    action = fileAction(filepath=_p_)
 
-    @property
-    def ignore(self):
-        if not hasattr(self, '_ignore'):
-            self._ignore = ''
-        return self._ignore
-
-    @ignore.setter
-    def ignore(self, ignore):
-        self._ignore = ignore
-
-    @property
-    def minclude(self):
-        if not hasattr(self, '_include'):
-            self._include = ['.']
-        return self._include
-
-    @minclude.setter
-    def minclude(self, minclude):
-        self._include = minclude
-
-    @file_db.setter
-    def file_db(self, file_db):
-        self._file_db = file_db
-
-    def __init__(self, left: pathlib.Path, right: pathlib.Path, ignore=''):
-        self.doodleSet = script.doodle_setting.Doodlesetting()
-        self._left = left
-        self._right = right
-        # self._file_db = left.joinpath("Sql_syn_file.db")
-        # if self.file_db.is_file():
-        #     pass
-        # else:
-        #     pass
-
-    def getFilePath(self):
-        for l_root, dirs, names in os.walk(str(self.left)):
-            for name in names:
-                r_root = l_root.replace(str(self.left), str(self.right))
-                print(f"""{l_root}\\{name}""")
-                print(f"""{r_root}\\{name}""")
-
-    def copyAndBakeup(self, is_dir: bool):
-        backup = self.right.joinpath("backup")
-        tem = pathlib.Path(tempfile.gettempdir())
-        synlist = [{"Left": str(self.left), "Right": str(self.right)}]
-        if is_dir:
-            # pool = multiprocessing.Pool(processes=4)
-            for root, dors, files in os.walk(str(self.left)):
-                for file in files:
-                    left_file = os.path.join(root, file)
-                    right_file = left_file.replace(str(self.left), str(self.right))
-                    shutil.copy2(left_file, right_file)
-                    logging.info("%s-------%s", left_file, right_file)
-                    # pool.apply(_copyfile, (left_file, right_file))
-            # pool.close()
-            # pool.join()
-            # synfile = script.synXml.weiteXml(tem,synlist,Exclude=["backup"],VersioningFolder=[str(backup)])
+            my_session.add(action)
         else:
-            if not backup.is_dir():
-                backup.mkdir()
-            # synfile = script.synXml.weiteXml(tem, synlist, Exclude=["backup"], VersioningFolder=[str(backup)])
-        # program = self.doodleSet.FreeFileSync
-        # subprocess.run('{} "{}"'.format(program, synfile), shell=True)
+            data_action = data_action[0]
+            if not data_t:  # 目标路径是空,从来源复制
+                data_action.direction = "s"
+            elif not data_s:  # 来源路径是空,从目标复制
+                data_action.direction = "t"
+            else:
+                data_t = data_t[0]
+                data_s = data_s[0]
+                not_qeual, file_copy = FileNotEqual(data_s, data_t)
+                if not_qeual:
+                    data_action.direction = file_copy.__class__.__name__[:1]
+                else:
+                    data_action.filepath = _p_
+                my_session.commit()
 
+
+def copyFile(soure: str, trange: str):
+    for root, dirs, files in os.walk(soure):
+        for file in files:
+            s_path = os.path.join(root, file)
+            t_path = s_path.replace(soure, trange)
+            try:
+                pathlib.Path(t_path).parent.mkdir(parents=True, exist_ok=True)
+            except FileExistsError:
+                pass
+            copyItem(s_path, t_path)
+
+
+def robocopy(soure: pathlib.Path, trange: pathlib.Path):
+    com = ["powershell.exe", "robocopy", soure.as_posix(), trange.as_posix(), "/FP", "/E"]
+    p = subprocess.Popen(com, stdout=subprocess.PIPE, encoding="gbk")
+    out_ = p.stdout.readlines()
+    return out_
+
+
+def copyItem(soure: str, trange: str):
+    com = ["powershell.exe", "Copy-Item", soure, trange]
+    p = subprocess.Popen(com, stdout=subprocess.PIPE, encoding="gbk")
+    out_ = p.stdout.readlines()
+    return out_
+
+
+class copyeasily(object):
+    soure: pathlib.Path
+    trange: pathlib.Path
+
+    def __init__(self, soure: pathlib.Path, trange: pathlib.Path):
+        try:
+            trange.iterdir().__next__()
+        except StopIteration:
+            robocopy(soure, trange)
+            self.session = None
+        else:
+            self.session = inspectfile(soure,trange)
 
 if __name__ == '__main__':
     left = pathlib.Path("D:\\ue_project")
-    right = pathlib.Path("F:\\ue_project")
-    copyfile(left, right)
+    right = pathlib.Path("D:\\ue_project_backup")
+    # inspectfile(left, right)
+    # copyFile(left.as_posix(), right.as_posix())
