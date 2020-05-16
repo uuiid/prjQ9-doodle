@@ -249,8 +249,8 @@ def copyFile(soure: str, trange: str):
             copyItem(s_path, t_path)
 
 
-def robocopy(soure: pathlib.Path, trange: pathlib.Path):
-    com = ["powershell.exe", "robocopy", soure.as_posix(), trange.as_posix(), "/FP", "/E"]
+def robocopy(soure: pathlib.Path, trange: pathlib.Path, ecom=()):
+    com = ["powershell.exe", "robocopy", soure.as_posix(), trange.as_posix(), "/FP", "/E"] + list(ecom)
     p = subprocess.Popen(com, stdout=subprocess.PIPE, encoding="gbk")
     out_ = p.stdout.readlines()
     return out_
@@ -274,7 +274,8 @@ class copyeasily(object):
             robocopy(soure, trange)
             self.session = None
         else:
-            self.session = inspectfile(soure,trange)
+            self.session = inspectfile(soure, trange)
+
 
 if __name__ == '__main__':
     left = pathlib.Path("D:\\ue_project")
