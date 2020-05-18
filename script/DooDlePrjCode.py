@@ -64,7 +64,7 @@ class _episodes(script.MySqlComm.Base):
     episodes: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
 
 
-class PrjCode():
+class PrjCode(object):
     mysqllib: str
     _root: pathlib.Path
     query_id: int
@@ -91,33 +91,63 @@ class PrjCode():
         self.comsql = script.MySqlComm.commMysql(mysql_lib)
 
     def submitInfo(self, filename: str, suffix: str, user: str, version: int, filepathAndname: str, infor=""):
+        """
+        提交文件信息
+        """
         pass
 
     def getScreenshot(self):
+        """
+        获得截图镜头
+        """
         pass
 
     def getScreenshotPath(self):
+        """
+        获得截图路径
+        """
         pass
 
     def getFileName(self, version: int, user_: str, suffix: str, prefix: str = "") -> str:
+        """
+        获得文件名称
+        """
         pass
 
     def getFilePath(self, folder_type: str = "Scenefiles") -> pathlib.Path:
+        """
+        获得文件路径
+        """
         pass
 
     def getMaxVersion(self) -> int:
+        """
+        获得最大版本
+        """
         pass
 
     def queryFileName(self, id__: int) -> pathlib.Path:
+        """
+        查询文件名称
+        """
         pass
 
     def queryFlipBook(self, ass_type: str) -> pathlib.Path:
+        """
+        查询拍屏
+        """
         pass
 
     def undataInformation(self, query_id: int):
+        """
+        更新信息
+        """
         pass
 
     def getFileState(self, flag) -> sqlalchemy.orm.query.Query:
+        """
+        获得文件状态
+        """
         pass
 
 
@@ -201,6 +231,9 @@ class PrjShot(PrjCode):
         return files
 
     def getFilePath(self, folder_type: str = "Scenefiles") -> pathlib.Path:
+        """
+        组合镜头信息, 返回文件路径
+        """
         path = self._root.joinpath(f'ep{self.episodes:0>3d}',
                                    f'sc{self.shot:0>4d}',
                                    folder_type,
@@ -210,6 +243,9 @@ class PrjShot(PrjCode):
         return path
 
     def getFileName(self, version: int, user_: str, suffix: str, prefix: str = "") -> str:
+        """
+        组合文件信息,  生成文件名称
+        """
         name = f"{prefix}shot_ep{self.episodes:0>3d}_sc{self.shot:0>4d}{self.shotab}_" \
                f"{self.department}_" \
                f"{self.Type}_v{version:0>4d}" \
@@ -217,6 +253,9 @@ class PrjShot(PrjCode):
         return name
 
     def getMaxVersion(self) -> int:
+        """
+        查询库, 获得最大的文件版本
+        """
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             file_data = session.query(_shot.version). \
@@ -252,6 +291,9 @@ class PrjShot(PrjCode):
             session.add(sub)
 
     def subEpisodesInfo(self, episodes: int):
+        """
+        提交集数,  比较特殊,  因为集数是分片表
+        """
         _shot.__table__.name = f"ep{episodes:0>3d}"
         _shot.__table__.create(self.comsql.engine)
 
@@ -261,7 +303,9 @@ class PrjShot(PrjCode):
             session.add(_episodes(episodes=self.episodes))
 
     def queryFileName(self, id__: int) -> pathlib.Path:
-
+        """
+        查询文件名称
+        """
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
             file_data = session.query(_shot.filepath).filter(_shot.id == id__).one()
@@ -273,6 +317,9 @@ class PrjShot(PrjCode):
         return pathlib.Path(file_data)
 
     def getScreenshot(self) -> pathlib.Path:
+        """
+        查询截图路径和名称
+        """
         path: pathlib.Path = self._root.joinpath(f'ep{self.episodes:0>3d}',
                                                  f'sc{self.shot:0>4d}{self.shotab}',
                                                  'Playblasts',
@@ -284,6 +331,9 @@ class PrjShot(PrjCode):
         return path
 
     def getScreenshotPath(self) -> pathlib.Path:
+        """
+        获得截图路径
+        """
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             file_data = session.query(_shot.filepath). \
@@ -298,6 +348,9 @@ class PrjShot(PrjCode):
         return file_data
 
     def queryFlipBook(self, ass_type: str) -> pathlib.Path:
+        """
+        获得拍屏路径
+        """
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             path = session.query(_shot.filepath). \
@@ -312,6 +365,9 @@ class PrjShot(PrjCode):
         return path
 
     def queryFlipBookShot(self, shot: int) -> pathlib.Path:
+        """
+        最新拍屏, 按镜头分的最新拍屏
+        """
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
             path = session.query(_shot.filepath). \
@@ -324,6 +380,9 @@ class PrjShot(PrjCode):
         return path
 
     def undataInformation(self, query_id: int):
+        """
+        更新拍屏信息以及文件状态
+        """
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             data: _shot = session.query(_shot).get(query_id)
@@ -331,6 +390,9 @@ class PrjShot(PrjCode):
             data.filestate = self.filestate
 
     def getFileState(self, flag) -> sqlalchemy.orm.query.Query:
+        """
+        获得文件状态
+        """
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             data = session.query(_shot).filter(_shot.filestate.isnot(None))
@@ -341,17 +403,21 @@ class PrjShot(PrjCode):
         return data
 
     def _getFileStateShot(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+        # 查询条件组合  约束集数变量
         return data.filter(_shot.episodes == self.episodes)
 
     def _getFileStateDep(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+        # 约束镜头变量
         data = self._getFileStateShot(data).filter(_shot.shot == self.shot).filter(_shot.shotab == self.shotab)
         return data
 
     def _getFileStateDepType(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+        # 约束部门变量
         data = self._getFileStateDep(data).filter(_shot.department == self.department)
         return data
 
     def _getFileStateFile(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+        # 约束镜头类型
         data = self._getFileStateDepType(data).filter(_shot.Type == self.Type)
         return data
 
@@ -395,6 +461,9 @@ class PrjAss(PrjCode):
         return file_data
 
     def getFilePath(self, folder_type: str = "Scenefiles") -> pathlib.Path:
+        """
+        组合文件信息, 返回路径变量
+        """
         path = self._root.joinpath(self.sort,
                                    self.name,
                                    folder_type,
@@ -403,6 +472,9 @@ class PrjAss(PrjCode):
         return path
 
     def getFileName(self, version: int, user_: str, suffix: str, prefix: str = "") -> str:
+        """
+        组合文件名称
+        """
         add_suffix = ""
         if self.Type in ["rig"]:
             add_suffix = "_rig"
@@ -411,6 +483,9 @@ class PrjAss(PrjCode):
         return name
 
     def getMaxVersion(self) -> int:
+        """
+        获得文件最高版本
+        """
         file_data = []
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
@@ -427,6 +502,9 @@ class PrjAss(PrjCode):
 
     def submitInfo(self, file_name: str, suffix: str, user: str, version: int,
                    filepath_and_name: str, infor: str = ""):
+        """
+        提交截屏
+        """
         sub = _ass(name=self.name, type=self.Type, file=self.file, fileSuffixes=self.fileSuffixes,
                    user=self.user, version=self.version, filepath=self.filepath, infor=self.infor)
         sub.__table__.name = self.sort
@@ -434,6 +512,9 @@ class PrjAss(PrjCode):
             session.add(sub)
 
     def queryFileName(self, id__: int) -> pathlib.Path:
+        """
+        查询文件路径
+        """
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
             file_data = session.query(_ass.filepath).filter(_ass.id == id__).one()
@@ -444,6 +525,9 @@ class PrjAss(PrjCode):
         return pathlib.Path(file_data)
 
     def getScreenshot(self) -> pathlib.Path:
+        """
+        获得截图名称
+        """
         path: pathlib.Path = self._root.joinpath(self.sort,
                                                  self.name,
                                                  'Playblasts',
@@ -454,6 +538,9 @@ class PrjAss(PrjCode):
         return path
 
     def getScreenshotPath(self) -> pathlib.Path:
+        """
+        查询截屏路径
+        """
         with self.comsql.session() as session:
             file_data = session.query(_ass.filepath). \
                 filter_by(name=self.name, type=self.Type, fileSuffixes='.jpg'). \
@@ -465,6 +552,9 @@ class PrjAss(PrjCode):
         return file_data
 
     def queryFlipBook(self, ass_type: str) -> pathlib.Path:
+        """
+        查询拍屏,  约束条件是名称和类型
+        """
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
             path = session.query(_ass.filepath). \
@@ -477,6 +567,9 @@ class PrjAss(PrjCode):
         return path
 
     def undataInformation(self, query_id: int):
+        """
+        更新资产信息
+        """
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             data: _ass = session.query(_ass).get(query_id)
@@ -484,6 +577,9 @@ class PrjAss(PrjCode):
             data.filestate = self.filestate
 
     def getFileState(self, flag) -> sqlalchemy.orm.query.Query:
+        """
+        查询文件状态
+        """
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             data = session.query(_ass).filter(_ass.filestate.isnot(None))
