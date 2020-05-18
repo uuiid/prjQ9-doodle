@@ -50,7 +50,7 @@ class _prjColor(object):
 
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
     """
-    这个类用来实现项目管理的属性和UI操作,  其中会有一个项目分析器在外部, 有每个项目分别配置或者使用默认设置
+    这个类用来实现项目管理的属性和UI操作,其中shot和ass是两个数据库链接器,  用来在ui和数据库中添加一个中间层
     """
 
     user: str
@@ -99,52 +99,55 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.tabWidget.currentChanged['int'].connect(lambda index: self.tabWigetClick(index))
 
         # <editor-fold desc="添加上下文菜单">
+        # 添加集数上下文菜单
         self.listepisodes.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.listepisodes.customContextMenuRequested.connect(
             lambda pos: self.addRightClickMenu(self.listepisodes.mapToGlobal(pos), 'episodes'))
-
+        # 添加镜头上下文菜单
         self.listshot.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.listshot.customContextMenuRequested.connect(
             lambda pos: self.addRightClickMenu(self.listshot.mapToGlobal(pos), "shot"))
-
+        # 部门菜单
         self.listdepartment.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.listdepartment.customContextMenuRequested.connect(
             lambda pos: self.addRightClickMenu(self.listdepartment.mapToGlobal(pos), "department"))
-
+        # 部门类型菜单
         self.listdepType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.listdepType.customContextMenuRequested.connect(
             lambda pos: self.addRightClickMenu(self.listdepType.mapToGlobal(pos), "depType"))
 
+        # 镜头文件菜单
         self.listfile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.listfile.customContextMenuRequested.connect(
             lambda pos: self.addRightClickMenu(self.listfile.mapToGlobal(pos), "shotFile"))
 
+        # 资产种类菜单
         self.listAss.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.listAss.customContextMenuRequested.connect(
             lambda pos: self.addRightClickMenu(self.listAss.mapToGlobal(pos), "assFolder"))
-
+        # 资产类型菜单
         self.listAssType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.listAssType.customContextMenuRequested.connect(
             lambda pos: self.addRightClickMenu(self.listAssType.mapToGlobal(pos), "assType"))
-
+        # 资产文件菜单
         self.listAssFile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.listAssFile.customContextMenuRequested.connect(
             lambda pos: self.addRightClickMenu(self.listAssFile.mapToGlobal(pos), "assFile"))
         # </editor-fold>
 
-        # 添加截图功能
+        # 链接截图功能和按钮
         self.ass_screenshot.clicked.connect(lambda: self.Screenshot("ass", self.ass_thumbnail))
         self.shot_screenshots.clicked.connect(lambda: self.Screenshot("shot", self.shot_thumbnail))
-        # 添加上传拍屏功能
+        # 链接上传拍屏功能和按钮
         self.shot_upload.clicked.connect(lambda: self.uploadFlipBook(self.shot))
         self.ass_upload.clicked.connect(lambda: self.uploadFlipBook(self.ass))
 
-        # 打开拍屏功能
+        # 链接播放拍屏的按钮
         self.ass_player.clicked.connect(lambda: self.playerButtenClicked(one_or_mut="one"))
         self.shot_player.clicked.connect(lambda: self.playerButtenClicked(one_or_mut="one"))
 
         # <editor-fold desc="关于shot的更新操作">
-        # self.addRightClick()
+
         # 首先扫描根目录获得集数
         self.setepisodex()
         # 并链接函数处理下一级
@@ -180,6 +183,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.pot_player = potplayer.PlayList()
 
     def tabWigetClick(self, index: int):
+        """
+        选项卡切换事件
+        """
         if index == 0:
             logging.info("点击资产")
             self.setepisodex()
@@ -189,6 +195,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     # <editor-fold desc="菜单项">
     def menuEpisodes(self, menu):
+        """
+        集数右键菜单
+        """
         add_episodes_folder = menu.addAction('添加')
         add_player = menu.addMenu("播放整集拍屏")
         add_episodes_folder.triggered.connect(self.addEpisodesFolder)
@@ -201,6 +210,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return menu
 
     def menuShot(self, menu):
+        """
+        镜头右键菜单
+        """
         if self.listepisodes.selectedItems():
             add_shot_folder = menu.addAction('添加', )
             add_shot_folder.triggered.connect(self.addShotFolder)
@@ -209,17 +221,26 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return menu
 
     def menuDepartment(self, menu):
+        """
+        镜头部门右键菜单
+        """
         if self.listshot.selectedItems():
             add_department = menu.addAction('添加')
             add_department.triggered.connect(self.addDepartmentFolder)
         return menu
 
     def menuDeptype(self, menu):
+        """
+        镜头部门类型右键菜单
+        """
         add_dep_type = menu.addAction('添加')
         add_dep_type.triggered.connect(self.addTypeFolder)
         return menu
 
     def menuShotfile(self, menu):
+        """
+        镜头文件菜单
+        """
         if self.listfile.selectedItems():
             open_explorer = menu.addAction('打开文件管理器')  # 用文件管理器打开文件位置
             open_explorer.triggered.connect(lambda: self.openShotExplorer(self.shot))
@@ -235,24 +256,29 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             # 导出Fbx和abc选项
             export_maya = menu.addAction("导出")
             export_maya.triggered.connect(self.exportMaya)
-
-        elif type == "assFolder":  # 添加资产文件夹右键菜单
-            add_ass_folder = menu.addAction('添加')
-            add_ass_folder.triggered.connect(self.addAssFolder)
         return menu
 
     def menuAssfolder(self, menu):
+        """
+        添加资产种类右键菜单
+        """
         add_ass_folder = menu.addAction('添加')
         add_ass_folder.triggered.connect(self.addAssFolder)
         return menu
 
     def menuAsstype(self, menu):
+        """
+        添加资产类型右键菜单
+        """
         if self.listAss.selectedItems():  # 添加资产类型右键文件夹
             add_ass_type_folder = menu.addAction('添加')
             add_ass_type_folder.triggered.connect(self.addAssTypeFolder)
         return menu
 
     def menuAssfile(self, menu):
+        """
+        添加资产文件右键菜单
+        """
         if self.listAssType.selectedItems():
             if self.listAssFile.selectedItems():
                 open_ass_explorer = menu.addAction("打开文件管理器")
@@ -261,7 +287,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 add_info.triggered.connect(lambda: self.subInfo(self.ass))
                 filestate = menu.addAction("标记问题")
                 filestate.triggered.connect(lambda: self.markFileStart(self.ass))
-                add_ass_file_dow = menu.addAction('同步UE文件')
+                add_ass_file_dow = menu.addAction("下载文件")
                 add_ass_file_dow.triggered.connect(self.downloadUe4)
             add_ass_file = menu.addAction('上传(提交)文件')
             add_ass_file.triggered.connect(self.uploadFiles)
@@ -284,6 +310,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     # </editor-fold>
     @staticmethod
     def _setQlistItemColor(list_: QtWidgets.QListWidget, finds, state_type):
+        """设置小部件颜色, 用来显示有问题的"""
         item = list_.findItems(finds, QtCore.Qt.MatchExactly)
         try:
             item = item[0]
@@ -303,7 +330,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listshot.clear()
         self.listdepartment.clear()
         self.listdepType.clear()
-        self.clearListFile()
+        self.clearTableFile(self.listfile)
 
         self.shot_thumbnail.clear()
 
@@ -323,7 +350,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         self.listdepartment.clear()
         self.listdepType.clear()
-        self.clearListFile()
+        self.clearTableFile(self.listfile)
 
         self.listshot.clear()
         self.shot_thumbnail.clear()
@@ -350,7 +377,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         self.listdepartment.clear()
         self.listdepType.clear()
-        self.clearListFile()
+        self.clearTableFile(self.listfile)
         self.shot_thumbnail.clear()
 
         logging.info('更新Department列表')
@@ -367,7 +394,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         """
         self.shot.department = item.text()
 
-        self.clearListFile()
+        self.clearTableFile(self.listfile)
         self.listdepType.clear()
         self.shot_thumbnail.clear()
 
@@ -384,7 +411,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.shot.Type = item.text()
 
         # 清空上一次文件显示和版本记录和文件路径
-        self.clearListFile()
+        self.clearTableFile(self.listfile)
         self._setWidegtItem(self.shot.getFile(), self.listfile)
 
     def shotFileClicked(self, shot_row):
@@ -398,10 +425,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.shot.fileSuffixes = self.listfile.item(shot_row, 3).text()
         self.shot.query_id = int(self.listfile.item(shot_row, 4).text())
 
-    def clearListFile(self):
-        mrowtmp = self.listfile.rowCount()
+    @staticmethod
+    def clearTableFile(table: QtWidgets.QTableWidget):
+        """清除列表"""
+        mrowtmp = table.rowCount()
         while mrowtmp >= 0:
-            self.listfile.removeRow(mrowtmp)
+            table.removeRow(mrowtmp)
             mrowtmp = mrowtmp - 1
 
     # </editor-fold>
@@ -417,7 +446,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             file_infor = [""]
             if item[1]:
                 file_infor = re.split(r"\|", item[1])
-            table.setItem(index, 1, QtWidgets.QTableWidgetItem(file_infor[-1]))
+            table.setItem(index, 1, QtWidgets.QTableWidgetItem(file_infor[-1]))  # 设置概述
             table.item(index, 1).setToolTip("\n".join(file_infor))
             table.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))
             table.setItem(index, 3, QtWidgets.QTableWidgetItem(item[3]))
@@ -426,13 +455,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     # <editor-fold desc="更新ass的各种操作">
     def assClassSortClicked(self, ass_name: str):
+        """
+        按钮点击事件, 更新资产种类
+        """
         self.ass.sort = ass_name
-        # self.assFamilyPath = self.setAssFamilyPath()
         logging.info('将资产类型设置为 %s', ass_name)
 
         self.listAss.clear()
         self.listAssType.clear()
-        self.clearListAssFile()
+        self.clearTableFile(self.listAssFile)
 
         self.ass_thumbnail.clear()
 
@@ -444,11 +475,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             self._setQlistItemColor(self.listAss, s.name, s.filestate)
 
     def assClassClicked(self, item):
+        """
+        资产种类点击事件, 资产类型的更新
+        """
         self.ass.name = item.text()  # self.listAssType.selectedItems()[0].text()
 
         self.listAssType.clear()
         logging.info('清除资产类型中的项数')
-        self.clearListAssFile()
+        self.clearTableFile(self.listAssFile)
         logging.info('清除资产文件中的项数')
 
         self.ass_thumbnail.clear()
@@ -459,11 +493,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             self._setQlistItemColor(self.listAssType, s.type, s.filestate)
 
     def assClassTypeClicked(self, item):
-        """资产类别点击事件"""
+        """资产类别点击事件, 更新资产文件列表"""
         self.ass.Type = item.text()
         self.setThumbnail("ass", self.ass_thumbnail)
         # 清空上一次文件显示和版本记录和文件路径
-        self.clearListAssFile()
+        self.clearTableFile(self.listAssFile)
         self._setWidegtItem(self.ass.getFileInfo(), self.listAssFile)
 
     def assFileClicked(self, ass_row):
@@ -473,20 +507,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.ass.fileSuffixes = self.listAssFile.item(ass_row, 3).text()
         self.ass.query_id = int(self.listAssFile.item(ass_row, 4).text())
 
-    """清理资产文件列表"""
-
-    def clearListAssFile(self):
-        mrowtmp = self.listAssFile.rowCount()
-        while mrowtmp >= 0:
-            self.listAssFile.removeRow(mrowtmp)
-            mrowtmp = mrowtmp - 1
-
     # </editor-fold>
 
     # <editor-fold desc="拖放操作函数">
     def enableBorder(self, enable):
         if enable:
-            # self.setStyleSheet("MainWidget{border:3px solid green}")
             self.listfile.setStyleSheet("border:3px solid #165E23")
         else:
             self.listfile.setStyleSheet('')
@@ -545,21 +570,21 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def addEpisodesFolder(self):
         """添加集数文件夹并提交数据库"""
-        episode,is_ok = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)
+        episode, is_ok = QtWidgets.QInputDialog.getInt(self, '输入集数', "ep", 1, 1, 999, 1)
         if is_ok:
             self.shot.subEpisodesInfo(episodes=episode)
             self.setepisodex()
 
     def addShotFolder(self):
         """添加镜头"""
-        shot,is_ok = QtWidgets.QInputDialog.getInt(self, '输入镜头', "sc", 1, 1, 999, 1)
+        shot, is_ok = QtWidgets.QInputDialog.getInt(self, '输入镜头', "sc", 1, 1, 999, 1)
         if is_ok and self.listepisodes.selectedItems():
             self.listshot.addItem('sc{:0>4d}'.format(shot))
 
     def addABshotFolder(self):
         """添加ab镜"""
         items = ['B', 'C', 'D', 'E']
-        shot_ab,is_ok = QtWidgets.QInputDialog.getItem(self, '选择AB镜头', '要先选择镜头才可以', items, 0, False)
+        shot_ab, is_ok = QtWidgets.QInputDialog.getItem(self, '选择AB镜头', '要先选择镜头才可以', items, 0, False)
         shot = self.shot.shot
         if is_ok and self.listshot.selectedItems():
             self.listshot.addItem('sc{:0>4d}{}'.format(shot, shot_ab))
@@ -572,8 +597,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def addTypeFolder(self):
         """添加类型文件"""
-        deptype,is_ok = QtWidgets.QInputDialog.getText(self, '输入镜头', "文件类型(请用英文或拼音)",
-                                                 QtWidgets.QLineEdit.Normal)
+        deptype, is_ok = QtWidgets.QInputDialog.getText(self, '输入镜头', "文件类型(请用英文或拼音)",
+                                                        QtWidgets.QLineEdit.Normal)
         if is_ok and self.listdepartment.selectedItems():
             self.listdepType.addItem(deptype)
 
@@ -595,7 +620,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         items: typing.List[str] = self.setlocale.assTypeFolder.copy()
         items = [i.format(self.ass.name) for i in items]
 
-        ass_type,is_ok = QtWidgets.QInputDialog.getItem(self, '选择资产类型', '要先选择资产', items, 0, False)
+        ass_type, is_ok = QtWidgets.QInputDialog.getItem(self, '选择资产类型', '要先选择资产', items, 0, False)
         if is_ok and self.listAss.selectedItems():
             self.listAssType.addItem(ass_type)
 
@@ -762,21 +787,30 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         return None
 
     def openShotFile(self):
+        """
+        打开文件
+        """
         file_path = self.shot.queryFileName(self.shot.query_id)
         os.startfile(str(file_path))
 
     def copyNameToClipboard(self):
-        #
+        """
+        复制文件名称到剪贴板
+        """
         file_path = self.shot.queryFileName(self.shot.query_id)
         pyperclip.copy(str(file_path.name))
         logging.info('复制 %s 到剪切板', str(file_path.name))
 
     def copyPathToClipboard(self):
+        """
+        复制文件路径到剪贴板
+        """
         file_path = self.shot.queryFileName(self.shot.query_id)
         pyperclip.copy(str(file_path.parent))
         logging.info('复制 %s 到剪切板', str(file_path.parent))
 
     def exportMaya(self):
+        """导出maya相机和"""
         file_data = self.shot.queryFileName(self.shot.query_id)
 
         logging.info(file_data)
@@ -788,6 +822,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                           QtWidgets.QMessageBox.Yes)
 
     def Screenshot(self, my_type: str, thumbnail: QtWidgets.QLabel):
+        """
+        截图保存动作
+        """
         core: script.DooDlePrjCode.PrjCode = getattr(self, my_type)
         path = core.getScreenshot()
         if not path.parent.is_dir():
@@ -808,6 +845,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.setThumbnail(my_type, thumbnail)
 
     def setThumbnail(self, type_: str, thumbnail: QtWidgets.QLabel):
+        """
+        设置截图显示
+        """
         core = getattr(self, type_)
         path = core.getScreenshotPath()
         pixmap = QtGui.QPixmap(str(path))
