@@ -288,7 +288,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 filestate = menu.addAction("标记问题")
                 filestate.triggered.connect(lambda: self.markFileStart(self.ass))
                 add_ass_file_dow = menu.addAction("下载文件")
-                add_ass_file_dow.triggered.connect(self.downloadUe4)
+                add_ass_file_dow.triggered.connect(lambda: self.download(self.ass))
             add_ass_file = menu.addAction('上传(提交)文件')
             add_ass_file.triggered.connect(self.uploadFiles)
             get_ass_path = menu.addAction('指定文件')
@@ -716,12 +716,18 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             success = True
         return success
 
-    def downloadUe4(self):
-        pass
-        # path = QtWidgets.QFileDialog.getExistingDirectory(self,
-        #                                                   "选择同步目录",
-        #                                                   self.recentlyOpenedFolder,
-        #                                                   QtWidgets.QFileDialog.ShowDirsOnly)
+    def download(self,core:script.DooDlePrjCode.PrjCode ):
+        path = QtWidgets.QFileDialog.getExistingDirectory(self,
+                                                          "选择同步目录",
+                                                          self.recentlyOpenedFolder,
+                                                          QtWidgets.QFileDialog.ShowDirsOnly)
+        pathprj = pathlib.Path(path)
+        path = pathprj.joinpath("Content")
+        sourepath = core.queryFileName(core.query_id)
+        tmp_copy = script.synchronizeFiles.copyeasily(sourepath,path)
+        tmp_copy.start()
+        QtWidgets.QMessageBox.critical(self,"复制中","请等待.....")
+        logging.info(path)
 
     def assUploadFileUE4Handle(self, source_path: pathlib.Path, target_file: pathlib.Path):
         """
