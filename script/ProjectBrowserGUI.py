@@ -822,9 +822,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         logging.info(file_data)
         if file_data:
             export_maya = script.MayaExportCam.export(file_data)
-            export_maya.exportCam()
-            QtWidgets.QMessageBox.warning(self, "点击:", "点击导出 "
-                                                       "请点击桌面maya导出快捷方式",
+            export_maya.start()
+            QtWidgets.QMessageBox.warning(self, "警告", "不要关闭弹出窗口",
                                           QtWidgets.QMessageBox.Yes)
 
     def Screenshot(self, my_type: str, thumbnail: QtWidgets.QLabel):
