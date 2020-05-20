@@ -3,6 +3,7 @@ import os
 import pathlib
 import sys
 import tempfile
+import threading
 import subprocess
 
 """import maya.standalone
@@ -26,7 +27,7 @@ for export in cmds.ls("::*UE4"):
     maya.mel.eval('''FBXExport -f "D:/testaa.fbx" -s''')"""
 
 
-class export(object):
+class export(threading.Thread):
     @property
     def path(self) -> pathlib.Path:
         if not hasattr(self, '_path'):
@@ -40,13 +41,17 @@ class export(object):
         self._path = path
 
     def __init__(self, path: pathlib.Path):
+        super().__init__()
         if not isinstance(path, pathlib.Path):
             path = pathlib.Path(path)
         self._path = path
 
+    def run(self) -> None:
+        self.exportCam()
+
     def exportCam(self):
-        # mayapy_path = '"C:\\Program Files\\Autodesk\\Maya2018\\bin\\mayapy.exe"'
-        mayapy_path = "C:\\Program Files\\Autodesk\\Maya2018\\bin\\mayapy.exe"
+        mayapy_path = '"C:\\Program Files\\Autodesk\\Maya2018\\bin\\mayapy.exe"'
+        # mayapy_path = "C:\\Program Files\\Autodesk\\Maya2018\\bin\\mayapy.exe"
         out = """
 import sys
 import os
@@ -166,7 +171,8 @@ with open(myfile,"a") as f:
         # tmp_path_cmd.write_text(cmdCom)
         logging.info("open %s", mayapy_path)
         # os.system(cmdCom)
-        # os.system(str(mayapy_path) + ''' ''' + str(tmp_path))
+        os.system(str(mayapy_path) + ''' ''' + tmp_path.as_posix())
         # sys.path.append(r"C:\Program Files\Autodesk\Maya2018\Python\Lib\site-packages")
         # subprocess.run([str(mayapy_path), str(tmp_path)])
+        # subprocess.run([mayapy_path, tmp_path.as_posix()])
         # os.system(os.path.join(tempfile.gettempdir(), "doodle_maya_export_log.txt"))
