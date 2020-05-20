@@ -289,7 +289,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 filestate.triggered.connect(lambda: self.markFileStart(self.ass))
                 add_ass_file_dow = menu.addAction("下载文件")
                 add_ass_file_dow.triggered.connect(lambda: self.download(self.ass))
-            add_ass_file = menu.addAction('上传(提交)文件')
+            add_ass_file = menu.addAction('上传(同步)文件')
             add_ass_file.triggered.connect(self.uploadFiles)
             get_ass_path = menu.addAction('指定文件')
             get_ass_path.triggered.connect(self.appointFilePath)

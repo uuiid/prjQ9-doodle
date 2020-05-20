@@ -169,7 +169,7 @@ class PrjShot(PrjCode):
         _shot.__table__.name = "mainshot"
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
-            eps = session.query(_shot.episodes).all()
+            eps = session.query(_shot.episodes).order_by(_episodes.episodes).all()
 
         return ['ep{:0>3d}'.format(ep[0]) for ep in eps]
 
