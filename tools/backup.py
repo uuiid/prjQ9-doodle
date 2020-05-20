@@ -1,29 +1,24 @@
+import datetime
 import logging
 import os
 import pathlib
-import shutil
-import sys
-import tempfile
-import multiprocessing
-import subprocess
-import threading
 import queue
-import time
 import re
+import subprocess
+import tempfile
+import threading
 
+import mysql.connector
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 import sqlalchemy.pool
-import datetime
-import concurrent.futures as cf
 
 Base = sqlalchemy.ext.declarative.declarative_base()
 
-import script.doodle_setting
-import script.synXml
-
 _path_my_ = set()
+
+ok = False
 
 
 class synInfo(Base):
@@ -260,15 +255,16 @@ def robocopy(soure: pathlib.Path, trange: pathlib.Path, ecom=()):
     # /NS 无大小
     # /E 具有子目录
     # /A 仅存档
-    com = ["powershell.exe", "robocopy", soure.as_posix(), trange.as_posix(), "/FP", "/V", "/NJH", "/NJS", "/NDL",
-           "/NS"] + list(ecom)
+    com = ["powershell.exe", "robocopy", soure.as_posix(), trange.as_posix(), "/FP", "/NJH", "/NJS", "/NDL","/NS"] + list(ecom)
+    if not ok:
+        com += ["/L"]
     p = subprocess.Popen(com, stdout=subprocess.PIPE, encoding="gbk")
     out_ = p.stdout.readlines()
 
-    # def NotNone(m_list) -> list:
-    #     return [n.strip() for n in m_list if n]
-    #
-    # out_ = [NotNone(re.split("\\n|\\t", o)) for o in out_]
+    def NotNone(m_list) -> list:
+        return [n.strip() for n in m_list if n]
+
+    out_ = [NotNone(re.split("\\n|\\t", o)) for o in out_]
 
     return out_
 
@@ -280,41 +276,110 @@ def copyItem(soure: str, trange: str):
     return out_
 
 
-class copyeasily(threading.Thread):
+class copyeasily(object):
     soure: pathlib.Path
     trange: pathlib.Path
 
     def __init__(self, soure: pathlib.Path, trange: pathlib.Path):
-        super().__init__()
-        """来源移动是一个文件, 目标一定是一个目录"""
-        self.soure = soure
-        self.trange = trange
-        if soure.is_file():
-            self.copy = getattr(self, f"copy{self.soure.suffix[1:].capitalize()}")
-        # try:
-        #     trange.iterdir().__next__()
-        # except StopIteration:
-        #     robocopy(soure, trange)
-        #     self.session = None
-        # else:
-        #     self.session = inspectfile(soure, trange)
-
-    def run(self) -> None:
-        self.copy()
+        getattr(self, f"copy{self.soure.suffix[1:].capitalize()}")
+        try:
+            trange.iterdir().__next__()
+        except StopIteration:
+            robocopy(soure, trange)
+            self.session = None
+        else:
+            self.session = inspectfile(soure, trange)
 
     def __getattr__(self, item):
         return self.copyFile
 
     def copyFile(self):
-        return robocopy(self.soure.parent, self.trange.parent, ("/IF", self.soure.name))
+        robocopy(self.soure.parent, self.trange.parent, ("/IF", self.soure.name))
 
     def copyUproject(self):
-        tmp = robocopy(self.soure.parent, self.trange.parent, ("/IF", self.soure.name))
-        tmp += robocopy(self.soure.parent.joinpath("Content"), self.trange.parent.joinpath("Content"), ("/E",))
-        return tmp
+        robocopy(self.soure.parent, self.trange.parent, ("/IF", self.soure.name))
+        robocopy(self.soure.parent.joinpath("Content"), self.trange.parent.joinpath("Content"), ("/E",))
+
+
+def selsctCommMysql(mybd: str, departmen, password, sql_command):
+    data_base = mysql.connector.connect(
+        host='192.168.10.213',
+        port='3306',
+        user='Effects',
+        passwd="Effects",
+        auth_plugin='caching_sha2_password',
+        db=mybd
+    )
+    cursor = data_base.cursor()
+    try:
+        cursor.execute(sql_command)
+        date = cursor.fetchall()
+    except:
+        date = ''
+    cursor.close()
+    data_base.close()
+    return date
+
+
+def _backup(trange: pathlib.Path, dubuxiaoyao: str, fujia):
+    path = []
+    sql2 = """SELECT episodes from mainshot"""
+
+    eps = selsctCommMysql(dubuxiaoyao, "", "", sql2)
+    for ep in eps:
+        sql = f"""SELECT episodes,shot,shotab,department,Type,filepath FROM (SELECT * FROM `ep{ep[0]:0>3d}` order by version desc limit 10000) as tab group by tab.shot,tab.shotab,tab.department,tab.Type"""
+        path += [[p[-1], f"shots\\ep{p[0]:0>3d}\\sc{p[1]:0>4d}{p[2]}\\{p[3]}\\{p[4]}"] for p in
+                 selsctCommMysql(dubuxiaoyao, "", "", sql)]
+    for ass in ["character", "effects", "props", "scane"]:
+        sql3 = f"""SELECT name,type,filepath FROM (SELECT * FROM `{ass}` order by version desc limit 10000) as tab group by tab.name,tab.type"""
+        path += [[p[-1], f"ass\\{ass}\\{p[0]}\\{p[1]}"] for p in selsctCommMysql(dubuxiaoyao, "", "", sql3)]
+
+    light = """SELECT value FROM `configure` WHERE name='synSever'"""
+    synpath = selsctCommMysql(dubuxiaoyao, "", "", light)[0][0]
+
+    for syn in selsctCommMysql(dubuxiaoyao, "", "", """SELECT DISTINCT value4 FROM `configure`"""):
+        if syn[0]:
+            path.append([os.path.abspath(os.path.join(synpath, syn[0])), f"ass\\light\\{syn[0]}"])
+
+    # tmp = pathlib.Path(tempfile.gettempdir()).joinpath("testpath.txt")
+    # tmp.write_text("\n".join([f"{ii[0]}--->{ii[1]}" for ii in path]),encoding="utf-8")
+
+    com_copy = []
+    for p_ in path:
+        p = pathlib.Path(p_[0])
+        if p.is_file():
+            if p.suffix in [".uproject"]:
+                com_copy.append(
+                    [p.parent.joinpath("Content"), trange.joinpath(p_[1], "Content"), ("/E",)])
+                com_copy.append([p.parent, trange.joinpath(p_[1])])
+            else:
+                com_copy.append([p.parent, trange.joinpath(p_[1])])
+                # robocopy(p.parent,trange,("/E",""))
+        else:
+            com_copy.append([p, trange.joinpath(p_[1])])
+    fujia(com_copy, trange)
+    tmp = pathlib.Path(tempfile.gettempdir()).joinpath("test_com.txt")
+    tmp.write_text(
+        "\n".join([f"{ii[0]}--->{ii[1]}  {ii[2][0]}" if len(ii) == 3 else f"{ii[0]}--->{ii[1]}" for ii in com_copy]),
+        encoding="utf-8")
+    for i in com_copy:
+        out = robocopy(*i)
+        yield out
+
+def fuJiaDBXX(com_copy, trange):
+    com_copy.append([pathlib.Path("Y:\\动画共享资料\\3-进行中的动画项目\\2-独步逍遥\\3-设定\\2-动画设定"), trange.joinpath("原画\\动画设定"), ("/E",)])
+    com_copy.append([pathlib.Path("Y:\\动画共享资料\\3-进行中的动画项目\\2-独步逍遥\\7-分镜"), trange.joinpath("分镜"), ("/E",)])
+    com_copy.append([pathlib.Path("Y:\\动画共享资料\\3-进行中的动画项目\\2-独步逍遥\\1-文本"), trange.joinpath("剧本"), ("/E",)])
+    com_copy.append([pathlib.Path("W:\\03_Workflow\\backup"), trange.joinpath("动画外包"), ("/E",)])
+
 
 if __name__ == '__main__':
-    left = pathlib.Path("D:\\ue_project")
+    left = pathlib.Path("D:\\dubuxiaoyao")
     right = pathlib.Path("D:\\ue_project_backup")
+    texts = _backup(left, "dubuxiaoyao", fuJiaDBXX)
+    tmp = pathlib.Path(tempfile.gettempdir()).joinpath("test_out.txt")
+    for text in texts:
+        with open(tmp,mode="a+",encoding='utf-8') as f:
+            f.write("\n".join([" --> ".join(t) for t in text if t]))
     # inspectfile(left, right)
     # copyFile(left.as_posix(), right.as_posix())
