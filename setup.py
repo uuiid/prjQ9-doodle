@@ -47,11 +47,15 @@ includes = ['urllib3',
             "sqlalchemy.sql",
             "sqlalchemy.sql.default_comparator",
             "sqlalchemy.ext.baked"]
+
+mypath = sys.path + ["C:\\Program Files\\Autodesk\\Maya2018\\bin",
+                     "C:\\Program Files\\Autodesk\\Maya2018\\Python\\Lib\\site-packages"]
 options = {
     'build_exe': {
         "build_exe": "dist/doodle_tray",
         'includes': includes,
-        "include_files": includefiles
+        "include_files": includefiles,
+        "path": mypath
     }
 }
 
