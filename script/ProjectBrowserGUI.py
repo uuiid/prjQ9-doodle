@@ -948,13 +948,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             if path:
                 self.pot_player.add(path.as_posix())
         else:
-            shots = self.shot.getShot()[:]
-            shots_ = [int(s[2:-1]) if s[6:] else int(s[2:]) for s in shots]
-            for shot in shots_:
-                path = self.shot.queryFlipBookShot(shot)
-                if path.as_posix() != '.':
-                    logging.info("播放文件路径 %s", path)
-                    self.pot_player.add(path)
+            for p in self.shot.querFlipBookShotTotal():
+                self.pot_player.add(p)
+            # shots = self.shot.getShot()[:]
+            # shots_ = [int(s[2:-1]) if s[6:] else int(s[2:]) for s in shots]
+            # for shot in shots_:
+            #     path = self.shot.queryFlipBookShot(shot)
+            #     if path.as_posix() != '.':
+            #         logging.info("播放文件路径 %s", path)
+            #         self.pot_player.add(path)
             # self.playerFlipBook('', '', one_or_mut="mut", department=department)
 
         self.pot_player.dump(tmp_path)
