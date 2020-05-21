@@ -20,7 +20,7 @@ import script.MySqlComm
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-synfile = ['ShanLu_LWZ']
+synfile = ['BiTaoGeDaBuJu']
 LR = ["Left", "Right"]
 ep = 15
 it = []

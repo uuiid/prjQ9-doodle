@@ -1,6 +1,7 @@
 import copy
 import logging
 import pathlib
+import typing
 
 import sqlalchemy
 import sqlalchemy.ext.declarative
@@ -235,7 +236,7 @@ class PrjShot(PrjCode):
         组合镜头信息, 返回文件路径
         """
         path = self._root.joinpath(f'ep{self.episodes:0>3d}',
-                                   f'sc{self.shot:0>4d}',
+                                   f'sc{self.shot:0>4d}{self.shotab}',
                                    folder_type,
                                    self.department,
                                    self.Type
@@ -377,6 +378,17 @@ class PrjShot(PrjCode):
             path = pathlib.Path(path[0])
         except:
             path = pathlib.Path("")
+        return path
+
+    def querFlipBookShotTotal(self) -> typing.List[pathlib.Path]:
+        with self.comsql.session() as session:
+            assert isinstance(session, sqlalchemy.orm.session.Session)
+            path = session.query(_shot).order_by(_shot.filetime).from_self().group_by(_shot.shot,_shot.shotab)
+        try:
+
+            path = [pathlib.Path(p.filepath) for p in path]
+        except IndexError:
+            path = []
         return path
 
     def undataInformation(self, query_id: int):
