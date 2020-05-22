@@ -1,54 +1,61 @@
 # -*- coding: UTF-8 -*-
-#coding=utf-8
+# coding=utf-8
 import os
 
-ROOT = "D:/"
-section = ['Light','Ren','Checkpoint']
-content = ['VFX','Light']
-keyPath = {'01shot':['shot'],'02works':['Ep'],'03scene':'Sc','04section':section,'05Content':content}
 
-def mkemyFile(paths):
-    for path in paths:
-        folder = os.path.exists(path)
+class createPath(object):
+    ROOT = "D:/"
 
-        if not folder:
-            os.makedirs(path)
-            print("new folder: {}".format(path))
-        else:
-            print("cunZhai: {}".format(path))
+    def __init__(self, root: str, eps: int, secene: int):
+        self._section = ['Light', 'Ren', 'Checkpoint']
+        self._content = ['VFX', 'Light']
+        self._keyPath = {'01shot': ['shot'], '02works': ['Ep'], '03scene': 'Sc', '04section': self._section,
+                         '05Content': self._content}
+        self.ROOT = root
+        self.eps = eps
+        self._secene = secene
+        self.paths = ""
 
-def shengChengPath(work,scene,root):
-    pathLen =  scene*len(content)*len(section)
-    print(pathLen)
-    Mpaths = []
+    def create(self):
+        self._mkemyFile(self._shengChengPath(self.eps, self._secene, self.ROOT))
 
-    for myi in range(1,scene):
-        path = keyPath['03scene'] + '{:0>4d}'.format(myi)
-        Mpaths.append(path)
-    keyPath['03scene'] = Mpaths
-    
-    keyPath['02works'][0] = keyPath['02works'][0] + '{:0>3d}'.format(work)
+    def _mkemyFile(self, paths):
+        for path in paths:
+            folder = os.path.exists(path)
 
-    paths = []
-    
-    for sh in keyPath['01shot']:
-        for wo in keyPath['02works']:
-            for sc in keyPath['03scene']:
-                for se in keyPath['04section']:
-                    for co in keyPath['05Content']:
-                        if se !='Checkpoint':
-                             co = ""
-                        tmp = os.path.join(sh,wo,sc,se,co)
-                        tmp = os.path.join(root,tmp)
-                        paths.append(tmp)
+            if not folder:
+                os.makedirs(path)
+                print("new folder: {}".format(path))
+            else:
+                print("cunZhai: {}".format(path))
 
-    print(len(paths))
-    for i in paths:
-        print('folder : {}'.format(i))
+    def _shengChengPath(self, work, scene, root):
+        pathLen = scene * len(self._content) * len(self._section)
+        print(pathLen)
+        Mpaths = []
 
-    return paths
+        for myi in range(1, scene):
+            path = self._keyPath['03scene'] + '{:0>4d}'.format(myi)
+            Mpaths.append(path)
+        self._keyPath['03scene'] = Mpaths
 
-work = 9
-scene = 140
-path =  shengChengPath(work,scene,ROOT)
-mkemyFile(path)
+        self._keyPath['02works'][0] = self._keyPath['02works'][0] + '{:0>3d}'.format(work)
+
+        paths = []
+
+        for sh in self._keyPath['01shot']:
+            for wo in self._keyPath['02works']:
+                for sc in self._keyPath['03scene']:
+                    for se in self._keyPath['04section']:
+                        for co in self._keyPath['05Content']:
+                            if se != 'Checkpoint':
+                                co = ""
+                            tmp = os.path.join(sh, wo, sc, se, co)
+                            tmp = os.path.join(root, tmp)
+                            paths.append(tmp)
+
+        print(len(paths))
+        for i in paths:
+            print('folder : {}'.format(i))
+
+        return self.paths

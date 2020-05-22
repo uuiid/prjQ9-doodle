@@ -3,7 +3,7 @@ import json
 import subprocess
 import time
 import script.MySqlComm
-
+import tools.ue_path
 # <editor-fold desc="表格">
 # it = []
 # for dep in ["Light", "VFX"]:
@@ -20,7 +20,7 @@ import script.MySqlComm
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-synfile = ['BiTaoGeDaBuJu']
+synfile = ['BiTaoGe_UE4',"SanChaLu_LWZ"]
 LR = ["Left", "Right"]
 ep = 15
 it = []
@@ -28,6 +28,8 @@ for dep in ["Light", "VFX"]:
     for key in synfile:
         for ls in LR:
             t = f"('synpath','{dep}','{ep:0>3d}','{ls}','Ep_{ep:0>2d}/{key}/Content/shot')"
+            path = tools.ue_path.createPath(f"W:/data/ue_prjEp_{ep:0>2d}/{key}/Content",eps=ep,secene=120)
+            path.create()
             it.append(t)
 
 # print(it)
