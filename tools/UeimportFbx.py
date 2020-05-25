@@ -1,5 +1,5 @@
 import unreal
-
+import json
 
 def _unreal_import_fbx_asset(input_path, destination_path, destination_name):
     """
@@ -9,7 +9,8 @@ def _unreal_import_fbx_asset(input_path, destination_path, destination_name):
     :param destination_name: The asset name to use; if None, will use the filename without extension
     """
     tasks = []
-    tasks.append(_generate_fbx_import_task(input_path, destination_path, destination_name))
+    tasks.append(_generate_fbx_import_task(input_path, destination_path,
+                                           destination_name,animations=True,automated=True))
 
     unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks(tasks)
 
@@ -25,9 +26,9 @@ def _unreal_import_fbx_asset(input_path, destination_path, destination_name):
     return first_imported_object
 
 
-def _generate_fbx_import_task(filename, destination_path, destination_name=None, replace_existing=True,
-                              automated=True, save=True, materials=True,
-                              textures=True, as_skeletal=False):
+def _generate_fbx_import_task(filename, destination_path, destination_name=None, replace_existing=False,
+                              automated=False, save=False, materials=False,
+                              textures=False, as_skeletal=False,animations=False):
     """
     Create and configure an Unreal AssetImportTask
     :param filename: The fbx file to import
@@ -50,9 +51,10 @@ def _generate_fbx_import_task(filename, destination_path, destination_name=None,
     task.options.import_materials = materials
     task.options.import_textures = textures
     task.options.import_as_skeletal = as_skeletal
-    task.options.import_animations = True
+    task.options.import_animations = animations
     # task.options.import_mesh = True
     # task.options.static_mesh_import_data.combine_meshes = True
+    # task.options.
 
     task.options.mesh_type_to_import = unreal.FBXImportType.FBXIT_STATIC_MESH
     if as_skeletal:
@@ -61,4 +63,4 @@ def _generate_fbx_import_task(filename, destination_path, destination_name=None,
     return task
 
 
-_unreal_import_fbx_asset("D:\\shot_ep020_sc0008_Anm_fbx_v0001__huang-zhi-cong__YeYu.fbx", "/Game/test", "test")
+_unreal_import_fbx_asset("D:\\shot_ep020_sc0072_Anm_fbx_v0001__huang-zhi-cong__YeYu.fbx", "/Game/test", "test")

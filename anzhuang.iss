@@ -28,7 +28,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "dist\doodle_tray\doodle_tray.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dist\doodle_tray\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs;
+Source: "dist\doodle_tray\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs replacesameversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -36,7 +36,6 @@ Name: "{group}\doodle"; Filename: "{app}\doodle_tray.exe"
 Name: "{group}\{cm:ProgramOnTheWeb,doodle}"; Filename: "http://www.example.com/"
 Name: "{group}\{cm:UninstallProgram,doodle}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\doodle"; Filename: "{app}\doodle_tray.exe"; Tasks: desktopicon
-Name: "{commondesktop}\maya¿ì½Ýµ¼³ö"; Filename: "{app}\tools\daoChu.cmd"; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\doodle"; Filename: "{app}\doodle_tray.exe"; Tasks: quicklaunchicon
 
 [Run]
