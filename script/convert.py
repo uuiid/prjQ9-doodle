@@ -67,7 +67,7 @@ class isChinese(object):
         return False
 
     def _constr(self):
-        pathlist = pypinyin.slug(self.test_str, pypinyin.NORMAL)
+        pathlist = pypinyin.slug(self.test_str, pypinyin.NORMAL,separator="")
         return pathlist
 
     def _conWindowsPath(self):

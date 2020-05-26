@@ -26,8 +26,8 @@ def toolspy() -> list:
 
 
 base = None
-if sys.platform == 'win32':
-    base = 'Win32GUI'
+# if sys.platform == 'win32':
+#     base = 'Win32GUI'
 includefiles = ["UiFile", ("tools/template", "tools/template"), "datas", "config"] + toolspy()
 includes = ['urllib3',
             "multiprocessing",

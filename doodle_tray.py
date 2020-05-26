@@ -164,7 +164,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
             except BaseException as err:
                 logging.error("%s", err)
             else:
-                time.sleep(1)
+                time.sleep(10)
                 subprocess.Popen(str(tmp_path.joinpath(doodle.split("/")[-1])))
                 sys.exit(self)
 
