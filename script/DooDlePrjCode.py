@@ -2,12 +2,14 @@ import copy
 import logging
 import pathlib
 import typing
+import cachetools
 
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 import script.MySqlComm
 import sqlalchemy.sql
+import script.convert
 
 
 # # 定义类型检查
@@ -28,6 +30,14 @@ import sqlalchemy.sql
 # @Typed(int)
 # class integer():
 #     pass
+
+# <editor-fold desc="数据库类">
+class nameTochinese(script.MySqlComm.Base):
+    __tablename__ = "nameTochinese"
+    id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True)
+    name: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128), unique=True)
+    localname: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128), unique=True)
+
 
 class _root(script.MySqlComm.Base):
     __abstract__ = True
@@ -65,6 +75,48 @@ class _episodes(script.MySqlComm.Base):
     episodes: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
 
 
+# </editor-fold>
+
+
+class convertMy(object):
+
+    def __init__(self, mysql_lib: str):
+        self.comsql = script.MySqlComm.commMysql(mysql_lib)
+
+        self.name = {}
+        self.local_name = {}
+        self.getnameTochinese()
+
+    def getnameTochinese(self):
+        with self.comsql.session() as session:
+            assert isinstance(session, sqlalchemy.orm.session.Session)
+            names = session.query(nameTochinese.name,nameTochinese.localname).all()
+            self.name = {name[0]:name[1] for name in names}
+            self.local_name = {name[1]: name[0] for name in names}
+
+    def toEn(self, zn_ch):
+        try:
+            m_name = self.local_name[zn_ch]
+        except KeyError as err:
+            logging.error("转换时库中没有键值")
+            m_name = script.convert.isChinese(zn_ch).easyToEn()
+        return m_name
+
+    def toZnCh(self, en):
+        try:
+            m_name = self.name[en]
+        except KeyError as err:
+            logging.error("转换时库中没有键值")
+            m_name = en
+        return m_name
+
+    def addLocalName(self, en: str, zn_ch):
+        sub = nameTochinese(name=en, localname=zn_ch)
+        with self.comsql.session() as session:
+            session.add(sub)
+        self.getnameTochinese()
+
+
 class PrjCode(object):
     mysqllib: str
     _root: pathlib.Path
@@ -90,6 +142,7 @@ class PrjCode(object):
         self._root = pathlib.Path(sort_root).joinpath(prj_root)
         self.mysqllib = mysql_lib
         self.comsql = script.MySqlComm.commMysql(mysql_lib)
+        self.convertMy = convertMy(mysql_lib=mysql_lib)
 
     def submitInfo(self, filename: str, suffix: str, user: str, version: int, filepathAndname: str, infor=""):
         """
@@ -383,7 +436,7 @@ class PrjShot(PrjCode):
     def querFlipBookShotTotal(self) -> typing.List[pathlib.Path]:
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            path = session.query(_shot).order_by(_shot.filetime).from_self().group_by(_shot.shot,_shot.shotab)
+            path = session.query(_shot).order_by(_shot.filetime).from_self().group_by(_shot.shot, _shot.shotab)
         try:
 
             path = [pathlib.Path(p.filepath) for p in path]
@@ -458,6 +511,7 @@ class PrjAss(PrjCode):
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             datas = session.query(_ass.type).filter_by(name=self.name).distinct()
+
         return [data[0] for data in datas]
 
     def getFileInfo(self) -> list:
@@ -476,6 +530,7 @@ class PrjAss(PrjCode):
         """
         组合文件信息, 返回路径变量
         """
+
         path = self._root.joinpath(self.sort,
                                    self.name,
                                    folder_type,
@@ -528,7 +583,7 @@ class PrjAss(PrjCode):
         查询文件路径
         """
         with self.comsql.session() as session:
-            assert isinstance(session, sqlalchemy.orm.session.Session)
+            # assert isinstance(session, sqlalchemy.orm.session.Session)
             file_data = session.query(_ass.filepath).filter(_ass.id == id__).one()
         try:
             file_data = file_data[0]
@@ -585,8 +640,10 @@ class PrjAss(PrjCode):
         with self.comsql.session() as session:
             # assert isinstance(session, sqlalchemy.orm.session.Session)
             data: _ass = session.query(_ass).get(query_id)
-            data.infor = self.infor
-            data.filestate = self.filestate
+            if hasattr(self, "infor"):
+                data.infor = self.infor
+            if hasattr(self, "filestate"):
+                data.filestate = self.filestate
 
     def getFileState(self, flag) -> sqlalchemy.orm.query.Query:
         """
@@ -597,13 +654,13 @@ class PrjAss(PrjCode):
             data = session.query(_ass).filter(_ass.filestate.isnot(None))
             try:
                 data = getattr(self, f"_getFileState{flag}")(data)
-            except BaseException as err:
-                logging.info("%s", err)
+            except AttributeError as err:
+                logging.error("查询文件状态时，类中没有这个属性 %s", err)
         return data
 
-    # def _getFileStateClass(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
-    #     data = data
-    #     return data
+    def _getFileStateClass(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
+        data = data
+        return data
 
     def _getFileStateType(self, data: sqlalchemy.orm.query.Query) -> sqlalchemy.orm.query.Query:
         data = data.filter(_ass.name == self.name)

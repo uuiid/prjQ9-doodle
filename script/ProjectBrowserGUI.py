@@ -70,7 +70,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                self.setlocale.assetsRoot)
         """======================================================================="""
         # 初始化一些属性
-        self.user = pypinyin.slug(self.setlocale.user, pypinyin.NORMAL)
+
+        self.user = script.convert.isChinese(self.setlocale.user).easyToEn()
         # 加载颜色类
         self._color = _prjColor
         # 最近打开的文件夹
@@ -97,43 +98,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         # 设置tabWigget点击清除事件
         self.tabWidget.currentChanged['int'].connect(lambda index: self.tabWigetClick(index))
-
-        # <editor-fold desc="添加上下文菜单">
-        # 添加集数上下文菜单
-        self.listepisodes.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listepisodes.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listepisodes.mapToGlobal(pos), 'episodes'))
-        # 添加镜头上下文菜单
-        self.listshot.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listshot.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listshot.mapToGlobal(pos), "shot"))
-        # 部门菜单
-        self.listdepartment.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listdepartment.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listdepartment.mapToGlobal(pos), "department"))
-        # 部门类型菜单
-        self.listdepType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listdepType.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listdepType.mapToGlobal(pos), "depType"))
-
-        # 镜头文件菜单
-        self.listfile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listfile.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listfile.mapToGlobal(pos), "shotFile"))
-
-        # 资产种类菜单
-        self.listAss.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listAss.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listAss.mapToGlobal(pos), "assFolder"))
-        # 资产类型菜单
-        self.listAssType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listAssType.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listAssType.mapToGlobal(pos), "assType"))
-        # 资产文件菜单
-        self.listAssFile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listAssFile.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listAssFile.mapToGlobal(pos), "assFile"))
-        # </editor-fold>
 
         # 链接截图功能和按钮
         self.ass_screenshot.clicked.connect(lambda: self.Screenshot("ass", self.ass_thumbnail))
@@ -179,6 +143,43 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listfile.doubleClicked.connect(self.openShotFile)
         # 添加刷新函数
         self.refresh.triggered.connect(self.setepisodex)
+
+        # <editor-fold desc="添加上下文菜单">
+        # 添加集数上下文菜单
+        self.listepisodes.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listepisodes.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listepisodes.mapToGlobal(pos), 'episodes'))
+        # 添加镜头上下文菜单
+        self.listshot.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listshot.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listshot.mapToGlobal(pos), "shot"))
+        # 部门菜单
+        self.listdepartment.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listdepartment.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listdepartment.mapToGlobal(pos), "department"))
+        # 部门类型菜单
+        self.listdepType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listdepType.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listdepType.mapToGlobal(pos), "depType"))
+
+        # 镜头文件菜单
+        self.listfile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listfile.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listfile.mapToGlobal(pos), "shotFile"))
+
+        # 资产种类菜单
+        self.listAss.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listAss.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listAss.mapToGlobal(pos), "assFolder"))
+        # 资产类型菜单
+        self.listAssType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listAssType.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listAssType.mapToGlobal(pos), "assType"))
+        # 资产文件菜单
+        self.listAssFile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.listAssFile.customContextMenuRequested.connect(
+            lambda pos: self.addRightClickMenu(self.listAssFile.mapToGlobal(pos), "assFile"))
+        # </editor-fold>
 
         self.pot_player = potplayer.PlayList()
 
@@ -264,6 +265,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         """
         add_ass_folder = menu.addAction('添加')
         add_ass_folder.triggered.connect(self.addAssFolder)
+        if self.listAss.selectedItems():
+            rename_folder = menu.addAction("添加中文名称")
+            rename_folder.triggered.connect(self.addAssZnChName)
         return menu
 
     def menuAsstype(self, menu):
@@ -315,7 +319,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         try:
             item = item[0]
         except IndexError as err:
-            logging.error("%s", err)
+            logging.error("没有找到这个小部件 %s", err)
         else:
             item.setBackground(getattr(_prjColor, f"listItemState{state_type}")())
         # item.setBackground(QtGui.QBrush(QtCore.Qt.red))
@@ -474,11 +478,20 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         for s in state:
             self._setQlistItemColor(self.listAss, s.name, s.filestate)
 
+        for name, loa in self.ass.convertMy.name.items():
+            try:
+                item = self.listAss.findItems(name, QtCore.Qt.MatchExactly)[0]
+            except IndexError:
+                logging.error("找不到中文项目")
+            else:
+                item.setText(loa)
+
     def assClassClicked(self, item):
         """
         资产种类点击事件, 资产类型的更新
         """
-        self.ass.name = item.text()  # self.listAssType.selectedItems()[0].text()
+
+        self.ass.name = self.ass.convertMy.toEn(item.text())  # self.listAssType.selectedItems()[0].text()
 
         self.listAssType.clear()
         logging.info('清除资产类型中的项数')
@@ -604,7 +617,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     def addAssFolder(self):
         """添加资产类型文件夹"""
-        ass_folder, is_ok = QtWidgets.QInputDialog.getText(self, '输入资产类型', "请用英文或拼音",
+        ass_folder, is_ok = QtWidgets.QInputDialog.getText(self, '输入资产类型', "请用中文",
                                                            QtWidgets.QLineEdit.Normal)
         if is_ok:
             item = self.listAss.findItems(ass_folder, QtCore.Qt.MatchExactly)
@@ -613,6 +626,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                               QtWidgets.QMessageBox.Yes)
                 return None
             self.listAss.addItem(ass_folder)
+
+    def addAssZnChName(self):
+        """添加中文别名"""
+        ass_folder, is_ok = QtWidgets.QInputDialog.getText(self, '输入中文名称', "请用中文",
+                                                           QtWidgets.QLineEdit.Normal)
+        if is_ok:
+            self.ass.convertMy.addLocalName(self.listAss.selectedItems()[0].text(), ass_folder)
+            self.assClassSortClicked(self.ass.sort)
 
     def addAssTypeFolder(self):
         """添加资产文件夹类型"""
@@ -716,7 +737,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             success = True
         return success
 
-    def download(self,core:script.DooDlePrjCode.PrjCode ):
+    def download(self, core: script.DooDlePrjCode.PrjCode):
         path = QtWidgets.QFileDialog.getExistingDirectory(self,
                                                           "选择同步目录",
                                                           self.recentlyOpenedFolder,
@@ -724,9 +745,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         pathprj = pathlib.Path(path)
         path = pathprj.joinpath("Content")
         sourepath = core.queryFileName(core.query_id)
-        tmp_copy = script.synchronizeFiles.copyeasily(sourepath,path)
+        tmp_copy = script.synchronizeFiles.copyeasily(sourepath, path)
         tmp_copy.start()
-        QtWidgets.QMessageBox.critical(self,"复制中","请等待.....")
+        QtWidgets.QMessageBox.critical(self, "复制中", "请等待.....")
         logging.info(path)
 
     def assUploadFileUE4Handle(self, source_path: pathlib.Path, target_file: pathlib.Path):

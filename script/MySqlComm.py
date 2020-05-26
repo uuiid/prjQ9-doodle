@@ -81,6 +81,9 @@ class commMysql(object):
         # tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
         # self.session: sqlalchemy.orm.session.Session = tmp_session
 
+    def createTable(self):
+        Base.metadata.create_all(self.engine)
+
     @contextlib.contextmanager
     def session(self) -> sqlalchemy.orm.session.Session:
         tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)

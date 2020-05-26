@@ -247,10 +247,12 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
 
     def editConfZhongWen(self, key, newValue: pathlib.Path):
         # 有中文时调取这个更改转为拼音
-        if script.convert.isChinese(newValue):
-            newValue = script.convert.convertToEn(newValue)
-        else:
-            newValue = newValue
+        # if script.convert.isChinese(newValue):
+        #     newValue = script.convert.convertToEn(newValue)
+        # else:
+        #     newValue = newValue
+        newValue = script.convert.isChinese(newValue)
+        newValue = newValue.easyToEn()
         self.sysTestYing.setText(newValue.as_posix())
         self.ta_log_GUI.info('中文%s更改为%s', key, newValue)
         setattr(self.setlocale, key, newValue.as_posix())
