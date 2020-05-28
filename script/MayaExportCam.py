@@ -7,27 +7,6 @@ import threading
 import subprocess
 import shutil
 
-"""import maya.standalone
-
-maya.standalone.initialize(name='python')
-import maya.cmds
-import maya.mel
-import pymel.core
-import subprocess
-"C:\\Program Files\\Autodesk\\Maya2018\\bin\\mayapy.exe" "C:\\Users\\teXiao\\AppData\\Local\\Temp\\export.py"
-maya.cmds.file(new=True, force=True)
-maya.cmds.file('C:/Users/teXiao/Documents/test.mb', o=True)
-# pymel.core.file('C:/Users/teXiao/Documents/test.mb',o=True)
-maya.cmds.select('persp1')
-maya.mel.eval('''FBXExport -f "D:/testaa.fbx" -s''')
-
-for export in cmds.ls("::*UE4"):
-    maya.cmds.select(export)
-    name = export.sp
-    print(export)
-    maya.mel.eval('''FBXExport -f "D:/testaa.fbx" -s''')"""
-
-
 class export(threading.Thread):
     @property
     def path(self) -> pathlib.Path:
@@ -41,11 +20,12 @@ class export(threading.Thread):
             path = pathlib.Path(path)
         self._path = path
 
-    def __init__(self, path: pathlib.Path):
+    def __init__(self, path: pathlib.Path, version):
         super().__init__()
         if not isinstance(path, pathlib.Path):
             path = pathlib.Path(path)
         self._path = path
+        self.version = version
 
     def run(self) -> None:
         self.exportCam()
@@ -61,7 +41,7 @@ class export(threading.Thread):
         # tmp_path.suffix
         logging.info("open %s", mayapy_path)
         logging.info(str(mayapy_path) + ' ' + tmp_path.as_posix() +
-f""" --path {self.path.parent.as_posix()} --name {self.path.stem} --version {0} --suffix {self.path.suffix} """)
+f""" --path {self.path.parent.as_posix()} --name {self.path.stem} --version {self.version} --suffix {self.path.suffix} """)
         os.system(str(mayapy_path) + ''' ''' + tmp_path.as_posix() +
-f""" --path {self.path.parent.as_posix()} --name {self.path.stem} --version {0} --suffix {self.path.suffix} """)
+f""" --path {self.path.parent.as_posix()} --name {self.path.stem} --version {self.version} --suffix {self.path.suffix} """)
         # os.system(str(mayapy_path) + ''' ''' + tmp_path.as_posix())

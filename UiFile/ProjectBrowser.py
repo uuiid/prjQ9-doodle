@@ -275,7 +275,10 @@ class Ui_MainWindow(object):
         MainWindow.setMenuBar(self.menubar)
         self.refresh = QtWidgets.QAction(MainWindow)
         self.refresh.setObjectName("refresh")
+        self.close_socket = QtWidgets.QAction(MainWindow)
+        self.close_socket.setObjectName("close_socket")
         self.caoZhuo.addAction(self.refresh)
+        self.caoZhuo.addAction(self.close_socket)
         self.menubar.addAction(self.caoZhuo.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -335,3 +338,4 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Episodes_shot), _translate("MainWindow", "镜头"))
         self.caoZhuo.setTitle(_translate("MainWindow", "操作"))
         self.refresh.setText(_translate("MainWindow", "刷新"))
+        self.close_socket.setText(_translate("MainWindow", "关闭链接"))

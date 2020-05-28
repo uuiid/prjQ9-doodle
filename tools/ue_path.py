@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # coding=utf-8
 import os
+import pathlib
 
 
 class createPath(object):
@@ -17,14 +18,16 @@ class createPath(object):
         self.paths = ""
 
     def create(self):
-        self._mkemyFile(self._shengChengPath(self.eps, self._secene, self.ROOT))
+        path = self._shengChengPath(self.eps, self._secene, self.ROOT)
+        self._mkemyFile(path)
 
     def _mkemyFile(self, paths):
         for path in paths:
             folder = os.path.exists(path)
 
-            if not folder:
-                os.makedirs(path)
+            if not pathlib.Path(path).is_dir():
+                pathlib.Path(path).mkdir(parents=True, exist_ok=True)
+                # os.makedirs(path)
                 print("new folder: {}".format(path))
             else:
                 print("cunZhai: {}".format(path))
@@ -51,11 +54,11 @@ class createPath(object):
                             if se != 'Checkpoint':
                                 co = ""
                             tmp = os.path.join(sh, wo, sc, se, co)
-                            tmp = os.path.join(root, tmp)
+                            tmp = os.path.abspath(os.path.join(root, tmp))
                             paths.append(tmp)
 
         print(len(paths))
         for i in paths:
             print('folder : {}'.format(i))
 
-        return self.paths
+        return paths

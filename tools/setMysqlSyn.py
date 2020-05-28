@@ -20,15 +20,15 @@ import tools.ue_path
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-synfile = ['BiTaoGe_UE4',"SanChaLu_LWZ"]
+synfile = ["LongShouFeng_New","ShanDong_UE4","ShanLu_UE4"]
 LR = ["Left", "Right"]
-ep = 15
+ep = 21
 it = []
 for dep in ["Light", "VFX"]:
     for key in synfile:
         for ls in LR:
             t = f"('synpath','{dep}','{ep:0>3d}','{ls}','Ep_{ep:0>2d}/{key}/Content/shot')"
-            path = tools.ue_path.createPath(f"W:/data/ue_prjEp_{ep:0>2d}/{key}/Content",eps=ep,secene=120)
+            path = tools.ue_path.createPath(f"W:/data/ue_prj/Ep_{ep:0>2d}/{key}/Content",eps=ep,secene=120)
             path.create()
             it.append(t)
 

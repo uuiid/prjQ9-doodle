@@ -491,12 +491,18 @@
      <string>操作</string>
     </property>
     <addaction name="refresh"/>
+    <addaction name="close_socket"/>
    </widget>
    <addaction name="caoZhuo"/>
   </widget>
   <action name="refresh">
    <property name="text">
     <string>刷新</string>
+   </property>
+  </action>
+  <action name="close_socket">
+   <property name="text">
+    <string>关闭链接</string>
    </property>
   </action>
  </widget>

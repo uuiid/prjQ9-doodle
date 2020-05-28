@@ -105,7 +105,7 @@ class export(object):
 start = maya.cmds.playbackOptions(query=True, min=True)
 end = maya.cmds.playbackOptions(query=True, max=True)
 
-myfile = os.path.join(args.path, "doodle_maya_export_log.json")
+myfile = os.path.join(args.path, "doodle_Export.json")
 exports = maya.cmds.ls("::*UE4")
 
 log = export()
@@ -131,6 +131,7 @@ for camer in cameras:
     for test in filter(None, camer.split("|")):
         if re.findall(exclude, test):
             ex = False
+
     if ex == True:
         exportCamera = maya.cmds.listRelatives(camer, parent=True, fullPath=True)[0]
         maya.cmds.select(exportCamera)

@@ -1,5 +1,8 @@
 import unreal
 import json
+import socket
+import datetime
+
 
 def _unreal_import_fbx_asset(input_path, destination_path, destination_name):
     """
@@ -10,7 +13,7 @@ def _unreal_import_fbx_asset(input_path, destination_path, destination_name):
     """
     tasks = []
     tasks.append(_generate_fbx_import_task(input_path, destination_path,
-                                           destination_name,animations=True,automated=True))
+                                           destination_name, animations=True, automated=True))
 
     unreal.AssetToolsHelpers.get_asset_tools().import_asset_tasks(tasks)
 
@@ -28,7 +31,7 @@ def _unreal_import_fbx_asset(input_path, destination_path, destination_name):
 
 def _generate_fbx_import_task(filename, destination_path, destination_name=None, replace_existing=False,
                               automated=False, save=False, materials=False,
-                              textures=False, as_skeletal=False,animations=False):
+                              textures=False, as_skeletal=False, animations=False):
     """
     Create and configure an Unreal AssetImportTask
     :param filename: The fbx file to import
@@ -63,4 +66,30 @@ def _generate_fbx_import_task(filename, destination_path, destination_name=None,
     return task
 
 
-_unreal_import_fbx_asset("D:\\shot_ep020_sc0072_Anm_fbx_v0001__huang-zhi-cong__YeYu.fbx", "/Game/test", "test")
+sover = socket.socket()
+sover.bind(("127.0.0.1", 23335))
+sover.listen(2)
+new = datetime.datetime.now() + datetime.timedelta(minutes=30)
+while True:
+    if new < datetime.datetime.now():
+        break
+    cs, address = sover.accept()
+
+    data = cs.recv(1024)
+    if b"close" == data:
+        break
+
+    print(data)
+    fbxmodle = json.loads(data.decode('utf-8'))
+    print(fbxmodle)
+    eps = fbxmodle["eps"]
+    shot = fbxmodle["shot"]
+    {}.items()
+    game_path = "/Game/shot/Ep{:0>3d}/Sc{:0>4d}/Ren".format(eps, shot)
+    for key, item in fbxmodle["content"].items():
+        if key in ["camera"]:
+            continue
+        _unreal_import_fbx_asset(item[0], game_path, key)
+    cs.close()
+
+sover.close()

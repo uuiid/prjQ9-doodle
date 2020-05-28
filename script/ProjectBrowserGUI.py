@@ -1,4 +1,5 @@
 # -*- coding: UTF-8 -*-
+import json
 import logging
 import os
 import pathlib
@@ -7,7 +8,7 @@ import shutil
 import sys
 import tempfile
 import typing
-
+import socket
 import potplayer
 import pyperclip
 import pypinyin
@@ -143,6 +144,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listfile.doubleClicked.connect(self.openShotFile)
         # 添加刷新函数
         self.refresh.triggered.connect(self.setepisodex)
+        self.close_socket.triggered.connect(self.closesocket)
 
         # <editor-fold desc="添加上下文菜单">
         # 添加集数上下文菜单
@@ -257,6 +259,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             # 导出Fbx和abc选项
             export_maya = menu.addAction("导出")
             export_maya.triggered.connect(self.exportMaya)
+            import_ue = menu.addAction("导入ue")
+            import_ue.triggered.connect(self.importUe)
         return menu
 
     def menuAssfolder(self, menu):
@@ -842,10 +846,18 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         logging.info(file_data)
         if file_data:
-            export_maya = script.MayaExportCam.export(file_data)
+            export_maya = script.MayaExportCam.export(file_data, self.shot.version)
             export_maya.start()
             QtWidgets.QMessageBox.warning(self, "警告", "不要关闭弹出窗口",
                                           QtWidgets.QMessageBox.Yes)
+            self.shot.Type = "export"
+            self.shot.file = "doodle_Export.json"
+            self.shot.fileSuffixes = ".json"
+            self.shot.infor = "maya导出文件"
+            self.shot.user = self.setlocale.user
+            self.shot.filepath = file_data.parent.joinpath("doodle_Export.json").as_posix()
+            self.shot.submitInfo()
+            self.listDepTypeClicked(self.listdepType.selectedItems()[0])
 
     def Screenshot(self, my_type: str, thumbnail: QtWidgets.QLabel):
         """
@@ -1011,6 +1023,34 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             code.undataInformation(code.query_id)
         logging.info("%s , %s", ass_type, info)
 
+    def importUe(self):
+        address = ("127.0.0.1", 23335)
+        so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            so.connect(address)
+            file_data = self.shot.queryFileName(self.shot.query_id)
+            content = file_data.read_text(encoding="utf-8")
+            data = {"eps": self.shot.episodes, "shot": self.shot.shot, "content": json.loads(content)}
+            so.send(json.dumps(data, ensure_ascii=False, indent=4, separators=(',', ':')).encode("utf-8"))
+            so.close()
+        except ConnectionRefusedError:
+            logging.info("导入ue失败")
+        else:
+            logging.info("成功导入ue")
+
+    @staticmethod
+    def closesocket():
+        address = ("127.0.0.1", 23335)
+        so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            so.connect(address)
+            data = "close"
+            so.send(data.encode("utf-8"))
+            so.close()
+        except ConnectionRefusedError:
+            logging.info("关闭链接失败")
+        else:
+            logging.info("成功关闭链接")
     # </editor-fold>
 
 
