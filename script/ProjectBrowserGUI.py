@@ -981,7 +981,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             if path:
                 self.pot_player.add(path.as_posix())
         else:
-            for p in self.shot.querFlipBookShotTotal():
+            for p in self.shot.querFlipBookShotTotal(department):
                 self.pot_player.add(p)
             # shots = self.shot.getShot()[:]
             # shots_ = [int(s[2:-1]) if s[6:] else int(s[2:]) for s in shots]

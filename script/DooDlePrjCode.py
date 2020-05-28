@@ -90,8 +90,8 @@ class convertMy(object):
     def getnameTochinese(self):
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            names = session.query(nameTochinese.name,nameTochinese.localname).all()
-            self.name = {name[0]:name[1] for name in names}
+            names = session.query(nameTochinese.name, nameTochinese.localname).all()
+            self.name = {name[0]: name[1] for name in names}
             self.local_name = {name[1]: name[0] for name in names}
 
     def toEn(self, zn_ch):
@@ -433,10 +433,12 @@ class PrjShot(PrjCode):
             path = pathlib.Path("")
         return path
 
-    def querFlipBookShotTotal(self) -> typing.List[pathlib.Path]:
+    def querFlipBookShotTotal(self, department) -> typing.List[pathlib.Path]:
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            path = session.query(_shot).order_by(_shot.filetime).from_self().group_by(_shot.shot, _shot.shotab)
+            # .filter(_shot.department == department)
+            path = session.query(_shot).filter(_shot.fileSuffixes == ".mp4").order_by(
+                _shot.filetime).from_self().group_by(_shot.shot, _shot.shotab).order_by(_shot.shot)
         try:
 
             path = [pathlib.Path(p.filepath) for p in path]

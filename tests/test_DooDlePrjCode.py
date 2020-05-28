@@ -46,13 +46,13 @@ def test_getFile(setup_modle):
 
 
 def test_queryFlipBookShotTotal(setup_modle):
-    setup_modle.episodes = 19
+    setup_modle.episodes = 12
     setup_modle.shot = 10
     setup_modle.shotab = ''
     setup_modle.department = "anm"
     setup_modle.Type = "Animation"
     script.DooDlePrjCode._shot.__table__.name = "ep019"
-    total = setup_modle.querFlipBookShotTotal()
+    total = setup_modle.querFlipBookShotTotal("VFX")
     for i in total:
         print(i)
 
