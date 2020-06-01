@@ -36,7 +36,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.timer = QtCore.QTimer(self)
         self.timer.setSingleShot(True)
         self.timer.timeout.connect(self.file_syns)
-        self.timer.timeout.connect(lambda: self.Updata(lambda: float(self.doodleSet.version) > self.version))
+        # self.timer.timeout.connect(lambda: self.Updata(lambda: float(self.doodleSet.version) > self.version))
         self.timer.start(self.timeSyn)
 
         self.setToolTip(f'文件管理系统-{self.version}')
@@ -67,6 +67,8 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
 
         menu.addSeparator()
         self.setContextMenu(menu)
+
+        # self.Updata(lambda: float(self.doodleSet.version) > self.version)
 
     def lookdepartment(self):
         if self.doodleSet.department in ['VFX', 'Light', 'modle']:

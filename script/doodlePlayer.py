@@ -3,7 +3,7 @@ import os
 import pathlib
 import subprocess
 import time
-
+import tempfile
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
@@ -61,6 +61,7 @@ class doodleScreenshot(QtWidgets.QDialog):
             outputRegion.save(self.savePath, format="JPG", quality=100)
             self.close()
 
+
 # class
 
 
@@ -72,17 +73,45 @@ def videoToMp4(video: pathlib.Path, mp4_path: pathlib.Path):
     if not mp4_path.parent.is_dir():
         mp4_path.parent.mkdir(parents=True, exist_ok=True)
     os.system(tools_bin_ffmpeg)
-    #ffmpeg.kill()
+    # ffmpeg.kill()
 
 
-def imageToMp4(video_path: pathlib.Path, image_path: pathlib.Path):
+def imageToMp4(video_path: pathlib.Path, image_path: pathlib.Path, watermark: str = "none"):
     tools_bin_ffmpeg = "tools\\bin\\ffmpeg "
-    list = image_path.parent.joinpath("list.txt")
-    image = ["file '" + i.as_posix() + "'" for i in image_path.parent.iterdir() if i.suffix in ['.png','.exr','jpg']]
-    list.write_text("\n".join(image))
-    tools_bin_ffmpeg += "-r 25 -f concat -safe 0 -i " + str(image_path.parent.joinpath(list))
-    tools_bin_ffmpeg += ' -c:v libx264 -vf fps=25 -pix_fmt yuv420p -s 1920*1080 ' + str(video_path)
-    logging.info("命令ffmpeg %s",tools_bin_ffmpeg)
+    my_list_ = image_path.parent.joinpath("my_list_.txt")
+    image = ["file '" + i.name + "'" for i in image_path.parent.iterdir() if i.suffix in ['.png', '.exr', 'jpg']]
+    my_list_.write_text("\n".join(image))
+    tools_bin_ffmpeg += "-r 25 -f concat -safe 0 -i " + my_list_.as_posix()
+    tools_bin_ffmpeg += f""" -filter_complex "drawtext=text='{watermark}': fontcolor=0xc62d1d: fontsize=44: x=10:y=10: shadowx=3: shadowy=3" """
+    tools_bin_ffmpeg += '-c:v libx264 -pix_fmt yuv420p -s 1920*1080 ' + video_path.as_posix()
+    logging.info("命令ffmpeg %s", tools_bin_ffmpeg)
+    if not video_path.parent.is_dir():
+        video_path.parent.mkdir(parents=True, exist_ok=True)
+    os.system(tools_bin_ffmpeg)
+
+
+def comMp4(video_path: pathlib.Path, paths: list):
+    """
+    for i in *.png; do echo "file '$i'" >> files.txt; echo "file_packet_metadata url=$i" >> files.txt; done
+
+    ffmpeg -r 25 -f concat -safe 0 -i files.txt -filter_complex "drawtext=text='%{metadata\:url}':
+    fontcolor=0x808080: fontsize=34: x=w-tw- 10:y=h-th-10" -r 12 -c:v libx264 filename.mp4
+
+    Args:
+        video_path:
+        paths:
+
+    Returns:
+
+    """
+    tools_bin_ffmpeg = "tools\\bin\\ffmpeg "
+    my_list_ = pathlib.Path(tempfile.gettempdir()).joinpath("my_list_.txt")
+    image = ["file '" + i.as_posix() + "'" for i in paths]
+    my_list_.write_text("\n".join(image))
+    tools_bin_ffmpeg += "-f concat -safe 0 -i " + str(my_list_)
+    # tools_bin_ffmpeg += """ -filter_complex " " """
+    tools_bin_ffmpeg += ' -c:v libx264 -pix_fmt yuv420p -s 1920*1080 -movflags +faststart ' + video_path.as_posix()
+    logging.info("命令ffmpeg %s", tools_bin_ffmpeg)
     if not video_path.parent.is_dir():
         video_path.parent.mkdir(parents=True, exist_ok=True)
     os.system(tools_bin_ffmpeg)

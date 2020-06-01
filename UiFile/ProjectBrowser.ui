@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1309</width>
-    <height>723</height>
+    <height>725</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -492,6 +492,7 @@
     </property>
     <addaction name="refresh"/>
     <addaction name="close_socket"/>
+    <addaction name="actioncom_video"/>
    </widget>
    <addaction name="caoZhuo"/>
   </widget>
@@ -502,7 +503,12 @@
   </action>
   <action name="close_socket">
    <property name="text">
-    <string>关闭链接</string>
+    <string>关闭ue4链接</string>
+   </property>
+  </action>
+  <action name="actioncom_video">
+   <property name="text">
+    <string>合成整集拍屏</string>
    </property>
   </action>
  </widget>

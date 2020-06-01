@@ -144,7 +144,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listfile.doubleClicked.connect(self.openShotFile)
         # 添加刷新函数
         self.refresh.triggered.connect(self.setepisodex)
+        # 关闭ue链接函数
         self.close_socket.triggered.connect(self.closesocket)
+        # 合成拍屏
+        self.actioncom_video.triggered.connect(self.comEpsVideo)
 
         # <editor-fold desc="添加上下文菜单">
         # 添加集数上下文菜单
@@ -930,7 +933,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                     path = pathlib.Path(tempfile.gettempdir()).joinpath(name)
                     if path.is_file():
                         os.remove(str(path))
-                    script.doodlePlayer.imageToMp4(video_path=path, image_path=file)
+                    script.doodlePlayer.imageToMp4(video_path=path, image_path=file, watermark=f"{path.name}")
                 except:
                     QtWidgets.QMessageBox.warning(self, "图片命名规则:", "test_####.png "
                                                                    "后缀前有四位数字,表示帧号,前面有下划线",
@@ -981,15 +984,20 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             if path:
                 self.pot_player.add(path.as_posix())
         else:
-            for p in self.shot.querFlipBookShotTotal(department):
-                self.pot_player.add(p)
-            # shots = self.shot.getShot()[:]
-            # shots_ = [int(s[2:-1]) if s[6:] else int(s[2:]) for s in shots]
-            # for shot in shots_:
-            #     path = self.shot.queryFlipBookShot(shot)
-            #     if path.as_posix() != '.':
-            #         logging.info("播放文件路径 %s", path)
-            #         self.pot_player.add(path)
+            # for p in self.shot.querFlipBookShotTotal(department):
+            #     self.pot_player.add(p)
+
+            video = self.shot._root.joinpath(f'ep{self.shot.episodes:0>3d}',f'ep{self.shot.episodes:0>3d}_FB.mp4')
+            if video.is_file():
+                self.pot_player.add(video)
+            else:
+                reply = QtWidgets.QMessageBox.warning(self, "警告:", "没有找到转换视频，是否执行自动转换",
+                                              QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+                if reply == QtWidgets.QMessageBox.Yes:
+                    self.comEpsVideo()
+                    self.pot_player.dump(video.as_posix())
+                else:
+                    return None
             # self.playerFlipBook('', '', one_or_mut="mut", department=department)
 
         self.pot_player.dump(tmp_path)
@@ -999,6 +1007,21 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             QtWidgets.QMessageBox.warning(self, "警告:", "警告:"
                                                        "请关闭360后重新打开本软件",
                                           QtWidgets.QMessageBox.Yes)
+
+    def comEpsVideo(self):
+        # shots = self.shot.getShot()[:]
+
+        shots_ = [(int(s[2:-1]), s[-1:]) if s[6:] else (int(s[2:]), "") for s in self.shot.getShot()[:]]
+        path = [self.shot.queryFlipBookShot(*pp) for pp in shots_]
+        path_ = [p_ for p_ in path if p_.is_file()]
+        video = self.shot._root.joinpath(f'ep{self.shot.episodes:0>3d}',f'ep{self.shot.episodes:0>3d}_FB.mp4')
+        tmp_video = pathlib.Path(tempfile.gettempdir()).joinpath(video.name)
+        if tmp_video.is_file():
+            os.remove(tmp_video.as_posix())
+        script.doodlePlayer.comMp4(video_path=tmp_video, paths=path_)
+        shutil.copy2(tmp_video.as_posix(),video.as_posix())
+
+        return video
 
     def subInfo(self, code: script.DooDlePrjCode.PrjCode):
         """

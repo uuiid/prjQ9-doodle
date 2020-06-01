@@ -51,7 +51,7 @@ def test_queryFlipBookShotTotal(setup_modle):
     setup_modle.shotab = ''
     setup_modle.department = "anm"
     setup_modle.Type = "Animation"
-    script.DooDlePrjCode._shot.__table__.name = "ep019"
+    script.DooDlePrjCode._shot.__table__.name = "ep012"
     total = setup_modle.querFlipBookShotTotal("VFX")
     for i in total:
         print(i)

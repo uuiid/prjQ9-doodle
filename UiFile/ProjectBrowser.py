@@ -13,7 +13,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1309, 723)
+        MainWindow.resize(1309, 725)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -277,8 +277,11 @@ class Ui_MainWindow(object):
         self.refresh.setObjectName("refresh")
         self.close_socket = QtWidgets.QAction(MainWindow)
         self.close_socket.setObjectName("close_socket")
+        self.actioncom_video = QtWidgets.QAction(MainWindow)
+        self.actioncom_video.setObjectName("actioncom_video")
         self.caoZhuo.addAction(self.refresh)
         self.caoZhuo.addAction(self.close_socket)
+        self.caoZhuo.addAction(self.actioncom_video)
         self.menubar.addAction(self.caoZhuo.menuAction())
 
         self.retranslateUi(MainWindow)
@@ -338,4 +341,5 @@ class Ui_MainWindow(object):
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Episodes_shot), _translate("MainWindow", "镜头"))
         self.caoZhuo.setTitle(_translate("MainWindow", "操作"))
         self.refresh.setText(_translate("MainWindow", "刷新"))
-        self.close_socket.setText(_translate("MainWindow", "关闭链接"))
+        self.close_socket.setText(_translate("MainWindow", "关闭ue4链接"))
+        self.actioncom_video.setText(_translate("MainWindow", "合成整集拍屏"))

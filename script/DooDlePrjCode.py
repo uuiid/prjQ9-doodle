@@ -32,6 +32,36 @@ import script.convert
 #     pass
 
 # <editor-fold desc="数据库类">
+
+# class _FlipBook(script.MySqlComm.Base):
+#     __abstract__ = True
+#     id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True)
+#     file: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+#     user: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+#     version: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
+#     filepath: str = sqlalchemy.Column(sqlalchemy.VARCHAR(1024))
+#     infor: str = sqlalchemy.Column(sqlalchemy.VARCHAR(4096))
+#     filestate = sqlalchemy.Column(sqlalchemy.VARCHAR(64))
+#     filetime = sqlalchemy.Column(sqlalchemy.DATETIME,
+#                                  server_default=sqlalchemy.sql.func.now(),
+#                                  server_onupdate=sqlalchemy.sql.func.now())
+#
+#
+# class _FB_shot(_FlipBook):
+#     __tablename__ = "FlipBookshot"
+#     episodes: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
+#     shot: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
+#     shotab: str = sqlalchemy.Column(sqlalchemy.VARCHAR(8))
+#     department: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+#     Type: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+#
+#
+# class _FB_ass(_FlipBook):
+#     __tablename__ = "FlipBookAss"
+#     name: str = sqlalchemy.Column(sqlalchemy.VARCHAR(256))
+#     type: # str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
+#
+
 class nameTochinese(script.MySqlComm.Base):
     __tablename__ = "nameTochinese"
     id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True)
@@ -418,14 +448,14 @@ class PrjShot(PrjCode):
             path = pathlib.Path("")
         return path
 
-    def queryFlipBookShot(self, shot: int) -> pathlib.Path:
+    def queryFlipBookShot(self, shot: int, shotab: str) -> pathlib.Path:
         """
         最新拍屏, 按镜头分的最新拍屏
         """
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
             path = session.query(_shot.filepath). \
-                filter_by(episodes=self.episodes, shot=shot, fileSuffixes='.mp4'). \
+                filter_by(episodes=self.episodes, shot=shot, shotab=shotab, fileSuffixes='.mp4'). \
                 order_by(sqlalchemy.desc(_shot.filetime)).first()
         try:
             path = pathlib.Path(path[0])
@@ -437,8 +467,16 @@ class PrjShot(PrjCode):
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
             # .filter(_shot.department == department)
-            path = session.query(_shot).filter(_shot.fileSuffixes == ".mp4").order_by(
-                _shot.filetime).from_self().group_by(_shot.shot, _shot.shotab).order_by(_shot.shot)
+            _shots = sqlalchemy.orm.aliased(_shot, name="_shots")
+            file_order = session.query(_shot).order_by(_shot.filetime) \
+                .filter_by(fileSuffixes=".mp4", department=department).correlate(_shots).subquery()
+            path = session.query(file_order).group_by(file_order.c.shot, file_order.c.shotab).order_by(
+                file_order.c.shot)
+
+            print("test")
+            # path = session.query(_shot).order_by(sqlalchemy.desc(_shot.filetime))\
+            #     .filter_by(fileSuffixes=".mp4",department=department) \
+            #     .from_self().group_by(_shot.shot, _shot.shotab).order_by(_shot.shot)
         try:
 
             path = [pathlib.Path(p.filepath) for p in path]

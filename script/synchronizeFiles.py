@@ -8,6 +8,7 @@ import multiprocessing
 import subprocess
 import threading
 import queue
+import ftpsync
 import time
 import re
 
