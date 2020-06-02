@@ -76,20 +76,17 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
 
     def file_syns(self):
         if self.doodleSet.department in ['Light', 'VFX']:
-            self.ta_log.info('进行同步')
             include_ = ["*"]
             if self.doodleSet.department in ["VFX"]:
                 include_ = ["*\\VFX\\*"]
-            readServerDiectory = self.doodleSet.getsever()
-
-            self.ta_log.info('读取服务器中同步目录 %s', readServerDiectory)
-            synfile_Name = '{}-ep-{}'.format(self.doodleSet.department, self.doodleSet.synEp)
-            synfile = script.synXml.weiteXml(self.doodleSet.doc,
-                                             readServerDiectory,
-                                             Include=include_,
-                                             fileName=synfile_Name)
-            program = self.doodleSet.FreeFileSync
-            subprocess.run('{} "{}"'.format(program, synfile), shell=True)
+            script.synXml.FreeFileSync(doc=self.doodleSet.doc,
+                                       syn_file=self.doodleSet.getsever(),
+                                       program=self.doodleSet.FreeFileSync,
+                                       file_name='{}-ep-{}'.format(self.doodleSet.department, self.doodleSet.synEp),
+                                       user=self.doodleSet.projectname,
+                                       ip_=self.doodleSet.ftpip,
+                                       password=self.doodleSet.password,
+                                       include=include_).run()
 
             self.ta_log.info('同步时间: %s', time.asctime(time.localtime(time.time())))
 
@@ -109,12 +106,14 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         if self.doodleSet.department in ['Light', 'VFX', 'modle']:
             synPath = [{'Left': 'D:\\Source\\UnrealEngine', 'Right': 'W:\\data\\Source\\UnrealEngine'}]
             synUE = 'UE_syn'
-            synfile = script.synXml.weiteXml(self.doodleSet.doc,
-                                             synPath,
-                                             Include=['\\Engine\\*'],
-                                             fileName=synUE)
-            program = self.doodleSet.FreeFileSync
-            subprocess.run('{} "{}"'.format(program, synfile), shell=True)
+            script.synXml.FreeFileSync(doc=self.doodleSet.doc,
+                                       syn_file=synPath,
+                                       program=self.doodleSet.FreeFileSync,
+                                       file_name=synUE,
+                                       user=self.doodleSet.projectname,
+                                       ip_=self.doodleSet.ftpip,
+                                       password=self.doodleSet.password,
+                                       include=['\\Engine\\*']).run()
 
     @staticmethod
     def openUE():
@@ -134,7 +133,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         tmp_path = pathlib.Path(tempfile.gettempdir())
         if unpdata_:
             try:
-                if tmp_path.is_file():
+                if tmp_path.joinpath(doodle.split("/")[-1]).as_posix():
                     os.remove(tmp_path.as_posix())
                 undata_progress = QtWidgets.QProgressDialog("下载文件", "...", 0, 99, parent=None)
                 undata_progress.setWindowModality(QtCore.Qt.WindowModal)
@@ -171,8 +170,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
                 sys.exit(self)
 
 
-
-def main():
+if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     QtWidgets.QApplication.setQuitOnLastWindowClosed(False)
     # w = QtWidgets.QWidget()
@@ -183,6 +181,3 @@ def main():
     tray_icon.show()
 
     sys.exit(app.exec_())
-
-
-main()

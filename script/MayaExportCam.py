@@ -7,6 +7,7 @@ import threading
 import subprocess
 import shutil
 
+
 class export(threading.Thread):
     @property
     def path(self) -> pathlib.Path:
@@ -40,8 +41,10 @@ class export(threading.Thread):
         shutil.copy2(sourefile, tmp_path)
         # tmp_path.suffix
         logging.info("open %s", mayapy_path)
-        logging.info(str(mayapy_path) + ' ' + tmp_path.as_posix() +
-f""" --path {self.path.parent.as_posix()} --name {self.path.stem} --version {self.version} --suffix {self.path.suffix} """)
+        #         logging.info(str(mayapy_path) + ' ' + tmp_path.as_posix() +
+        # f""" --path {self.path.parent.as_posix()} --name {self.path.stem} -
+        # -version {self.version} --suffix {self.path.suffix} """)
         os.system(str(mayapy_path) + ''' ''' + tmp_path.as_posix() +
-f""" --path {self.path.parent.as_posix()} --name {self.path.stem} --version {self.version} --suffix {self.path.suffix} """)
+                  f""" --path {self.path.parent.as_posix()} --name {self.path.stem} """
+                  f"""--version {self.version} --suffix {self.path.suffix} """)
         # os.system(str(mayapy_path) + ''' ''' + tmp_path.as_posix())

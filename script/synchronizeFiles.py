@@ -1,3 +1,4 @@
+import ftplib
 import logging
 import os
 import pathlib
@@ -8,7 +9,7 @@ import multiprocessing
 import subprocess
 import threading
 import queue
-import ftpsync
+import ftputil
 import time
 import re
 
@@ -25,6 +26,43 @@ import script.doodle_setting
 import script.synXml
 
 _path_my_ = set()
+
+
+class _ftpDowUp(object):
+    def __init__(self, local: pathlib.Path, remote: pathlib.Path, doodle_set, optional):
+        self.local = local.as_posix()
+        self.remote = remote.as_posix()
+        self.user = "user"
+        self.passwd = "12345"
+        self.optional = optional
+
+
+class ftpDownload(_ftpDowUp):
+
+    def dow(self):
+        # ftplib.FTP_PORT=2121
+        with ftputil.FTPHost("192.168.10.213", "user", "12345", session_factory=ftplib.FTP) as hsot:
+            # hsot.listdir("/03_Workflow")
+            hsot.chdir(self.remote)
+            for root, folders, files in hsot.walk(self.remote):
+                trg = pathlib.Path(self.local).joinpath(root.replace(self.remote, "")[1:])
+                trg.mkdir(parents=True, exist_ok=True)
+                print(trg.as_posix())
+                for f in files:
+                    hsot.download(root + '/' + f, trg.joinpath(f).as_posix())
+
+
+class ftpUpload(_ftpDowUp):
+
+    def Upload(self):
+        # ftplib.FTP_PORT=2121
+        with ftputil.FTPHost("192.168.10.213", "user", "12345", session_factory=ftplib.FTP) as hsot:
+            # hsot.listdir("/03_Workflow")
+            for root, folders, files in os.walk(self.local):
+                trg = os.path.join(self.remote,root.replace(self.local, "")[1:])
+                for f in files:
+                    # print((root + "/" + f).replace("\\","/") + "\n" + (trg + "/" + f).replace("\\","/"))
+                    hsot.upload((root + "/" + f).replace("\\","/"), trg.replace("\\","/"))
 
 
 class synInfo(Base):
@@ -292,13 +330,6 @@ class copyeasily(threading.Thread):
         self.trange = trange
         if soure.is_file():
             self.copy = getattr(self, f"copy{self.soure.suffix[1:].capitalize()}")
-        # try:
-        #     trange.iterdir().__next__()
-        # except StopIteration:
-        #     robocopy(soure, trange)
-        #     self.session = None
-        # else:
-        #     self.session = inspectfile(soure, trange)
 
     def run(self) -> None:
         self.copy()
@@ -313,6 +344,7 @@ class copyeasily(threading.Thread):
         tmp = robocopy(self.soure.parent, self.trange.parent, ("/IF", self.soure.name))
         tmp += robocopy(self.soure.parent.joinpath("Content"), self.trange.parent.joinpath("Content"), ("/E",))
         return tmp
+
 
 if __name__ == '__main__':
     left = pathlib.Path("D:\\ue_project")

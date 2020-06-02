@@ -7,6 +7,7 @@ import sys
 import threading
 import functools
 import sqlalchemy
+import psutil
 import sqlalchemy.ext.declarative
 from PyQt5 import QtWidgets
 
@@ -52,12 +53,22 @@ class Doodlesetting():
         self.projectname = 'dubuxiaoyao'
         self.ProgramFolder = ['Export', 'Playblasts', 'Rendering', 'Scenefiles']
         self.assTypeFolder = ['sourceimages', 'scenes', '{}_UE4', 'rig', "{}_low"]
-        self.filestate = ["Error","Amend","Complete"]
+        self.filestate = ["Error", "Amend", "Complete"]
         self.project = ''
         self.__initSetAttr(self.__getString())
         self.__initSetAttr(self.__getseverPrjBrowser())
+
         self.my_sql = script.MySqlComm.commMysql(self.projectname, "", "")
+
         self.sever_con = srverSetting()
+
+        self.cache_path = pathlib.Path("C:\\Doodle_cache")
+        self.getCacheDiskPath(1)
+        self.cache_path.mkdir(parents=True, exist_ok=True)
+
+        self.ftpuser = "user"
+        self.password = "MTIzNDU="
+        self.ftpip = "192.168.10.213"
 
     # <editor-fold desc="属性操作">
 
@@ -126,8 +137,8 @@ class Doodlesetting():
         try:
             logging.info('尝试读取文件')
             itoa = self.userland.read_text(encoding='utf-8')
-            itoa = json.loads(itoa)
             logging.info("%s", itoa)
+            itoa = json.loads(itoa)
         except:
             self.writeDoodlelocalSet()
             logging.info('读入失败,  写空文件')
@@ -176,8 +187,23 @@ class Doodlesetting():
         data = script.MySqlComm.selsctCommMysql(self.projectname, self.department, "", sql_command=sql_com)
 
         in_data_ = {key: value for key, value in data}
-        logging.info('服务器上的项目设置(json) %s', in_data_)
+        logging.info('服务器上的项目设置(json) %s', json.dumps(in_data_,
+                                                      ensure_ascii=False, indent=4, separators=(',', ':')))
         return in_data_
+
+    def getCacheDiskPath(self, disk_index: int):
+        try:
+            path = psutil.disk_partitions()[disk_index][1]
+        except IndexError as err:
+            logging.info("无法找到缓存所用磁盘")
+        else:
+            if disk_index > 4:
+                return None
+            if psutil.disk_usage(path)[3] > 90:
+                self.getCacheDiskPath(disk_index + 1)
+            else:
+                self.cache_path = pathlib.Path(path).joinpath("Doodle_cache")
+        logging.info("找到缓存路径 %s", self.cache_path)
 
 
 class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):

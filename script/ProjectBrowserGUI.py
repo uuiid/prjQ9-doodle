@@ -765,15 +765,16 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         backup = target.joinpath('backup')
         source = source_path.parent
         syn_path = [{'Left': str(source), 'Right': str(target)}]
-        syn_file = script.synXml.weiteXml(self.setlocale.doc,
-                                          syn_path,
-                                          Include=['*\\Content\\*'],
-                                          Exclude=['*\\backup\\'],
-                                          VersioningFolder=str(backup),
-                                          fileName='UEpriect')
-        program = self.setlocale.FreeFileSync
-        os.system('{} "{}"'.format(program, syn_file))
-        shutil.copy2(str(source_path), str(target_file.as_posix()))
+        script.synXml.FreeFileSync(doc=self.setlocale.doc,
+                                   syn_file=syn_path,
+                                   program=self.setlocale.FreeFileSync,
+                                   file_name="UEpriect",
+                                   user=self.setlocale.projectname,
+                                   ip_=self.setlocale.ftpip,
+                                   password=self.setlocale.password,
+                                   include=['*\\Content\\*'],
+                                   exclude=['*\\backup\\'],
+                                   versioning_folder=str(backup)).run()
         return True
 
     def appointFilePath(self):

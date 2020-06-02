@@ -7,7 +7,11 @@ import pyftpdlib.servers as ftpsevers
 
 def maim():
     authorizer = ftpauth.DummyAuthorizer()
-    authorizer.add_user("user", "12345", "X:\\", perm="elradfmwMT")
+    # dubuxiaoyao
+    authorizer.add_user("dubuxiaoyao", "12345", "W:\\", perm="elradfmwMT")
+    # changanhuanjie
+    authorizer.add_user("changanhuanjie", "12345", "X:\\", perm="elradfmwMT")
+
     authorizer.add_anonymous("X:\\")
 
     handler = ftphand.FTPHandler
@@ -15,7 +19,7 @@ def maim():
 
     handler.banner = "pyftpdlib based ftpd ready."
 
-    address = ("127.0.0.1", 2121)
+    address = ("192.168.10.213", 21)
     sevrve = ftpsevers.FTPServer(address, handler)
 
     sevrve.max_cons = 256

@@ -9,12 +9,10 @@
         <Variant>TwoWay</Variant>
         <DetectMovedFiles>false</DetectMovedFiles>
         <DeletionPolicy>Versioning</DeletionPolicy>
-        <VersioningFolder Style="TimeStamp-Folder" MaxAge="10">W:\data\ue_prj\backup</VersioningFolder>
+        <VersioningFolder Style="TimeStamp-Folder">W:\data\ue_prj\backup</VersioningFolder>
     </Synchronize>
     <Filter>
-        <Include>
-            <Item>*</Item>
-        </Include>
+        <Include></Include>
         <Exclude>
             <Item>\System Volume Information\</Item>
             <Item>\$Recycle.Bin\</Item>

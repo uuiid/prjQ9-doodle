@@ -18,10 +18,11 @@ def Lookingconfig(paths: pathlib.Path):
             return path
     return Lookingconfig(paths.parent)
 
+
 ta_log = get_logger(__name__)
 
-def erorrDecorator(function):
 
+def erorrDecorator(function):
     @functools.wraps(function)
     def wrapper(*args, **kwargs):
         log = ta_log
@@ -33,8 +34,6 @@ def erorrDecorator(function):
             raise
 
     return wrapper
-
-
 
 
 @erorrDecorator
