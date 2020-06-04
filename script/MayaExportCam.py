@@ -1,11 +1,9 @@
 import logging
 import os
 import pathlib
-import sys
+import shutil
 import tempfile
 import threading
-import subprocess
-import shutil
 
 
 class export(threading.Thread):

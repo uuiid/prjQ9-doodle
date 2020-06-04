@@ -1,9 +1,8 @@
-import urllib.request
-import requests
 import logging
 
+import requests
 from PyQt5 import QtCore
-from PyQt5 import QtWidgets, QtGui
+from PyQt5 import QtWidgets
 
 
 class downloadThread(QtCore.QThread, QtWidgets.QWidget):

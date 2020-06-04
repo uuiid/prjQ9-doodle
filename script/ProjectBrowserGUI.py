@@ -4,14 +4,13 @@ import logging
 import os
 import pathlib
 import re
-import shutil
+import socket
 import sys
 import tempfile
 import typing
-import socket
+
 import potplayer
 import pyperclip
-import pypinyin
 import qdarkgraystyle
 from PyQt5 import QtCore
 from PyQt5 import QtGui
@@ -19,6 +18,7 @@ from PyQt5 import QtWidgets
 
 import UiFile.ProjectBrowser
 import script.DooDlePrjCode
+import script.DoodleFileProcessing
 import script.MayaExportCam
 import script.MySqlComm
 import script.convert
@@ -565,8 +565,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 dst_file = file_path.joinpath(shot_name)
 
                 # 在这里copy
-                file_path.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(str(path), str(dst_file))
+                # file_path.mkdir(parents=True, exist_ok=True)
+
+                script.DoodleFileProcessing.copyeasily(path,file_path.joinpath(shot_name),self.setlocale).start()
 
                 logging.info('%s ---> %s', path, dst_file)
 
@@ -673,19 +674,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             target_file = self.ass.getFilePath().joinpath(self.ass.getFileName(version=version_max,
                                                                                user_=self.user,
                                                                                suffix=file.suffix))
-            success = False
-            if file.suffix in ['.mb', '.ma', '.max']:
-                success = self.backupCopy(file, target_file, version_max)
-            elif file.suffix in [".fbx"]:
+            success = script.DoodleFileProcessing.copyeasily(file, trange=target_file,
+                                                             doodle_set=self.setlocale)
+            if file.suffix in [".fbx"]:
                 version_max -= 1
-                success = self.backupCopy(file, target_file, version_max)
-            elif file.suffix in ['.uproject']:
-                success = self.assUploadFileUE4Handle(file, target_file)
             elif file.suffix in ['.png', '.tga', 'jpg']:
-                success = self.assUploadMapHandle(file, target_file, version_max)
-            else:
                 pass
-            if success:
+            logging.info('文件上传%s ---->  %s', file, target_file)
+            success.start()
+            if True:
                 self.ass.file = target_file.name
                 self.ass.fileSuffixes = target_file.suffix
                 self.ass.user = self.setlocale.user
@@ -706,43 +703,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         :param soure_file: pathlib.Path
         :return: Bool
         """
-        file_path = soure_file.parent
-        file_str = f'^{self.ass.name}_.*_(?:Color|Normal|bump|alpha)$'
-        success = False
-        for fi in file_path.iterdir():
-            if re.match(file_str, fi.stem):
-                tar = target.parent.joinpath(fi.name)
-                self.backupCopy(fi, tar, version)
-                success = True
-        return success
-
-    @script.doodleLog.erorrDecorator
-    def backupCopy(self, source: pathlib.Path, target: pathlib.Path, version: int):
-        """
-        来源和目标必须时文件 + 路径
-        :param source: pathlib.Path
-        :param target: pathlib.Path
-        :param version: int
-        :return: Bool
-        """
-        target_parent = target.parent
-        backup = target_parent.joinpath('backup')
-        target_parent.mkdir(parents=True, exist_ok=True)
-        if not backup.is_dir():
-            backup.mkdir(parents=True, exist_ok=True)
-        backup_file = backup.joinpath('{}_v{:0>4d}{}'.format(target.stem,
-                                                             version,
-                                                             target.suffix))
-        if target.is_file():
-            shutil.move(str(target), str(backup_file))
-            logging.info('文件备份%s ---->  %s', target, backup_file)
-        file = shutil.copy2(str(source), str(target))
-
-        logging.info('文件上传%s ---->  %s', source, target)
-        success = False
-        if os.path.isfile(file):
-            success = True
-        return success
+        pass
 
     def download(self, core: script.DooDlePrjCode.PrjCode):
         path = QtWidgets.QFileDialog.getExistingDirectory(self,
@@ -750,32 +711,21 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                           self.recentlyOpenedFolder,
                                                           QtWidgets.QFileDialog.ShowDirsOnly)
         pathprj = pathlib.Path(path)
-        path = pathprj.joinpath("Content")
-        sourepath = core.queryFileName(core.query_id)
-        tmp_copy = script.synchronizeFiles.copyeasily(sourepath, path)
-        tmp_copy.start()
+        is_enpty = True
+        for p in pathprj.iterdir():
+            is_enpty = False
+            break
+        if not is_enpty:
+            QtWidgets.QMessageBox.warning(self, "警告", "请选择空目录",
+                                          QtWidgets.QMessageBox.Yes)
+            return None
+        serverpath = core.queryFileName(core.query_id)
+        dow = script.DoodleFileProcessing.copyeasily(pathprj.joinpath(serverpath.name),
+                                                     serverpath,
+                                                     self.setlocale)
+        dow.start()
         QtWidgets.QMessageBox.critical(self, "复制中", "请等待.....")
         logging.info(path)
-
-    def assUploadFileUE4Handle(self, source_path: pathlib.Path, target_file: pathlib.Path):
-        """
-        上传ue4项目
-        """
-        target: pathlib.Path = target_file.parent
-        backup = target.joinpath('backup')
-        source = source_path.parent
-        syn_path = [{'Left': str(source), 'Right': str(target)}]
-        script.synXml.FreeFileSync(doc=self.setlocale.doc,
-                                   syn_file=syn_path,
-                                   program=self.setlocale.FreeFileSync,
-                                   file_name="UEpriect",
-                                   user=self.setlocale.projectname,
-                                   ip_=self.setlocale.ftpip,
-                                   password=self.setlocale.password,
-                                   include=['*\\Content\\*'],
-                                   exclude=['*\\backup\\'],
-                                   versioning_folder=str(backup)).run()
-        return True
 
     def appointFilePath(self):
         """指定文件路径"""
@@ -931,7 +881,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 script.doodlePlayer.videoToMp4(video=file, mp4_path=path)
             elif file.suffix in [".exr", ".png", ".tga", "jpg"]:
                 try:
-                    path = pathlib.Path(tempfile.gettempdir()).joinpath(name)
+                    path = self.setlocale.cache_path.joinpath(name)
                     if path.is_file():
                         os.remove(str(path))
                     script.doodlePlayer.imageToMp4(video_path=path, image_path=file, watermark=f"{path.name}")
@@ -946,7 +896,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
             if not right_path.is_dir():
                 right_path.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(str(path), str(right_path.joinpath(name)))
+
+            script.DoodleFileProcessing.copyeasily(path, right_path, self.setlocale).start()
+
             logging.info("复制路径到 %s", right_path)
 
             code.file = path.name
@@ -988,12 +940,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             # for p in self.shot.querFlipBookShotTotal(department):
             #     self.pot_player.add(p)
 
-            video = self.shot._root.joinpath(f'ep{self.shot.episodes:0>3d}',f'ep{self.shot.episodes:0>3d}_FB.mp4')
+            video = self.shot._root.joinpath(f'ep{self.shot.episodes:0>3d}', f'ep{self.shot.episodes:0>3d}_FB.mp4')
             if video.is_file():
                 self.pot_player.add(video)
             else:
                 reply = QtWidgets.QMessageBox.warning(self, "警告:", "没有找到转换视频，是否执行自动转换",
-                                              QtWidgets.QMessageBox.Yes|QtWidgets.QMessageBox.No)
+                                                      QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
                 if reply == QtWidgets.QMessageBox.Yes:
                     self.comEpsVideo()
                     self.pot_player.dump(video.as_posix())
@@ -1016,11 +968,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         path = [self.shot.queryFlipBookShot(*pp) for pp in shots_]
         path_ = [p_ for p_ in path if p_.is_file()]
         video = self.shot._root.joinpath(f'ep{self.shot.episodes:0>3d}',f'ep{self.shot.episodes:0>3d}_FB.mp4')
-        tmp_video = pathlib.Path(tempfile.gettempdir()).joinpath(video.name)
+        tmp_video = pathlib.Path(tempfile.gettempdir()).joinpath(f'ep{self.shot.episodes:0>3d}_FB.mp4')
         if tmp_video.is_file():
             os.remove(tmp_video.as_posix())
         script.doodlePlayer.comMp4(video_path=tmp_video, paths=path_)
-        shutil.copy2(tmp_video.as_posix(),video.as_posix())
+
+        script.DoodleFileProcessing.copyeasily(tmp_video, video, self.setlocale).start()
 
         return video
 

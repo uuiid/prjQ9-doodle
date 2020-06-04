@@ -8,10 +8,8 @@ import tempfile
 import time
 import threading
 import queue
-import urllib.request
 
 import qdarkgraystyle
-import urllib3
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets, QtGui
 

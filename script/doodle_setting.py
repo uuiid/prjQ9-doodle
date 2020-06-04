@@ -1,20 +1,18 @@
 # -*- coding: UTF-8 -*-
-import logging
-import codecs
 import json
+import logging
 import pathlib
 import sys
 import threading
-import functools
-import sqlalchemy
+
 import psutil
 import sqlalchemy.ext.declarative
 from PyQt5 import QtWidgets
 
 import UiFile.setting
+import script.MySqlComm
 import script.convert
 import script.doodleLog
-import script.MySqlComm
 
 
 class srverSetting(sqlalchemy.ext.declarative.declarative_base()):

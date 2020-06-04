@@ -1,29 +1,19 @@
+import datetime
 import ftplib
 import logging
 import os
 import pathlib
-import shutil
-import sys
-import tempfile
-import multiprocessing
+import queue
 import subprocess
 import threading
-import queue
-import ftputil
-import time
-import re
 
+import ftputil
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 import sqlalchemy.pool
-import datetime
-import concurrent.futures as cf
 
 Base = sqlalchemy.ext.declarative.declarative_base()
-
-import script.doodle_setting
-import script.synXml
 
 _path_my_ = set()
 
