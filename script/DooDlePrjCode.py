@@ -1,66 +1,16 @@
-import copy
 import logging
 import pathlib
 import typing
-import cachetools
 
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
-import script.MySqlComm
 import sqlalchemy.sql
+
+import script.MySqlComm
 import script.convert
+import script.ormClass
 
-
-# # 定义类型检查
-# def Typed(expected_type, cls=None):
-#     if cls is None:
-#         return lambda cls: Typed(expected_type, cls)
-#     super_set = cls.__set__
-#
-#     def __set__(self, instance, value):
-#         if not isinstance(value, expected_type):
-#             raise TypeError('expected ' + str(expected_type))
-#         super_set(self, instance, value)
-#
-#     cls.__set__ = __set__
-#     return cls
-#
-#
-# @Typed(int)
-# class integer():
-#     pass
-
-# <editor-fold desc="数据库类">
-
-# class _FlipBook(script.MySqlComm.Base):
-#     __abstract__ = True
-#     id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True)
-#     file: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
-#     user: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
-#     version: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
-#     filepath: str = sqlalchemy.Column(sqlalchemy.VARCHAR(1024))
-#     infor: str = sqlalchemy.Column(sqlalchemy.VARCHAR(4096))
-#     filestate = sqlalchemy.Column(sqlalchemy.VARCHAR(64))
-#     filetime = sqlalchemy.Column(sqlalchemy.DATETIME,
-#                                  server_default=sqlalchemy.sql.func.now(),
-#                                  server_onupdate=sqlalchemy.sql.func.now())
-#
-#
-# class _FB_shot(_FlipBook):
-#     __tablename__ = "FlipBookshot"
-#     episodes: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
-#     shot: int = sqlalchemy.Column(sqlalchemy.SMALLINT)
-#     shotab: str = sqlalchemy.Column(sqlalchemy.VARCHAR(8))
-#     department: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
-#     Type: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
-#
-#
-# class _FB_ass(_FlipBook):
-#     __tablename__ = "FlipBookAss"
-#     name: str = sqlalchemy.Column(sqlalchemy.VARCHAR(256))
-#     type: # str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
-#
 
 class nameTochinese(script.MySqlComm.Base):
     __tablename__ = "nameTochinese"
