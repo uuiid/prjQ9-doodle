@@ -13,6 +13,8 @@ import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 import sqlalchemy.pool
+import xml.etree.ElementTree as Et
+import pathlib
 
 Base = sqlalchemy.ext.declarative.declarative_base()
 
@@ -300,6 +302,68 @@ class copyeasily(object):
         robocopy(self.soure.parent, self.trange.parent, ("/IF", self.soure.name))
         robocopy(self.soure.parent.joinpath("Content"), self.trange.parent.joinpath("Content"), ("/E",))
 
+def indent(elem, level=0):
+    i = "\n" + level * "\t"
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "\t"
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            indent(elem, level + 1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
+
+def weiteXml(doc: pathlib.Path, synFile: list,**syn_parameter) -> pathlib.Path:
+    '''传入对象是一个写入文件的路径和一个同步列表,
+    key : fileName Include Exclude Variant VersioningFolder
+    Variant(TwoWay,Update)
+    这个列表由一个key是Left和Right的字典构成'''
+    template_path = pathlib.Path("template\\temp.ffs_batch")
+    tree = Et.parse(str(template_path))
+    # 加入同步目录
+    for syn in synFile:
+        pair = Et.SubElement(tree.findall('./FolderPairs')[0], 'Pair')
+        LElement = Et.SubElement(pair, "Left")
+        LElement.text = syn['Left']
+        RElement = Et.SubElement(pair, "Right")
+        RElement.text = syn['Right']
+
+    # 查看是否具有过滤器,如果有就删除原来过滤器后添加传入过滤器
+    if 'Include' in syn_parameter.keys():
+        includes = syn_parameter['Include']
+        include_my = tree.findall('./Filter/Include')[0]
+        include_my.remove(include_my.findall('./Item')[0])
+        for include_i in includes:
+            includepath = Et.SubElement(include_my, 'Item')
+            includepath.text = include_i
+    if 'Exclude' in syn_parameter.keys():
+        exclude = syn_parameter['Exclude']
+        exclude_my = tree.findall('./Filter/Exclude')[0]
+        for exclude_i in exclude:
+            exclude_path = Et.SubElement(exclude_my, 'Item')
+            exclude_path.text = exclude_i
+    # 设置同步方式
+    if 'Variant' in syn_parameter.keys():
+        variant = syn_parameter['Variant']
+        variant_my = tree.findall('./Synchronize/Variant')[0]
+        variant_my.text = variant
+    # 设置同步时备份目录
+    if 'VersioningFolder' in syn_parameter.keys():
+        versioningFolder = syn_parameter['VersioningFolder']
+        VersioningFolder_my = tree.findall('./Synchronize/VersioningFolder')[0]
+        VersioningFolder_my.text = versioningFolder
+    # 将xml文档格式化
+    root = tree.getroot()
+    indent(root)
+    # 获取写入文件路径和文件命
+    writePath = doc.joinpath('{}.ffs_batch'.format(syn_parameter['fileName']))
+    # 写入文件
+    tree.write(writePath.as_posix(), encoding='utf-8', xml_declaration=True)
+    return writePath
 
 def selsctCommMysql(mybd: str, departmen, password, sql_command):
     data_base = mysql.connector.connect(
@@ -321,7 +385,7 @@ def selsctCommMysql(mybd: str, departmen, password, sql_command):
     return date
 
 
-def _backup(trange: pathlib.Path, dubuxiaoyao: str, fujia):
+def _backup(trange: pathlib.Path, dubuxiaoyao: str,synwaithpath:pathlib.Path, fujia):
     path = []
     sql2 = """SELECT episodes from mainshot"""
 
@@ -350,7 +414,7 @@ def _backup(trange: pathlib.Path, dubuxiaoyao: str, fujia):
         if p.is_file():
             if p.suffix in [".uproject"]:
                 com_copy.append(
-                    [p.parent.joinpath("Content"), trange.joinpath(p_[1], "Content"), ("/E",)])
+                    [p.parent.joinpath("Content"), trange.joinpath(p_[1], "Content")])
                 com_copy.append([p.parent, trange.joinpath(p_[1])])
             else:
                 com_copy.append([p.parent, trange.joinpath(p_[1])])
@@ -358,28 +422,38 @@ def _backup(trange: pathlib.Path, dubuxiaoyao: str, fujia):
         else:
             com_copy.append([p, trange.joinpath(p_[1])])
     fujia(com_copy, trange)
-    tmp = pathlib.Path(tempfile.gettempdir()).joinpath("test_com.txt")
-    tmp.write_text(
-        "\n".join([f"{ii[0]}--->{ii[1]}  {ii[2][0]}" if len(ii) == 3 else f"{ii[0]}--->{ii[1]}" for ii in com_copy]),
+
+    # syn_dist =[]
+    # for t__ in com_copy:
+    #     syn_dist.append({"Left":t__[0].as_posix(),"Right":t__[1].as_posix()})
+    # for i__ in range((com_copy.__len__()/100).__int__()):
+    #     weiteXml(synwaithpath,syn_dist[i__:i__+100],fileName=dubuxiaoyao + f"{i__}")
+    synwaithpath.joinpath("test.txt").write_text(
+        "\n".join([f"{ii[0]}--->{ii[1]}" for ii in com_copy]),
         encoding="utf-8")
-    for i in com_copy:
-        out = robocopy(*i)
-        yield out
+    # for i in com_copy:
+    #     out = robocopy(*i)
+    #     yield out
+
 
 def fuJiaDBXX(com_copy, trange):
-    com_copy.append([pathlib.Path("Y:\\动画共享资料\\3-进行中的动画项目\\2-独步逍遥\\3-设定\\2-动画设定"), trange.joinpath("原画\\动画设定"), ("/E",)])
-    com_copy.append([pathlib.Path("Y:\\动画共享资料\\3-进行中的动画项目\\2-独步逍遥\\7-分镜"), trange.joinpath("分镜"), ("/E",)])
-    com_copy.append([pathlib.Path("Y:\\动画共享资料\\3-进行中的动画项目\\2-独步逍遥\\1-文本"), trange.joinpath("剧本"), ("/E",)])
-    com_copy.append([pathlib.Path("W:\\03_Workflow\\backup"), trange.joinpath("动画外包"), ("/E",)])
+    com_copy.append([pathlib.Path("Y:\\动画共享资料\\3-进行中的动画项目\\2-独步逍遥\\3-设定\\2-动画设定"), trange.joinpath("原画\\动画设定")])
+    com_copy.append([pathlib.Path("Y:\\动画共享资料\\3-进行中的动画项目\\2-独步逍遥\\7-分镜"), trange.joinpath("分镜")])
+    com_copy.append([pathlib.Path("Y:\\动画共享资料\\3-进行中的动画项目\\2-独步逍遥\\1-文本"), trange.joinpath("剧本")])
+    com_copy.append([pathlib.Path("W:\\03_Workflow\\backup"), trange.joinpath("动画外包")])
 
 
 if __name__ == '__main__':
-    left = pathlib.Path("D:\\dubuxiaoyao")
-    right = pathlib.Path("D:\\ue_project_backup")
-    texts = _backup(left, "dubuxiaoyao", fuJiaDBXX)
-    tmp = pathlib.Path(tempfile.gettempdir()).joinpath("test_out.txt")
-    for text in texts:
-        with open(tmp,mode="a+",encoding='utf-8') as f:
-            f.write("\n".join([" --> ".join(t) for t in text if t]))
+
+    synpath = pathlib.Path("D:\\test\\")
+
+    left = pathlib.Path("E:\\dubuxiaoyao")
+    # right = pathlib.Path("E:\\dubuxiaoyao")
+    texts = _backup(left, "dubuxiaoyao",synpath, fuJiaDBXX)
+
+    # tmp = pathlib.Path(tempfile.gettempdir()).joinpath("test_out.txt")
+    # for text in texts:
+    #     with open(tmp,mode="a+",encoding='utf-8') as f:
+    #         f.write("\n".join([" --> ".join(t) for t in text if t]))
     # inspectfile(left, right)
     # copyFile(left.as_posix(), right.as_posix())

@@ -19,12 +19,11 @@ class export(threading.Thread):
             path = pathlib.Path(path)
         self._path = path
 
-    def __init__(self, path: pathlib.Path, version):
+    def __init__(self, path: pathlib.Path, version, cache_path: pathlib.Path):
         super().__init__()
-        if not isinstance(path, pathlib.Path):
-            path = pathlib.Path(path)
         self._path = path
         self.version = version
+        self.cache_path = cache_path
 
     def run(self) -> None:
         self.exportCam()
@@ -37,12 +36,14 @@ class export(threading.Thread):
         tmp_path = pathlib.Path(tempfile.gettempdir()).joinpath('export.py')
 
         shutil.copy2(sourefile, tmp_path)
-        # tmp_path.suffix
+
         logging.info("open %s", mayapy_path)
-        #         logging.info(str(mayapy_path) + ' ' + tmp_path.as_posix() +
-        # f""" --path {self.path.parent.as_posix()} --name {self.path.stem} -
-        # -version {self.version} --suffix {self.path.suffix} """)
-        os.system(str(mayapy_path) + ''' ''' + tmp_path.as_posix() +
-                  f""" --path {self.path.parent.as_posix()} --name {self.path.stem} """
-                  f"""--version {self.version} --suffix {self.path.suffix} """)
+        self.cache_path.mkdir(parents=True, exist_ok=True)
+        command = str(mayapy_path) + ''' ''' + tmp_path.as_posix() + \
+                  f""" --path {self.path.parent.as_posix()} --name {self.path.stem} """ \
+                  f"""--version {self.version} --suffix {self.path.suffix} """ \
+                  f"""--exportpath {self.cache_path.as_posix()}"""
+        logging.info(command)
+        os.system(command)
+
         # os.system(str(mayapy_path) + ''' ''' + tmp_path.as_posix())

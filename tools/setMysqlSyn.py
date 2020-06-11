@@ -7,10 +7,13 @@ import tools.ue_path
 # <editor-fold desc="表格">
 # it = []
 """
+BiTaoGe_UE4
 BiTaoGeShanMen_ZX
-BiTaoGeShiWuSuo_UE4
-SiTuZhengTianYuanZi_UE4
-WenXinFeng_UE4
+DiSanGuanRuKou_LWZ
+LinShiZhen_ZX
+PuTongJiShanLuShang_UE4
+ShanFeng_ZX
+
 """
 # for dep in ["Light", "VFX"]:
 #     synPath = pathlib.Path(f"W:\\configuration\\{dep}_synFile.json")
@@ -26,9 +29,10 @@ WenXinFeng_UE4
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-synfile = ["BiTaoGeShanMen_ZX","BiTaoGeShiWuSuo_UE4","SiTuZhengTianYuanZi_UE4","WenXinFeng_UE4"]
+synfile = ["BiTaoGe_UE4","BiTaoGeShanMen_ZX","DiSanGuanRuKou_LWZ",
+           "LinShiZhen_ZX","PuTongJiShanLuShang_UE4","ShanFeng_ZX"]
 LR = ["Left", "Right"]
-ep = 18
+ep = 17
 it = []
 for dep in ["Light", "VFX"]:
     for key in synfile:

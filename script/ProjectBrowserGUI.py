@@ -28,6 +28,8 @@ import script.doodle_setting
 import script.synXml
 import script.synchronizeFiles
 
+from script.DoodleFileClass import *
+
 
 class _prjColor(object):
     @staticmethod
@@ -556,28 +558,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 logging.info('检测到文件%s拖入窗口', path)
                 # 获得文件路径并进行复制
 
-                version = self.shot.getMaxVersion()
-                if path.suffix in ['.ma', '.mb', '.hip']:
-                    version += 1
+                # 创建maya文件并上传
+                mayafile = shotMayaFile(self.shot, self.setlocale)
+                mayafile.upload(path)
+                logging.info("上传成功 %s", path)
 
-                file_path = self.shot.getFilePath()
-                shot_name = self.shot.getFileName(version=version, user_=self.user, suffix=path.suffix)
-                dst_file = file_path.joinpath(shot_name)
-
-                # 在这里copy
-                # file_path.mkdir(parents=True, exist_ok=True)
-
-                script.DoodleFileProcessing.copyeasily(path,file_path.joinpath(shot_name),self.setlocale).start()
-
-                logging.info('%s ---> %s', path, dst_file)
-
-                self.shot.file = shot_name
-                self.shot.fileSuffixes = path.suffix
-                self.shot.user = self.setlocale.user
-                self.shot.version = version
-                self.shot.filepath = dst_file.as_posix()
-                self.shot.infor = ""
-                self.shot.submitInfo()
                 self.listDepTypeClicked(self.listdepType.selectedItems()[0])
                 self.enableBorder(False)
             else:
@@ -670,31 +655,26 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.recentlyOpenedFolder = file
         if file and self.listAssType.selectedItems():
             file = pathlib.Path(file)
-            version_max = self.ass.getMaxVersion() + 1
-            target_file = self.ass.getFilePath().joinpath(self.ass.getFileName(version=version_max,
-                                                                               user_=self.user,
-                                                                               suffix=file.suffix))
-            success = script.DoodleFileProcessing.copyeasily(file, trange=target_file,
-                                                             doodle_set=self.setlocale)
-            if file.suffix in [".fbx"]:
-                version_max -= 1
-            elif file.suffix in ['.png', '.tga', 'jpg']:
-                pass
-            logging.info('文件上传%s ---->  %s', file, target_file)
-            success.start()
-            if True:
-                self.ass.file = target_file.name
-                self.ass.fileSuffixes = target_file.suffix
-                self.ass.user = self.setlocale.user
-                self.ass.version = version_max
-                self.ass.filepath = target_file.as_posix()
-                self.ass.infor = remarks_info
-                self.ass.submitInfo(target_file.name, target_file.stem, self.user, version_max,
-                                    infor=remarks_info, filepath_and_name=target_file.as_posix())
+            # 使用工厂获得提交类
+            sub_class = doodleFileFactory(self.ass, file.suffix)
+            if sub_class:
+                sub_class = sub_class(self.ass, self.setlocale)
+            else:
+                return None
+            sub_class.infor = remarks_info
+            sub_class.upload(file)
+        # 如果是中文名称,需要提交中文相对名称
+        text = self.listAss.selectedItems()[0].text()
+        try:
+            self.ass.convertMy.local_name[text]
+        except KeyError:
+            self.ass.convertMy.addLocalName(self.ass.convertMy.toEn(text), text)
+        else:
+            logging.info("库中已经储存此键值,无需上传中文名称")
 
+        # 激活点击事件更新列表
         self.assClassTypeClicked(self.listAssType.selectedItems()[0])
 
-    @script.doodleLog.erorrDecorator
     def assUploadMapHandle(self, soure_file: pathlib.Path, target: pathlib.Path, version: int):
         """
         上传贴图文件
@@ -711,21 +691,22 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                           self.recentlyOpenedFolder,
                                                           QtWidgets.QFileDialog.ShowDirsOnly)
         pathprj = pathlib.Path(path)
-        is_enpty = True
-        for p in pathprj.iterdir():
-            is_enpty = False
-            break
-        if not is_enpty:
-            QtWidgets.QMessageBox.warning(self, "警告", "请选择空目录",
-                                          QtWidgets.QMessageBox.Yes)
-            return None
-        serverpath = core.queryFileName(core.query_id)
-        dow = script.DoodleFileProcessing.copyeasily(pathprj.joinpath(serverpath.name),
-                                                     serverpath,
-                                                     self.setlocale)
-        dow.start()
-        QtWidgets.QMessageBox.critical(self, "复制中", "请等待.....")
-        logging.info(path)
+        # is_enpty = True
+        # for p in pathprj.iterdir():
+        #     is_enpty = False
+        #     break
+        # if not is_enpty:
+        #     QtWidgets.QMessageBox.warning(self, "警告", "请选择空目录",
+        #                                   QtWidgets.QMessageBox.Yes)
+        #     return None
+        if isinstance(core, script.DooDlePrjCode.PrjAss):
+            cls_file = doodleFileFactory(self.ass, ".uproject")
+            if cls_file:
+                cls_file = cls_file(core, self.setlocale)
+                cls_file.down(core.query_id, pathprj)
+
+            QtWidgets.QMessageBox.critical(self, "复制中", "请等待.....")
+            logging.info(path)
 
     def appointFilePath(self):
         """指定文件路径"""
@@ -742,17 +723,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         if file and (self.listAssType.selectedItems() or self.listdepType.selectedItems()):
             file = pathlib.Path(file)
             if self.listAssType.selectedItems():
-                version: int = self.ass.getMaxVersion() + 1
-
-                self.ass.file = file.name
-                self.ass.fileSuffixes = file.suffix
-                self.ass.user = self.setlocale.user
-                self.ass.version = version
-                self.ass.filepath = file.as_posix()
-                self.ass.infor = remarks_info
-
-                self.ass.submitInfo(file.name, file.suffix, self.user, version,
-                                    filepath_and_name=file.as_posix(), infor=remarks_info)
+                cls_file = doodleFileFactory(self.ass, file.suffix)
+                if cls_file:
+                    cls_file = cls_file(self.ass, self.setlocale)
+                    cls_file.infor = remarks_info
+                    cls_file.appoint(file)
 
     # </editor-fold>
 
@@ -795,45 +770,37 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         logging.info('复制 %s 到剪切板', str(file_path.parent))
 
     def exportMaya(self):
-        """导出maya相机和"""
+        """
+        导出maya相机和动画FBX
+        """
         file_data = self.shot.queryFileName(self.shot.query_id)
 
         logging.info(file_data)
         if file_data:
-            export_maya = script.MayaExportCam.export(file_data, self.shot.version)
-            export_maya.start()
             QtWidgets.QMessageBox.warning(self, "警告", "不要关闭弹出窗口",
                                           QtWidgets.QMessageBox.Yes)
-            self.shot.Type = "export"
-            self.shot.file = "doodle_Export.json"
-            self.shot.fileSuffixes = ".json"
-            self.shot.infor = "maya导出文件"
-            self.shot.user = self.setlocale.user
-            self.shot.filepath = file_data.parent.joinpath("doodle_Export.json").as_posix()
-            self.shot.submitInfo()
+
+            export = shotMayaExportFile(self.shot, self.setlocale)
+            export.infor = "这是maya导出文件"
+            export.exportRun(file_data)
+
             self.listDepTypeClicked(self.listdepType.selectedItems()[0])
 
     def Screenshot(self, my_type: str, thumbnail: QtWidgets.QLabel):
         """
         截图保存动作
         """
+        # 获得核心
         core: script.DooDlePrjCode.PrjCode = getattr(self, my_type)
-        path = core.getScreenshot()
-        if not path.parent.is_dir():
-            path.parent.mkdir(parents=True, exist_ok=True)
-
-        screen_shot = script.doodlePlayer.doodleScreenshot(path=str(path))
-        self.hide()
-        screen_shot.exec_()
-        self.show()
-        if path.is_file():
-            core.file = path.name
-            core.fileSuffixes = path.suffix
-            core.version = 1
-            core.filepath = path.as_posix()
-            core.infor = "这是截图"
-            core.user = self.setlocale.user
-            core.submitInfo(path.name, path.suffix, self.user, 0, path.as_posix(), "这是截图")
+        # 判断类型
+        cls_sshot = doodleFileFactory(core,"Screenshot")(core,self.setlocale)
+        cls_sshot.infor = "这是截图"
+        # 上传截屏
+        with cls_sshot.upload() as cache:
+            screen_shot = script.doodlePlayer.doodleScreenshot(path=cache.as_posix())
+            self.hide()
+            screen_shot.exec_()
+            self.show()
         self.setThumbnail(my_type, thumbnail)
 
     def setThumbnail(self, type_: str, thumbnail: QtWidgets.QLabel):
@@ -841,7 +808,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         设置截图显示
         """
         core = getattr(self, type_)
-        path = core.getScreenshotPath()
+        # 获得截图类
+        cls_sshot = doodleFileFactory(core,"Screenshot")(core,self.setlocale)
+        # 下载文件
+        path = cls_sshot.down()
+
         pixmap = QtGui.QPixmap(str(path))
         pixmap = pixmap.scaled(thumbnail.geometry().size(), QtCore.Qt.KeepAspectRatio)
         thumbnail.setPixmap(pixmap)
@@ -858,58 +829,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                                 "*.png *.tga *.jpg)")
 
         self.recentlyOpenedFolder = file
-
-        version: int = code.getMaxVersion() + 1
-
-        if re.match("^FB_.*", code.Type):
-            prefix_ = ''
-        else:
-            prefix_ = "FB_"
-            code.Type = f"FB_{code.Type}"
-
-        name = code.getFileName(version, self.user, ".mp4", prefix=prefix_)
-        right_path = code.getFilePath("FlipBook")
-
-        logging.info("获得file %s \n 获得 nmae %s", file, name)
-        if file:
-
-            file = pathlib.Path(file)
-            if file.suffix in ['.mov', '.avi']:
-                path = file.parent.joinpath("convert", name)
-                if path.is_file():
-                    os.remove(str(path))
-                script.doodlePlayer.videoToMp4(video=file, mp4_path=path)
-            elif file.suffix in [".exr", ".png", ".tga", "jpg"]:
-                try:
-                    path = self.setlocale.cache_path.joinpath(name)
-                    if path.is_file():
-                        os.remove(str(path))
-                    script.doodlePlayer.imageToMp4(video_path=path, image_path=file, watermark=f"{path.name}")
-                except:
-                    QtWidgets.QMessageBox.warning(self, "图片命名规则:", "test_####.png "
-                                                                   "后缀前有四位数字,表示帧号,前面有下划线",
-                                                  QtWidgets.QMessageBox.Yes)
-                    return ''
-
-            else:
-                path = file
-
-            if not right_path.is_dir():
-                right_path.mkdir(parents=True, exist_ok=True)
-
-            script.DoodleFileProcessing.copyeasily(path, right_path, self.setlocale).start()
-
-            logging.info("复制路径到 %s", right_path)
-
-            code.file = path.name
-            code.fileSuffixes = path.suffix
-            code.user = self.setlocale.user
-            code.version = version
-            code.filepath = right_path.joinpath(path.name).as_posix()
-            code.infor = "这是拍屏"
-            code.submitInfo(right_path.name, right_path.suffix, self.user,
-                            version=version, filepathAndname=right_path.as_posix(), infor="这是拍屏")
-            self.listDepartmenClicked(self.listdepartment.selectedItems()[0])
+        # 获得拍屏类
+        cla_FB = assFBFile(code, self.setlocale)
+        cla_FB.infor = "这是拍屏"
+        cla_FB.upload(file)
+        self.listDepartmenClicked(self.listdepartment.selectedItems()[0])
 
     def playerButtenClicked(self, one_or_mut: str, department="Anm"):
         """
@@ -920,61 +844,48 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         if one_or_mut == "one":
             path = pathlib.Path("")
             if self.listAssType.selectedItems():
-                if self.ass.Type[:2] == "FB":
-                    my_ass_type = self.ass.Type
-                else:
-                    my_ass_type = "FB_" + self.ass.Type
-                path = self.ass.queryFlipBook(my_ass_type)
-                # self.playerFlipBook("ass", my_ass_type)
+                code = self.ass
+            else:
+                code = self.shot
+            player = doodleFileFactory(code,"FB")(code,self.setlocale)
 
-            elif self.listdepType.selectedItems():
-                if self.shot.Type[:2] == "FB":
-                    my_shot_type = self.shot.Type
-                else:
-                    my_shot_type = "FB_" + self.shot.Type
-                path = self.shot.queryFlipBook(my_shot_type)
-                # self.playerFlipBook("shot", my_shot_type)
+            path = player.downPlayer(code.Type)
+
+            while player.syn.is_alive():
+                pass
+
             if path:
                 self.pot_player.add(path.as_posix())
         else:
-            # for p in self.shot.querFlipBookShotTotal(department):
-            #     self.pot_player.add(p)
+            player = shotMayaFBFile(self.shot,self.setlocale)
+            video = player.getEpisodesFlipBook()
 
-            video = self.shot._root.joinpath(f'ep{self.shot.episodes:0>3d}', f'ep{self.shot.episodes:0>3d}_FB.mp4')
-            if video.is_file():
+            while player.syn.is_alive():
+                pass
+
+            if video:
                 self.pot_player.add(video)
             else:
                 reply = QtWidgets.QMessageBox.warning(self, "警告:", "没有找到转换视频，是否执行自动转换",
                                                       QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
                 if reply == QtWidgets.QMessageBox.Yes:
-                    self.comEpsVideo()
+                    # 合成视频
+                    video = player.makeEpisodesFlipBook()
+
                     self.pot_player.dump(video.as_posix())
                 else:
                     return None
-            # self.playerFlipBook('', '', one_or_mut="mut", department=department)
 
         self.pot_player.dump(tmp_path)
         try:
             potplayer.run(tmp_path)
         except:
-            QtWidgets.QMessageBox.warning(self, "警告:", "警告:"
-                                                       "请关闭360后重新打开本软件",
+            QtWidgets.QMessageBox.warning(self, "警告:", "警告:请关闭360后重新打开本软件,或者检查安装potplayer",
                                           QtWidgets.QMessageBox.Yes)
 
     def comEpsVideo(self):
-        # shots = self.shot.getShot()[:]
-
-        shots_ = [(int(s[2:-1]), s[-1:]) if s[6:] else (int(s[2:]), "") for s in self.shot.getShot()[:]]
-        path = [self.shot.queryFlipBookShot(*pp) for pp in shots_]
-        path_ = [p_ for p_ in path if p_.is_file()]
-        video = self.shot._root.joinpath(f'ep{self.shot.episodes:0>3d}',f'ep{self.shot.episodes:0>3d}_FB.mp4')
-        tmp_video = pathlib.Path(tempfile.gettempdir()).joinpath(f'ep{self.shot.episodes:0>3d}_FB.mp4')
-        if tmp_video.is_file():
-            os.remove(tmp_video.as_posix())
-        script.doodlePlayer.comMp4(video_path=tmp_video, paths=path_)
-
-        script.DoodleFileProcessing.copyeasily(tmp_video, video, self.setlocale).start()
-
+        player = shotMayaFBFile(self.shot,self.setlocale)
+        video = player.makeEpisodesFlipBook()
         return video
 
     def subInfo(self, code: script.DooDlePrjCode.PrjCode):
@@ -1005,9 +916,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             so.connect(address)
-            file_data = self.shot.queryFileName(self.shot.query_id)
-            content = file_data.read_text(encoding="utf-8")
+            maya_export = shotMayaExportFile(self.shot,self.setlocale)
+            content = maya_export.down(self.shot.query_id)
+
             data = {"eps": self.shot.episodes, "shot": self.shot.shot, "content": json.loads(content)}
+
             so.send(json.dumps(data, ensure_ascii=False, indent=4, separators=(',', ':')).encode("utf-8"))
             so.close()
         except ConnectionRefusedError:

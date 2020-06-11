@@ -13,7 +13,6 @@
     </Synchronize>
     <Filter>
         <Include>
-            <Item>*</Item>
         </Include>
         <Exclude>
             <Item>\System Volume Information\</Item>
