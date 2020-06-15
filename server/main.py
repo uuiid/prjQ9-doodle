@@ -28,5 +28,9 @@ def maim():
     sevrve.serve_forever()
 
 
+def addUser(authorizer):
+    pass
+
+
 if __name__ == '__main__':
     maim()

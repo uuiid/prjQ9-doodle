@@ -1,21 +1,15 @@
 # -*- coding: UTF-8 -*-
-import json
-import logging
-import os
-import pathlib
-import re
+
 import socket
 import sys
-import tempfile
-import typing
 
 import potplayer
 import pyperclip
-import qdarkgraystyle
+
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5 import QtWidgets
-
+import qdarkgraystyle
 import UiFile.ProjectBrowser
 import script.DooDlePrjCode
 import script.DoodleFileProcessing
@@ -447,6 +441,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             mrowtmp = mrowtmp - 1
 
     # </editor-fold>
+
     @staticmethod
     def _setWidegtItem(items: list, table: QtWidgets.QTableWidget):
         """

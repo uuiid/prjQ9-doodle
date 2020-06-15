@@ -9,10 +9,10 @@ import time
 import threading
 import queue
 
-import qdarkgraystyle
+
 from PyQt5 import QtCore
 from PyQt5 import QtWidgets, QtGui
-
+import qdarkgraystyle
 import script.DoodleUpdata
 import script.ProjectBrowserGUI
 import script.doodleLog
