@@ -21,23 +21,12 @@ import json
 parser = argparse.ArgumentParser(description="exportMayaFile")
 parser.add_argument("--name", "-n", help="name attr")
 parser.add_argument("--path", "-p", help="path attr")
+parser.add_argument("--exportpath", "-exp", help="export path attr")
 parser.add_argument("--version", "-v", help="version", default=0)
 parser.add_argument("--suffix", "-su", help="suffix", default=".ma")
 args = parser.parse_args()
 
 
-# class test():
-#     name = ''
-#     path = ""
-#     version = 0
-#     suffix = ""
-#
-#
-# args = test()
-# args.name = "shot_ep012_sc0010_Anm_Animation_v0001__PHB_"
-# args.path = r"W:/03_Workflow/Shots/ep012/sc0010/Scenefiles/Anm/Animation"
-# args.version = 0
-# args.suffix = ".mb"
 
 maya.cmds.file(new=True, force=True)
 maya.cmds.file(os.path.join(args.path, args.name + args.suffix), o=True)
@@ -105,7 +94,7 @@ class export(object):
 start = maya.cmds.playbackOptions(query=True, min=True)
 end = maya.cmds.playbackOptions(query=True, max=True)
 
-myfile = os.path.join(args.path, "doodle_Export.json")
+myfile = os.path.join(args.exportpath, "doodle_Export.json")
 exports = maya.cmds.ls("::*UE4")
 
 log = export()
@@ -113,12 +102,12 @@ log = export()
 for export in exports:
     maya.cmds.select(export)
     split___ = export.split(":")[0].split("_")[0]
-    mel_name = "{path}/{name}_{suh}.fbx".format(path=args.path, name=args.name, suh=split___)
+    mel_name = "{path}/{name}_{suh}.fbx".format(path=args.exportpath, name=args.name, suh=split___)
 
     maya.cmds.bakeResults(simulation=True, t=(start, end), hierarchy="below", sampleBy=1, disableImplicitControl=True,
                           preserveOutsideKeys=False, sparseAnimCurveBake=False)
     maya.mel.eval("FBXExportBakeComplexAnimation -v true")
-    maya.mel.eval('FBXExport -f "%s" -s' % mel_name)
+    maya.mel.eval('FBXExport -f "{}" -s'.format(mel_name))
 
     log.addfile(split___, mel_name, args.version)
 
@@ -139,10 +128,10 @@ for camer in cameras:
                               disableImplicitControl=True, preserveOutsideKeys=False, sparseAnimCurveBake=False)
         if len(exportCamera.split("|")) > 2:
             camBakeAim()
-        mel_name = "{path}/{name}_camera_{start}-{end}.fbx".format(path=args.path, name=args.name, start=int(start),
+        mel_name = "{path}/{name}_camera_{start}-{end}.fbx".format(path=args.exportpath, name=args.name, start=int(start),
                                                                    end=int(end))
         maya.cmds.FBXExport("-file", mel_name, "-s")
         log.addfile("camera", mel_name, args.version)
 
-with open(myfile, "a") as f:
+with open(myfile, "w") as f:
     f.write(json.dumps(log.__dict__,ensure_ascii=False, indent=4, separators=(',', ':')))

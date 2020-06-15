@@ -65,11 +65,12 @@ class doodleScreenshot(QtWidgets.QDialog):
 # class
 
 
-def videoToMp4(video: pathlib.Path, mp4_path: pathlib.Path):
+def videoToMp4(video: pathlib.Path, mp4_path: pathlib.Path, watermark: str = "none"):
     tools_bin_ffmpeg = "tools\\bin\\ffmpeg "
     tools_bin_ffmpeg += " -i " + str(video)
     tools_bin_ffmpeg += " -vcodec h264"
-    tools_bin_ffmpeg += " -acodec mp2 -s 1920*1080 " + str(mp4_path)
+    tools_bin_ffmpeg += f""" -filter_complex "drawtext=text='{watermark}': fontcolor=0xc62d1d: fontsize=44: x=10:y=10: shadowx=3: shadowy=3" """
+    tools_bin_ffmpeg += "-acodec mp2 -s 1920*1080 " + str(mp4_path)
     if not mp4_path.parent.is_dir():
         mp4_path.parent.mkdir(parents=True, exist_ok=True)
     os.system(tools_bin_ffmpeg)
