@@ -240,6 +240,8 @@ class PrjCode(object):
         Returns:
 
         """
+        if not path:
+            return None
         if path.drive:
             if path.drive.__len__() == 2:
                 _path = path.as_posix()[2:]
@@ -331,7 +333,7 @@ class PrjShot(PrjCode):
                 distinct().all()
         return files
 
-    def getFlipBookPath(self):
+    def getFlipBookEpsisodesPath(self):
         """
         获得集数拍屏路径
         Returns:
@@ -410,7 +412,7 @@ class PrjShot(PrjCode):
         with self.comsql.sessionOne() as session:
             session.add(_episodes(episodes=self.episodes))
 
-    def subEpisodesIndo(self):
+    def subEpisodesFlipBook(self):
         """
         提交集数拍屏
         Returns:
@@ -496,7 +498,9 @@ class PrjShot(PrjCode):
             shot_fb_path = shot_fb_path[0]
             return pathlib.Path(shot_fb_path)
         except IndexError:
-            pass
+            logging.error("没有查询到拍屏IndexError")
+        except TypeError:
+            logging.error("没有查询到拍屏TYPEERROR")
 
     # # <editor-fold desc="暂时无用">
     # def __querFlipBookShotTotal(self, department) -> typing.List[pathlib.Path]:
@@ -522,7 +526,7 @@ class PrjShot(PrjCode):
     #
     # # </editor-fold>
 
-    def queryEpisodesFlipBook(self) -> int:
+    def queryEpisodesFlipBook(self) -> pathlib.Path:
         """查询每集拍屏"""
         with self.comsql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)

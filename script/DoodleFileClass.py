@@ -22,6 +22,81 @@ from script import synXml as Syn
 import script.convert
 
 
+class MultipleFlipBook(object):
+    filepath: typing.List[pathlib.Path]
+    shot: typing.List[int]
+
+    def __init__(self):
+        self.filepath = []
+        self.episodes = []
+        self.shot = []
+
+    def addPath(self, filepath: pathlib.Path):
+        self.filepath.append(filepath)
+
+    def addShot(self, shot):
+        self.shot.append(shot)
+
+
+class DoodlefilePath(object):
+
+    def __init__(self, local_path: pathlib.Path = "", server_path: pathlib.Path = "", file_name: str = ""):
+        self.local_path = local_path
+        self.server_path = server_path
+        self.file_name = file_name
+
+    @property
+    def local_path(self):
+        if not hasattr(self, '_local_path'):
+            self._local_path = pathlib.Path("")
+        return self._local_path
+
+    @local_path.setter
+    def local_path(self, local_path):
+        if not isinstance(local_path, pathlib.Path):
+            local_path = pathlib.Path(local_path)
+        if not re.match("^[A-Z]:/", local_path.as_posix()):
+            raise ValueError("{}必须是本地路径".format(local_path.as_posix()))
+        self._local_path = local_path
+
+    @property
+    def server_path(self):
+        if not hasattr(self, '_server_path'):
+            self._server_path = pathlib.Path("")
+        return self._server_path
+
+    @server_path.setter
+    def server_path(self, server_path):
+        if not isinstance(server_path, pathlib.Path):
+            server_path = pathlib.Path(server_path)
+        if not re.match("^/", server_path.as_posix()):
+            raise ValueError("{}必须以'/'开头".format(server_path.as_posix()))
+        self._server_path = server_path
+
+    @property
+    def file_name(self):
+        if not hasattr(self, '_file_name'):
+            self._file_name = pathlib.Path("")
+        return self._file_name
+
+    @file_name.setter
+    def file_name(self, file_name):
+        if re.findall("/", file_name):
+            raise ValueError("{}必须是文件名称".format(file_name))
+        self._file_name = file_name
+
+    def __str__(self):
+        return f"{self.server_path.as_posix()}/{self.file_name}"
+
+    @property
+    def loacl_file_str(self) -> str:
+        return self.local_path.joinpath(self.file_name).as_posix()
+
+    @property
+    def server_file_str(self):
+        return self.server_path.joinpath(self.file_name).as_posix()
+
+
 class export(threading.Thread):
     @property
     def path(self) -> pathlib.Path:
@@ -35,7 +110,7 @@ class export(threading.Thread):
             path = pathlib.Path(path)
         self._path = path
 
-    def __init__(self, path: pathlib.Path, version, cache_path: pathlib.Path,shot_maya_export_cls):
+    def __init__(self, path: pathlib.Path, version, cache_path: pathlib.Path, shot_maya_export_cls):
         super().__init__()
         self._path = path
         self.version = version
@@ -45,7 +120,7 @@ class export(threading.Thread):
 
     def run(self) -> None:
         self.exportCam()
-        self.cls.MY_upload(self.cache_path.joinpath("doodle_Export.json"),self.trange_path,self.cache_path)
+        self.cls.MY_upload(self.cache_path.joinpath("doodle_Export.json"), self.trange_path, self.cache_path)
 
     def exportCam(self):
         mayapy_path = '"C:\\Program Files\\Autodesk\\Maya2018\\bin\\mayapy.exe"'
@@ -69,6 +144,7 @@ class export(threading.Thread):
 
 
 class ftpServer(object):
+    _file_: typing.List[DoodlefilePath]
 
     def __init__(self,
                  user: str,
@@ -78,43 +154,40 @@ class ftpServer(object):
         self.ftpip = ip_
         mydirt = {"MTIzNDU=": "12345"}
         self.password = mydirt[password]
+        self._file_ = []
 
     def run(self):
         self.my_run()
 
-    def addSynFile(self, syn_file: list):
-        self.Left = syn_file[0]["Left"]
-        self.Right = syn_file[0]["Right"]
-
-    def addInclude(self, include: list):
-        self.include = include
+    def addFile(self, file: DoodlefilePath):
+        self._file_.append(file)
 
     def _down(self):
-        logging.info("开始下载 %s", self.include)
-        if not self.include[0]:
+        logging.info("开始下载 %s", self._file_)
+        if not self._file_:
             return None
         with ftputil.FTPHost(self.ftpip, self.user, self.password) as host:
-            for file in self.include:
-                server_file = "{}/{}".format(self.Right, file)
-                local_files = "{}/{}".format(self.Left, file)
+            for file in self._file_:
                 # 如果没有存在目录就创建
-                self._makeLoaclDir(self.Left)
+                self._makeLoaclDir(file.local_path.as_posix())
 
-                if host.path.isfile(server_file):
-                    host.download_if_newer(server_file, local_files)
+                if host.path.isfile(file.server_file_str):
+                    host.download_if_newer(file.server_file_str, file.loacl_file_str)
 
     def _upload(self):
-        logging.info("开始上传 %s", self.include)
+        logging.info("开始上传 %s", self._file_)
         now__strftime = datetime.datetime.now().strftime("%y_%b_%d_%h_%M_%S")
         with ftputil.FTPHost(self.ftpip, self.user, self.password) as host:
-            for file in self.include:
-                server_file = "{}/{}".format(self.Right, file)
-                local_files = "{}/{}".format(self.Left, file)
-                host.makedirs(self.Right)
-                if host.path.isfile(server_file):
-                    host.makedirs("{}/{}/{}".format(self.Right, "backup", now__strftime))
-                    host.rename(server_file, "{}/{}/{}/{}".format(self.Right, "backup", now__strftime, file))
-                host.upload(local_files, server_file)
+            for file in self._file_:
+                # server_file = "{}/{}".format(self.Right, file)
+                # local_files = "{}/{}".format(self.Left, file)
+                host.makedirs(file.server_path.as_posix())
+                if host.path.isfile(file.server_file_str):
+                    host.makedirs("{}/{}/{}".format(file.server_path.as_posix(), "backup", now__strftime))
+                    host.rename(file.server_file_str, "{}/{}/{}/{}".format(file.server_path.as_posix(),
+                                                                           "backup", now__strftime,
+                                                                           file.file_name))
+                host.upload(file.loacl_file_str, file.server_file_str)
 
     def _makeLoaclDir(self, path):
         try:
@@ -137,6 +210,9 @@ class ftpServer(object):
             self.my_run = self._upload
         else:
             self.my_run = None
+
+    def clear(self):
+        self._file_.clear()
 
 
 class _fileclass(object):
@@ -186,10 +262,9 @@ class _fileclass(object):
         else:
             down_path = self.pathAndCache(path.parent).as_posix()
         # 添加文件下载路径
-        self.ftp.addSynFile([{"Left": down_path,
-                              "Right": path.parent.as_posix()}])
-        # 添加下载名称
-        self.ftp.addInclude([path.name])
+        file_tmp = DoodlefilePath(down_path, path.parent, path.name)
+
+        self.ftp.addFile(file_tmp)
         self.ftp.setRun("down")
         # 开始线程
         self.ftp.run()
@@ -227,9 +302,7 @@ class _fileclass(object):
         self.copyToCache(self.soure_file, cache_path.joinpath(self.file_name))
 
         # 添加上传路径
-        self.ftp.addSynFile([{"Left": cache_path.as_posix(), "Right": trange_path.as_posix()}])
-        # 添加上传文件名称
-        self.ftp.addInclude([self.file_name])
+        self.ftp.addFile(DoodlefilePath(cache_path, trange_path, self.file_name))
 
         # 添加服务器路径
         self.trange_path = trange_path.joinpath(self.file_name)
@@ -312,10 +385,7 @@ class _Screenshot(_fileclass):
         else:
             if cache_path.is_file():
                 # 添加上传文件路径
-                self.ftp.addSynFile(
-                    [{"Left": cache_path.parent.as_posix(), "Right": self.trange_path.parent.as_posix()}])
-                # 添加上传文件名称
-                self.ftp.addInclude([self.file_name])
+                self.ftp.addFile(DoodlefilePath(cache_path.parent, self.trange_path.parent, self.file_name))
                 # 更新核心信息后提交
                 self.subInfo()
                 self.code.submitInfo()
@@ -326,6 +396,8 @@ class _Screenshot(_fileclass):
     def down(self, query_id: int = 0, down_path: pathlib.Path = ""):
         # 查询数据库获得文件路径
         path = self.code.convertPathToIp(self.code.getScreenshotPath())
+        if path == pathlib.Path(""):
+            return None
         # 获得下载路径
         down_path_ = self.pathAndCache(self.code.getScreenshot())
         if down_path_ == pathlib.Path(""):
@@ -333,10 +405,8 @@ class _Screenshot(_fileclass):
         else:
             down_path = down_path_.parent.as_posix()
         # 添加文件下载路径
-        self.ftp.addSynFile([{"Left": down_path,
-                              "Right": path.parent.as_posix()}])
-        # 添加下载名称
-        self.ftp.addInclude([path.name])
+        self.ftp.addFile(DoodlefilePath(down_path, path.parent, path.name))
+
         self.ftp.setRun("down")
         # 开始线程
         self.ftp.run()
@@ -359,6 +429,7 @@ class _FlipBook(_fileclass):
 
     def upload(self, soure_file):
         self.soure_file = soure_file
+
         # 获得目标路径
         trange_path = self.code.getFilePath("FlipBook")
         # 获得缓存路径
@@ -381,8 +452,7 @@ class _FlipBook(_fileclass):
         self.caahe_path = cache_path
         self.converMP4(self.soure_file)
         # 添加上传信息
-        self.ftp.addSynFile([{"Left": cache_path.as_posix(), "Right": trange_path.as_posix()}])
-        self.ftp.addInclude([self.file_name])
+        self.ftp.addFile(DoodlefilePath(cache_path, trange_path, self.file_name))
 
         # 开始提交线程
         self.trange_path = trange_path.joinpath(self.file_name)
@@ -522,6 +592,7 @@ class shotMayaFBFile(_FlipBook):
         self.user = doodle_set.user
         self._creteThread()
         self._creteFtpServer()
+        self.re_test = re.compile("\d+")
 
     def downFlipBook(self, query_path: pathlib.Path):
         # 查询数据库获得文件路径
@@ -529,10 +600,7 @@ class shotMayaFBFile(_FlipBook):
         # 获得下载路径
         down_path = self.pathAndCache(path.parent).as_posix()
         # 添加文件下载路径
-        self.ftp.addSynFile([{"Left": down_path,
-                              "Right": path.parent.as_posix()}])
-        # 添加下载名称
-        self.ftp.addInclude([path.name])
+        self.ftp.addFile(DoodlefilePath(down_path, path.parent, path.name))
         # 设置下载属性
         self.ftp.setRun()
 
@@ -541,28 +609,65 @@ class shotMayaFBFile(_FlipBook):
 
     def getEpisodesFlipBook(self) -> pathlib.Path:
         # 获得服务器路径
-        ftp_path = self.code.getFlipBookPath()
+        ftp_path = self.code.getFlipBookEpsisodesPath()
         # 获得缓存路径
         cache_path = self.pathAndCache(ftp_path)
         # 查询拍屏路径
         flipbook_path = self.code.queryEpisodesFlipBook()
-        if flipbook_path:
-            self.down(flipbook_path, cache_path)
+
+        self.ftp.clear()
+        self.ftp.addFile(DoodlefilePath(cache_path.parent, flipbook_path.parent, cache_path.name))
+        self.ftp.setRun()
+        self.ftp.run()
+
+        if cache_path.is_file():
             return cache_path
         else:
             pass
 
+    @contextlib.contextmanager
+    def uploadMultiple(self, soure_file):
+        self.soure_file = soure_file
+        mutiple_book = MultipleFlipBook()
+        my_test_re = re.compile("\d+")
+        # assert isinstance(self.code, script.DooDlePrjCode.PrjShot)
+        if self.soure_file.suffix in [".png", ".tga", ".jpg", ".exr"]:
+            for folder in self.soure_file.parent.parent.iterdir():
+                self.searchFolder()
+
+    def searchFolder(self, folders: pathlib.Path, mutiple_book: MultipleFlipBook):
+        sequence = []
+        shot = -1
+        for file in folders.iterdir():
+            myinfo = list(map(int, filter(None, self.re_test.findall(file.name))))
+            if (file.suffix in [".png", ".tga", ".jpg", ".exr"]) and myinfo:
+                if shot < 0:
+                    shot = myinfo[-2]
+                else:
+                    if shot != myinfo[-2]: return None
+                sequence.append(myinfo[-1])
+        if sequence:
+            if (max(sequence) - min(sequence)) == (sequence.__len__() + 1):
+                mutiple_book.addShot(shot=shot)
+                mutiple_book.filepath = list(folders.iterdir())
+
     def makeEpisodesFlipBook(self) -> pathlib.Path:
         shots_ = [(int(s[2:-1]), s[-1:]) if s[6:] else (int(s[2:]), "") for s in self.code.getShot()[:]]
-        path = [self.code.queryFlipBookShot(*pp) for pp in shots_]
+        path = [self.code.convertPathToIp(self.code.queryFlipBookShot(*pp)) for pp in shots_]
 
         # 获得服务器路径
-        ftp_path = self.code.getFlipBookPath()
+        ftp_path = self.code.getFlipBookEpsisodesPath()
         # 获得缓存路径
         cache_file = self.pathAndCache(ftp_path)
-        pow = {"MTIzNDU=":"12345"}
-        ftp_sever = f"ftp://{self.doodle_set.projectname}:{pow[self.doodle_set.password]}@{self.doodle_set.ftpip}:21"
-        path_ = [f"{ftp_sever}{p_.as_posix()}" for p_ in path if p_]
+        path_ = []
+        for fb_path in path:
+            if not fb_path:
+                continue
+            path_.append(self.pathAndCache(ftp_path.parent).joinpath(fb_path.name))
+            self.ftp.addFile(DoodlefilePath(self.pathAndCache(ftp_path.parent), fb_path.parent, fb_path.name))
+        self.ftp.setRun("down")
+        self.ftp.run()
+
         cache_file.parent.mkdir(parents=True, exist_ok=True)
         if cache_file.is_file():
             os.remove(cache_file.as_posix())
@@ -573,11 +678,13 @@ class shotMayaFBFile(_FlipBook):
         return cache_file
 
     def subAndUploadFlipBook(self, cache_file: pathlib.Path, trange_file: pathlib.Path):
-        self.ftp.addSynFile([{"Left": cache_file.parent.as_posix(),
-                              "Right": trange_file.parent.as_posix()}])
-        self.ftp.addInclude([cache_file.name])
+        self.ftp.clear()
+        self.ftp.addFile(DoodlefilePath(cache_file.parent, trange_file.parent, cache_file.name))
         self.ftp.setRun("upload")
         self.ftp.run()
+        self.code.filepath = trange_file.as_posix()
+        self.code.version = 0
+        self.code.subEpisodesFlipBook()
 
 
 # </editor-fold>
@@ -598,9 +705,8 @@ class shotMayaExportFile(_ShotFile):
         path = self.code.queryFileName(query_id)
         path = self.code.convertPathToIp(path)
         cache = self.pathAndCache(path)
-        self.ftp.addSynFile([{"Left": cache.parent.as_posix(),
-                              "Right": path.parent.as_posix()}])
-        self.ftp.addInclude([cache.name])
+        self.ftp.addFile(DoodlefilePath(cache.parent, path.parent, cache.name))
+
         self.ftp.setRun("down")
         self.ftp.run()
 
@@ -613,30 +719,28 @@ class shotMayaExportFile(_ShotFile):
                 split_name = value[0].split("/")[0]
                 down_name.append(split_name)
                 filedow[key] = cache.parent.joinpath(split_name)
-        self.ftp.addSynFile([{"Left": cache.parent.as_posix(),
-                              "Right": path.parent.as_posix()}])
-        self.ftp.addInclude(down_name)
+
+        self.ftp.addFile(DoodlefilePath(cache.parent, path.parent, down_name))
+
         self.ftp.setRun("down")
         self.ftp.run()
         pass
 
-    def MY_upload(self, soure_file: pathlib.Path,trange_path: pathlib.Path,cache_path: pathlib.Path):
+    def MY_upload(self, soure_file: pathlib.Path, trange_path: pathlib.Path, cache_path: pathlib.Path):
         # trange_path = self.code.getFilePath()
         # # 获得缓存路径
         # cache_path = self.pathAndCache(trange_path)
 
-        self.ftp.addSynFile([{"Left": cache_path.as_posix(), "Right": trange_path.as_posix()}])
-        include = [self.file_name]
+        self.ftp.addFile(DoodlefilePath(cache_path, trange_path, self.file_name))
         if soure_file.is_file():
             maya_export_info: dict = json.loads(soure_file.read_text(encoding="utf-8"))
             # 添加上传文件名称
             for key, value in maya_export_info.items():
                 path_value__name = pathlib.Path(value[0]).name
-                include.append(path_value__name)
-                maya_export_info[key] = [trange_path.joinpath(path_value__name).as_posix(),value[1]]
+                self.ftp.addFile(DoodlefilePath(cache_path, trange_path, path_value__name))
+                maya_export_info[key] = [trange_path.joinpath(path_value__name).as_posix(), value[1]]
             # 将json重新写入
             soure_file.write_text(json.dumps(maya_export_info, ensure_ascii=False, indent=4, separators=(',', ':')))
-            self.ftp.addInclude(include)
             # 开始提交线程
             self.ftp.setRun("upload")
             self.ftp.run()
@@ -657,9 +761,7 @@ class shotMayaExportFile(_ShotFile):
         self.subInfo()
         # 提交文件到数据库
         self.code.submitInfo()
-        export(soure_file,self.code.version,cache_path,self).start()
-
-
+        export(soure_file, self.code.version, cache_path, self).start()
 
     def subInfo(self):
         super().subInfo()

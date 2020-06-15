@@ -57,7 +57,7 @@ class FreeFileSync(threading.Thread):
         self.program = program
         self.tree = Et.parse(pathlib.Path("tools\\template\\temp.ffs_batch").as_posix())
 
-        self.pair = Et.SubElement(self.tree.findall('./FolderPairs')[0], 'Pair')
+        self.pair = self.tree.findall('./FolderPairs')[0] # Et.SubElement(self.tree.findall('./FolderPairs')[0], 'Pair')
         self.user = user
         self.ip_ = ip_
         self.password = password
@@ -99,9 +99,10 @@ class FreeFileSync(threading.Thread):
 
     def addSynFile(self, syn_file: list):
         for syn in syn_file:
-            l_element = Et.SubElement(self.pair, "Left")
+            pair = Et.SubElement(self.pair, 'Pair')
+            l_element = Et.SubElement(pair, "Left")
             l_element.text = syn['Left']
-            r_element = Et.SubElement(self.pair, "Right")
+            r_element = Et.SubElement(pair, "Right")
             r_element.text = "ftp://{user}@{ip_}:21{path}|pass64={password}".format(user=self.user,
                                                                                     ip_=self.ip_,
                                                                                     path=self.testpath(syn['Right']),
