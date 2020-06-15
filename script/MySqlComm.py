@@ -75,7 +75,7 @@ class commMysql(object):
         com_lur = "mysql+mysqlconnector" \
                   "://{_departmen}:{_password}@" \
                   "192.168.10.213:3306/{_mybd}".format(_departmen="Effects", _password="Effects", _mybd=mybd)
-        self.engine = sqlalchemy.create_engine(com_lur, encoding='utf-8')
+        self.engine = sqlalchemy.create_engine(com_lur, encoding='utf-8',echo=True)
         tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
         self.sessionclass = sqlalchemy.orm.scoped_session(tmp_session)
         # tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)

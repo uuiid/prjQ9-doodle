@@ -1,35 +1,15 @@
-import copy
 import logging
 import pathlib
 import typing
-import cachetools
 
 import sqlalchemy
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
-import script.MySqlComm
 import sqlalchemy.sql
+
+import script.MySqlComm
 import script.convert
-
-
-# # 定义类型检查
-# def Typed(expected_type, cls=None):
-#     if cls is None:
-#         return lambda cls: Typed(expected_type, cls)
-#     super_set = cls.__set__
-#
-#     def __set__(self, instance, value):
-#         if not isinstance(value, expected_type):
-#             raise TypeError('expected ' + str(expected_type))
-#         super_set(self, instance, value)
-#
-#     cls.__set__ = __set__
-#     return cls
-#
-#
-# @Typed(int)
-# class integer():
-#     pass
+import script.ormClass
 
 
 class nameTochinese(script.MySqlComm.Base):
