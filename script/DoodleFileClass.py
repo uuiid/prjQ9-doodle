@@ -595,6 +595,14 @@ class shotMayaFBFile(_FlipBook):
         self.re_test = re.compile("\d+")
 
     def downFlipBook(self, query_path: pathlib.Path):
+        """
+        下载flipbook
+        Args:
+            query_path: 查询路径(带文件名称)
+
+        Returns:
+
+        """
         # 查询数据库获得文件路径
         path = self.code.convertPathToIp(query_path)
         # 获得下载路径
@@ -608,6 +616,11 @@ class shotMayaFBFile(_FlipBook):
         self.ftp.run()
 
     def getEpisodesFlipBook(self) -> pathlib.Path:
+        """
+        获得整集的拍屏
+        Returns:
+
+        """
         # 获得服务器路径
         ftp_path = self.code.getFlipBookEpsisodesPath()
         # 获得缓存路径
@@ -625,31 +638,31 @@ class shotMayaFBFile(_FlipBook):
         else:
             pass
 
-    @contextlib.contextmanager
-    def uploadMultiple(self, soure_file):
-        self.soure_file = soure_file
-        mutiple_book = MultipleFlipBook()
-        my_test_re = re.compile("\d+")
-        # assert isinstance(self.code, script.DooDlePrjCode.PrjShot)
-        if self.soure_file.suffix in [".png", ".tga", ".jpg", ".exr"]:
-            for folder in self.soure_file.parent.parent.iterdir():
-                self.searchFolder()
-
-    def searchFolder(self, folders: pathlib.Path, mutiple_book: MultipleFlipBook):
-        sequence = []
-        shot = -1
-        for file in folders.iterdir():
-            myinfo = list(map(int, filter(None, self.re_test.findall(file.name))))
-            if (file.suffix in [".png", ".tga", ".jpg", ".exr"]) and myinfo:
-                if shot < 0:
-                    shot = myinfo[-2]
-                else:
-                    if shot != myinfo[-2]: return None
-                sequence.append(myinfo[-1])
-        if sequence:
-            if (max(sequence) - min(sequence)) == (sequence.__len__() + 1):
-                mutiple_book.addShot(shot=shot)
-                mutiple_book.filepath = list(folders.iterdir())
+    # @contextlib.contextmanager
+    # def uploadMultiple(self, soure_file):
+    #     self.soure_file = soure_file
+    #     mutiple_book = MultipleFlipBook()
+    #     my_test_re = re.compile("\d+")
+    #     # assert isinstance(self.code, script.DooDlePrjCode.PrjShot)
+    #     if self.soure_file.suffix in [".png", ".tga", ".jpg", ".exr"]:
+    #         for folder in self.soure_file.parent.parent.iterdir():
+    #             self.searchFolder()
+    #
+    # def searchFolder(self, folders: pathlib.Path, mutiple_book: MultipleFlipBook):
+    #     sequence = []
+    #     shot = -1
+    #     for file in folders.iterdir():
+    #         myinfo = list(map(int, filter(None, self.re_test.findall(file.name))))
+    #         if (file.suffix in [".png", ".tga", ".jpg", ".exr"]) and myinfo:
+    #             if shot < 0:
+    #                 shot = myinfo[-2]
+    #             else:
+    #                 if shot != myinfo[-2]: return None
+    #             sequence.append(myinfo[-1])
+    #     if sequence:
+    #         if (max(sequence) - min(sequence)) == (sequence.__len__() + 1):
+    #             mutiple_book.addShot(shot=shot)
+    #             mutiple_book.filepath = list(folders.iterdir())
 
     def makeEpisodesFlipBook(self) -> pathlib.Path:
         shots_ = [(int(s[2:-1]), s[-1:]) if s[6:] else (int(s[2:]), "") for s in self.code.getShot()[:]]
