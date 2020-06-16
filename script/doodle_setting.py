@@ -64,8 +64,7 @@ class Doodlesetting():
         self.getCacheDiskPath(1)
         self.cache_path.mkdir(parents=True, exist_ok=True)
 
-        self.ftpuser = "user"
-        self.password = "MTIzNDU="
+        self.ftpuser = self.projectname + script.convert.isChinese(self.user).easyToEn()
         self.ftpip = "192.168.10.213"
 
     # <editor-fold desc="属性操作">
@@ -107,6 +106,10 @@ class Doodlesetting():
         self._projectname = projectname
 
     # </editor-fold>
+
+    @property
+    def password(self):
+        return script.convert.isChinese(self.user).easyToEn()
 
     def __initSetAttr(self, setDict: dict):
         for key, value in setDict.items():
@@ -202,6 +205,19 @@ class Doodlesetting():
             else:
                 self.cache_path = pathlib.Path(path).joinpath("Doodle_cache")
         logging.info("找到缓存路径 %s", self.cache_path)
+
+    def FTPconnectIsGood(self) -> bool:
+        sql_command = f"""SELECT `user` FROM user"""
+        server_user = script.MySqlComm.selsctCommMysql("myuser","","",sql_command)
+        server_user_ = [s[0] for s in server_user]
+        if self.user in server_user_:
+            return True
+        else:
+            return False
+
+    def FTP_Register(self):
+        sql_command = """INSERT INTO `user` (`user`, password) VALUES ('{}','{}')""".format(self.user,self.password)
+        script.MySqlComm.inserteCommMysql("myuser","","",sql_command)
 
 
 class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):

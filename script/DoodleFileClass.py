@@ -152,8 +152,7 @@ class ftpServer(object):
                  password: str):
         self.user = user
         self.ftpip = ip_
-        mydirt = {"MTIzNDU=": "12345"}
-        self.password = mydirt[password]
+        self.password = password
         self._file_ = []
 
     def run(self):
@@ -179,8 +178,7 @@ class ftpServer(object):
         now__strftime = datetime.datetime.now().strftime("%y_%b_%d_%h_%M_%S")
         with ftputil.FTPHost(self.ftpip, self.user, self.password) as host:
             for file in self._file_:
-                # server_file = "{}/{}".format(self.Right, file)
-                # local_files = "{}/{}".format(self.Left, file)
+
                 host.makedirs(file.server_path.as_posix())
                 if host.path.isfile(file.server_file_str):
                     host.makedirs("{}/{}/{}".format(file.server_path.as_posix(), "backup", now__strftime))
@@ -243,14 +241,14 @@ class _fileclass(object):
         self.syn = Syn.FreeFileSync(doc=self.doodle_set.cache_path,
                                     file_name=uuid.uuid4().__str__().replace("-", ""),
                                     program=self.doodle_set.FreeFileSync,
-                                    user=self.doodle_set.projectname,
+                                    user=self.doodle_set.ftpuser,
                                     ip_=self.doodle_set.ftpip,
                                     password=self.doodle_set.password)
         self.syn.addExclude(["backup"])
 
     def _creteFtpServer(self):
         self.ftp = ftpServer(ip_=self.doodle_set.ftpip,
-                             user=self.doodle_set.projectname,
+                             user=self.doodle_set.ftpuser,
                              password=self.doodle_set.password)
 
     def down(self, query_id: int, down_path: pathlib.Path = ""):

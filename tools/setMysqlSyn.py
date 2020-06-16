@@ -26,9 +26,9 @@ SiTuZhengTianYuanZi_UE4
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-synfile = ["CangShuGe2","ShanLu_UE4","SiTuZhengTianYuanZi_UE4"]
+synfile = ["ShaMo_UE4"]
 LR = ["Left", "Right"]
-ep = 22
+ep = 16
 it = []
 for dep in ["Light", "VFX"]:
     for key in synfile:

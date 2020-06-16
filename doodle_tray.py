@@ -19,7 +19,7 @@ import script.doodleLog
 import script.doodle_setting
 import script.synXml
 import script.DoodleUpdata
-
+import script.DoodleRegister
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     timeSyn = 7200000
@@ -60,6 +60,9 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         updata = menu.addAction('更新')
         updata.triggered.connect(lambda: self.Updata(True))
 
+        register = menu.addAction("注册")
+        register.triggered.connect(self.register)
+
         exit_ = menu.addAction('退出')
         exit_.triggered.connect(self.myexit)
 
@@ -81,7 +84,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
                                        syn_file=self.doodleSet.getsever(),
                                        program=self.doodleSet.FreeFileSync,
                                        file_name='{}-ep-{}'.format(self.doodleSet.department, self.doodleSet.synEp),
-                                       user=self.doodleSet.projectname,
+                                       user=self.doodleSet.ftpuser,
                                        ip_=self.doodleSet.ftpip,
                                        password=self.doodleSet.password,
                                        include=include_).run()
@@ -108,7 +111,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
                                        syn_file=synPath,
                                        program=self.doodleSet.FreeFileSync,
                                        file_name=synUE,
-                                       user=self.doodleSet.projectname,
+                                       user=self.doodleSet.ftpuser,
                                        ip_=self.doodleSet.ftpip,
                                        password=self.doodleSet.password,
                                        include=['\\Engine\\*']).run()
@@ -167,6 +170,8 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
                 subprocess.Popen(str(tmp_path.joinpath(doodle.split("/")[-1])))
                 sys.exit(self)
 
+    def register(self):
+        script.DoodleRegister.Rigister(self.doodleSet).show()
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

@@ -4,15 +4,14 @@ import pyftpdlib.authorizers as ftpauth
 import pyftpdlib.handlers as ftphand
 import pyftpdlib.servers as ftpsevers
 
+import script.MySqlComm
+
 
 def maim():
     authorizer = ftpauth.DummyAuthorizer()
-    # dubuxiaoyao
-    authorizer.add_user("dubuxiaoyao", "12345", "W:\\", perm="elradfmwMT")
-    # changanhuanjie
-    authorizer.add_user("changanhuanjie", "12345", "X:\\", perm="elradfmwMT")
+    addUser(authorizer)
 
-    authorizer.add_anonymous("X:\\")
+    authorizer.add_anonymous("C:\\Users\\teXiao\\doodle\\tools")
 
     handler = ftphand.FTPHandler
     handler.authorizer = authorizer
@@ -29,7 +28,13 @@ def maim():
 
 
 def addUser(authorizer):
-    pass
+    prj = {"dubuxiaoyao":"W:\\","changanhuanjie":"X:\\"}
+    server_user = script.MySqlComm.selsctCommMysql("myuser", "", "", """SELECT `user`,password FROM `user`""")
+    for user, pow in server_user:
+        for key,value in prj.items():
+            authorizer.add_user(f"{key}{pow}",pow,value,perm="elradfmwMT")
+    for key, value in prj.items():
+        authorizer.add_user(f"{key}", "12345", value, perm="elradfmwMT")
 
 
 if __name__ == '__main__':

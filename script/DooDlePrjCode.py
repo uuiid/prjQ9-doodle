@@ -13,7 +13,7 @@ import script.ormClass
 
 
 class nameTochinese(script.MySqlComm.Base):
-    __tablename__ = "nameTochinese"
+    __tablename__ = "nametochinese"
     id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True)
     name: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128), unique=True)
     localname: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128), unique=True)

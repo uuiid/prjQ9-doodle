@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 import subprocess
 import xml.etree.cElementTree as Et
+import base64
 import pathlib
 import shutil
 import logging
@@ -60,7 +61,7 @@ class FreeFileSync(threading.Thread):
         self.pair = self.tree.findall('./FolderPairs')[0] # Et.SubElement(self.tree.findall('./FolderPairs')[0], 'Pair')
         self.user = user
         self.ip_ = ip_
-        self.password = password
+        self.password = base64.b64encode(password.encode("utf-8")).decode("utf-8")
         self.doc_: pathlib.Path = doc
         self.file_name = file_name
 

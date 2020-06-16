@@ -20,7 +20,7 @@ class copyeasily(threading.Thread):
         self.syn = Syn.FreeFileSync(doc=doodle_set.cache_path,
                                     file_name=soure.stem,
                                     program=doodle_set.FreeFileSync,
-                                    user=doodle_set.projectname,
+                                    user=doodle_set.ftpuser,
                                     ip_=doodle_set.ftpip,
                                     password=doodle_set.password)
         self.syn.addExclude(["backup"])

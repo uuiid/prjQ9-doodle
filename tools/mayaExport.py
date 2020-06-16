@@ -4,15 +4,10 @@ import maya.standalone
 
 maya.standalone.initialize(name='python')
 
-import sys
-import os
 import argparse
-
-
 import maya.cmds
 import maya.mel
 import pymel.core
-import tempfile
 import os
 import re
 import json

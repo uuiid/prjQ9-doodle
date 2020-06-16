@@ -23,11 +23,6 @@ def camBakeAim():
             mel.eval('setAttr "{}.displayGateMaskOpacity" 1;'.format(cam.getShape().longName()))
             newCam.setOverscan(1)
             pm.rename(newCam, cam.nodeName())
-            # try:
-            #     newCam.setOverscan(1)
-            # except:
-            #     pass
-            # newCam.setFocalLength(focalLen)
 
             pointCon = pm.pointConstraint(camloa, newCam)
             orientCon = pm.orientConstraint(camloa, newCam)
@@ -50,8 +45,6 @@ def camBakeAim():
 
             pm.delete(pointCon, orientCon, camloa)
         except:
-            print
-            "shi_Bai"
+            print "shi_Bai"
         else:
-            print
-            "cheng_Gong"
+            print "cheng_Gong"
