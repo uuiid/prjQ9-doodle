@@ -9,10 +9,9 @@ import time
 import threading
 import queue
 
-
-from PyQt5 import QtCore
-from PyQt5 import QtWidgets, QtGui
-import qdarkgraystyle
+from PySide2 import QtCore
+from PySide2 import QtWidgets, QtGui
+import qdarkstyle
 import script.DoodleUpdata
 import script.ProjectBrowserGUI
 import script.doodleLog
@@ -20,10 +19,14 @@ import script.doodle_setting
 import script.synXml
 import script.DoodleUpdata
 import script.DoodleRegister
+import script.DoodleUpdata
+import script.DoodleLocalConnection
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     timeSyn = 7200000
     version = 1.100
+    setwin: script.doodle_setting.DoodlesettingGUI = None
+    project_browser: script.ProjectBrowserGUI.ProjectBrowserGUI = None
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
@@ -36,6 +39,10 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.timer.timeout.connect(self.file_syns)
         # self.timer.timeout.connect(lambda: self.Updata(lambda: float(self.doodleSet.version) > self.version))
         self.timer.start(self.timeSyn)
+        # 添加本地线程服务器
+        self.localServer = script.DoodleLocalConnection.DoodleServer(self.doodleSet)
+        self.localServer.start()
+
 
         self.setToolTip(f'文件管理系统-{self.version}')
         menu = QtWidgets.QMenu(parent)
@@ -99,9 +106,12 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         sys.exit()
 
     def setGUI(self):
-        setwin = script.doodle_setting.DoodlesettingGUI()
+        if isinstance(self.setwin, script.doodle_setting.DoodlesettingGUI):
+            self.setwin.show()
+        else:
+            self.setwin = script.doodle_setting.DoodlesettingGUI()
+            self.setwin.show()
         self.ta_log.info('打开了设置')
-        setwin.show()
 
     def UEsync(self):
         if self.doodleSet.department in ['Light', 'VFX', 'modle']:
@@ -122,64 +132,31 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         subprocess.Popen("D:\\Source\\UnrealEngine\\Engine\\Binaries\\Win64\\UE4Editor.exe")
 
     def openProject(self):
-        project_browser = script.ProjectBrowserGUI.ProjectBrowserGUI()
+        if isinstance(self.project_browser, script.ProjectBrowserGUI.ProjectBrowserGUI):
+            self.project_browser.show()
+        else:
+            self.project_browser = script.ProjectBrowserGUI.ProjectBrowserGUI()
+            self.project_browser.show()
         self.ta_log.info('打开了项目管理器')
-        project_browser.show()
 
     def Updata(self, unpdata_=True):
-        doodle = "http://192.168.10.213:8000/dist/doodle.exe"
-        # djv = "http://192.168.10.213:8000/dist/DJV.zip"
-        # ffmpeg = "http://192.168.10.213:8000/dist/ffmpeg.zip"
-        # urls = [doodle, djv, ffmpeg]
-        tmp_path = pathlib.Path(tempfile.gettempdir())
-        if unpdata_:
-            try:
-                if tmp_path.joinpath(doodle.split("/")[-1]).as_posix():
-                    os.remove(tmp_path.as_posix())
-                undata_progress = QtWidgets.QProgressDialog("下载文件", "...", 0, 99, parent=None)
-                undata_progress.setWindowModality(QtCore.Qt.WindowModal)
-                undata_progress.setMinimumDuration(100)
-                undata_progress.forceShow()
-                my_q = queue.Queue()
-                my_th = threading.Thread(
-                    target=script.DoodleUpdata.undataDoodle,
-                    args=(my_q, doodle, tmp_path.joinpath(doodle.split("/")[-1]).as_posix()))
-                my_th.start()
-
-                # dow = script.DoodleUpdata.downloadThread(doodle, tmp_path.joinpath(doodle.split("/")[-1]), 10240)
-                # dow.dowload_proes_signal.connect(self._updata)
-                # dow.start()
-                while True:
-                    try:
-                        i = my_q.get(block=True, timeout=1)
-                        if i > 99: break
-                    except queue.Empty:
-                        break
-                    else:
-                        undata_progress.setValue(i)
-                undata_progress.close()
-                # for i in range(100):
-                #     self.undata_progress.setValue(i)
-                #     time.sleep(0.1)
-                # undata_progress.setWindowFlags(QtCore.Qt.Main)
-                # undata_progress.setValue(dow.jindu)
-            except BaseException as err:
-                logging.error("%s", err)
-            else:
-                time.sleep(10)
-                subprocess.Popen(str(tmp_path.joinpath(doodle.split("/")[-1])))
-                sys.exit(self)
+        script.DoodleUpdata.downloadThread(self.doodleSet).run()
+        sys.exit(self)
 
     def register(self):
         script.DoodleRegister.Rigister(self.doodleSet).show()
+
+    def GUIReinitialize(self):
+        self.project_browser = None
+        self.setwin = None
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     QtWidgets.QApplication.setQuitOnLastWindowClosed(False)
     # w = QtWidgets.QWidget()
-    app.setStyleSheet(qdarkgraystyle.load_stylesheet())
+    app.setStyleSheet(qdarkstyle.load_stylesheet_pyside2())
 
-    tray_icon = SystemTrayIcon(QtGui.QIcon('datas/icon.png'), None)
+    tray_icon = SystemTrayIcon(QtGui.QIcon("datas/icon.png"), None)
     tray_icon.showMessage('文件管理', 'hello')
     tray_icon.show()
 

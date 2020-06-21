@@ -1,6 +1,6 @@
 from unittest import TestCase
 import pytest
-from PyQt5 import QtTest
+from PySide2 import QtTest
 import unittest
 import script.ProjectBrowserGUI
 import script.doodle_setting

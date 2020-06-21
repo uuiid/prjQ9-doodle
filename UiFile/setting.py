@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\setting.ui'
+# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\setting.ui',
+# licensing of 'C:\Users\teXiao\doodle\UiFile\setting.ui' applies.
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# Created: Thu Jun 18 18:37:15 2020
+#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
-
-from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -145,28 +145,28 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.Department.setText(_translate("MainWindow", "部门"))
-        self.DepartmentTest.setItemText(0, _translate("MainWindow", "未记录"))
-        self.DepartmentTest.setItemText(1, _translate("MainWindow", "Executive"))
-        self.DepartmentTest.setItemText(2, _translate("MainWindow", "Light"))
-        self.DepartmentTest.setItemText(3, _translate("MainWindow", "VFX"))
-        self.DepartmentTest.setItemText(4, _translate("MainWindow", "modle"))
-        self.DepartmentTest.setItemText(5, _translate("MainWindow", "rig"))
-        self.DepartmentTest.setItemText(6, _translate("MainWindow", "Anm"))
-        self.DepartmentTest.setItemText(7, _translate("MainWindow", "direct"))
-        self.DepartmentTest.setItemText(8, _translate("MainWindow", "paint"))
-        self.user.setText(_translate("MainWindow", "用户名"))
-        self.syn.setText(_translate("MainWindow", "同步目录"))
-        self.sysTestYing.setText(_translate("MainWindow", "TextLabel"))
-        self.label.setText(_translate("MainWindow", "服务器目录"))
-        self.synSever.setText(_translate("MainWindow", "TextLabel"))
-        self.label_2.setText(_translate("MainWindow", "集数"))
-        self.project.setText(_translate("MainWindow", "project"))
-        self.projectCombo.setItemText(0, _translate("MainWindow", "dubuxiaoyao"))
-        self.projectCombo.setItemText(1, _translate("MainWindow", "changanhuanjie"))
-        self.freeFileSync.setText(_translate("MainWindow", "同步软件安装目录"))
-        self.freeFileSyncButton.setText(_translate("MainWindow", "PushButton"))
-        self.menu.setTitle(_translate("MainWindow", "文件"))
-        self.save.setText(_translate("MainWindow", "保存"))
+        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "MainWindow", None, -1))
+        self.Department.setText(QtWidgets.QApplication.translate("MainWindow", "部门", None, -1))
+        self.DepartmentTest.setItemText(0, QtWidgets.QApplication.translate("MainWindow", "未记录", None, -1))
+        self.DepartmentTest.setItemText(1, QtWidgets.QApplication.translate("MainWindow", "Executive", None, -1))
+        self.DepartmentTest.setItemText(2, QtWidgets.QApplication.translate("MainWindow", "Light", None, -1))
+        self.DepartmentTest.setItemText(3, QtWidgets.QApplication.translate("MainWindow", "VFX", None, -1))
+        self.DepartmentTest.setItemText(4, QtWidgets.QApplication.translate("MainWindow", "modle", None, -1))
+        self.DepartmentTest.setItemText(5, QtWidgets.QApplication.translate("MainWindow", "rig", None, -1))
+        self.DepartmentTest.setItemText(6, QtWidgets.QApplication.translate("MainWindow", "Anm", None, -1))
+        self.DepartmentTest.setItemText(7, QtWidgets.QApplication.translate("MainWindow", "direct", None, -1))
+        self.DepartmentTest.setItemText(8, QtWidgets.QApplication.translate("MainWindow", "paint", None, -1))
+        self.user.setText(QtWidgets.QApplication.translate("MainWindow", "用户名", None, -1))
+        self.syn.setText(QtWidgets.QApplication.translate("MainWindow", "同步目录", None, -1))
+        self.sysTestYing.setText(QtWidgets.QApplication.translate("MainWindow", "TextLabel", None, -1))
+        self.label.setText(QtWidgets.QApplication.translate("MainWindow", "服务器目录", None, -1))
+        self.synSever.setText(QtWidgets.QApplication.translate("MainWindow", "TextLabel", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "集数", None, -1))
+        self.project.setText(QtWidgets.QApplication.translate("MainWindow", "project", None, -1))
+        self.projectCombo.setItemText(0, QtWidgets.QApplication.translate("MainWindow", "dubuxiaoyao", None, -1))
+        self.projectCombo.setItemText(1, QtWidgets.QApplication.translate("MainWindow", "changanhuanjie", None, -1))
+        self.freeFileSync.setText(QtWidgets.QApplication.translate("MainWindow", "同步软件安装目录", None, -1))
+        self.freeFileSyncButton.setText(QtWidgets.QApplication.translate("MainWindow", "PushButton", None, -1))
+        self.menu.setTitle(QtWidgets.QApplication.translate("MainWindow", "文件", None, -1))
+        self.save.setText(QtWidgets.QApplication.translate("MainWindow", "保存", None, -1))
+

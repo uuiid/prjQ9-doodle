@@ -1,7 +1,7 @@
 import sys
 
-import qdarkgraystyle
-from PyQt5 import QtWidgets
+import qdarkstyle
+from PySide2 import QtWidgets
 
 import UiFile.register
 import script.doodle_setting
@@ -36,7 +36,7 @@ class Rigister(QtWidgets.QMainWindow, UiFile.register.Ui_MainWindow):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    app.setStyleSheet(qdarkgraystyle.load_stylesheet())
+    app.setStyleSheet(qdarkstyle.load_stylesheet())
     doodle_set = script.doodle_setting.Doodlesetting()
     w = Rigister(doodle_set)
     w.setWindowTitle("Remer")

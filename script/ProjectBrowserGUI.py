@@ -6,13 +6,12 @@ import sys
 import potplayer
 import pyperclip
 
-from PyQt5 import QtCore
-from PyQt5 import QtGui
-from PyQt5 import QtWidgets
-import qdarkgraystyle
+from PySide2 import QtCore
+from PySide2 import QtGui
+from PySide2 import QtWidgets
+import qdarkstyle
 import UiFile.ProjectBrowser
 import script.DooDlePrjCode
-import script.DoodleFileProcessing
 import script.MayaExportCam
 import script.MySqlComm
 import script.convert
@@ -28,21 +27,26 @@ from script.DoodleFileClass import *
 class _prjColor(object):
     @staticmethod
     def listItemStateError():
-        bush = QtGui.QBrush(QtCore.Qt.red)
+        bush = QtGui.QBrush()
+        bush.setColor(QtCore.Qt.red)
         return bush
 
     @staticmethod
     def listItemStateAmend():
-        bush = QtGui.QBrush(QtCore.Qt.darkYellow)
+        bush = QtGui.QBrush()
+        bush.setColor(QtCore.Qt.darkYellow)
         return bush
 
     @staticmethod
     def listItemStateComplete():
-        bush = QtGui.QBrush(QtCore.Qt.darkGreen)
+        bush = QtGui.QBrush()
+        bush.setColor(QtCore.Qt.darkGreen)
         return bush
 
     def __getattr__(self, item):
-        return QtGui.QBrush(QtCore.Qt.black)
+        bush = QtGui.QBrush()
+        bush.setColor(QtCore.Qt.black)
+        return bush
 
 
 class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
@@ -53,7 +57,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     user: str
 
     def __init__(self, parent=None):
-        super(ProjectBrowserGUI, self).__init__()
+        super(ProjectBrowserGUI, self).__init__(parent)
         # 获取设置
 
         self.setlocale = script.doodle_setting.Doodlesetting()
@@ -311,7 +315,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         except AttributeError as err:
             logging.info("寻找不到属性了 %s", err)
         menu.exec_(point)
-
     # menu.popup(point)
 
     # </editor-fold>
@@ -454,7 +457,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             file_infor = [""]
             if item[1]:
                 file_infor = re.split(r"\|", item[1])
-            table.setItem(index, 1, QtWidgets.QTableWidgetItem(file_infor[-1]))  # 设置概述
+            table.setItem(index, 1, QtWidgets.QTableWidgetItem(text=file_infor[-1]))  # 设置概述
             table.item(index, 1).setToolTip("\n".join(file_infor))
             table.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))
             table.setItem(index, 3, QtWidgets.QTableWidgetItem(item[3]))
@@ -620,8 +623,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         ass_folder, is_ok = QtWidgets.QInputDialog.getText(self, '输入中文名称', "请用中文",
                                                            QtWidgets.QLineEdit.Normal)
         if is_ok:
-            self.ass.convertMy.addLocalName(self.listAss.selectedItems()[0].text(), ass_folder)
-            self.assClassSortClicked(self.ass.sort)
+            is_is = QtWidgets.QMessageBox.warning(self, "请确认", "拼音名称:{}\n中文名:{}".format(
+                                                  self.listAss.selectedItems()[0].text(),ass_folder),
+                                                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if is_is == QtWidgets.QMessageBox.Yes:
+                self.ass.convertMy.addLocalName(self.listAss.selectedItems()[0].text(), ass_folder)
+                self.assClassSortClicked(self.ass.sort)
 
     def addAssTypeFolder(self):
         """添加资产文件夹类型"""
@@ -659,14 +666,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             sub_class.infor = remarks_info
             sub_class.upload(file)
         # 如果是中文名称,需要提交中文相对名称
-        text = self.listAss.selectedItems()[0].text()
-        try:
-            self.ass.convertMy.local_name[text]
-        except KeyError:
-            self.ass.convertMy.addLocalName(self.ass.convertMy.toEn(text), text)
-        else:
-            logging.info("库中已经储存此键值,无需上传中文名称")
-
+        self.andTranslate()
         # 激活点击事件更新列表
         self.assClassTypeClicked(self.listAssType.selectedItems()[0])
 
@@ -723,7 +723,17 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                     cls_file = cls_file(self.ass, self.setlocale)
                     cls_file.infor = remarks_info
                     cls_file.appoint(file)
+        self.andTranslate()
 
+    def andTranslate(self):
+        text = self.listAss.selectedItems()[0].text()
+        self.ass.convertMy.getnameTochinese()
+        try:
+            self.ass.convertMy.local_name[text]
+        except KeyError:
+            self.ass.convertMy.addLocalName(self.ass.convertMy.toEn(text),text)
+        else:
+            logging.info("库中已经储存此键值,无需上传中文名称")
     # </editor-fold>
 
     # <editor-fold desc="各种对于文件的操作">
@@ -941,7 +951,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    app.setStyleSheet(qdarkgraystyle.load_stylesheet())
+    app.setStyleSheet(qdarkstyle.load_stylesheet())
     w = ProjectBrowserGUI()
     w.setWindowTitle("Remer")
     w.show()

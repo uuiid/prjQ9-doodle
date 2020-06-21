@@ -169,7 +169,6 @@ class ftpServer(object):
             for file in self._file_:
                 # 如果没有存在目录就创建
                 self._makeLoaclDir(file.local_path.as_posix())
-
                 if host.path.isfile(file.server_file_str):
                     host.download_if_newer(file.server_file_str, file.loacl_file_str)
 
@@ -178,8 +177,8 @@ class ftpServer(object):
         now__strftime = datetime.datetime.now().strftime("%y_%b_%d_%h_%M_%S")
         with ftputil.FTPHost(self.ftpip, self.user, self.password) as host:
             for file in self._file_:
-
-                host.makedirs(file.server_path.as_posix())
+                if not host.path.isdir(file.server_path.as_posix()):
+                    host.makedirs(file.server_path.as_posix())
                 if host.path.isfile(file.server_file_str):
                     host.makedirs("{}/{}/{}".format(file.server_path.as_posix(), "backup", now__strftime))
                     host.rename(file.server_file_str, "{}/{}/{}/{}".format(file.server_path.as_posix(),
@@ -356,7 +355,7 @@ class _AssFile(_fileclass):
         # 获得文件名称
         self.file_name = self.soure_file.stem
         # 添加服务器路径
-        self.trange_path = soure_file
+        self.trange_path = self.code.convertPathToIp(soure_file)
         # 开始提交
         self.subInfo()
         # 提交文件到数据库

@@ -21,7 +21,7 @@ OutputDir=C:\Users\teXiao\doodle\dist
 OutputBaseFilename=doodle
 Compression=lzma
 SolidCompression=yes
-
+LZMANumBlockThreads=12
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1

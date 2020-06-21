@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui'
+# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui',
+# licensing of 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui' applies.
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# Created: Thu Jun 18 18:37:09 2020
+#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
-
-from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -293,53 +293,43 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.listdepType, self.listfile)
 
     def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.scane.setText(_translate("MainWindow", "场景"))
-        self.character.setText(_translate("MainWindow", "人物"))
-        self.props.setText(_translate("MainWindow", "道具"))
-        self.effects.setText(_translate("MainWindow", "特效"))
-        self.label_2.setText(_translate("MainWindow", "类别"))
-        self.label_4.setText(_translate("MainWindow", "文件"))
-        item = self.listAssFile.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "版本"))
-        item = self.listAssFile.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "概述"))
-        item = self.listAssFile.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "制作人"))
-        item = self.listAssFile.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "后缀"))
-        item = self.listAssFile.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindow", "ID"))
-        self.ass_upload.setText(_translate("MainWindow", "转盘"))
-        self.ass_screenshot.setText(_translate("MainWindow", "截图"))
-        self.label_3.setText(_translate("MainWindow", "预览"))
-        self.ass_player.setText(_translate("MainWindow", "播放"))
-        self.ass_thumbnail.setText(_translate("MainWindow", "TextLabel"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("MainWindow", "资产"))
-        self.episodes.setText(_translate("MainWindow", "集数"))
-        self.shot_shot.setText(_translate("MainWindow", "镜头"))
-        self.department.setText(_translate("MainWindow", "部门"))
-        self.depType.setText(_translate("MainWindow", "类型"))
-        self.file.setText(_translate("MainWindow", "文件"))
-        item = self.listfile.horizontalHeaderItem(0)
-        item.setText(_translate("MainWindow", "版本"))
-        item = self.listfile.horizontalHeaderItem(1)
-        item.setText(_translate("MainWindow", "概述"))
-        item = self.listfile.horizontalHeaderItem(2)
-        item.setText(_translate("MainWindow", "制作人"))
-        item = self.listfile.horizontalHeaderItem(3)
-        item.setText(_translate("MainWindow", "格式"))
-        item = self.listfile.horizontalHeaderItem(4)
-        item.setText(_translate("MainWindow", "ID"))
-        self.shot_upload.setText(_translate("MainWindow", "上传拍屏"))
-        self.shot_screenshots.setToolTip(_translate("MainWindow", "<html><head/><body><p>这个按钮按下时可以截屏</p></body></html>"))
-        self.shot_screenshots.setText(_translate("MainWindow", "截屏"))
-        self.label_6.setText(_translate("MainWindow", "拍屏"))
-        self.shot_player.setText(_translate("MainWindow", "播放"))
-        self.shot_thumbnail.setText(_translate("MainWindow", "TextLabel"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Episodes_shot), _translate("MainWindow", "镜头"))
-        self.caoZhuo.setTitle(_translate("MainWindow", "操作"))
-        self.refresh.setText(_translate("MainWindow", "刷新"))
-        self.close_socket.setText(_translate("MainWindow", "关闭ue4链接"))
-        self.actioncom_video.setText(_translate("MainWindow", "合成整集拍屏"))
+        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "MainWindow", None, -1))
+        self.scane.setText(QtWidgets.QApplication.translate("MainWindow", "场景", None, -1))
+        self.character.setText(QtWidgets.QApplication.translate("MainWindow", "人物", None, -1))
+        self.props.setText(QtWidgets.QApplication.translate("MainWindow", "道具", None, -1))
+        self.effects.setText(QtWidgets.QApplication.translate("MainWindow", "特效", None, -1))
+        self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "类别", None, -1))
+        self.label_4.setText(QtWidgets.QApplication.translate("MainWindow", "文件", None, -1))
+        self.listAssFile.horizontalHeaderItem(0).setText(QtWidgets.QApplication.translate("MainWindow", "版本", None, -1))
+        self.listAssFile.horizontalHeaderItem(1).setText(QtWidgets.QApplication.translate("MainWindow", "概述", None, -1))
+        self.listAssFile.horizontalHeaderItem(2).setText(QtWidgets.QApplication.translate("MainWindow", "制作人", None, -1))
+        self.listAssFile.horizontalHeaderItem(3).setText(QtWidgets.QApplication.translate("MainWindow", "后缀", None, -1))
+        self.listAssFile.horizontalHeaderItem(4).setText(QtWidgets.QApplication.translate("MainWindow", "ID", None, -1))
+        self.ass_upload.setText(QtWidgets.QApplication.translate("MainWindow", "转盘", None, -1))
+        self.ass_screenshot.setText(QtWidgets.QApplication.translate("MainWindow", "截图", None, -1))
+        self.label_3.setText(QtWidgets.QApplication.translate("MainWindow", "预览", None, -1))
+        self.ass_player.setText(QtWidgets.QApplication.translate("MainWindow", "播放", None, -1))
+        self.ass_thumbnail.setText(QtWidgets.QApplication.translate("MainWindow", "TextLabel", None, -1))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), QtWidgets.QApplication.translate("MainWindow", "资产", None, -1))
+        self.episodes.setText(QtWidgets.QApplication.translate("MainWindow", "集数", None, -1))
+        self.shot_shot.setText(QtWidgets.QApplication.translate("MainWindow", "镜头", None, -1))
+        self.department.setText(QtWidgets.QApplication.translate("MainWindow", "部门", None, -1))
+        self.depType.setText(QtWidgets.QApplication.translate("MainWindow", "类型", None, -1))
+        self.file.setText(QtWidgets.QApplication.translate("MainWindow", "文件", None, -1))
+        self.listfile.horizontalHeaderItem(0).setText(QtWidgets.QApplication.translate("MainWindow", "版本", None, -1))
+        self.listfile.horizontalHeaderItem(1).setText(QtWidgets.QApplication.translate("MainWindow", "概述", None, -1))
+        self.listfile.horizontalHeaderItem(2).setText(QtWidgets.QApplication.translate("MainWindow", "制作人", None, -1))
+        self.listfile.horizontalHeaderItem(3).setText(QtWidgets.QApplication.translate("MainWindow", "格式", None, -1))
+        self.listfile.horizontalHeaderItem(4).setText(QtWidgets.QApplication.translate("MainWindow", "ID", None, -1))
+        self.shot_upload.setText(QtWidgets.QApplication.translate("MainWindow", "上传拍屏", None, -1))
+        self.shot_screenshots.setToolTip(QtWidgets.QApplication.translate("MainWindow", "<html><head/><body><p>这个按钮按下时可以截屏</p></body></html>", None, -1))
+        self.shot_screenshots.setText(QtWidgets.QApplication.translate("MainWindow", "截屏", None, -1))
+        self.label_6.setText(QtWidgets.QApplication.translate("MainWindow", "拍屏", None, -1))
+        self.shot_player.setText(QtWidgets.QApplication.translate("MainWindow", "播放", None, -1))
+        self.shot_thumbnail.setText(QtWidgets.QApplication.translate("MainWindow", "TextLabel", None, -1))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Episodes_shot), QtWidgets.QApplication.translate("MainWindow", "镜头", None, -1))
+        self.caoZhuo.setTitle(QtWidgets.QApplication.translate("MainWindow", "操作", None, -1))
+        self.refresh.setText(QtWidgets.QApplication.translate("MainWindow", "刷新", None, -1))
+        self.close_socket.setText(QtWidgets.QApplication.translate("MainWindow", "关闭ue4链接", None, -1))
+        self.actioncom_video.setText(QtWidgets.QApplication.translate("MainWindow", "合成整集拍屏", None, -1))
+

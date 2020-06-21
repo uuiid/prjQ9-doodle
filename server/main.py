@@ -11,7 +11,7 @@ def maim():
     authorizer = ftpauth.DummyAuthorizer()
     addUser(authorizer)
 
-    authorizer.add_anonymous("C:\\Users\\teXiao\\doodle\\tools")
+    authorizer.add_anonymous("C:\\Users\\teXiao\\doodle")
 
     handler = ftphand.FTPHandler
     handler.authorizer = authorizer

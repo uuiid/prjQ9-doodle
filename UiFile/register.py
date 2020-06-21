@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\register.ui'
+# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\register.ui',
+# licensing of 'C:\Users\teXiao\doodle\UiFile\register.ui' applies.
 #
-# Created by: PyQt5 UI code generator 5.12.3
+# Created: Thu Jun 18 18:37:12 2020
+#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
-
-from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -52,8 +52,8 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.user.setText(_translate("MainWindow", "姓名"))
-        self.is_ok.setText(_translate("MainWindow", "确认"))
-        self.cancel.setText(_translate("MainWindow", "取消"))
+        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "MainWindow", None, -1))
+        self.user.setText(QtWidgets.QApplication.translate("MainWindow", "姓名", None, -1))
+        self.is_ok.setText(QtWidgets.QApplication.translate("MainWindow", "确认", None, -1))
+        self.cancel.setText(QtWidgets.QApplication.translate("MainWindow", "取消", None, -1))
+

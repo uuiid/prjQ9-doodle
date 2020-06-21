@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\mainwindow.ui'
+# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\mainwindow.ui',
+# licensing of 'C:\Users\teXiao\doodle\UiFile\mainwindow.ui' applies.
 #
-# Created by: PyQt5 UI code generator 5.13.0
+# Created: Thu Jun 18 18:37:06 2020
+#      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
 
-
-from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PySide2 import QtCore, QtGui, QtWidgets
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -22,8 +22,6 @@ class Ui_MainWindow(object):
         self.centralWidget.setSizePolicy(sizePolicy)
         self.centralWidget.setObjectName("centralWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralWidget)
-        self.verticalLayout.setContentsMargins(11, 11, 11, 11)
-        self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName("verticalLayout")
         self.playlistView = QtWidgets.QListView(self.centralWidget)
         self.playlistView.setAcceptDrops(True)
@@ -35,7 +33,6 @@ class Ui_MainWindow(object):
         self.playlistView.setObjectName("playlistView")
         self.verticalLayout.addWidget(self.playlistView)
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_4.setSpacing(6)
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.currentTimeLabel = QtWidgets.QLabel(self.centralWidget)
         self.currentTimeLabel.setMinimumSize(QtCore.QSize(80, 0))
@@ -53,7 +50,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.addWidget(self.totalTimeLabel)
         self.verticalLayout.addLayout(self.horizontalLayout_4)
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_5.setSpacing(6)
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
         self.previousButton = QtWidgets.QPushButton(self.centralWidget)
         self.previousButton.setText("")
@@ -131,9 +127,9 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Failamp"))
-        self.currentTimeLabel.setText(_translate("MainWindow", "0:00"))
-        self.totalTimeLabel.setText(_translate("MainWindow", "0:00"))
-        self.menuFIle.setTitle(_translate("MainWindow", "FIle"))
-        self.open_file_action.setText(_translate("MainWindow", "Open file..."))
+        MainWindow.setWindowTitle(QtWidgets.QApplication.translate("MainWindow", "Failamp", None, -1))
+        self.currentTimeLabel.setText(QtWidgets.QApplication.translate("MainWindow", "0:00", None, -1))
+        self.totalTimeLabel.setText(QtWidgets.QApplication.translate("MainWindow", "0:00", None, -1))
+        self.menuFIle.setTitle(QtWidgets.QApplication.translate("MainWindow", "FIle", None, -1))
+        self.open_file_action.setText(QtWidgets.QApplication.translate("MainWindow", "Open file...", None, -1))
+

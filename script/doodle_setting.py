@@ -7,7 +7,7 @@ import threading
 
 import psutil
 import sqlalchemy.ext.declarative
-from PyQt5 import QtWidgets
+from PySide2 import QtWidgets
 
 import UiFile.setting
 import script.MySqlComm
@@ -224,7 +224,7 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
 
     def __init__(self, parent=None):
         super(DoodlesettingGUI, self).__init__()
-        QtWidgets.QMainWindow.__init__(self, parent=parent)
+        # QtWidgets.QMainWindow.__init__(self, parent=parent)
         self.setlocale = Doodlesetting()
         self.ta_log_GUI = script.doodleLog.get_logger(__name__ + 'GUI')
 

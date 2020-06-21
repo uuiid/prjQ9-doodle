@@ -45,6 +45,6 @@ def camBakeAim():
 
             pm.delete(pointCon, orientCon, camloa)
         except:
-            print "shi_Bai"
+            print("shi_Bai")
         else:
-            print "cheng_Gong"
+            print("cheng_Gong")
