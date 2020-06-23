@@ -7,9 +7,11 @@ import tools.ue_path
 # <editor-fold desc="表格">
 # it = []
 """
-BiTaoGe_UE4
-WenXinFengFangWu_UE4
-WenXinFengXiaoWu_LWZ
+
+
+
+
+
 
 
 """
@@ -27,9 +29,9 @@ WenXinFengXiaoWu_LWZ
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-synfile = ["JiaTing"]
+synfile = ["BiTaoGe_UE4","BiYunFengDaZhen_UE4","FireMontain_ZX","GeZhuDeDianNei","LongShouFeng_New","XuanYaQiaoBi2"]
 LR = ["Left", "Right"]
-ep = 16
+ep = 28
 it = []
 for dep in ["Light", "VFX"]:
     for key in synfile:

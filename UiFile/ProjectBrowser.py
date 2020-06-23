@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui',
 # licensing of 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui' applies.
 #
-# Created: Thu Jun 18 18:37:09 2020
+# Created: Sun Jun 21 18:48:13 2020
 #      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -272,6 +272,8 @@ class Ui_MainWindow(object):
         self.menubar.setObjectName("menubar")
         self.caoZhuo = QtWidgets.QMenu(self.menubar)
         self.caoZhuo.setObjectName("caoZhuo")
+        self.tool = QtWidgets.QMenu(self.menubar)
+        self.tool.setObjectName("tool")
         MainWindow.setMenuBar(self.menubar)
         self.refresh = QtWidgets.QAction(MainWindow)
         self.refresh.setObjectName("refresh")
@@ -279,10 +281,15 @@ class Ui_MainWindow(object):
         self.close_socket.setObjectName("close_socket")
         self.actioncom_video = QtWidgets.QAction(MainWindow)
         self.actioncom_video.setObjectName("actioncom_video")
+        self.actionclothToFbx = QtWidgets.QAction(MainWindow)
+        self.actionclothToFbx.setObjectName("actionclothToFbx")
         self.caoZhuo.addAction(self.refresh)
+        self.caoZhuo.addSeparator()
         self.caoZhuo.addAction(self.close_socket)
         self.caoZhuo.addAction(self.actioncom_video)
+        self.tool.addAction(self.actionclothToFbx)
         self.menubar.addAction(self.caoZhuo.menuAction())
+        self.menubar.addAction(self.tool.menuAction())
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(1)
@@ -329,7 +336,9 @@ class Ui_MainWindow(object):
         self.shot_thumbnail.setText(QtWidgets.QApplication.translate("MainWindow", "TextLabel", None, -1))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Episodes_shot), QtWidgets.QApplication.translate("MainWindow", "镜头", None, -1))
         self.caoZhuo.setTitle(QtWidgets.QApplication.translate("MainWindow", "操作", None, -1))
+        self.tool.setTitle(QtWidgets.QApplication.translate("MainWindow", "工具", None, -1))
         self.refresh.setText(QtWidgets.QApplication.translate("MainWindow", "刷新", None, -1))
         self.close_socket.setText(QtWidgets.QApplication.translate("MainWindow", "关闭ue4链接", None, -1))
         self.actioncom_video.setText(QtWidgets.QApplication.translate("MainWindow", "合成整集拍屏", None, -1))
+        self.actionclothToFbx.setText(QtWidgets.QApplication.translate("MainWindow", "布料转FBX", None, -1))
 

@@ -1,7 +1,7 @@
 import sys
 import maya.api.OpenMaya as om
 import maya.OpenMayaMPx as OpenMayaMPx
-import Doodle_shelf
+import scripts.Doodle_shelf
 
 #
 # def maya_useNewAPI():
@@ -37,7 +37,7 @@ def initializePlugin(plugin):
             PyHelloWorldCmd.kPluginCmdName, PyHelloWorldCmd.cmdCreator
         )
         dle_plugin_ui.registerUI(
-            Doodle_shelf.DoodleUIManage.creation, Doodle_shelf.DoodleUIManage.deleteSelf
+            scripts.Doodle_shelf.DoodleUIManage.creation, scripts.Doodle_shelf.DoodleUIManage.deleteSelf
         )
     except:
         sys.stderr.write(

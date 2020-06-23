@@ -41,6 +41,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         self.timer.start(self.timeSyn)
         # 添加本地线程服务器
         self.localServer = script.DoodleLocalConnection.DoodleServer(self.doodleSet)
+        self.localServer.setDaemon(True)
         self.localServer.start()
 
 
@@ -53,6 +54,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         project = menu.addAction('项目管理器')
         project.triggered.connect(self.openProject)
 
+        # <editor-fold desc="动作">
         UEmenu = menu.addMenu('UE动作')
 
         UE_open = UEmenu.addAction('打开UE')
@@ -60,6 +62,11 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
 
         UE_sync = UEmenu.addAction('同步UE')
         UE_sync.triggered.connect(self.UEsync)
+        # </editor-fold>
+
+        install_plug:QtWidgets.QMenu = menu.addMenu("安装插件")
+        install_maya:QtWidgets.QAction = install_plug.addAction("安装maya插件")
+        install_maya.triggered.connect(self.installMaya)
 
         setmenu = menu.addAction('设置')
         setmenu.triggered.connect(self.setGUI)
@@ -149,6 +156,16 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     def GUIReinitialize(self):
         self.project_browser = None
         self.setwin = None
+
+    def installMaya(self):
+        mode = "+ doodle_main.py 1.1 {_path_}\n" \
+               "MYMODULE_LOCATION:= {_path_}\n" \
+               "PATH+:= {_path_}/scripts;{_path_}/plug-ins\n" \
+               "PYTHONPATH+:= {_path_}/scripts".format(_path_="C:/Program Files/doodle/tools/maya_plug")
+        maya_plug_path = self.doodleSet.doc.parent.joinpath("maya","modules")
+        if not maya_plug_path.is_dir():
+            maya_plug_path.mkdir(parents=True, exist_ok=True)
+        maya_plug_path.joinpath("Doodle.mod").write_text(mode)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

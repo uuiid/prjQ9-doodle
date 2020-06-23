@@ -148,6 +148,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.close_socket.triggered.connect(self.closesocket)
         # 合成拍屏
         self.actioncom_video.triggered.connect(self.comEpsVideo)
+        # 转换布料
+        self.actionclothToFbx.triggered.connect(self.convertCloth)
 
         # <editor-fold desc="添加上下文菜单">
         # 添加集数上下文菜单
@@ -260,7 +262,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             copy_path_to_clip = menu.addAction('复制路径')
             copy_path_to_clip.triggered.connect(self.copyPathToClipboard)
             # 导出Fbx和abc选项
-            export_maya = menu.addAction("导出")
+            export_maya = menu.addAction("导出maya相机")
             export_maya.triggered.connect(self.exportMaya)
             import_ue = menu.addAction("导入ue")
             import_ue.triggered.connect(self.importUe)
@@ -946,6 +948,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             logging.info("关闭链接失败")
         else:
             logging.info("成功关闭链接")
+
+    def convertCloth(self):
+        shotMayaClothExportFile(self.shot,self.setlocale).down(self.shot.query_id)
     # </editor-fold>
 
 

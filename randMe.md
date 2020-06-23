@@ -15,3 +15,6 @@ build_ext --inplace
 setup(name="test", ext_modules=cythonize('temp/test.pyx', annotate=True),)
 python setup.py build
 "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" anzhuang.iss
+
+
+

@@ -491,10 +491,18 @@
      <string>操作</string>
     </property>
     <addaction name="refresh"/>
+    <addaction name="separator"/>
     <addaction name="close_socket"/>
     <addaction name="actioncom_video"/>
    </widget>
+   <widget class="QMenu" name="tool">
+    <property name="title">
+     <string>工具</string>
+    </property>
+    <addaction name="actionclothToFbx"/>
+   </widget>
    <addaction name="caoZhuo"/>
+   <addaction name="tool"/>
   </widget>
   <action name="refresh">
    <property name="text">
@@ -509,6 +517,11 @@
   <action name="actioncom_video">
    <property name="text">
     <string>合成整集拍屏</string>
+   </property>
+  </action>
+  <action name="actionclothToFbx">
+   <property name="text">
+    <string>布料转FBX</string>
    </property>
   </action>
  </widget>

@@ -9,6 +9,7 @@ import re
 import shutil
 import tempfile
 import threading
+import subprocess
 
 import ftputil
 import typing
@@ -180,7 +181,9 @@ class ftpServer(object):
                 if not host.path.isdir(file.server_path.as_posix()):
                     host.makedirs(file.server_path.as_posix())
                 if host.path.isfile(file.server_file_str):
-                    host.makedirs("{}/{}/{}".format(file.server_path.as_posix(), "backup", now__strftime))
+                    tmp_floder = "{}/{}/{}".format(file.server_path.as_posix(), "backup", now__strftime)
+                    if not host.path.isdir(tmp_floder):
+                        host.makedirs(tmp_floder)
                     host.rename(file.server_file_str, "{}/{}/{}/{}".format(file.server_path.as_posix(),
                                                                            "backup", now__strftime,
                                                                            file.file_name))
@@ -776,6 +779,75 @@ class shotMayaExportFile(_ShotFile):
     def subInfo(self):
         super().subInfo()
         self.code.Type = "export"
+
+
+class shotMayaClothExportFile(_ShotFile):
+
+    def upload(self, soure_file: typing.List[pathlib.Path]):
+        self.soure_file = soure_file[-1]
+        self.file_name = soure_file[-1].name
+        trange_path = self.code.getFilePath("export_clothToFbx")
+        # 获得版本
+        self.version_max = self.code.getMaxVersion() + 1
+        # 添加多个文件路径
+        for path in soure_file:
+            self.ftp.addFile(DoodlefilePath(path.parent, trange_path, path.name))
+
+        # 添加服务器路径
+        self.trange_path = trange_path.joinpath(self.file_name)
+        # 提交文件到数据库
+        self.subInfo()
+        self.code.submitInfo()
+        # 开始提交线程
+        self.ftp.setRun("upload")
+        self.ftp.run()
+
+    def down(self, query_id: int, down_path: pathlib.Path = ""):
+        # 获得服务器路径
+        path = self.code.convertPathToIp(self.code.queryFileName(query_id))
+        # 添加下载路径
+        down_path = self.pathAndCache(path.parent)
+        # 添加文件
+        file_tmp = DoodlefilePath(down_path.as_posix(), path.parent, path.name)
+
+        self.ftp.addFile(file_tmp)
+        self.ftp.setRun("down")
+        # 开始线程
+        self.ftp.run()
+
+        # 开始其他文件的下载和读取
+        self.ftp.clear()
+        data = down_path.joinpath(path.name).read_text(encoding="utf-8")
+        data = json.loads(data)
+        for d_ in data:
+            Ifbx_path = pathlib.Path(d_["Ifbx_filepath"])
+            Iabc_path = pathlib.Path(d_["Iabc_filepath"])
+            self.ftp.addFile(DoodlefilePath(down_path.as_posix(), path.parent, Ifbx_path.name))
+            self.ftp.addFile(DoodlefilePath(down_path.as_posix(), path.parent, Iabc_path.name))
+        self.ftp.setRun("down")
+        # 开始线程
+        self.ftp.run()
+
+        for d_ in data:
+            self.convertCloth(d_["Command"])
+        try:
+            os.startfile(str(down_path))
+        except:
+            logging.info("无法打开文件位置")
+
+    @staticmethod
+    def convertCloth(comm: list):
+        comm[0] = "tools\\dem_bones\\" + comm[0]
+        subprocess.Popen(comm[:1] + list(map(lambda x, y: "=".join([str(x), str(y)]), comm[1::2], comm[2::2])),
+                         start_new_session=True)
+        # p = subprocess.Popen(comm[:1] + list(map(lambda x,y:"=".join([str(x),str(y)]), comm[1::2],comm[2::2])),
+        #                      stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+        # while True:
+        #     i = p.stdout.readline()
+        #     if i:
+        #         logging.info(i)
+        #     elif p.poll() is not None:
+        #         break
 
 
 class shotScreenshot(_Screenshot):

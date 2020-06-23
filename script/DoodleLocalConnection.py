@@ -3,11 +3,13 @@ import pathlib
 import pickle
 import threading
 import traceback
+import json
 from multiprocessing import connection as Conn
 
 import script.DooDlePrjCode
 import script.convert
 import script.DoodleDictToObject as DleDict
+import script.DoodleFileClass as DleFile
 
 
 class DoodleServer(threading.Thread):
@@ -39,7 +41,6 @@ class DoodleServer(threading.Thread):
             try:
                 recv_bytes = self.client.recv_bytes()
                 if recv_bytes == b"close":
-                    self.client.close()
                     logging.info("客户端连接主动断开")
                     break
                 data = pickle.loads(recv_bytes)
@@ -47,6 +48,7 @@ class DoodleServer(threading.Thread):
                 getattr(self, data.url)(data)
             except EOFError:
                 logging.error(traceback.print_exc())
+                self.client.close()
                 break
 
     def send_To(self, data):
@@ -60,6 +62,28 @@ class DoodleServer(threading.Thread):
 
     def getPath(self, data):
         core = getattr(self, data.core)
+        self._setBaseCoreAttr(data, core)
+        path: pathlib.Path = core.getFilePath(data.folder_type)
+        self.send_To(path.as_posix())
+
+    def subInfo(self, data):
+        core = getattr(self, data.core)
+        self._setBaseCoreAttr(data.info, core)
+        assert isinstance(core, script.DooDlePrjCode.PrjShot)
+        # 创建maya布料上传函数
+        file = DleFile.shotMayaClothExportFile(core, self.doodle_set)
+        # 转换需要上传路径
+        data.info.filepath = [pathlib.Path(_path) for _path in data.info.filepath[:]]
+        # 写出决策文件
+        cloth_export = pathlib.Path(data.info.filepath[0]).parent.joinpath("Doodle_Cloth_export.json")
+        cloth_export.write_text(json.dumps([dem.__dict__ for dem in data._data_],
+                                           ensure_ascii=False, indent=4, separators=(',', ':')))
+        # 将决策文件同时上传
+        data.info.filepath.append(cloth_export)
+        file.upload(data.info.filepath)
+
+
+    def _setBaseCoreAttr(self, data, core):
         if isinstance(core, script.DooDlePrjCode.PrjAss):
             try:
                 pass
@@ -74,8 +98,3 @@ class DoodleServer(threading.Thread):
                 core.Type = data.Type
             except KeyError:
                 logging.error("传入字典无法解析 %s", traceback.print_exc())
-        path: pathlib.Path = core.getFilePath(data.folder_type)
-        self.send_To(path.as_posix())
-
-    def subInfo(self,data):
-        pass
