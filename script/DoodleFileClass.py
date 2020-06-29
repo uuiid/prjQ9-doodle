@@ -880,7 +880,7 @@ def doodleFileFactory(core, suffix):
             cls = assUePrj
         elif suffix in [".mb", ".ma"]:
             cls = assMayaFile
-        elif suffix in ['.png', '.tga', 'jpg']:
+        elif suffix in ['.png', '.tga', '.jpg']:
             cls = assMapping
         elif suffix in ["FB"]:
             cls = assFBFile

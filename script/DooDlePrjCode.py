@@ -9,7 +9,7 @@ import sqlalchemy.sql
 
 import script.MySqlComm
 import script.convert
-import script.ormClass
+
 
 
 class nameTochinese(script.MySqlComm.Base):

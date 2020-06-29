@@ -55,10 +55,10 @@ def getoutFileName(outtype,older):
         if filepath[1] != "":
             if filepath[2] != "":
                 if filepath[3] != "":
-                    tfilepath = os.path.join("W:/03_Workflow/", filepath[0] + "s", filepath[1].split('-')[0],filepath[1].split('-')[1], "Scenefiles", filepath[2], filepath[3])
+                    tfilepath = os.path.join("W:/03_Workflow/", filepath[0] + "s", filepath[1],filepath[2], "Scenefiles", filepath[3], filepath[4])
                     tfilepath = mkdir(tfilepath)
 
-                    exname = tfilepath + "/" + filepath[0] + "_" +filepath[1] + "_" + filepath[2] + "_" + filepath[3] + "_" + filepath[4] \
+                    exname = tfilepath + "/" + filepath[0] + "_" + filepath[1] + "_" + filepath[2] + "_" + filepath[3] + "_" + filepath[4] \
                         + "_" + "export-" + older_B + "_" + namesp + "_" + "." + str(start) + "-" + str(end) + "." + outtype
     return [os.path.abspath(exname),start,end]
 

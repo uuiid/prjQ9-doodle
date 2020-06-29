@@ -95,7 +95,7 @@ def comMp4(video_path: pathlib.Path, paths: list):
     """
     for i in *.png; do echo "file '$i'" >> files.txt; echo "file_packet_metadata url=$i" >> files.txt; done
 
-    ffmpeg -r 25 -f concat -safe 0 -i files.txt -filter_complex "drawtext=text='%{metadata\:url}':
+    ffmpeg -r 25 -f concat -safe 0 -i files.txt -filter_complex "drawtext=text='%{metadata:url}':
     fontcolor=0x808080: fontsize=34: x=w-tw- 10:y=h-th-10" -r 12 -c:v libx264 filename.mp4
 
     Args:

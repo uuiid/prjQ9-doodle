@@ -24,7 +24,7 @@ class commMysql(object):
         com_lur = "mysql+mysqlconnector" \
                   "://{_departmen}:{_password}@" \
                   "192.168.10.213:3306/{_mybd}".format(_departmen="Effects", _password="Effects", _mybd=mybd)
-        self.engine = sqlalchemy.create_engine(com_lur, encoding='utf-8', echo=True)
+        self.engine = sqlalchemy.create_engine(com_lur, encoding='utf-8')  # , echo=True
         tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
         self.sessionclass = sqlalchemy.orm.scoped_session(tmp_session)
         # tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
@@ -35,8 +35,8 @@ class commMysql(object):
 
     @contextlib.contextmanager
     def session(self) -> sqlalchemy.orm.session.Session:
-        tmp_session = sqlalchemy.orm.sessionmaker(bind=self.engine)
-        session: sqlalchemy.orm.session.Session = self.sessionclass()
+        # tmp_session = # self.sessionclass()
+        session: sqlalchemy.orm.session.Session = sqlalchemy.orm.sessionmaker(bind=self.engine)()
         try:
             yield session
             session.commit()
@@ -45,7 +45,6 @@ class commMysql(object):
             session.rollback()
         finally:
             session.close()
-            self.sessionclass().close()
 
     @contextlib.contextmanager
     def sessionOne(self) -> sqlalchemy.orm.session.Session:
@@ -60,4 +59,3 @@ class commMysql(object):
             session.rollback()
         finally:
             pass
-            session.close()

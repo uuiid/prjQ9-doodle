@@ -262,10 +262,13 @@
               <property name="text">
                <string>集数</string>
               </property>
+              <property name="buddy">
+               <cstring>listepisodes</cstring>
+              </property>
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listepisodes"/>
+             <widget class="EpisodesListWidget" name="listepisodes"/>
             </item>
            </layout>
           </item>
@@ -525,6 +528,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>EpisodesListWidget</class>
+   <extends>QListWidget</extends>
+   <header location="global">DoodleServer/episodeslistwidget.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>listepisodes</tabstop>
   <tabstop>listshot</tabstop>
