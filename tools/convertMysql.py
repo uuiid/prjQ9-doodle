@@ -19,7 +19,7 @@ class convert(object):
         self.file_type = {}
         self.ass_name = {}
 
-        self.tmp =[]
+        self.tmp = []
 
     def convert(self):
         ass = ["character", "effects", "scane", "props"]
@@ -36,13 +36,10 @@ class convert(object):
             with self.sql.engine.connect() as connect:
                 assert isinstance(connect, sqlalchemy.engine.Connection)
                 ass_s = connect.execute(sqlcom).fetchall()
-            for file_type in {_ass_[1] for _ass_ in ass_s}:
-                self.file_type[file_type] = fileType(file_type=file_type)
-                self.file_type[file_type].file_class = self.file_class[__a]
 
             for ass_name in {_ass_[0] for _ass_ in ass_s}:
                 self.ass_name[ass_name] = assClass(file_name=ass_name)
-                self.ass_name[ass_name].file_class= self.file_class[__a]
+                self.ass_name[ass_name].file_class = self.file_class[__a]
                 try:
                     zn_name = name_to_zhcn[ass_name]
                 except KeyError:
@@ -50,6 +47,13 @@ class convert(object):
                     # print("没有这个中文")
                 else:
                     self.ass_name[ass_name].nameZNCH = ZNch(localname=zn_name)
+
+            # for file_type in {_ass_[1] for _ass_ in ass_s}:
+
+            for f_cls, f_type in {(_ass_[0], _ass_[1]) for _ass_ in ass_s}:
+                self.file_type[f"{f_cls}_{f_type}"] = fileType(file_type=f_type)
+                self.file_type[f"{f_cls}_{f_type}"].file_class = self.file_class[__a]
+                self.file_type[f"{f_cls}_{f_type}"].ass_class = self.ass_name[f_cls]
 
             for _ass_s_ in ass_s:
                 kwargs = {"file": _ass_s_[2], "fileSuffixes": _ass_s_[3], "user": _ass_s_[4], "version": _ass_s_[5],
@@ -68,7 +72,7 @@ class convert(object):
 
                 if ass_file:
                     ass_file.file_class = self.file_class[__a]
-                    ass_file.file_type = self.file_type[_ass_s_[1]]
+                    ass_file.file_type = self.file_type[f"{_ass_s_[0]}_{_ass_s_[1]}"]
                     ass_file.ass_class = self.ass_name[_ass_s_[0]]
                     self.tmp.append(ass_file)
 
@@ -102,7 +106,7 @@ class convert(object):
             self.eps[ep].addShot.append(self.shots[f"{my_shot[0]}_{my_shot[1]}"])
             for my_shot_2 in {s[2] for s in shots}:
                 self.file_class[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}"] = fileClass(file_class=my_shot_2)
-                for my_shot_3 in { s[3] for s in shots}:
+                for my_shot_3 in {s[3] for s in shots}:
                     self.file_type[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}_{my_shot_3}"] = fileType(file_type=my_shot_3)
                     self.file_class[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}"].addfileType.append(
                         self.file_type[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}_{my_shot_3}"])
@@ -131,20 +135,19 @@ class convert(object):
                 tmp_orm.file_type = self.file_type[f"{shot_[0]}_{shot_[1]}_{shot_[2]}_{shot_[3]}"]
 
             else:
-                print(shot_[2],shot_[3])
+                print(shot_[2], shot_[3])
 
     def subass(self):
         with self.sql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            for key,name in self.file_class.items():
+            for key, name in self.file_class.items():
                 session.add(name)
 
     def subeps(self):
         with self.sql.session() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            for key,ep in self.eps.items():
+            for key, ep in self.eps.items():
                 session.add(ep)
-
 
 
 def run():

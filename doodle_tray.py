@@ -140,6 +140,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
 
     def openProject(self):
         if isinstance(self.project_browser, script.ProjectBrowserGUI.ProjectBrowserGUI):
+            self.project_browser = script.ProjectBrowserGUI.ProjectBrowserGUI()
             self.project_browser.show()
         else:
             self.project_browser = script.ProjectBrowserGUI.ProjectBrowserGUI()

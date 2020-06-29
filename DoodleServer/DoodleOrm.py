@@ -317,10 +317,13 @@ class fileType(DoleSql.Base):
     id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True, nullable=False, autoincrement=True, unique=True)
     file_type: str = sqlalchemy.Column(sqlalchemy.VARCHAR(64))
 
-    # 添加类型反射
+    # 添加类型反射和约束
     __file_class__: int = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-
     file_class: typing.List = sqlalchemy.orm.relationship("fileClass", back_populates="addfileType")
+
+    # 添加资产名称反射和约束
+    __ass_class__: int = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("assclass.id"))
+    ass_class: typing.List = sqlalchemy.orm.relationship("assClass", back_populates="addfileType")
 
     # 添加资产ue场景反射
     addassUEScane = sqlalchemy.orm.relationship("assUEScane", back_populates="file_type",
@@ -368,6 +371,9 @@ class assClass(DoleSql.Base):
     # 添加资产类型反射
     __file_class__: int = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
     file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addass_class")
+
+    # 添加fileType反射
+    addfileType = sqlalchemy.orm.relationship("fileType", back_populates="ass_class")
 
     # 添加中文
     nameZNCH = sqlalchemy.orm.relationship("ZNch", uselist=False, back_populates="ass_class")

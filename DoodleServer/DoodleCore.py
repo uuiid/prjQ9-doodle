@@ -31,6 +31,9 @@ class PrjCore(object):
     def queryMaxVersion(self, base_class: DoleSql.Base) -> int:
         pass
 
+    def queryFile(self, base_class: DoleSql.Base) -> typing.List[DoleSql.Base]:
+        pass
+
     def subClass(self, base_class: DoleSql.Base):
         with self.comsql.sessionOne() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
@@ -55,6 +58,11 @@ class PrjShot(PrjCore):
     shotab: str
     file_class: str
     file_type: str
+
+    eps_obj:Episodes
+    shot_obj:Shot
+    file_class_obj:fileClass
+    file_type_obj:fileType
 
     def queryEps(self) -> typing.List[str]:
         """
@@ -171,7 +179,12 @@ class PrjShot(PrjCore):
 
 class PrjAss(PrjCore):
     file_class: str
+    ass_name:str
     file_type: str
+
+    file_class_obj: fileClass
+    ass_name_obj: assClass
+    file_type_obj: fileType
 
     def queryAssClass(self):
         with self.comsql.sessionOne() as session:
@@ -181,19 +194,48 @@ class PrjAss(PrjCore):
                 .filter(fileClass.__shot__.is_(None)).all()
         return [d[0] for d in data]
 
-    def queryAssType(self):
+    def queryAssname(self):
         with self.comsql.sessionOne() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            datasub = session.query(fileClass.file_class)\
-                .filter(fileClass.__shot__.is_(None))\
-                .subquery()
             data = session.query(assClass.file_name) \
                 .order_by(assClass.file_class) \
-                .join(datasub)\
+                .join(fileClass)\
                 .filter(fileClass.file_class == self.file_class)\
                 .all()
         return [d[0] for d in data]
 
+    def queryAssType(self):
+        with self.comsql.sessionOne() as session:
+            assert isinstance(session, sqlalchemy.orm.session.Session)
+            data = session.query(fileType.file_type) \
+                .join(assClass)\
+                .filter(assClass.file_name == self.ass_name) \
+                .all()
+        return [d[0] for d in data]
+
+    def queryFile(self, base_class: DoleSql.Base) -> typing.List[DoleSql.Base]:
+        with self.comsql.sessionOne() as session:
+            assert isinstance(session, sqlalchemy.orm.session.Session)
+            data = session.query(base_class)\
+                .join(assClass,fileType) \
+                .filter(assClass.file_name == self.ass_name) \
+                .filter(fileType.file_type == self.file_type) \
+                .all()
+        return data
+
+    def queryMaxVersion(self, base_class: DoleSql.Base) -> int:
+        with self.comsql.sessionOne() as session:
+            assert isinstance(session, sqlalchemy.orm.session.Session)
+            data = session.query(base_class.version)\
+                .join(assClass,fileType) \
+                .filter(assClass.file_name == self.ass_name) \
+                .filter(fileType.file_type == self.file_type) \
+                .order_by(base_class.version).one()
+        if data:
+            data = data[0]
+        else:
+            data = 0
+        return data
 
 class DoodleServer(threading.Thread):
     server = None

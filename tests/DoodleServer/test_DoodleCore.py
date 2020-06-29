@@ -112,9 +112,25 @@ def test_comm_name(prjshot_setup):
 
 
 def test_query_ass_class(prjAss_setup):
-    print(prjAss_setup.queryAssClass())
+    prjAss_setup.file_class = "character"
+    print(prjAss_setup.queryAssname())
 
 
 def test_query_ass_type(prjAss_setup):
     prjAss_setup.file_class = "character"
+    prjAss_setup.ass_name = "XueMang"
     print(prjAss_setup.queryAssType())
+
+
+def test_Ass_query_file(prjAss_setup):
+    prjAss_setup.file_class = "character"
+    prjAss_setup.ass_name = "XueMang"
+    prjAss_setup.file_type = "rig"
+    print(prjAss_setup.queryFile(DoleOrm.assMayaRigModel)[0].filepath)
+
+
+def test_query_Ass_max_version(prjAss_setup):
+    prjAss_setup.file_class = "character"
+    prjAss_setup.ass_name = "XueMang"
+    prjAss_setup.file_type = "rig"
+    print(prjAss_setup.queryMaxVersion(DoleOrm.assMayaRigModel))

@@ -459,7 +459,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             file_infor = [""]
             if item[1]:
                 file_infor = re.split(r"\|", item[1])
-            table.setItem(index, 1, QtWidgets.QTableWidgetItem(text=file_infor[-1]))  # 设置概述
+            table.setItem(index, 1, QtWidgets.QTableWidgetItem(file_infor[-1]))  # 设置概述
             table.item(index, 1).setToolTip("\n".join(file_infor))
             table.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))
             table.setItem(index, 3, QtWidgets.QTableWidgetItem(item[3]))
