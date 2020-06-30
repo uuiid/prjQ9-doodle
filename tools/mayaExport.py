@@ -101,7 +101,11 @@ for export in exports:
 
     maya.cmds.bakeResults(simulation=True, t=(start, end), hierarchy="below", sampleBy=1, disableImplicitControl=True,
                           preserveOutsideKeys=False, sparseAnimCurveBake=False)
+    maya.mel.eval("FBXExportBakeComplexStart -v {}".format(start))
+    maya.mel.eval("FBXExportBakeComplexEnd -v {}".format(end))
     maya.mel.eval("FBXExportBakeComplexAnimation -v true")
+    maya.mel.eval("FBXExportSmoothingGroups -v true")
+    maya.mel.eval("FBXExportConstraints -v true")
     maya.mel.eval('FBXExport -f "{}" -s'.format(mel_name))
 
     log.addfile(split___, mel_name, args.version)
@@ -115,6 +119,8 @@ for camer in cameras:
     for test in filter(None, camer.split("|")):
         if re.findall(exclude, test):
             ex = False
+        if not re.findall("_",test):
+            ex = False
 
     if ex == True:
         exportCamera = maya.cmds.listRelatives(camer, parent=True, fullPath=True)[0]
@@ -125,7 +131,11 @@ for camer in cameras:
             camBakeAim()
         mel_name = "{path}/{name}_camera_{start}-{end}.fbx".format(path=args.exportpath, name=args.name, start=int(start),
                                                                    end=int(end))
-        maya.cmds.FBXExport("-file", mel_name, "-s")
+        maya.mel.eval("FBXExportBakeComplexStart -v {}".format(start))
+        maya.mel.eval("FBXExportBakeComplexEnd -v {}".format(end))
+        maya.mel.eval("FBXExportBakeComplexAnimation -v true")
+        maya.mel.eval("FBXExportConstraints -v true")
+        maya.mel.eval('FBXExport -f "{}" -s'.format(mel_name))
         log.addfile("camera", mel_name, args.version)
 
 with open(myfile, "w") as f:
