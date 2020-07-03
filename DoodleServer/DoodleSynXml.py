@@ -6,7 +6,7 @@ import pathlib
 import shutil
 import logging
 import threading
-
+import DoodleServer
 
 def indent(elem, level=0):
     i = "\n" + level * "\t"
@@ -55,10 +55,14 @@ class FreeFileSync(threading.Thread):
         """
         super().__init__()
 
-        self.program = program
-        self.tree = Et.parse(pathlib.Path("tools\\template\\temp.ffs_batch").as_posix())
+        self.doodle_root = DoodleServer.GETDOODLEROOT(pathlib.Path().absolute())
+        template = self.doodle_root.joinpath("tools", "template", "temp.ffs_batch")
 
-        self.pair = self.tree.findall('./FolderPairs')[0] # Et.SubElement(self.tree.findall('./FolderPairs')[0], 'Pair')
+        self.program = program
+        self.tree = Et.parse(template)
+
+        self.pair = self.tree.findall('./FolderPairs')[
+            0]  # Et.SubElement(self.tree.findall('./FolderPairs')[0], 'Pair')
         self.user = user
         self.ip_ = ip_
         self.password = base64.b64encode(password.encode("utf-8")).decode("utf-8")
@@ -169,13 +173,14 @@ class FreeFileSync(threading.Thread):
 
     def __copyGlob(self):
         self.golb_setting = self.doc_.joinpath("golb_setting")
-        shutil.copy2("tools\\template\\_GlobalSettings.xml", self.golb_setting.as_posix())
+        _global_syn_sttings = self.doodle_root.joinpath("tools", "template", "_GlobalSettings.xml")
+        shutil.copy2(_global_syn_sttings, self.golb_setting.as_posix())
 
     @staticmethod
     def testpath(path: str):
         path = pathlib.Path(path)
         if path.drive:
-            if path.drive.__len__() ==2:
+            if path.drive.__len__() == 2:
                 return path.as_posix()[2:]
             else:
                 strlen = path.as_posix().split("/")[2].__len__() + 2

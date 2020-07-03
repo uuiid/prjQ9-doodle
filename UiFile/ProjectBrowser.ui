@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1309</width>
-    <height>725</height>
+    <height>698</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -532,7 +532,7 @@
   <customwidget>
    <class>EpisodesListWidget</class>
    <extends>QListWidget</extends>
-   <header location="global">DoodleServer/episodeslistwidget.h</header>
+   <header>script.DoodlePrjUI.episodeslistwidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

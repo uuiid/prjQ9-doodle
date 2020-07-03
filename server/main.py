@@ -4,7 +4,7 @@ import pyftpdlib.authorizers as ftpauth
 import pyftpdlib.handlers as ftphand
 import pyftpdlib.servers as ftpsevers
 
-import script.MySqlComm
+import DoodleServer.DoodleSql as DoleSql
 
 
 def maim():
@@ -29,7 +29,9 @@ def maim():
 
 def addUser(authorizer):
     prj = {"dubuxiaoyao":"W:\\","changanhuanjie":"X:\\"}
-    server_user = script.MySqlComm.selsctCommMysql("myuser", "", "", """SELECT `user`,password FROM `user`""")
+    # server_user = script.MySqlComm.selsctCommMysql("myuser", "", "", """SELECT `user`,password FROM `user`""")
+    with DoleSql.commMysql().engine.connect() as connect:
+        server_user = connect.execute("""SELECT `user`,password FROM myuser.`user`""").fetchall()
     for user, pow in server_user:
         for key,value in prj.items():
             authorizer.add_user(f"{key}{pow}",pow,value,perm="elradfmwMT")

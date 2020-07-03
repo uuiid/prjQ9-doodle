@@ -6,10 +6,9 @@ import traceback
 import json
 from multiprocessing import connection as Conn
 
-import script.DooDlePrjCode
-import script.convert
-import script.DoodleDictToObject as DleDict
-import script.DoodleFileClass as DleFile
+import DoodleServer.DoodleDictToObject as DleDict
+import DoodleServer.DoodleBaseClass as DleFile
+import DoodleServer as Doodle
 
 
 class DoodleServer(threading.Thread):
@@ -20,12 +19,8 @@ class DoodleServer(threading.Thread):
         super().__init__()
         self.doodle_set = doodle_set
         """=============="""
-        self.shot = script.DooDlePrjCode.PrjShot(self.doodle_set.projectname,
-                                                 self.doodle_set.project,
-                                                 self.doodle_set.shotRoot)
-        self.ass = script.DooDlePrjCode.PrjAss(self.doodle_set.projectname,
-                                               self.doodle_set.project,
-                                               self.doodle_set.assetsRoot)
+        self.shot = Doodle.DoodleCore.PrjShot(self.doodle_set)
+        self.ass = Doodle.DoodleCore.PrjAss(self.doodle_set)
 
     def run(self):
         self.server = Conn.Listener(("127.0.0.1", 23369), authkey=b"doodle")
@@ -69,7 +64,7 @@ class DoodleServer(threading.Thread):
     def subInfo(self, data):
         core = getattr(self, data.core)
         self._setBaseCoreAttr(data.info, core)
-        assert isinstance(core, script.DooDlePrjCode.PrjShot)
+        assert isinstance(core, Doodle.DoodleCore.PrjShot)
         # 创建maya布料上传函数
         file = DleFile.shotMayaClothExportFile(core, self.doodle_set)
         # 转换需要上传路径
@@ -82,14 +77,13 @@ class DoodleServer(threading.Thread):
         data.info.filepath.append(cloth_export)
         file.upload(data.info.filepath)
 
-
     def _setBaseCoreAttr(self, data, core):
-        if isinstance(core, script.DooDlePrjCode.PrjAss):
+        if isinstance(core, Doodle.DoodleCore.PrjAss):
             try:
                 pass
             except KeyError:
                 pass
-        elif isinstance(core, script.DooDlePrjCode.PrjShot):
+        elif isinstance(core, Doodle.DoodleCore.PrjShot):
             try:
                 core.episodes = data.episodes
                 core.shot = data.shot

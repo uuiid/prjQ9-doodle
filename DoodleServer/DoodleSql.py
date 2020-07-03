@@ -59,3 +59,6 @@ class commMysql(object):
             session.rollback()
         finally:
             pass
+
+    def __del__(self):
+        self.sessionclass().close()

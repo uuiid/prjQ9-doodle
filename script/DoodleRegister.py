@@ -4,12 +4,12 @@ import qdarkstyle
 from PySide2 import QtWidgets
 
 import UiFile.register
-import script.doodle_setting
+import script.DoodleSetGui
 
 
 class Rigister(QtWidgets.QMainWindow, UiFile.register.Ui_MainWindow):
 
-    def __init__(self, doodle_set: script.doodle_setting.Doodlesetting):
+    def __init__(self, doodle_set: script.DoodleSetGui.Doodlesetting):
         super().__init__()
         self.setupUi(self)
         self.doodle_set = doodle_set
@@ -37,7 +37,7 @@ class Rigister(QtWidgets.QMainWindow, UiFile.register.Ui_MainWindow):
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     app.setStyleSheet(qdarkstyle.load_stylesheet())
-    doodle_set = script.doodle_setting.Doodlesetting()
+    doodle_set = script.DoodleSetGui.Doodlesetting()
     w = Rigister(doodle_set)
     w.setWindowTitle("Remer")
     w.show()

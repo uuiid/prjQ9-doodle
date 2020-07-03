@@ -2,13 +2,17 @@ import pathlib
 import json
 import subprocess
 import time
-import script.MySqlComm
+
+import sqlalchemy.orm
+
+import DoodleServer.DoodleSql
 import tools.ue_path
 # <editor-fold desc="表格">
 # it = []
 """
-BiTaoGeDaBuJu
-ShanDong_UE4
+BiTaoGe_UE4
+BiYunFengDaZhen_UE4
+FireMontain_ZX
 
 """
 # for dep in ["Light", "VFX"]:
@@ -25,9 +29,10 @@ ShanDong_UE4
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-synfile = ["SiTuZhengTianYuanZi_UE4"]
+synfile = ["BiTaoGe_UE4","BiYunFengDaZhen_UE4","FireMontain_ZX"]
 LR = ["Left", "Right"]
-ep = 27
+ep = 26
+
 it = []
 for dep in ["Light", "VFX"]:
     for key in synfile:
@@ -39,6 +44,7 @@ for dep in ["Light", "VFX"]:
 
 # print(it)
 sql_com = f"INSERT INTO `configure` (name, value, value2, value3, value4) VALUES {','.join(it)}"
-
-script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
+with DoodleServer.DoodleSql.commMysql("dubuxiaoyao").engine.connect() as connect:
+    assert isinstance(connect, sqlalchemy.engine.Connection)
+    eps = connect.execute(sql_com)
 # </editor-fold>

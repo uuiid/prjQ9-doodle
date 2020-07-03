@@ -52,12 +52,14 @@ class convert(object):
 
             for f_cls, f_type in {(_ass_[0], _ass_[1]) for _ass_ in ass_s}:
                 self.file_type[f"{f_cls}_{f_type}"] = fileType(file_type=f_type)
+                # 添加联系
                 self.file_type[f"{f_cls}_{f_type}"].file_class = self.file_class[__a]
                 self.file_type[f"{f_cls}_{f_type}"].ass_class = self.ass_name[f_cls]
 
             for _ass_s_ in ass_s:
                 kwargs = {"file": _ass_s_[2], "fileSuffixes": _ass_s_[3], "user": _ass_s_[4], "version": _ass_s_[5],
-                          "filepath": _ass_s_[7], "infor": _ass_s_[6], "filetime": _ass_s_[9], "filestate": _ass_s_[8]}
+                          "_file_path_": self.convertPathToIp(_ass_s_[7]), "infor": _ass_s_[6], "filetime": _ass_s_[9],
+                          "filestate": _ass_s_[8]}
                 ass_file = None
                 if re.findall("sourceimages", _ass_s_[1]):
                     ass_file = assMapping(**kwargs)
@@ -71,6 +73,7 @@ class convert(object):
                     ass_file = assMayaLowModleModel(**kwargs)
 
                 if ass_file:
+                    # 添加联系
                     ass_file.file_class = self.file_class[__a]
                     ass_file.file_type = self.file_type[f"{_ass_s_[0]}_{_ass_s_[1]}"]
                     ass_file.ass_class = self.ass_name[_ass_s_[0]]
@@ -106,16 +109,25 @@ class convert(object):
             self.eps[ep].addShot.append(self.shots[f"{my_shot[0]}_{my_shot[1]}"])
             for my_shot_2 in {s[2] for s in shots}:
                 self.file_class[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}"] = fileClass(file_class=my_shot_2)
+                self.shots[f"{my_shot[0]}_{my_shot[1]}"].addfileClass.append(
+                    self.file_class[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}"])
+                self.eps[ep].addFileClass.append(
+                    self.file_class[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}"])
                 for my_shot_3 in {s[3] for s in shots}:
                     self.file_type[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}_{my_shot_3}"] = fileType(file_type=my_shot_3)
                     self.file_class[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}"].addfileType.append(
-                        self.file_type[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}_{my_shot_3}"])
-                self.shots[f"{my_shot[0]}_{my_shot[1]}"].addfile_class.append(
-                    self.file_class[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}"])
+                        self.file_type[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}_{my_shot_3}"]
+                    )
+                    self.shots[f"{my_shot[0]}_{my_shot[1]}"].addfileType.append(
+                        self.file_type[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}_{my_shot_3}"]
+                    )
+                    self.eps[ep].addFileType.append(
+                        self.file_type[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}_{my_shot_3}"]
+                    )
 
         for shot_ in shots:
             kwargs = {"file": shot_[4], "fileSuffixes": shot_[5], "user": shot_[6], "version": shot_[7],
-                      "filepath": shot_[8], "infor": shot_[9], "filetime": shot_[10], "filestate": shot_[11]}
+                      "_file_path_": self.convertPathToIp(shot_[8]), "infor": shot_[9], "filetime": shot_[10], "filestate": shot_[11]}
             tmp_orm = None
             if shot_[2] == "VFX":
                 tmp_orm = shotFlipBook(**kwargs)
@@ -148,6 +160,27 @@ class convert(object):
             assert isinstance(session, sqlalchemy.orm.session.Session)
             for key, ep in self.eps.items():
                 session.add(ep)
+
+    @staticmethod
+    def convertPathToIp(path: pathlib.Path) -> pathlib.Path:
+        """
+
+        Args:
+            path:
+
+        Returns:
+
+        """
+        if path.drive:
+            if path.drive.__len__() == 2:
+                _path = path.as_posix()[2:]
+            else:
+                strlen = path.as_posix().split("/")[2].__len__() + 2
+                _path = path.as_posix()[strlen:]
+        else:
+            _path = path.as_posix()
+        _path_ = pathlib.Path(_path)
+        return _path_
 
 
 def run():
