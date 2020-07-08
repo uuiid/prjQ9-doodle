@@ -56,18 +56,19 @@ class EpisodesListWidget(QtWidgets.QListWidget):
         if is_ok:
             item = EpisodesListWidgetItem()
             item.eps_data = DoodleServer.DoodleOrm.Episodes(episodes=episode)
-            self.addItem(item=item)
+            self.addItem(item)
 
     def addItems(self, labels: typing.List[DoodleServer.DoodleOrm.Episodes], p_str=None):
         for i in labels:
             item = EpisodesListWidgetItem()
             item.eps_data = i
-            self.addItem(item=item)
+            self.addItem(item)
 
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     w = EpisodesListWidget()
+    w.addItems(DoodleServer.Core.PrjShot(DoodleServer.DoodleSet.Doodlesetting()).queryEps())
     w.setWindowTitle("Remer")
     w.show()
 
