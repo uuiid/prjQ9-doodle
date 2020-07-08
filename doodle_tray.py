@@ -14,9 +14,9 @@ from PySide2 import QtWidgets, QtGui
 import qdarkstyle
 import script.DoodleUpdata
 import script.ProjectBrowserGUI
-import script.doodleLog
-import script.doodle_setting
-import script.synXml
+import script.DoodleLog
+import script.DoodleSetGui
+import script.DoodleSynXml
 import script.DoodleUpdata
 import script.DoodleRegister
 import script.DoodleUpdata
@@ -24,13 +24,13 @@ import script.DoodleLocalConnection
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     timeSyn = 7200000
-    version = 1.100
-    setwin: script.doodle_setting.DoodlesettingGUI = None
-    project_browser: script.ProjectBrowserGUI.ProjectBrowserGUI = None
+    version = 1.130
+    setwin: script.DoodleSetGui.DoodlesettingGUI
+    project_browser: script.ProjectBrowserGUI.ProjectBrowserGUI
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
-        self.doodleSet = script.doodle_setting.Doodlesetting()
+        self.doodleSet = script.DoodleSetGui.Doodlesetting()
         self.ta_log = logging
         self.par = parent
 
@@ -94,14 +94,14 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
             include_ = ["*"]
             if self.doodleSet.department in ["VFX"]:
                 include_ = ["*\\VFX\\*"]
-            script.synXml.FreeFileSync(doc=self.doodleSet.doc,
-                                       syn_file=self.doodleSet.getsever(),
-                                       program=self.doodleSet.FreeFileSync,
-                                       file_name='{}-ep-{}'.format(self.doodleSet.department, self.doodleSet.synEp),
-                                       user=self.doodleSet.ftpuser,
-                                       ip_=self.doodleSet.ftpip,
-                                       password=self.doodleSet.password,
-                                       include=include_).run()
+            script.DoodleSynXml.FreeFileSync(doc=self.doodleSet.doc,
+                                             syn_file=self.doodleSet.getsever(),
+                                             program=self.doodleSet.FreeFileSync,
+                                             file_name='{}-ep-{}'.format(self.doodleSet.department, self.doodleSet.synEp),
+                                             user=self.doodleSet.ftpuser,
+                                             ip_=self.doodleSet.ftpip,
+                                             password=self.doodleSet.password,
+                                             include=include_).run()
 
             self.ta_log.info('同步时间: %s', time.asctime(time.localtime(time.time())))
 
@@ -113,10 +113,10 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         sys.exit()
 
     def setGUI(self):
-        if isinstance(self.setwin, script.doodle_setting.DoodlesettingGUI):
+        if isinstance(self.setwin, script.DoodleSetGui.DoodlesettingGUI):
             self.setwin.show()
         else:
-            self.setwin = script.doodle_setting.DoodlesettingGUI()
+            self.setwin = script.DoodleSetGui.DoodlesettingGUI()
             self.setwin.show()
         self.ta_log.info('打开了设置')
 
@@ -124,18 +124,18 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         if self.doodleSet.department in ['Light', 'VFX', 'modle']:
             synPath = [{'Left': 'D:\\Source\\UnrealEngine', 'Right': 'W:\\data\\Source\\UnrealEngine'}]
             synUE = 'UE_syn'
-            script.synXml.FreeFileSync(doc=self.doodleSet.doc,
-                                       syn_file=synPath,
-                                       program=self.doodleSet.FreeFileSync,
-                                       file_name=synUE,
-                                       user=self.doodleSet.ftpuser,
-                                       ip_=self.doodleSet.ftpip,
-                                       password=self.doodleSet.password,
-                                       include=['\\Engine\\*']).run()
+            script.DoodleSynXml.FreeFileSync(doc=self.doodleSet.doc,
+                                             syn_file=synPath,
+                                             program=self.doodleSet.FreeFileSync,
+                                             file_name=synUE,
+                                             user=self.doodleSet.ftpuser,
+                                             ip_=self.doodleSet.ftpip,
+                                             password=self.doodleSet.password,
+                                             include=['\\Engine\\*']).run()
 
     @staticmethod
     def openUE():
-        script.doodleLog.ta_log.info('启动UE')
+        script.DoodleLog.ta_log.info('启动UE')
         subprocess.Popen("D:\\Source\\UnrealEngine\\Engine\\Binaries\\Win64\\UE4Editor.exe")
 
     def openProject(self):

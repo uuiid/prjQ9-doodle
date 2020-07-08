@@ -1,27 +1,22 @@
 # -*- coding: UTF-8 -*-
-
+import pathlib
+import re
 import socket
 import sys
-
+import logging
 import potplayer
 import pyperclip
+import typing
 
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
+
 import qdarkstyle
 import UiFile.ProjectBrowser
-import script.DooDlePrjCode
-import script.MayaExportCam
-import script.MySqlComm
-import script.convert
-import script.doodleLog
-import script.doodlePlayer
-import script.doodle_setting
-import script.synXml
-import script.synchronizeFiles
 
-from script.DoodleFileClass import *
+import script.DoodleSetGui
+import DoodleServer
 
 
 class _prjColor(object):
@@ -56,23 +51,18 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
     user: str
 
-    def __init__(self, parent=None):
+    def __init__(self, doodle_set: DoodleServer.Set.Doodlesetting, parent=None):
         super(ProjectBrowserGUI, self).__init__(parent)
         # 获取设置
 
-        self.setlocale = script.doodle_setting.Doodlesetting()
+        self.setlocale = doodle_set
         """======================================================================="""
         # 导入解析项目模块
-        self.shot = script.DooDlePrjCode.PrjShot(self.setlocale.projectname,
-                                                 self.setlocale.project,
-                                                 self.setlocale.shotRoot)
-        self.ass = script.DooDlePrjCode.PrjAss(self.setlocale.projectname,
-                                               self.setlocale.project,
-                                               self.setlocale.assetsRoot)
+        self.core = DoodleServer.Core.PrjShot(self.setlocale)
         """======================================================================="""
         # 初始化一些属性
 
-        self.user = script.convert.isChinese(self.setlocale.user).easyToEn()
+        self.user = DoodleServer.DoodleZNCHConvert.isChinese(self.setlocale.user).easyToEn()
         # 加载颜色类
         self._color = _prjColor
         # 最近打开的文件夹
@@ -196,8 +186,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         """
         if index == 0:
             logging.info("点击资产")
+            self.core = DoodleServer.Core.PrjAss(self.setlocale)
             self.setepisodex()
         elif index == 1:
+            self.core = DoodleServer.Core.PrjShot(self.setlocale)
             logging.info("点击镜头")
             self.assClassSortClicked("character")
 
@@ -317,6 +309,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         except AttributeError as err:
             logging.info("寻找不到属性了 %s", err)
         menu.exec_(point)
+
     # menu.popup(point)
 
     # </editor-fold>
@@ -347,18 +340,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.shot_thumbnail.clear()
 
         logging.info('更新集数列表')
-        self.listepisodes.addItems(self.shot.getEpsodes())
+        assert isinstance(self.core, DoleCore.PrjShot)
+        self.listepisodes.addItems(self.core.queryEps())
 
     def listEpisodesClicked(self, item):
         """
         集数点击事件
         """
-        items__text = item.text()
-        if items__text == 'pv':
-            items__text = 0
-        else:
-            items__text = int(items__text[2:])
-        self.shot.episodes = items__text
+        self.core.episodes = item.text()
 
         self.listdepartment.clear()
         self.listdepType.clear()
@@ -369,11 +358,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         logging.info('更新shot列表')
 
-        self.listshot.addItems(self.shot.getShot())
+        self.listshot.addItems(self.core.queryShot())
         # 设置颜色
-        state = self.shot.getFileState("Shot")
-        for s in state:
-            self._setQlistItemColor(self.listshot, f'sc{s.shot:0>4d}{s.shotab}', s.filestate)
+        # state = self.shot.getFileState("Shot")
+        # for s in state:
+        #     self._setQlistItemColor(self.listshot, f'sc{s.shot:0>4d}{s.shotab}', s.filestate)
 
     def listshotClicked(self, item):
         """
@@ -394,11 +383,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         logging.info('更新Department列表')
 
-        self.listdepartment.addItems(self.shot.getDepartment())
+        self.listdepartment.addItems(self.core.queryFileClass())
         # 设置颜色
-        state = self.shot.getFileState("Dep")
-        for s in state:
-            self._setQlistItemColor(self.listdepartment, self.setlocale.department, s.filestate)
+        # state = self.shot.getFileState("Dep")
+        # for s in state:
+        #     self._setQlistItemColor(self.listdepartment, self.setlocale.department, s.filestate)
 
     def listDepartmenClicked(self, item):
         """
@@ -410,11 +399,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepType.clear()
         self.shot_thumbnail.clear()
 
-        self.listdepType.addItems(self.shot.getDepType())
+        self.listdepType.addItems(self.core.queryFileType())
         # 设置颜色
-        state = self.shot.getFileState("DepType")
-        for s in state:
-            self._setQlistItemColor(self.listdepType, s.Type, s.filestate)
+        # state = self.shot.getFileState("DepType")
+        # for s in state:
+        #     self._setQlistItemColor(self.listdepType, s.Type, s.filestate)
 
     def listDepTypeClicked(self, item):
         """
@@ -424,7 +413,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         # 清空上一次文件显示和版本记录和文件路径
         self.clearTableFile(self.listfile)
-        self._setWidegtItem(self.shot.getFile(), self.listfile)
+        self._setWidegtItem(self.core.queryFile(), self.listfile)
 
     def shotFileClicked(self, shot_row):
         """
@@ -455,15 +444,15 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         for index, item in enumerate(items):
             table.insertRow(index)
-            table.setItem(index, 0, QtWidgets.QTableWidgetItem(f'v{item[0]:0>4d}'))
+            table.setItem(index, 0, QtWidgets.QTableWidgetItem(None, f'v{item.version:0>4d}'))
             file_infor = [""]
-            if item[1]:
+            if item.infor:
                 file_infor = re.split(r"\|", item[1])
-            table.setItem(index, 1, QtWidgets.QTableWidgetItem(file_infor[-1]))  # 设置概述
+            table.setItem(index, 1, QtWidgets.QTableWidgetItem(None, file_infor[-1]))  # 设置概述
             table.item(index, 1).setToolTip("\n".join(file_infor))
-            table.setItem(index, 2, QtWidgets.QTableWidgetItem(item[2]))
-            table.setItem(index, 3, QtWidgets.QTableWidgetItem(item[3]))
-            table.setItem(index, 4, QtWidgets.QTableWidgetItem(str(item[4])))
+            table.setItem(index, 2, QtWidgets.QTableWidgetItem(None, item.user))
+            table.setItem(index, 3, QtWidgets.QTableWidgetItem(None, item.fileSuffixes))
+            table.setItem(index, 4, QtWidgets.QTableWidgetItem(None, str(item.id)))
         logging.info('更新文件列表')
 
     # <editor-fold desc="更新ass的各种操作">
@@ -626,8 +615,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                                            QtWidgets.QLineEdit.Normal)
         if is_ok:
             is_is = QtWidgets.QMessageBox.warning(self, "请确认", "拼音名称:{}\n中文名:{}".format(
-                                                  self.listAss.selectedItems()[0].text(),ass_folder),
-                                                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                self.listAss.selectedItems()[0].text(), ass_folder),
+                                                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
             if is_is == QtWidgets.QMessageBox.Yes:
                 self.ass.convertMy.addLocalName(self.listAss.selectedItems()[0].text(), ass_folder)
                 self.assClassSortClicked(self.ass.sort)
@@ -700,7 +689,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             cls_file = doodleFileFactory(self.ass, ".uproject")
             if cls_file:
                 cls_file = cls_file(core, self.setlocale)
-                cls_file.down(core.query_id, pathprj)
+                cls_file.down()
 
             QtWidgets.QMessageBox.critical(self, "复制中", "请等待.....")
             logging.info(path)
@@ -733,9 +722,10 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         try:
             self.ass.convertMy.local_name[text]
         except KeyError:
-            self.ass.convertMy.addLocalName(self.ass.convertMy.toEn(text),text)
+            self.ass.convertMy.addLocalName(self.ass.convertMy.toEn(text), text)
         else:
             logging.info("库中已经储存此键值,无需上传中文名称")
+
     # </editor-fold>
 
     # <editor-fold desc="各种对于文件的操作">
@@ -789,7 +779,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
             export = shotMayaExportFile(self.shot, self.setlocale)
             export.infor = "这是maya导出文件"
-            export.exportRun(file_data)
+            export.subDataToBD(file_data)
 
             self.listDepTypeClicked(self.listdepType.selectedItems()[0])
 
@@ -800,11 +790,11 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 获得核心
         core: script.DooDlePrjCode.PrjCode = getattr(self, my_type)
         # 判断类型
-        cls_sshot = doodleFileFactory(core,"Screenshot")(core,self.setlocale)
+        cls_sshot = doodleFileFactory(core, "Screenshot")(core, self.setlocale)
         cls_sshot.infor = "这是截图"
         # 上传截屏
         with cls_sshot.upload() as cache:
-            screen_shot = script.doodlePlayer.doodleScreenshot(path=cache.as_posix())
+            screen_shot = script.DoodlePlayer.doodleScreenshot(path=cache.as_posix())
             self.hide()
             screen_shot.exec_()
             self.show()
@@ -816,7 +806,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         """
         core = getattr(self, type_)
         # 获得截图类
-        cls_sshot = doodleFileFactory(core,"Screenshot")(core,self.setlocale)
+        cls_sshot = doodleFileFactory(core, "Screenshot")(core, self.setlocale)
         # 下载文件
         path = cls_sshot.down()
 
@@ -854,7 +844,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                 code = self.ass
             else:
                 code = self.shot
-            player = doodleFileFactory(code,"FB")(code,self.setlocale)
+            player = doodleFileFactory(code, "FB")(code, self.setlocale)
 
             path = player.downPlayer(code.Type)
 
@@ -864,7 +854,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             if path:
                 self.pot_player.add(path.as_posix())
         else:
-            player = shotMayaFBFile(self.shot,self.setlocale)
+            player = shotMayaFBFile(self.shot, self.setlocale)
             video = player.getEpisodesFlipBook()
 
             while player.syn.is_alive():
@@ -891,7 +881,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
                                           QtWidgets.QMessageBox.Yes)
 
     def comEpsVideo(self):
-        player = shotMayaFBFile(self.shot,self.setlocale)
+        player = shotMayaFBFile(self.shot, self.setlocale)
         video = player.makeEpisodesFlipBook()
         return video
 
@@ -923,7 +913,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
             so.connect(address)
-            maya_export = shotMayaExportFile(self.shot,self.setlocale)
+            maya_export = shotMayaExportFile(self.shot, self.setlocale)
             content = maya_export.down(self.shot.query_id)
 
             data = {"eps": self.shot.episodes, "shot": self.shot.shot, "content": json.loads(content)}
@@ -950,7 +940,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             logging.info("成功关闭链接")
 
     def convertCloth(self):
-        shotMayaClothExportFile(self.shot,self.setlocale).down(self.shot.query_id)
+        shotMayaClothExportFile(self.shot, self.setlocale).down(self.shot.query_id)
     # </editor-fold>
 
 

@@ -6,9 +6,9 @@
         <CopyLockedFiles Enabled="false"/>
         <CopyFilePermissions Enabled="false"/>
         <FileTimeTolerance Seconds="2"/>
-        <RunWithBackgroundPriority Enabled="false"/>
+        <RunWithBackgroundPriority Enabled="true"/>
         <LockDirectoriesDuringSync Enabled="true"/>
-        <VerifyCopiedFiles Enabled="false"/>
+        <VerifyCopiedFiles Enabled="true"/>
         <LogFiles MaxAge="30" Format="HTML"/>
         <NotificationSound CompareFinished="" SyncFinished="%ffs_resource%\bell.wav"/>
         <ProgressDialog AutoClose="false"/>
@@ -18,8 +18,8 @@
             <ConfirmCommandMassInvoke Show="false"/>
             <WarnFolderNotExisting Show="false"/>
             <WarnFoldersDifferInCase Show="false"/>
-            <WarnUnresolvedConflicts Show="false"/>
-            <WarnNotEnoughDiskSpace Show="false"/>
+            <WarnUnresolvedConflicts Show="true"/>
+            <WarnNotEnoughDiskSpace Show="true"/>
             <WarnSignificantDifference Show="false"/>
             <WarnRecycleBinNotAvailable Show="false"/>
             <WarnInputFieldEmpty Show="false"/>

@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui',
 # licensing of 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui' applies.
 #
-# Created: Sun Jun 21 18:48:13 2020
+# Created: Tue Jul  7 14:32:47 2020
 #      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -13,7 +13,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1309, 725)
+        MainWindow.resize(1309, 698)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.centralwidget)
@@ -147,7 +147,7 @@ class Ui_MainWindow(object):
         self.episodes = QtWidgets.QLabel(self.Episodes_shot)
         self.episodes.setObjectName("episodes")
         self.verticalLayout_2.addWidget(self.episodes)
-        self.listepisodes = QtWidgets.QListWidget(self.Episodes_shot)
+        self.listepisodes = EpisodesListWidget(self.Episodes_shot)
         self.listepisodes.setObjectName("listepisodes")
         self.verticalLayout_2.addWidget(self.listepisodes)
         self.horizontalLayout_6.addLayout(self.verticalLayout_2)
@@ -290,6 +290,7 @@ class Ui_MainWindow(object):
         self.tool.addAction(self.actionclothToFbx)
         self.menubar.addAction(self.caoZhuo.menuAction())
         self.menubar.addAction(self.tool.menuAction())
+        self.episodes.setBuddy(self.listepisodes)
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(1)
@@ -342,3 +343,4 @@ class Ui_MainWindow(object):
         self.actioncom_video.setText(QtWidgets.QApplication.translate("MainWindow", "合成整集拍屏", None, -1))
         self.actionclothToFbx.setText(QtWidgets.QApplication.translate("MainWindow", "布料转FBX", None, -1))
 
+from script.DoodlePrjUI.episodeslistwidget import EpisodesListWidget

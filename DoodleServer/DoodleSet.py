@@ -2,31 +2,15 @@
 import json
 import logging
 import pathlib
-import sys
 import threading
 
 import psutil
-import sqlalchemy.ext.declarative
-from PySide2 import QtWidgets
 
-import UiFile.setting
-import script.MySqlComm
-import script.convert
-import script.doodleLog
+import DoodleServer.DoodleSql as Dolesql
+import DoodleServer.DoodleZNCHConvert as DoleConvert
 
 
-class srverSetting(sqlalchemy.ext.declarative.declarative_base()):
-    __tablename__ = "configure"
-    id = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True)
-    name = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
-    value = sqlalchemy.Column(sqlalchemy.VARCHAR(1024))
-    value2 = sqlalchemy.Column(sqlalchemy.VARCHAR(32))
-    value3 = sqlalchemy.Column(sqlalchemy.VARCHAR(256))
-    value4 = sqlalchemy.Column(sqlalchemy.VARCHAR(1024))
-
-
-class Doodlesetting():
-    _setting = {}
+class Doodlesetting(object):
     _instance_lock = threading.Lock()
     shotRoot: str
     assetsRoot: str
@@ -53,18 +37,16 @@ class Doodlesetting():
         self.assTypeFolder = ['sourceimages', 'scenes', '{}_UE4', 'rig', "{}_low"]
         self.filestate = ["Error", "Amend", "Complete"]
         self.project = ''
+        self.my_sql = Dolesql.commMysql(self.projectname, "", "")
+
         self.__initSetAttr(self.__getString())
         self.__initSetAttr(self.__getseverPrjBrowser())
-
-        self.my_sql = script.MySqlComm.commMysql(self.projectname, "", "")
-
-        self.sever_con = srverSetting()
 
         self.cache_path = pathlib.Path("C:\\Doodle_cache")
         self.getCacheDiskPath(1)
         self.cache_path.mkdir(parents=True, exist_ok=True)
 
-        self.ftpuser = self.projectname + script.convert.isChinese(self.user).easyToEn()
+        self.ftpuser = self.projectname + DoleConvert.isChinese(self.user).easyToEn()
         self.ftpip = "192.168.10.213"
 
     # <editor-fold desc="属性操作">
@@ -109,7 +91,7 @@ class Doodlesetting():
 
     @property
     def password(self):
-        return script.convert.isChinese(self.user).easyToEn()
+        return DoleConvert.isChinese(self.user).easyToEn()
 
     def __initSetAttr(self, setDict: dict):
         for key, value in setDict.items():
@@ -166,14 +148,11 @@ class Doodlesetting():
         返回服务器上的 同步目录设置
         """
         # 读取本地部门类型 以及每集类型
-        # self.setlocale = script.doodle_setting.Doodlesetting()
         # 获得设置的文件路径
         sql_com = "SELECT DISTINCT value3, value4 FROM `configure` " \
                   f"WHERE name='synpath' AND value='{self.department}' AND value2 ='{self.synEp:0>3d}'"
-        data = script.MySqlComm.selsctCommMysql(self.projectname, self.department, "", sql_command=sql_com)
-        # {"Left": [value for key, value in data if key == "Left"],
-        #  "Right": [value for key, value in data if key == "Right"]}
-        # tmp = [{key: value} for key, value in data]
+        with self.my_sql.engine.connect() as connect:
+            data = connect.execute(sql_com).fetchall()
         tmp = [data[i:i + 2] for i in range(0, len(data), 2)]
         return [{i[0][0]: self.syn + '/' + i[0][1], i[1][0]: self.synSever + '/' + i[1][1]} for i in tmp]
 
@@ -185,7 +164,8 @@ class Doodlesetting():
         """
 
         sql_com = "SELECT DISTINCT name,value FROM `configure`"
-        data = script.MySqlComm.selsctCommMysql(self.projectname, self.department, "", sql_command=sql_com)
+        with self.my_sql.engine.connect() as connect:
+            data = connect.execute(sql_com).fetchall()
 
         in_data_ = {key: value for key, value in data}
         logging.info('服务器上的项目设置(json) %s', json.dumps(in_data_,
@@ -208,7 +188,8 @@ class Doodlesetting():
 
     def FTPconnectIsGood(self) -> bool:
         sql_command = f"""SELECT `user` FROM user"""
-        server_user = script.MySqlComm.selsctCommMysql("myuser","","",sql_command)
+        with self.my_sql.engine.connect() as connect:
+            server_user = connect.execute(sql_command).fetchall()
         server_user_ = [s[0] for s in server_user]
         if self.user in server_user_:
             return True
@@ -216,100 +197,10 @@ class Doodlesetting():
             return False
 
     def FTP_Register(self):
-        sql_command = """INSERT INTO `user` (`user`, password) VALUES ('{}','{}')""".format(self.user,self.password)
-        script.MySqlComm.inserteCommMysql("myuser","","",sql_command)
-
-
-class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow):
-
-    def __init__(self, parent=None):
-        super(DoodlesettingGUI, self).__init__()
-        # QtWidgets.QMainWindow.__init__(self, parent=parent)
-        self.setlocale = Doodlesetting()
-        self.ta_log_GUI = script.doodleLog.get_logger(__name__ + 'GUI')
-
-        self.setupUi(self)
-        # 设置部门显示
-        self.DepartmentTest.setCurrentText(self.setlocale.department)
-        self.DepartmentTest.currentIndexChanged.connect(lambda: self.editconf('department',
-                                                                              self.DepartmentTest.currentText()))
-        # 设置人员名称
-        self.userTest.setText(self.setlocale.user)
-        self.userTest.textChanged.connect(lambda: self.editconf('user', self.userTest.text()))
-
-        # 设置本地同步目录
-        self.synTest.setText(str(self.setlocale.syn))
-        self.synTest.textChanged.connect(
-            lambda: self.editConfZhongWen('syn', pathlib.Path(self.synTest.text())))
-
-        # 设置服务器同步目录
-        self.synSever.setText(str(self.setlocale.synSever))
-
-        # 设置项目目录
-        self.projectCombo.setCurrentText(str(self.setlocale.projectname))
-        self.projectCombo.currentIndexChanged.connect(self.projecrEdit)
-
-        # 设置同步集数
-        self.synEp.setValue(self.setlocale.synEp)
-        # 链接同步集数更改命令
-        self.synEp.valueChanged.connect(self.editSynEp)
-
-        # 设置同步软件安装目录
-        self.freeFileSyncButton.setText(str(self.setlocale.FreeFileSync))
-
-        # 设置同步目录显示
-        self.synSeverPath()
-
-        # 设置保存按钮命令
-        self.save.triggered.connect(self.saveset)
-
-    def editconf(self, key, newValue):
-        # 当设置更改时获得更改
-        # self.setlocale.setting[key] = newValue
-        setattr(self.setlocale, key, newValue)
-        self.ta_log_GUI.info('用户将%s更改为%s', key, newValue)
-        self.synSeverPath()
-
-    def synSeverPath(self):
-        # 将同步目录显示出来
-        self.pathSynSever.clear()
-        self.pathSynLocale.clear()
-        syn_sever_path = self.setlocale.getsever()
-        try:
-            for path in syn_sever_path:
-                self.pathSynSever.addItem(path['Left'])
-                self.pathSynLocale.addItem(path['Right'])
-        except KeyError:
-            self.pathSynSever.clear()
-            self.pathSynLocale.clear()
-        except:
-            pass
-
-    def editConfZhongWen(self, key, newValue: pathlib.Path):
-        newValue = script.convert.isChinese(newValue)
-        newValue = newValue.easyToEn()
-        self.sysTestYing.setText(newValue.as_posix())
-        self.ta_log_GUI.info('中文%s更改为%s', key, newValue)
-        setattr(self.setlocale, key, newValue.as_posix())
-        self.synSeverPath()
-
-    def editSynEp(self):
-        self.setlocale.synEp = int(self.synEp.value())
-        self.synSeverPath()
-
-    def saveset(self):
-        # 保存到文档的设置文件中
-        self.ta_log_GUI.info('设置保存')
-        self.setlocale.writeDoodlelocalSet()
-
-    def projecrEdit(self, index):
-        self.setlocale.projectname = self.projectCombo.itemText(index)
+        sql_command = """INSERT INTO `user` (`user`, password) VALUES ('{}','{}')""".format(self.user, self.password)
+        with self.my_sql.engine.connect() as connect:
+            connect.execute(sql_command)
 
 
 if __name__ == '__main__':
-    app = QtWidgets.QApplication(sys.argv)
-    w = DoodlesettingGUI()
-
-    w.show()
-
-    sys.exit(app.exec_())
+    pass

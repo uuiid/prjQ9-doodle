@@ -3,11 +3,11 @@ import pytest
 from PySide2 import QtTest
 import unittest
 import script.ProjectBrowserGUI
-import script.doodle_setting
+import script.DoodleSetGui
 import script.MySqlComm
 # class TestClass():
 def test_getsever():
-    doodleset = script.doodle_setting.Doodlesetting()
+    doodleset = script.DoodleSetGui.Doodlesetting()
 
     print(doodleset.getsever())
 
