@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui',
 # licensing of 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui' applies.
 #
-# Created: Thu Jul  9 18:57:02 2020
+# Created: Fri Jul 10 13:22:11 2020
 #      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,7 +30,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_6.setObjectName("verticalLayout_6")
         self.horizontalLayout_5 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_5.setObjectName("horizontalLayout_5")
-        self.scane = QtWidgets.QPushButton(self.tab_2)
+        self.scane = assFileClassPushButtem(self.tab_2)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -43,7 +43,7 @@ class Ui_MainWindow(object):
         self.scane.setAutoExclusive(True)
         self.scane.setObjectName("scane")
         self.horizontalLayout_5.addWidget(self.scane)
-        self.character = QtWidgets.QPushButton(self.tab_2)
+        self.character = assFileClassPushButtem(self.tab_2)
         self.character.setMinimumSize(QtCore.QSize(0, 30))
         self.character.setStyleSheet("")
         self.character.setCheckable(True)
@@ -51,7 +51,7 @@ class Ui_MainWindow(object):
         self.character.setAutoExclusive(True)
         self.character.setObjectName("character")
         self.horizontalLayout_5.addWidget(self.character)
-        self.props = QtWidgets.QPushButton(self.tab_2)
+        self.props = assFileClassPushButtem(self.tab_2)
         self.props.setMinimumSize(QtCore.QSize(0, 30))
         self.props.setStyleSheet("")
         self.props.setCheckable(True)
@@ -59,7 +59,7 @@ class Ui_MainWindow(object):
         self.props.setAutoExclusive(True)
         self.props.setObjectName("props")
         self.horizontalLayout_5.addWidget(self.props)
-        self.effects = QtWidgets.QPushButton(self.tab_2)
+        self.effects = assFileClassPushButtem(self.tab_2)
         self.effects.setMinimumSize(QtCore.QSize(0, 30))
         self.effects.setStyleSheet("")
         self.effects.setCheckable(True)
@@ -293,7 +293,7 @@ class Ui_MainWindow(object):
         self.episodes.setBuddy(self.listepisodes)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.listepisodes, self.listshot)
         MainWindow.setTabOrder(self.listshot, self.listdepartment)
@@ -343,6 +343,6 @@ class Ui_MainWindow(object):
         self.actioncom_video.setText(QtWidgets.QApplication.translate("MainWindow", "合成整集拍屏", None, -1))
         self.actionclothToFbx.setText(QtWidgets.QApplication.translate("MainWindow", "布料转FBX", None, -1))
 
-from script.DoodlePrjUI.DoodleButten import shotSubFilbBook, shotScreenshotPushButten, assSubFilbBook, assScreenshotPushButten
-from script.DoodlePrjUI.DoodleListWidget import AssNameListWidget, ShotFileClassListWidget, ShotListWidget, AssFileTypeListWidget, EpisodesListWidget, ShotFileTypeListWidget
+from script.DoodlePrjUI.DoodleListWidget import ShotFileTypeListWidget, ShotFileClassListWidget, AssFileTypeListWidget, AssNameListWidget, EpisodesListWidget, ShotListWidget
+from script.DoodlePrjUI.DoodleButten import assSubFilbBook, shotSubFilbBook, assScreenshotPushButten, shotScreenshotPushButten, assFileClassPushButtem
 from script.DoodlePrjUI.DoodleTableWidget import shotTableWidget, assTableWidget

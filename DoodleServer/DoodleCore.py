@@ -94,8 +94,6 @@ class PrjCore(object):
             if re.fullmatch("[a,A]nm", self.file_class.file_class):
                 if re.findall("^FB_", self.file_type.file_type):
                     cls = DoleOrm.shotFlipBook
-                elif re.findall("^export_", self.file_type.file_type):
-                    cls = DoleOrm.shotMayaAnmExport
                 else:
                     cls = DoleOrm.shotMayaAnmScane
             elif re.fullmatch('VFX', self.file_class.file_class):
@@ -104,8 +102,10 @@ class PrjCore(object):
             elif re.fullmatch("Light", self.file_class.file_class):
                 if re.findall("^FB_", self.file_type.file_type):
                     cls = DoleOrm.shotFlipBook
-                elif re.findall("^export_", self.file_type.file_type):
-                    cls = DoleOrm.shotMayaAnmExport
+            if re.findall("^export_", self.file_type.file_type):
+                cls = DoleOrm.shotMayaAnmExport
+            if re.findall("screenshot", self.file_type.file_type):
+                cls = DoleOrm.shotScreenshot
         elif isinstance(self, PrjAss):
             if re.findall("sourceimages", self.file_type.file_type):
                 cls = DoleOrm.assMapping
@@ -117,6 +117,8 @@ class PrjCore(object):
                 cls = DoleOrm.assMayaRigModel
             elif re.findall("_low$", self.file_type.file_type):
                 cls = DoleOrm.assMayaLowModleModel
+            if re.findall("^screenshot", self.file_type.file_type):
+                cls = DoleOrm.assScreenshot
         return cls
 
     @staticmethod

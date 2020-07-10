@@ -207,7 +207,7 @@ class Doodlesetting(object):
         logging.info("找到缓存路径 %s", self.cache_path)
 
     def FTPconnectIsGood(self) -> bool:
-        sql_command = f"""SELECT `user` FROM user"""
+        sql_command = f"""SELECT `user` FROM myuser.user"""
         with self.my_sql.engine.connect() as connect:
             server_user = connect.execute(sql_command).fetchall()
         server_user_ = [s[0] for s in server_user]
@@ -217,7 +217,7 @@ class Doodlesetting(object):
             return False
 
     def FTP_Register(self):
-        sql_command = """INSERT INTO `user` (`user`, password) VALUES ('{}','{}')""".format(self.user, self.password)
+        sql_command = """INSERT INTO `myuser.user` (`user`, password) VALUES ('{}','{}')""".format(self.user, self.password)
         with self.my_sql.engine.connect() as connect:
             connect.execute(sql_command)
 

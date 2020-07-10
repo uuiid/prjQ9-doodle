@@ -11,7 +11,7 @@ class core:
         :return:
         :rtype:
         """
-        return QtCore.QCoreApplication.instance().code
+        return QtCore.QCoreApplication.instance().core
 
     @property
     def doodle_set(self) -> DoodleServer.Set.Doodlesetting:

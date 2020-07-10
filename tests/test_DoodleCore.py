@@ -108,13 +108,13 @@ def test_comm_name(prjshot_setup):
 
 
 def test_query_ass_name(prjAss_setup):
-    prjAss_setup.file_class = DoleOrm.fileClass(id=1, file_class="character")
+    prjAss_setup.file_class = DoleOrm.fileClass(id=9, file_class="character")
     query_assname = prjAss_setup.queryAssname()
     print(query_assname)
 
 
 def test_query_ass_type(prjAss_setup):
-    prjAss_setup.file_class = DoleOrm.fileClass(id=1, file_class="character")
+    prjAss_setup.file_class = DoleOrm.fileClass(id=9, file_class="character")
     prjAss_setup.ass_class = DoleOrm.assClass(id=1, file_name='10GeZhongJingXiuXianZhe')
     query_ass_type = prjAss_setup.queryAssType()
     print(query_ass_type)
@@ -146,3 +146,7 @@ def test_Ass_comm_path(prjAss_setup):
     prjAss_setup.ass_class = DoleOrm.assClass(id=99, file_name='10GeZhongJingXiuXianZhe')
     # prjAss_setup.file_type = DoleOrm.fileType(id=270, file_type='10GeZhongJingXiuXianZhe_UE4')
     print(prjAss_setup.commPath("ad"))
+
+
+def test_query_ass_class(prjAss_setup):
+    print([file_clas.file_class for file_clas in  prjAss_setup.queryAssClass()])

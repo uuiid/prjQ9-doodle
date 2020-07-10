@@ -5,12 +5,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 
 import UiFile.ProjectBrowser
 import DoodleServer
-
-
-class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow):
-    def __init__(self):
-        super(ProjectBrowserGUI, self).__init__(parent=None)
-        self.setupUi(self)
+import script.DoodleBrowserGUI
 
 
 class DoodleMain(QtWidgets.QApplication):
@@ -22,16 +17,15 @@ class DoodleMain(QtWidgets.QApplication):
         super(DoodleMain, self).__init__(sys.argv)
         self.doodle_set = DoodleServer.Set.Doodlesetting()
         self._core_ = DoodleServer.Core.PrjShot(self.doodle_set)
-
-        self.browser = ProjectBrowserGUI()
+        self.browser = None
         # app = QtWidgets.QApplication(sys.argv)
         QtWidgets.QApplication.setQuitOnLastWindowClosed(False)
 
         # tray_icon = ProjectBrowserGUI()
         # tray_icon.showMessage('文件管理', 'hello')
-        self.browser.show()
-
-        sys.exit(self.exec_())
+        #
+        # self.openProjectBrowserGUI()
+        # sys.exit(self.exec_())
 
     def codeToShot(self):
         self._core_ = DoodleServer.Core.PrjShot(self.doodle_set)
@@ -42,5 +36,11 @@ class DoodleMain(QtWidgets.QApplication):
     def DoodleQuery(self):
         sys.exit(self.exec_())
 
+    def openProjectBrowserGUI(self):
+        self.browser = script.DoodleBrowserGUI.ProjectBrowserGUI()
+        self.browser.show()
 
-DoodleMain()
+m = DoodleMain()
+m.openProjectBrowserGUI()
+m.exec_()
+

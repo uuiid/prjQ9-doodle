@@ -1,10 +1,12 @@
 import pathlib
 import typing
+
 import sqlalchemy.orm
 import sqlalchemy.sql
-# import sqlalchemy
+# from DoodleServer import DoleSql,dictToObj
+import DoodleServer.DoodleDictToObject as dictToObj
+# # import sqlalchemy
 import DoodleServer.DoodleSql as DoleSql
-import DoodleServer.DoodleDictToObject as DoleCict
 
 
 def convertData(cls: DoleSql.Base, obj: object):
@@ -36,7 +38,7 @@ class fileAttributeInfo_(DoleSql.Base):
                 "version": self.version, "filepath": self.filepath, "infor": self.infor, "filestate": self.filestate}
 
     def toObj(self):
-        return DoleCict.convertTool().convert(self.toDict())
+        return dictToObj.convertTool().convert(self.toDict())
 
     @property
     def file_path(self) -> pathlib.Path:
@@ -556,6 +558,6 @@ class configure(DoleSql.Base):
 if __name__ == '__main__':
     # pass
     # test = Episodes(episodes=1)
-    # print("ok")
-    DoleSql.commMysql("dubuxiaoyao", "", "").createTable()
+    print("ok")
+    # DoleSql.commMysql("dubuxiaoyao", "", "").createTable()
     # shotFlipBook.filetime.desc()

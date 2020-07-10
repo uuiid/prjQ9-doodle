@@ -3,28 +3,27 @@ import typing
 import pathlib
 import DoodleServer
 
-import script.DoodleCore
+import script.DoodleCoreApp
 
 
-class ScreenshotPushButten(QtWidgets.QPushButton, script.DoodleCore.core):
-    app: DoodleServer.DoodleCore.Shot
-    Screenshot: typing.Any
+class ScreenshotPushButten(QtWidgets.QPushButton, script.DoodleCoreApp.core):
+    screenshot_class: typing.Any
 
     @QtCore.Slot()
     def Screenshot(self):
-        screenshot = self.Screenshot(self.app.code, self.app.doodle_set)
+        screenshot = self.screenshot_class(self.core, self.doodle_set)
         with screenshot.upload() as path:
             player_doodle_screenshot = DoodleServer.Player.doodleScreenshot(path=path.as_posix())
-            self.app.browser.hide()
+            self.doodle_app.browser.hide()
             player_doodle_screenshot.exec_()
-            self.app.browser.show()
+            self.doodle_app.browser.show()
 
 
 class shotScreenshotPushButten(ScreenshotPushButten):
 
     def __init__(self, parent):
         super(shotScreenshotPushButten, self).__init__(parent=parent)
-        self.Screenshot = DoodleServer.DoodleBaseClass.shotScreenshot
+        self.screenshot_class = DoodleServer.DoodleBaseClass.shotScreenshot
         # 链接截图功能和按钮
         self.clicked.connect(self.Screenshot)
 
@@ -32,12 +31,12 @@ class shotScreenshotPushButten(ScreenshotPushButten):
 class assScreenshotPushButten(ScreenshotPushButten):
     def __init__(self, parent):
         super(assScreenshotPushButten, self).__init__(parent=parent)
-        self.Screenshot = DoodleServer.DoodleBaseClass.assScreenshot
+        self.screenshot_class = DoodleServer.DoodleBaseClass.assScreenshot
         # 链接截图功能和按钮
         self.clicked.connect(self.Screenshot)
 
 
-class subFilbBook(QtWidgets.QPushButton):
+class subFilbBook(QtWidgets.QPushButton,script.DoodleCoreApp.core):
     flib_book: typing.Any
 
     @QtCore.Slot()
@@ -47,7 +46,9 @@ class subFilbBook(QtWidgets.QPushButton):
                                                                 "",
                                                                 "files (*.mp4 *.avi *.mov *.exr "
                                                                 "*.png *.tga *.jpg)")
-        flib_book = self.flib_book(self.app.code, self.app.doodle_set)
+
+        flib_book = self.flib_book(self.core, self.doodle_set)
+
         # assert isinstance(flib_book, DoodleServer.baseClass.shotFBFile)
         if file:
             flib_book.upload(pathlib.Path(file))
@@ -69,3 +70,25 @@ class assSubFilbBook(subFilbBook):
         self.flib_book = DoodleServer.baseClass.shotFBFile
         # 链接上传拍屏功能和按钮
         self.clicked.connect(self.subFlinBook)
+
+
+class assFileClassPushButtem(QtWidgets.QPushButton, script.DoodleCoreApp.core):
+    _file_clas_: DoodleServer.DoodleOrm.fileClass
+
+    @property
+    def file_clas(self):
+        if not hasattr(self, '_file_clas_'):
+            assert AttributeError("没有这个属性")
+        return self._file_clas_
+
+    @file_clas.setter
+    def file_clas(self, file_clas):
+        self._file_clas_ = file_clas
+
+    def __init__(self, parent):
+        super(assFileClassPushButtem, self).__init__(parent=parent)
+        self.clicked.connect(self.setCore)
+
+    @QtCore.Slot()
+    def setCore(self):
+        self.core.file_class = self._file_clas_

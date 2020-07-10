@@ -2,28 +2,40 @@ import logging
 import os
 import pathlib
 import re
-import sys
-import abc
 import typing
 
 import pyperclip
 from PySide2 import QtCore, QtGui, QtWidgets
 
 import DoodleServer
-import script.DoodleCore
+import script.DoodleCoreApp
 
 
-class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCore.core):
-    doodle_stting: DoodleServer.DoodleSet.Doodlesetting
+class FileTableWidgetItem(QtWidgets.QTableWidgetItem):
+    _file_data_: DoodleServer.DoodleOrm.fileAttributeInfo_
+
+    @property
+    def file_data(self):
+        if not hasattr(self, '_file_data_'):
+            assert AttributeError("filetable没有这个属性!")
+        return self._file_data_
+
+    @file_data.setter
+    def file_data(self, file_data):
+        self._file_data_ = file_data
+
+
+class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
     subInfo = QtCore.Signal(DoodleServer.DoodleOrm.fileAttributeInfo_)
     dowfile = QtCore.Signal(DoodleServer.DoodleOrm.fileAttributeInfo_)
-    uploadfile = QtCore.Signal(pathlib.Path)
 
     doodle_refresh = QtCore.Signal()
 
     def __init__(self, parent):
         super(FileTableWidget, self).__init__(parent=parent)
         self.setAcceptDrops(True)
+        self.itemClicked.connect(self.setCore)
+        self.itemDoubleClicked.connect(self.openShotExplorer)
 
     def addTableItems(self, labels: typing.List[DoodleServer.DoodleOrm.fileAttributeInfo_]):
         for index, item in enumerate(labels):
@@ -56,9 +68,9 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCore.core):
         logging.info("跟新文件列表")
 
     @QtCore.Slot()
-    def openShotExplorer(self):
-        item: FileTableWidgetItem = self.currentItem()
-        joinpath = self.doodle_stting.project.joinpath(item.file_data.file_path.parent)
+    def openShotExplorer(self, item: FileTableWidgetItem):
+        item = self.currentItem()
+        joinpath = self.doodle_set.project.joinpath(item.file_data.file_path.parent)
         try:
             os.startfile(joinpath)
         except FileNotFoundError:
@@ -67,13 +79,21 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCore.core):
                                           QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
 
     @QtCore.Slot()
-    def copyPathToClipboard(self):
-        item: FileTableWidgetItem = self.currentItem()
+    def openFile(self, item: FileTableWidgetItem):
+        joinpath = self.doodle_set.project.joinpath(item.file_data.file_path)
+        try:
+            os.startfile(joinpath)
+        except FileNotFoundError:
+            logging.error("没有这样的文件")
+            QtWidgets.QMessageBox.warning(self, "警告:", f"没有找到文件{joinpath.as_posix()}",
+                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+
+    @QtCore.Slot()
+    def copyPathToClipboard(self, item: FileTableWidgetItem):
         pyperclip.copy(item.file_data.file_path.parent.as_posix())
 
     @QtCore.Slot()
-    def copyNameToClipboard(self):
-        item: FileTableWidgetItem = self.currentItem()
+    def copyNameToClipboard(self, item: FileTableWidgetItem):
         pyperclip.copy(item.file_data.file_path.name)
 
     def localuploadFiles(self):
@@ -85,29 +105,34 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCore.core):
         if file:
             self.uploadfile.emit(pathlib.Path(file))
 
+    @QtCore.Slot()
+    def updataClass(self, item: FileTableWidgetItem):
+        remarks_info = QtWidgets.QInputDialog.getText(self,
+                                                      "填写备注(中文)",
+                                                      "备注",
+                                                      QtWidgets.QLineEdit.Normal)[0]
+        item.file_data.infor += remarks_info
+        self.core.updataClass(item.file_data)
+
     def doodleClear(self):
         mrowtmp = self.rowCount()
         while mrowtmp >= 0:
             self.removeRow(mrowtmp)
             mrowtmp = mrowtmp - 1
 
+    def doodleUpdata(self):
+        self.addTableItems(self.core.queryFile())
 
-class FileTableWidgetItem(QtWidgets.QTableWidgetItem):
-    _file_data_: DoodleServer.DoodleOrm.fileAttributeInfo_
-
-    @property
-    def file_data(self):
-        if not hasattr(self, '_file_data_'):
-            assert AttributeError("filetable没有这个属性!")
-        return self._file_data_
-
-    @file_data.setter
-    def file_data(self, file_data):
-        self._file_data_ = file_data
+    def setCore(self, item: FileTableWidgetItem):
+        self.core.query_file = item.file_data
 
 
 class assTableWidget(FileTableWidget):
     appointfile = QtCore.Signal(pathlib.Path)
+
+    # def __init__(self,parent):
+    #     super(assTableWidget, self).__init__(parent=parent)
+    #     self.itemClicked.connect(self.setCore)
 
     def contextMenuEvent(self, arg__1):
         menu = QtWidgets.QMenu(self)
@@ -157,12 +182,14 @@ class assTableWidget(FileTableWidget):
                 subclass_obj = subclass(self.core, self.doodle_set)
                 subclass_obj.infor = remarks_info
                 return subclass_obj, path
-        return None,None
+        return None, None
 
 
 class shotTableWidget(FileTableWidget):
-    exportFBX = QtCore.Signal(DoodleServer.DoodleOrm.fileAttributeInfo_)
-    imporpUe4 = QtCore.Signal(DoodleServer.DoodleOrm.fileAttributeInfo_)
+
+    # def __init__(self, parent):
+    #     super(shotTableWidget, self).__init__(parent=parent)
+    #     self.itemClicked.connect(self.setCore)
 
     def contextMenuEvent(self, arg__1):
         menu = QtWidgets.QMenu(self)
@@ -171,7 +198,7 @@ class shotTableWidget(FileTableWidget):
             open_explorer.triggered.connect(self.openShotExplorer)
             # copy文件名称或者路径到剪切板
             add_info = menu.addAction("更新概述")
-            add_info.triggered.connect(lambda: self.subInfo.emit(self.currentItem().file_data))
+            add_info.triggered.connect(self.updataClass)
             filestate = menu.addAction("标记问题")
             filestate.triggered.connect(lambda: self.subInfo.emit(self.currentItem().file_data))
             copy_name_to_clip = menu.addAction('复制名称')
@@ -180,7 +207,7 @@ class shotTableWidget(FileTableWidget):
             copy_path_to_clip.triggered.connect(self.copyPathToClipboard)
             # 导出Fbx和abc选项
             export_maya = menu.addAction("导出maya相机和fbx")
-            export_maya.triggered.connect(lambda: self.exportFBX.emit(self.currentItem().file_data))
+            export_maya.triggered.connect(self.export)
             import_ue = menu.addAction("导入ue")
             import_ue.triggered.connect(lambda: self.imporpUe4.emit(self.currentItem().file_data))
             menu.move(QtGui.QCursor().pos())
@@ -214,7 +241,7 @@ class shotTableWidget(FileTableWidget):
                 # 获得文件路径并进行复制
 
                 # 创建maya文件并上传
-                self.uploadfile.emit(path)
+                DoodleServer.baseClass.shotMayaFile(self.core, self.doodle_set).upload(path)
 
                 self.listDepTypeClicked(self.listdepType.selectedItems()[0])
                 self.enableBorder(False)
@@ -222,4 +249,10 @@ class shotTableWidget(FileTableWidget):
                 pass
         else:
             a0.ignore()
+
+    @QtCore.Slot()
+    def export(self, item: FileTableWidgetItem):
+        self.core.query_file = item.file_data
+        DoodleServer.baseClass.shotMayaExportFile(self.core, self.doodle_set).export()
+
     # </editor-fold>

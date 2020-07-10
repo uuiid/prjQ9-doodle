@@ -1,7 +1,7 @@
+import contextlib
 import logging
 import threading
-import contextlib
-import mysql.connector
+
 import sqlalchemy.ext.declarative
 import sqlalchemy.orm
 

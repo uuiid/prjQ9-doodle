@@ -30,6 +30,7 @@ class convert(object):
         name_to_zhcn = {name[0]: name[1] for name in name_to_zhcn[:]}
         for __a in ass:
             self.file_type = {}
+            self.ass_name = {}
             sqlcom = f"""SELECT `name`,`type`,`file`,`fileSuffixes`,`user`,`version`,`infor`,filepath,filestate,filetime FROM dubuxiaoyao.`{__a}`"""
             # 添加fileclass
             self.file_class[__a] = fileClass(file_class=__a)
@@ -47,6 +48,7 @@ class convert(object):
                     # print("没有这个中文")
                 else:
                     self.ass_name[ass_name].nameZNCH = ZNch(localname=zn_name)
+                    name_to_zhcn.pop(ass_name)
 
             # for file_type in {_ass_[1] for _ass_ in ass_s}:
 
@@ -77,7 +79,6 @@ class convert(object):
                     ass_file.file_class = self.file_class[__a]
                     ass_file.file_type = self.file_type[f"{_ass_s_[0]}_{_ass_s_[1]}"]
                     ass_file.ass_class = self.ass_name[_ass_s_[0]]
-                    self.tmp.append(ass_file)
 
     def eps_shot(self):
         sqlcom = """SELECT episodes FROM dubuxiaoyao.mainshot"""
@@ -97,37 +98,45 @@ class convert(object):
             assert isinstance(connect, sqlalchemy.engine.Connection)
             shots = connect.execute(sqlcom).fetchall()
 
-        # for my_shot_2 in {s[2] for s in shots}:
-        #     self.file_class[my_shot_2] = fileClass(file_class=my_shot_2)
-        #
-        # for my_shot_2, my_shot_3 in {(s[2], s[3]) for s in shots}:
-        #     self.file_type[my_shot_3] = fileType(file_type=my_shot_3)
-        #     self.file_class[my_shot_2].addfileType.append(self.file_type[my_shot_3])
+        for my_shot_0,my_shot_1,my_shot_2,my_shot_3 in [s[:4] for s in shots]:
+            # 设置shot联系
+            try:
+                tmp = self.shots[f"{my_shot_0}_{my_shot_1}"]
+            except KeyError:
+                self.shots[f"{my_shot_0}_{my_shot_1}"] = Shot(shot_=my_shot_0, shotab=my_shot_1)
+            self.eps[ep].addShot.append(self.shots[f"{my_shot_0}_{my_shot_1}"])
 
-        for my_shot in {(s[0], s[1]) for s in shots}:
-            self.shots[f"{my_shot[0]}_{my_shot[1]}"] = Shot(shot_=my_shot[0], shotab=my_shot[1])
-            self.eps[ep].addShot.append(self.shots[f"{my_shot[0]}_{my_shot[1]}"])
-            for my_shot_2 in {s[2] for s in shots}:
-                self.file_class[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}"] = fileClass(file_class=my_shot_2)
-                self.shots[f"{my_shot[0]}_{my_shot[1]}"].addfileClass.append(
-                    self.file_class[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}"])
-                self.eps[ep].addFileClass.append(
-                    self.file_class[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}"])
-                for my_shot_3 in {s[3] for s in shots}:
-                    self.file_type[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}_{my_shot_3}"] = fileType(file_type=my_shot_3)
-                    self.file_class[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}"].addfileType.append(
-                        self.file_type[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}_{my_shot_3}"]
-                    )
-                    self.shots[f"{my_shot[0]}_{my_shot[1]}"].addfileType.append(
-                        self.file_type[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}_{my_shot_3}"]
-                    )
-                    self.eps[ep].addFileType.append(
-                        self.file_type[f"{my_shot[0]}_{my_shot[1]}_{my_shot_2}_{my_shot_3}"]
-                    )
+            # 设置fileclass联系
+            try:
+                tmp = self.file_class[f"{my_shot_0}_{my_shot_1}_{my_shot_2}"]
+            except KeyError:
+                self.file_class[f"{my_shot_0}_{my_shot_1}_{my_shot_2}"] = fileClass(file_class=my_shot_2)
+            self.shots[f"{my_shot_0}_{my_shot_1}"].addfileClass.append(
+                self.file_class[f"{my_shot_0}_{my_shot_1}_{my_shot_2}"])
+            self.eps[ep].addFileClass.append(
+                self.file_class[f"{my_shot_0}_{my_shot_1}_{my_shot_2}"])
+
+            # 设置filetype联系
+            try:
+                tmp = self.file_type[f"{my_shot_0}_{my_shot_1}_{my_shot_2}_{my_shot_3}"]
+            except KeyError:
+                self.file_type[f"{my_shot_0}_{my_shot_1}_{my_shot_2}_{my_shot_3}"] = fileType(file_type=my_shot_3)
+            self.file_class[f"{my_shot_0}_{my_shot_1}_{my_shot_2}"].addfileType.append(
+                self.file_type[f"{my_shot_0}_{my_shot_1}_{my_shot_2}_{my_shot_3}"]
+            )
+            self.shots[f"{my_shot_0}_{my_shot_1}"].addfileType.append(
+                self.file_type[f"{my_shot_0}_{my_shot_1}_{my_shot_2}_{my_shot_3}"]
+            )
+            self.eps[ep].addFileType.append(
+                self.file_type[f"{my_shot_0}_{my_shot_1}_{my_shot_2}_{my_shot_3}"]
+            )
+
+
 
         for shot_ in shots:
             kwargs = {"file": shot_[4], "fileSuffixes": shot_[5], "user": shot_[6], "version": shot_[7],
-                      "_file_path_": self.convertPathToIp(shot_[8]), "infor": shot_[9], "filetime": shot_[10], "filestate": shot_[11]}
+                      "_file_path_": self.convertPathToIp(shot_[8]), "infor": shot_[9], "filetime": shot_[10],
+                      "filestate": shot_[11]}
             tmp_orm = None
             if shot_[2] == "VFX":
                 tmp_orm = shotFlipBook(**kwargs)
@@ -162,7 +171,7 @@ class convert(object):
                 session.add(ep)
 
     @staticmethod
-    def convertPathToIp(path: pathlib.Path) -> pathlib.Path:
+    def convertPathToIp(path:str) -> pathlib.Path:
         """
 
         Args:
@@ -171,6 +180,7 @@ class convert(object):
         Returns:
 
         """
+        path = pathlib.Path(path)
         if path.drive:
             if path.drive.__len__() == 2:
                 _path = path.as_posix()[2:]
@@ -179,14 +189,14 @@ class convert(object):
                 _path = path.as_posix()[strlen:]
         else:
             _path = path.as_posix()
-        _path_ = pathlib.Path(_path)
-        return _path_
+        # _path_ = pathlib.Path(_path)
+        return _path
 
 
 def run():
     test = convert()
     test.convert()
-    test.subass()
+    # test.subass()
     print(test)
     test.eps_shot()
     test.subeps()

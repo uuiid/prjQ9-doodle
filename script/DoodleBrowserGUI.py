@@ -16,11 +16,12 @@ import qdarkstyle
 import UiFile.ProjectBrowser
 
 import script.DoodleSetGui
-import script.DoodleCore
+import script.DoodleCoreApp
 import DoodleServer
 import script.DoodlePrjUI.DoodleListWidget
 import script.DoodlePrjUI.DoodleTableWidget
 import script.DoodlePrjUI.DoodleButten
+
 
 class _prjColor(object):
     @staticmethod
@@ -47,10 +48,11 @@ class _prjColor(object):
         return bush
 
 
-class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow,script.DoodleCore.core):
+class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWindow, script.DoodleCoreApp.core):
     """
     这个类用来实现项目管理的属性和UI操作,其中shot和ass是两个数据库链接器,  用来在ui和数据库中添加一个中间层
     """
+
     #
     # @property
     # def core(self) -> DoodleServer.Core.PrjCore:
@@ -107,8 +109,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepartment.itemClicked.connect(lambda item: self.listDepartmenClicked(item))
         # 在depType中添加点击跟新文件事件
         self.listdepType.itemClicked.connect(lambda item: self.listDepTypeClicked(item))
-        # 在文件中添加点击事件
-        self.listfile.cellClicked.connect(lambda row, column: self.shotFileClicked(row))
         # </editor-fold>
 
         # 设置ass类型
@@ -121,55 +121,53 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listAss.itemClicked.connect(lambda item: self.assClassClicked(item))
         # 在listType中添加点击事件生成file列表
         self.listAssType.itemClicked.connect(lambda item: self.assClassTypeClicked(item))
-        # 在listassfile中获得资产信息
-        self.listAssFile.cellClicked.connect(lambda row, colume: self.assFileClicked(row))
 
         # 双击打开文件
-        self.listfile.doubleClicked.connect(self.openShotFile)
+        # self.listfile.doubleClicked.connect(self.openShotFile)
         # 添加刷新函数
         self.refresh.triggered.connect(self.setepisodex)
-        # 关闭ue链接函数
-        self.close_socket.triggered.connect(self.closesocket)
-        # 合成拍屏
-        self.actioncom_video.triggered.connect(self.comEpsVideo)
-        # 转换布料
-        self.actionclothToFbx.triggered.connect(self.convertCloth)
+        # # 关闭ue链接函数
+        # self.close_socket.triggered.connect(self.closesocket)
+        # # 合成拍屏
+        # self.actioncom_video.triggered.connect(self.comEpsVideo)
+        # # 转换布料
+        # self.actionclothToFbx.triggered.connect(self.convertCloth)
 
         # <editor-fold desc="添加上下文菜单">
         # 添加集数上下文菜单
-        self.listepisodes.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listepisodes.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listepisodes.mapToGlobal(pos), 'episodes'))
-        # 添加镜头上下文菜单
-        self.listshot.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listshot.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listshot.mapToGlobal(pos), "shot"))
-        # 部门菜单
-        self.listdepartment.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listdepartment.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listdepartment.mapToGlobal(pos), "department"))
-        # 部门类型菜单
-        self.listdepType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listdepType.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listdepType.mapToGlobal(pos), "depType"))
+        # self.listepisodes.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        # self.listepisodes.customContextMenuRequested.connect(
+        #     lambda pos: self.addRightClickMenu(self.listepisodes.mapToGlobal(pos), 'episodes'))
+        # # 添加镜头上下文菜单
+        # self.listshot.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        # self.listshot.customContextMenuRequested.connect(
+        #     lambda pos: self.addRightClickMenu(self.listshot.mapToGlobal(pos), "shot"))
+        # # 部门菜单
+        # self.listdepartment.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        # self.listdepartment.customContextMenuRequested.connect(
+        #     lambda pos: self.addRightClickMenu(self.listdepartment.mapToGlobal(pos), "department"))
+        # # 部门类型菜单
+        # self.listdepType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        # self.listdepType.customContextMenuRequested.connect(
+        #     lambda pos: self.addRightClickMenu(self.listdepType.mapToGlobal(pos), "depType"))
 
         # 镜头文件菜单
-        self.listfile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listfile.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listfile.mapToGlobal(pos), "shotFile"))
-
-        # 资产种类菜单
-        self.listAss.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listAss.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listAss.mapToGlobal(pos), "assFolder"))
-        # 资产类型菜单
-        self.listAssType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listAssType.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listAssType.mapToGlobal(pos), "assType"))
-        # 资产文件菜单
-        self.listAssFile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.listAssFile.customContextMenuRequested.connect(
-            lambda pos: self.addRightClickMenu(self.listAssFile.mapToGlobal(pos), "assFile"))
+        # self.listfile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        # self.listfile.customContextMenuRequested.connect(
+        #     lambda pos: self.addRightClickMenu(self.listfile.mapToGlobal(pos), "shotFile"))
+        #
+        # # 资产种类菜单
+        # self.listAss.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        # self.listAss.customContextMenuRequested.connect(
+        #     lambda pos: self.addRightClickMenu(self.listAss.mapToGlobal(pos), "assFolder"))
+        # # 资产类型菜单
+        # self.listAssType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        # self.listAssType.customContextMenuRequested.connect(
+        #     lambda pos: self.addRightClickMenu(self.listAssType.mapToGlobal(pos), "assType"))
+        # # 资产文件菜单
+        # self.listAssFile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        # self.listAssFile.customContextMenuRequested.connect(
+        #     lambda pos: self.addRightClickMenu(self.listAssFile.mapToGlobal(pos), "assFile"))
         # </editor-fold>
 
         self.pot_player = potplayer.PlayList()
@@ -180,12 +178,13 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         """
         if index == 0:
             logging.info("点击资产")
-            QtCore.QCoreApplication.instance().codeToAss()
-            self.setepisodex()
-        elif index == 1:
-            QtCore.QCoreApplication.instance().codeToShot()
-            logging.info("点击镜头")
+            self.doodle_app.codeToAss()
+            self.character.file_clas, self.effects.file_clas, self.props.file_clas, self.scane.file_clas = self.core.queryAssClass()
             self.assClassSortClicked("character")
+        elif index == 1:
+            self.doodle_app.codeToShot()
+            logging.info("点击镜头")
+            self.setepisodex()
 
     # </editor-fold>
     # @staticmethod
@@ -198,7 +197,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #         logging.error("没有找到这个小部件 %s", err)
     #     else:
     #         item.setBackground(getattr(_prjColor, f"listItemState{state_type}")())
-        # item.setBackground(QtGui.QBrush(QtCore.Qt.red))
+    # item.setBackground(QtGui.QBrush(QtCore.Qt.red))
 
     # <editor-fold desc="镜头更新事件">
 
@@ -250,37 +249,19 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         """
         部门点击事件
         """
-        self.clearTableFile(self.listfile)
+        self.listfile.doodleClear()
         self.listdepType.clear()
         self.shot_thumbnail.clear()
 
-        self.listdepType.addItems(self.core.queryFileType())
-        # 设置颜色
-        # state = self.shot.getFileState("DepType")
-        # for s in state:
-        #     self._setQlistItemColor(self.listdepType, s.Type, s.filestate)
+        self.listdepType.doodleUpdata()
 
     def listDepTypeClicked(self, item):
         """
         部门类型点击事件
         """
-        self.shot.Type = item.text()
-
         # 清空上一次文件显示和版本记录和文件路径
-        self.clearTableFile(self.listfile)
-        self._setWidegtItem(self.core.queryFile(), self.listfile)
-
-    def shotFileClicked(self, shot_row):
-        """
-        镜头文件点击事件
-        """
-        # shot_row = row
-        # shot_row = self.listfile.currentRow()
-        self.shot.version = int(self.listfile.item(shot_row, 0).text()[1:])
-        self.shot.infor = self.listfile.item(shot_row, 1).text()
-        self.shot.fileSuffixes = self.listfile.item(shot_row, 3).text()
-        self.shot.query_id = int(self.listfile.item(shot_row, 4).text())
-
+        self.listfile.doodleClear()
+        self.listfile.doodleUpdata()
 
     # </editor-fold>
 
@@ -289,56 +270,32 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         """
         按钮点击事件, 更新资产种类
         """
-        self.ass.sort = ass_name
-        logging.info('将资产类型设置为 %s', ass_name)
-
+        # self.core.file_class
         self.listAss.clear()
         self.listAssType.clear()
-        self.clearTableFile(self.listAssFile)
+        self.listAssFile.doodleClear()
 
         self.ass_thumbnail.clear()
 
-        # 通过mySql命令获得数据
-        self.listAss.addItems(self.ass.getAssClass())
-        # 设置颜色
-        state = self.ass.getFileState("Class")
-        for s in state:
-            self._setQlistItemColor(self.listAss, s.name, s.filestate)
-
-        for name, loa in self.ass.convertMy.name.items():
-            try:
-                item = self.listAss.findItems(name, QtCore.Qt.MatchExactly)[0]
-            except IndexError:
-                logging.error("找不到中文项目")
-            else:
-                item.setText(loa)
+        self.listAss.doodleUpdata()
 
     def assClassClicked(self, item):
         """
         资产种类点击事件, 资产类型的更新
         """
 
-        self.ass.name = self.ass.convertMy.toEn(item.text())  # self.listAssType.selectedItems()[0].text()
-
         self.listAssType.clear()
-        logging.info('清除资产类型中的项数')
-        self.clearTableFile(self.listAssFile)
-        logging.info('清除资产文件中的项数')
+        self.listAssFile.doodleClear()
+        logging.info('清除资产类型,文件中的项数')
 
         self.ass_thumbnail.clear()
-        self.listAssType.addItems(self.ass.getAssType())
-        # 设置颜色
-        state = self.ass.getFileState("Type")
-        for s in state:
-            self._setQlistItemColor(self.listAssType, s.type, s.filestate)
+        self.listAssType.doodleUpdata()
 
     def assClassTypeClicked(self, item):
         """资产类别点击事件, 更新资产文件列表"""
-        self.ass.Type = item.text()
-        self.setThumbnail("ass", self.ass_thumbnail)
         # 清空上一次文件显示和版本记录和文件路径
-        self.clearTableFile(self.listAssFile)
-        self._setWidegtItem(self.ass.getFileInfo(), self.listAssFile)
+        self.listAssFile.doodleClear()
+        self.listAssFile.doodleUpdata()
 
     def assFileClicked(self, ass_row):
         # ass_row = self.listAssFile.currentRow()

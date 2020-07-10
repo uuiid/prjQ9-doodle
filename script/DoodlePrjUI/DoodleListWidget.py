@@ -10,10 +10,10 @@ import pyperclip
 from PySide2 import QtCore, QtGui, QtWidgets
 
 import DoodleServer
-import script.DoodleCore
+import script.DoodleCoreApp
 
 
-class DoodleListWidegt(QtWidgets.QListWidget, script.DoodleCore.core):
+class DoodleListWidegt(QtWidgets.QListWidget, script.DoodleCoreApp.core):
     # def __init__(self,, parent=None):
     #     super(DoodleListWidegt, self).__init__(parent=parent)
     #
@@ -58,7 +58,7 @@ class EpisodesListWidget(DoodleListWidegt):
 
     def __init__(self, parent):
         super(EpisodesListWidget, self).__init__(parent=parent)
-        self.clicked.connect(self.setCore)
+        self.itemClicked.connect(self.setCore)
 
     def contextMenuEvent(self, arg__1: QtGui.QContextMenuEvent):
         # print(arg__1)
@@ -120,7 +120,7 @@ class ShotListWidget(DoodleListWidegt):
 
     def __init__(self, parent):
         super(ShotListWidget, self).__init__(parent=parent)
-        self.clicked.connect(self.setCore)
+        self.itemClicked.connect(self.setCore)
 
     @QtCore.Slot()
     def addFofler(self):
@@ -190,7 +190,7 @@ class ShotFileClassListWidget(DoodleListWidegt):
 
     def __init__(self, parent):
         super(ShotFileClassListWidget, self).__init__(parent=parent)
-        self.clicked.connect(self.setCore)
+        self.itemClicked.connect(self.setCore)
 
     def contextMenuEvent(self, arg__1):
         menu = QtWidgets.QMenu(self)
@@ -220,7 +220,7 @@ class ShotFileClassListWidget(DoodleListWidegt):
 
     @QtCore.Slot()
     def setCore(self, item: ShotFileClassListWidgetItem):
-        self.core = item.file_class
+        self.core.file_class = item.file_class
 
 
 class ShotFileTypeListWidgetItem(QtWidgets.QListWidgetItem):
@@ -243,7 +243,7 @@ class ShotFileTypeListWidget(DoodleListWidegt):
 
     def __init__(self, parent):
         super(ShotFileTypeListWidget, self).__init__(parent=parent)
-        self.clicked.connect(self.setCore)
+        self.itemClicked.connect(self.setCore)
 
     def contextMenuEvent(self, arg__1):
         menu = QtWidgets.QMenu(self)
@@ -270,9 +270,12 @@ class ShotFileTypeListWidget(DoodleListWidegt):
             item.file_type = i
             self.addItem(item)
 
+    def doodleUpdata(self):
+        self.addItems(self.core.queryFileType())
+
     @QtCore.Slot()
     def setCore(self, item: ShotFileTypeListWidgetItem):
-        self.core = item.file_type
+        self.core.file_type = item.file_type
 
 
 class AssNameListWidgetItem(QtWidgets.QListWidgetItem):
@@ -295,10 +298,29 @@ class AssNameListWidgetItem(QtWidgets.QListWidgetItem):
         self.setText(localname)
 
 
+class AssFileTypeListWidgetItem(QtWidgets.QListWidgetItem):
+    _file_type_: DoodleServer.DoodleOrm.fileType
+
+    @property
+    def file_type(self):
+        if not hasattr(self, '_file_type_'):
+            assert AttributeError("小部件assfiletype没有这个数据")
+        return self._file_type_
+
+    @file_type.setter
+    def file_type(self, file_type):
+        self._file_type_ = file_type
+        self.setText(self._file_type_.file_type)
+
+
 class AssNameListWidget(DoodleListWidegt):
     addZNCH = QtCore.Signal(DoodleServer.DoodleOrm.ZNch)
     updata = QtCore.Signal(DoodleServer.DoodleOrm.ZNch)
     item_class = AssNameListWidgetItem
+
+    def __init__(self, parent):
+        super(AssNameListWidget, self).__init__(parent=parent)
+        self.itemClicked.connect(self.setCore)
 
     def contextMenuEvent(self, arg__1):
         menu = QtWidgets.QMenu(self)
@@ -349,23 +371,20 @@ class AssNameListWidget(DoodleListWidegt):
                     znch.localname = ass_folder
                     self.updata.emit(znch)
 
+    def doodleUpdata(self):
+        self.addItems(self.core.queryAssname())
 
-class AssFileTypeListWidgetItem(QtWidgets.QListWidgetItem):
-    _file_type_: DoodleServer.DoodleOrm.fileType
-
-    @property
-    def file_type(self):
-        if not hasattr(self, '_file_type_'):
-            assert AttributeError("小部件assfiletype没有这个数据")
-        return self._file_type_
-
-    @file_type.setter
-    def file_type(self, file_type):
-        self._file_type_ = file_type
-        self.setText(self._file_type_.file_type)
+    @QtCore.Slot()
+    def setCore(self, item: AssNameListWidgetItem):
+        self.core.ass_class = item.ass_name_data
 
 
 class AssFileTypeListWidget(DoodleListWidegt):
+
+    def __init__(self, parent):
+        super(AssFileTypeListWidget, self).__init__(parent=parent)
+        self.itemClicked.connect(self.setCore)
+
     def contextMenuEvent(self, arg__1):
         menu = QtWidgets.QMenu(self)
         # 添加资产类型右键文件夹
@@ -377,7 +396,7 @@ class AssFileTypeListWidget(DoodleListWidegt):
     def addItems(self, labels: typing.List[DoodleServer.DoodleOrm.fileType], p_str=None):
         for i in labels:
             item = AssFileTypeListWidgetItem()
-            item.ass_name_data = i
+            item.file_type = i
             self.addItem(item)
 
     @QtCore.Slot()
@@ -393,6 +412,13 @@ class AssFileTypeListWidget(DoodleListWidegt):
                 self.addItem(item)
             else:
                 self.showMessageBox()
+
+    def doodleUpdata(self):
+        self.addItems(self.core.queryAssType())
+
+    @QtCore.Slot()
+    def setCore(self, item: AssFileTypeListWidgetItem):
+        self.core.file_type = item.file_type
 
 
 if __name__ == '__main__':
