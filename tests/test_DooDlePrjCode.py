@@ -1,5 +1,5 @@
 import pytest
-import script.ProjectBrowserGUI
+import script.DoodleBrowserGUI
 import script.DooDlePrjCode
 import script.MySqlComm
 

@@ -68,6 +68,11 @@ class PrjCore(object):
             assert isinstance(session, sqlalchemy.orm.session.Session)
             session.add(base_class)
 
+    def updataClass(self, base_class: DoleOrm.fileAttributeInfo_):
+        with self.comsql.sessionOne() as session:
+            assert isinstance(session, sqlalchemy.orm.session.Session)
+            session.flush(base_class)
+
     def quertById(self, base_class: typing.Type[DoleOrm.fileAttributeInfo_],
                   query_id: int = None) -> DoleOrm.fileAttributeInfo_:
         if not query_id:

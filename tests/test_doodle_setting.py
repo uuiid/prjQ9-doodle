@@ -2,7 +2,7 @@ from unittest import TestCase
 import pytest
 from PySide2 import QtTest
 import unittest
-import script.ProjectBrowserGUI
+import script.DoodleBrowserGUI
 import script.DoodleSetGui
 import script.MySqlComm
 # class TestClass():

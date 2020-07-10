@@ -375,7 +375,7 @@ class _AssFile(_fileclass):
 class _Screenshot(_fileclass, metaclass=ABCMeta):
 
     @contextlib.contextmanager
-    def upload(self, soure_file: pathlib.Path = None) -> typing.Iterator:
+    def upload(self, soure_file: pathlib.Path = None) -> typing.Iterator[pathlib.Path]:
         self.code.file_type = self._seekScreenshot_()
         trange_path = self.code.commPath("screenshot")
         # 截图直接保存到缓存路径当中
@@ -549,6 +549,7 @@ class assUePrj(_AssFile):
 
     def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
         assert isinstance(sub_class, DoleOrm.assUEScane)
+        sub_class.infor = self.infor
         self.code.file_type.ass_class = self.code.ass_class
         self.code.file_type.file_class = self.code.file_class
         self.code.ass_class.file_class = self.code.file_class
@@ -734,6 +735,7 @@ class shotFBFile(_FlipBook):
 
     def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
         assert isinstance(sub_class, DoleOrm.shotFlipBook)
+        sub_class.infor = "这是拍屏"
         # shot类约束
         self.code.shot.episodes = self.code.episodes
         # class类约束
@@ -1118,7 +1120,7 @@ class shotScreenshot(_Screenshot):
 
 def doodleFileFactory(core, suffix):
     cls = None
-    if isinstance(core, DoleCore.PrjShot):
+    if isinstance(core, DoodleServer.DoodleCore.PrjShot):
         if suffix in [".mb", ".ma"]:
             cls = shotMayaFile
         elif suffix in [".mp4"]:
@@ -1127,7 +1129,7 @@ def doodleFileFactory(core, suffix):
             cls = shotFBFile
         elif suffix in ["Screenshot"]:
             cls = shotScreenshot
-    elif isinstance(core, DoleCore.PrjAss):
+    elif isinstance(core, DoodleServer.DoodleCore.PrjAss):
         if suffix in [".uproject"]:
             cls = assUePrj
         elif suffix in [".mb", ".ma"]:

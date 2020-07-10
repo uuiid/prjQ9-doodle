@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui',
 # licensing of 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui' applies.
 #
-# Created: Tue Jul  7 14:32:47 2020
+# Created: Thu Jul  9 18:57:02 2020
 #      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -68,7 +68,7 @@ class Ui_MainWindow(object):
         self.effects.setObjectName("effects")
         self.horizontalLayout_5.addWidget(self.effects)
         self.verticalLayout_6.addLayout(self.horizontalLayout_5)
-        self.listAss = QtWidgets.QListWidget(self.tab_2)
+        self.listAss = AssNameListWidget(self.tab_2)
         self.listAss.setObjectName("listAss")
         self.verticalLayout_6.addWidget(self.listAss)
         self.verticalLayout_6.setStretch(0, 1)
@@ -79,7 +79,7 @@ class Ui_MainWindow(object):
         self.label_2 = QtWidgets.QLabel(self.tab_2)
         self.label_2.setObjectName("label_2")
         self.verticalLayout_8.addWidget(self.label_2)
-        self.listAssType = QtWidgets.QListWidget(self.tab_2)
+        self.listAssType = AssFileTypeListWidget(self.tab_2)
         self.listAssType.setObjectName("listAssType")
         self.verticalLayout_8.addWidget(self.listAssType)
         self.verticalLayout_8.setStretch(1, 1)
@@ -89,7 +89,7 @@ class Ui_MainWindow(object):
         self.label_4 = QtWidgets.QLabel(self.tab_2)
         self.label_4.setObjectName("label_4")
         self.verticalLayout_7.addWidget(self.label_4)
-        self.listAssFile = QtWidgets.QTableWidget(self.tab_2)
+        self.listAssFile = assTableWidget(self.tab_2)
         self.listAssFile.setObjectName("listAssFile")
         self.listAssFile.setColumnCount(5)
         self.listAssFile.setRowCount(0)
@@ -108,10 +108,10 @@ class Ui_MainWindow(object):
         self.horizontalLayout_8.setObjectName("horizontalLayout_8")
         self.verticalLayout_11 = QtWidgets.QVBoxLayout()
         self.verticalLayout_11.setObjectName("verticalLayout_11")
-        self.ass_upload = QtWidgets.QPushButton(self.tab_2)
+        self.ass_upload = assSubFilbBook(self.tab_2)
         self.ass_upload.setObjectName("ass_upload")
         self.verticalLayout_11.addWidget(self.ass_upload)
-        self.ass_screenshot = QtWidgets.QPushButton(self.tab_2)
+        self.ass_screenshot = assScreenshotPushButten(self.tab_2)
         self.ass_screenshot.setObjectName("ass_screenshot")
         self.verticalLayout_11.addWidget(self.ass_screenshot)
         self.label_3 = QtWidgets.QLabel(self.tab_2)
@@ -156,7 +156,7 @@ class Ui_MainWindow(object):
         self.shot_shot = QtWidgets.QLabel(self.Episodes_shot)
         self.shot_shot.setObjectName("shot_shot")
         self.verticalLayout_3.addWidget(self.shot_shot)
-        self.listshot = QtWidgets.QListWidget(self.Episodes_shot)
+        self.listshot = ShotListWidget(self.Episodes_shot)
         self.listshot.setObjectName("listshot")
         self.verticalLayout_3.addWidget(self.listshot)
         self.horizontalLayout_6.addLayout(self.verticalLayout_3)
@@ -169,7 +169,7 @@ class Ui_MainWindow(object):
         self.department = QtWidgets.QLabel(self.Episodes_shot)
         self.department.setObjectName("department")
         self.verticalLayout_4.addWidget(self.department)
-        self.listdepartment = QtWidgets.QListWidget(self.Episodes_shot)
+        self.listdepartment = ShotFileClassListWidget(self.Episodes_shot)
         self.listdepartment.setObjectName("listdepartment")
         self.verticalLayout_4.addWidget(self.listdepartment)
         self.horizontalLayout.addLayout(self.verticalLayout_4)
@@ -178,7 +178,7 @@ class Ui_MainWindow(object):
         self.depType = QtWidgets.QLabel(self.Episodes_shot)
         self.depType.setObjectName("depType")
         self.verticalLayout_5.addWidget(self.depType)
-        self.listdepType = QtWidgets.QListWidget(self.Episodes_shot)
+        self.listdepType = ShotFileTypeListWidget(self.Episodes_shot)
         self.listdepType.setObjectName("listdepType")
         self.verticalLayout_5.addWidget(self.listdepType)
         self.horizontalLayout.addLayout(self.verticalLayout_5)
@@ -187,7 +187,7 @@ class Ui_MainWindow(object):
         self.file = QtWidgets.QLabel(self.Episodes_shot)
         self.file.setObjectName("file")
         self.verticalLayout.addWidget(self.file)
-        self.listfile = QtWidgets.QTableWidget(self.Episodes_shot)
+        self.listfile = shotTableWidget(self.Episodes_shot)
         self.listfile.setMaximumSize(QtCore.QSize(120000, 1200))
         self.listfile.setObjectName("listfile")
         self.listfile.setColumnCount(5)
@@ -230,14 +230,14 @@ class Ui_MainWindow(object):
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.verticalLayout_9 = QtWidgets.QVBoxLayout()
         self.verticalLayout_9.setObjectName("verticalLayout_9")
-        self.shot_upload = QtWidgets.QPushButton(self.Episodes_shot)
+        self.shot_upload = shotSubFilbBook(self.Episodes_shot)
         self.shot_upload.setStyleSheet("")
         self.shot_upload.setCheckable(False)
         self.shot_upload.setAutoRepeat(True)
         self.shot_upload.setAutoExclusive(False)
         self.shot_upload.setObjectName("shot_upload")
         self.verticalLayout_9.addWidget(self.shot_upload)
-        self.shot_screenshots = QtWidgets.QPushButton(self.Episodes_shot)
+        self.shot_screenshots = shotScreenshotPushButten(self.Episodes_shot)
         self.shot_screenshots.setStyleSheet("")
         self.shot_screenshots.setCheckable(False)
         self.shot_screenshots.setAutoRepeat(True)
@@ -293,7 +293,7 @@ class Ui_MainWindow(object):
         self.episodes.setBuddy(self.listepisodes)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.setTabOrder(self.listepisodes, self.listshot)
         MainWindow.setTabOrder(self.listshot, self.listdepartment)
@@ -343,4 +343,6 @@ class Ui_MainWindow(object):
         self.actioncom_video.setText(QtWidgets.QApplication.translate("MainWindow", "合成整集拍屏", None, -1))
         self.actionclothToFbx.setText(QtWidgets.QApplication.translate("MainWindow", "布料转FBX", None, -1))
 
-from script.DoodlePrjUI.episodeslistwidget import EpisodesListWidget
+from script.DoodlePrjUI.DoodleButten import shotSubFilbBook, shotScreenshotPushButten, assSubFilbBook, assScreenshotPushButten
+from script.DoodlePrjUI.DoodleListWidget import AssNameListWidget, ShotFileClassListWidget, ShotListWidget, AssFileTypeListWidget, EpisodesListWidget, ShotFileTypeListWidget
+from script.DoodlePrjUI.DoodleTableWidget import shotTableWidget, assTableWidget

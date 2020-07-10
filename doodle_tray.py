@@ -13,7 +13,7 @@ from PySide2 import QtCore
 from PySide2 import QtWidgets, QtGui
 import qdarkstyle
 import script.DoodleUpdata
-import script.ProjectBrowserGUI
+import script.DoodleBrowserGUI
 import script.DoodleLog
 import script.DoodleSetGui
 import script.DoodleSynXml
@@ -26,7 +26,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
     timeSyn = 7200000
     version = 1.130
     setwin: script.DoodleSetGui.DoodlesettingGUI
-    project_browser: script.ProjectBrowserGUI.ProjectBrowserGUI
+    project_browser: script.DoodleBrowserGUI.ProjectBrowserGUI
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
@@ -139,11 +139,11 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon):
         subprocess.Popen("D:\\Source\\UnrealEngine\\Engine\\Binaries\\Win64\\UE4Editor.exe")
 
     def openProject(self):
-        if isinstance(self.project_browser, script.ProjectBrowserGUI.ProjectBrowserGUI):
-            self.project_browser = script.ProjectBrowserGUI.ProjectBrowserGUI()
+        if isinstance(self.project_browser, script.DoodleBrowserGUI.ProjectBrowserGUI):
+            self.project_browser = script.DoodleBrowserGUI.ProjectBrowserGUI()
             self.project_browser.show()
         else:
-            self.project_browser = script.ProjectBrowserGUI.ProjectBrowserGUI()
+            self.project_browser = script.DoodleBrowserGUI.ProjectBrowserGUI()
             self.project_browser.show()
         self.ta_log.info('打开了项目管理器')
 

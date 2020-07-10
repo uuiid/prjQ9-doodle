@@ -18,7 +18,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
@@ -140,7 +140,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QListWidget" name="listAss"/>
+             <widget class="AssNameListWidget" name="listAss"/>
             </item>
            </layout>
           </item>
@@ -154,7 +154,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listAssType"/>
+             <widget class="AssFileTypeListWidget" name="listAssType"/>
             </item>
            </layout>
           </item>
@@ -168,7 +168,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QTableWidget" name="listAssFile">
+             <widget class="assTableWidget" name="listAssFile">
               <column>
                <property name="text">
                 <string>版本</string>
@@ -201,14 +201,14 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_11" stretch="0,0,1,0">
                 <item>
-                 <widget class="QPushButton" name="ass_upload">
+                 <widget class="assSubFilbBook" name="ass_upload">
                   <property name="text">
                    <string>转盘</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="ass_screenshot">
+                 <widget class="assScreenshotPushButten" name="ass_screenshot">
                   <property name="text">
                    <string>截图</string>
                   </property>
@@ -282,7 +282,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QListWidget" name="listshot"/>
+             <widget class="ShotListWidget" name="listshot"/>
             </item>
            </layout>
           </item>
@@ -300,7 +300,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QListWidget" name="listdepartment"/>
+                 <widget class="ShotFileClassListWidget" name="listdepartment"/>
                 </item>
                </layout>
               </item>
@@ -314,7 +314,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QListWidget" name="listdepType"/>
+                 <widget class="ShotFileTypeListWidget" name="listdepType"/>
                 </item>
                </layout>
               </item>
@@ -328,7 +328,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QTableWidget" name="listfile">
+                 <widget class="shotTableWidget" name="listfile">
                   <property name="maximumSize">
                    <size>
                     <width>120000</width>
@@ -405,7 +405,7 @@
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_9">
                 <item>
-                 <widget class="QPushButton" name="shot_upload">
+                 <widget class="shotSubFilbBook" name="shot_upload">
                   <property name="styleSheet">
                    <string notr="true"/>
                   </property>
@@ -424,7 +424,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="shot_screenshots">
+                 <widget class="shotScreenshotPushButten" name="shot_screenshots">
                   <property name="toolTip">
                    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;这个按钮按下时可以截屏&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
@@ -532,7 +532,62 @@
   <customwidget>
    <class>EpisodesListWidget</class>
    <extends>QListWidget</extends>
-   <header>script.DoodlePrjUI.episodeslistwidget.h</header>
+   <header>script.DoodlePrjUI.DoodleListWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ShotListWidget</class>
+   <extends>QListWidget</extends>
+   <header>script.DoodlePrjUI.DoodleListWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ShotFileClassListWidget</class>
+   <extends>QListWidget</extends>
+   <header>script.DoodlePrjUI.DoodleListWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ShotFileTypeListWidget</class>
+   <extends>QListWidget</extends>
+   <header>script.DoodlePrjUI.DoodleListWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>shotTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>script.DoodlePrjUI.DoodleTableWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AssNameListWidget</class>
+   <extends>QListWidget</extends>
+   <header>script.DoodlePrjUI.DoodleListWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AssFileTypeListWidget</class>
+   <extends>QListWidget</extends>
+   <header>script.DoodlePrjUI.DoodleListWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>assTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>script.DoodlePrjUI.DoodleTableWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>shotScreenshotPushButten</class>
+   <extends>QPushButton</extends>
+   <header>script.DoodlePrjUI.DoodleButten.h</header>
+  </customwidget>
+  <customwidget>
+   <class>assScreenshotPushButten</class>
+   <extends>QPushButton</extends>
+   <header>script.DoodlePrjUI.DoodleButten.h</header>
+  </customwidget>
+  <customwidget>
+   <class>shotSubFilbBook</class>
+   <extends>QPushButton</extends>
+   <header>script.DoodlePrjUI.DoodleButten.h</header>
+  </customwidget>
+  <customwidget>
+   <class>assSubFilbBook</class>
+   <extends>QPushButton</extends>
+   <header>script.DoodlePrjUI.DoodleButten.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

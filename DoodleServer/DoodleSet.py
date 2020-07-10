@@ -87,6 +87,26 @@ class Doodlesetting(object):
             projectname = "dubuxiaoyao"
         self._projectname = projectname
 
+    _project_: pathlib.Path
+
+    @property
+    def project(self):
+        if not hasattr(self, '_project_'):
+            assert AttributeError("")
+        if not isinstance(self._project_, pathlib.Path):
+            self._project_ = pathlib.Path(self._project_)
+        return self._project_
+
+    @project.setter
+    def project(self, project):
+        if not isinstance(project, pathlib.Path):
+            self._project_ = pathlib.Path(project)
+        self._project_ = project
+
+    @property
+    def en_user(self) -> str:
+        return DoleConvert.isChinese(self.user).easyToEn()
+
     # </editor-fold>
 
     @property
