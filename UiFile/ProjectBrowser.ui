@@ -231,7 +231,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QLabel" name="ass_thumbnail">
+               <widget class="assScreenshotQlabel" name="ass_thumbnail">
                 <property name="text">
                  <string>TextLabel</string>
                 </property>
@@ -462,7 +462,7 @@
                </layout>
               </item>
               <item>
-               <widget class="QLabel" name="shot_thumbnail">
+               <widget class="shotScreenshotQlabel" name="shot_thumbnail">
                 <property name="text">
                  <string>TextLabel</string>
                 </property>
@@ -593,6 +593,16 @@
    <class>assFileClassPushButtem</class>
    <extends>QPushButton</extends>
    <header>script.DoodlePrjUI.DoodleButten.h</header>
+  </customwidget>
+  <customwidget>
+   <class>shotScreenshotQlabel</class>
+   <extends>QLabel</extends>
+   <header>script.DoodlePrjUI.DoodleLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>assScreenshotQlabel</class>
+   <extends>QLabel</extends>
+   <header>script.DoodlePrjUI.DoodleLabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

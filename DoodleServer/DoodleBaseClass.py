@@ -403,12 +403,12 @@ class _Screenshot(_fileclass, metaclass=ABCMeta):
             else:
                 logging.error("未发现截图")
 
-    def down(self, down_path: pathlib.Path = None):
+    def down(self, down_path: pathlib.Path = None) -> typing.Union[pathlib.Path,None]:
         # 查询数据库获得文件路径
         self.code.file_type = self._seekScreenshot_()
         query_file = self.code.queryFile(self.doodle_file_class)
         if not query_file:
-            path = pathlib.Path("datas/icon.png")
+            return None
         else:
             self.code.query_id = query_file[0].id
             path = self.code.convertPathToIp(self.code.quertById(self.doodle_file_class).file_path)
@@ -430,7 +430,6 @@ class _Screenshot(_fileclass, metaclass=ABCMeta):
     @abstractmethod
     def _seekScreenshot_(self):
         pass
-
 
 
 class _FlipBook(_fileclass, metaclass=ABCMeta):
@@ -1105,7 +1104,8 @@ class shotScreenshot(_Screenshot):
         return sub_class
 
     def _seekScreenshot_(self):
-        self.code.file_class = self._seekFileClass_()
+        if not self.code.file_class:
+            self.code.file_class = self._seekFileClass_()
         for tmp_type in self.code.file_class.addfileType:
             if tmp_type.file_type == "screenshot":
                 return tmp_type

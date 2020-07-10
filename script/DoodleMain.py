@@ -1,11 +1,14 @@
 import sys
-
+import qdarkstyle
 # import script
 from PySide2 import QtCore, QtGui, QtWidgets
 
 import UiFile.ProjectBrowser
 import DoodleServer
 import script.DoodleBrowserGUI
+import script.DoodleTray
+import script.DoodleSetGui
+import script.DoodleRegister
 
 
 class DoodleMain(QtWidgets.QApplication):
@@ -17,10 +20,12 @@ class DoodleMain(QtWidgets.QApplication):
         super(DoodleMain, self).__init__(sys.argv)
         self.doodle_set = DoodleServer.Set.Doodlesetting()
         self._core_ = DoodleServer.Core.PrjShot(self.doodle_set)
-        self.browser = None
-        # app = QtWidgets.QApplication(sys.argv)
         QtWidgets.QApplication.setQuitOnLastWindowClosed(False)
+        self.setStyleSheet(qdarkstyle.load_stylesheet_pyside2())
 
+        self.browser = None
+        self.tray = None
+        self.doodle_set_gui = None
         # tray_icon = ProjectBrowserGUI()
         # tray_icon.showMessage('文件管理', 'hello')
         #
@@ -34,13 +39,25 @@ class DoodleMain(QtWidgets.QApplication):
         self._core_ = DoodleServer.Core.PrjAss(self.doodle_set)
 
     def DoodleQuery(self):
-        sys.exit(self.exec_())
+        self.tray.setVisible(False)
+        self.tray = None
+        sys.exit()
 
     def openProjectBrowserGUI(self):
         self.browser = script.DoodleBrowserGUI.ProjectBrowserGUI()
         self.browser.show()
 
-m = DoodleMain()
-m.openProjectBrowserGUI()
-m.exec_()
+    def showSet(self):
+        self.doodle_set_gui = script.DoodleSetGui.DoodlesettingGUI()
+        self.doodle_set_gui.show()
 
+    def showTray(self):
+        self.tray = script.DoodleTray.SystemTrayIcon(QtGui.QIcon("datas/icon.png"), None)
+        self.tray.showMessage('文件管理', 'hello')
+        self.tray.show()
+
+    def showRigister(self):
+        script.DoodleRegister.Rigister(self.doodle_set).show()
+# m = DoodleMain()
+# m.showTray()
+# m.exec_()

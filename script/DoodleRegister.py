@@ -9,7 +9,7 @@ import script.DoodleSetGui
 
 class Rigister(QtWidgets.QMainWindow, UiFile.register.Ui_MainWindow):
 
-    def __init__(self, doodle_set: script.DoodleSetGui.Doodlesetting):
+    def __init__(self, doodle_set):
         super().__init__()
         self.setupUi(self)
         self.doodle_set = doodle_set

@@ -99,10 +99,12 @@ class PrjCore(object):
             elif re.fullmatch('VFX', self.file_class.file_class):
                 if re.findall("^FB_", self.file_type.file_type):
                     cls = DoleOrm.shotFlipBook
+                else:
+                    cls = DoleOrm.shotUEVFXScane
             elif re.fullmatch("Light", self.file_class.file_class):
                 if re.findall("^FB_", self.file_type.file_type):
                     cls = DoleOrm.shotFlipBook
-            if re.findall("^export_", self.file_type.file_type):
+            if re.findall("^export", self.file_type.file_type):
                 cls = DoleOrm.shotMayaAnmExport
             if re.findall("screenshot", self.file_type.file_type):
                 cls = DoleOrm.shotScreenshot

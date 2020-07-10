@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui',
 # licensing of 'C:\Users\teXiao\doodle\UiFile\ProjectBrowser.ui' applies.
 #
-# Created: Fri Jul 10 13:22:11 2020
+# Created: Fri Jul 10 14:15:50 2020
 #      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -122,7 +122,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_11.addWidget(self.ass_player)
         self.verticalLayout_11.setStretch(2, 1)
         self.horizontalLayout_8.addLayout(self.verticalLayout_11)
-        self.ass_thumbnail = QtWidgets.QLabel(self.tab_2)
+        self.ass_thumbnail = assScreenshotQlabel(self.tab_2)
         self.ass_thumbnail.setObjectName("ass_thumbnail")
         self.horizontalLayout_8.addWidget(self.ass_thumbnail)
         self.horizontalLayout_8.setStretch(1, 1)
@@ -251,7 +251,7 @@ class Ui_MainWindow(object):
         self.shot_player.setObjectName("shot_player")
         self.verticalLayout_9.addWidget(self.shot_player)
         self.horizontalLayout_4.addLayout(self.verticalLayout_9)
-        self.shot_thumbnail = QtWidgets.QLabel(self.Episodes_shot)
+        self.shot_thumbnail = shotScreenshotQlabel(self.Episodes_shot)
         self.shot_thumbnail.setObjectName("shot_thumbnail")
         self.horizontalLayout_4.addWidget(self.shot_thumbnail)
         self.horizontalLayout_4.setStretch(0, 1)
@@ -343,6 +343,7 @@ class Ui_MainWindow(object):
         self.actioncom_video.setText(QtWidgets.QApplication.translate("MainWindow", "合成整集拍屏", None, -1))
         self.actionclothToFbx.setText(QtWidgets.QApplication.translate("MainWindow", "布料转FBX", None, -1))
 
-from script.DoodlePrjUI.DoodleListWidget import ShotFileTypeListWidget, ShotFileClassListWidget, AssFileTypeListWidget, AssNameListWidget, EpisodesListWidget, ShotListWidget
-from script.DoodlePrjUI.DoodleButten import assSubFilbBook, shotSubFilbBook, assScreenshotPushButten, shotScreenshotPushButten, assFileClassPushButtem
+from script.DoodlePrjUI.DoodleButten import assSubFilbBook, shotSubFilbBook, assFileClassPushButtem, assScreenshotPushButten, shotScreenshotPushButten
+from script.DoodlePrjUI.DoodleListWidget import EpisodesListWidget, ShotListWidget, ShotFileClassListWidget, AssNameListWidget, ShotFileTypeListWidget, AssFileTypeListWidget
 from script.DoodlePrjUI.DoodleTableWidget import shotTableWidget, assTableWidget
+from script.DoodlePrjUI.DoodleLabel import assScreenshotQlabel, shotScreenshotQlabel

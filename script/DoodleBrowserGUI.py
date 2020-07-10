@@ -244,6 +244,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         logging.info('更新Department列表')
 
         self.listdepartment.doodleUpdata()
+        self.shot_thumbnail.doodleUpdata()
 
     def listDepartmenClicked(self, item):
         """
@@ -254,6 +255,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.shot_thumbnail.clear()
 
         self.listdepType.doodleUpdata()
+        self.shot_thumbnail.doodleUpdata()
+
 
     def listDepTypeClicked(self, item):
         """
@@ -262,6 +265,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # 清空上一次文件显示和版本记录和文件路径
         self.listfile.doodleClear()
         self.listfile.doodleUpdata()
+        self.shot_thumbnail.doodleUpdata()
 
     # </editor-fold>
 
@@ -290,19 +294,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         self.ass_thumbnail.clear()
         self.listAssType.doodleUpdata()
+        self.ass_thumbnail.doodleUpdata()
 
     def assClassTypeClicked(self, item):
         """资产类别点击事件, 更新资产文件列表"""
         # 清空上一次文件显示和版本记录和文件路径
         self.listAssFile.doodleClear()
         self.listAssFile.doodleUpdata()
-
-    def assFileClicked(self, ass_row):
-        # ass_row = self.listAssFile.currentRow()
-        self.ass.version = int(self.listAssFile.item(ass_row, 0).text()[1:])
-        self.ass.infor = self.listAssFile.item(ass_row, 1).text()
-        self.ass.fileSuffixes = self.listAssFile.item(ass_row, 3).text()
-        self.ass.query_id = int(self.listAssFile.item(ass_row, 4).text())
+        self.ass_thumbnail.doodleUpdata()
 
     # </editor-fold>
     # def assUploadMapHandle(self, soure_file: pathlib.Path, target: pathlib.Path, version: int):
@@ -332,7 +331,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #     if isinstance(core, script.DooDlePrjCode.PrjAss):
     #         cls_file = doodleFileFactory(self.ass, ".uproject")
     #         if cls_file:
-    #             cls_file = cls_file(core, self.setlocale)
+    #             cls_file = cls_file(core, self.doodle_set)
     #             cls_file.down()
     #
     #         QtWidgets.QMessageBox.critical(self, "复制中", "请等待.....")
@@ -364,7 +363,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #         QtWidgets.QMessageBox.warning(self, "警告", "不要关闭弹出窗口",
     #                                       QtWidgets.QMessageBox.Yes)
     #
-    #         export = shotMayaExportFile(self.shot, self.setlocale)
+    #         export = shotMayaExportFile(self.shot, self.doodle_set)
     #         export.infor = "这是maya导出文件"
     #         export.subDataToBD(file_data)
     #
@@ -377,7 +376,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #     # 获得核心
     #     core: script.DooDlePrjCode.PrjCode = getattr(self, my_type)
     #     # 判断类型
-    #     cls_sshot = doodleFileFactory(core, "Screenshot")(core, self.setlocale)
+    #     cls_sshot = doodleFileFactory(core, "Screenshot")(core, self.doodle_set)
     #     cls_sshot.infor = "这是截图"
     #     # 上传截屏
     #     with cls_sshot.upload() as cache:
@@ -393,7 +392,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #     """
     #     core = getattr(self, type_)
     #     # 获得截图类
-    #     cls_sshot = doodleFileFactory(core, "Screenshot")(core, self.setlocale)
+    #     cls_sshot = doodleFileFactory(core, "Screenshot")(core, self.doodle_set)
     #     # 下载文件
     #     path = cls_sshot.down()
     #
@@ -414,7 +413,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #
     #     self.recentlyOpenedFolder = file
     #     # 获得拍屏类
-    #     cla_FB = assFBFile(code, self.setlocale)
+    #     cla_FB = assFBFile(code, self.doodle_set)
     #     cla_FB.infor = "这是拍屏"
     #     cla_FB.upload(file)
     #     self.listDepartmenClicked(self.listdepartment.selectedItems()[0])
@@ -431,7 +430,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #             code = self.ass
     #         else:
     #             code = self.shot
-    #         player = doodleFileFactory(code, "FB")(code, self.setlocale)
+    #         player = doodleFileFactory(code, "FB")(code, self.doodle_set)
     #
     #         path = player.downPlayer(code.Type)
     #
@@ -441,7 +440,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #         if path:
     #             self.pot_player.add(path.as_posix())
     #     else:
-    #         player = shotMayaFBFile(self.shot, self.setlocale)
+    #         player = shotMayaFBFile(self.shot, self.doodle_set)
     #         video = player.getEpisodesFlipBook()
     #
     #         while player.syn.is_alive():
@@ -468,7 +467,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #                                       QtWidgets.QMessageBox.Yes)
     #
     # def comEpsVideo(self):
-    #     player = shotMayaFBFile(self.shot, self.setlocale)
+    #     player = shotMayaFBFile(self.shot, self.doodle_set)
     #     video = player.makeEpisodesFlipBook()
     #     return video
     #
@@ -486,12 +485,12 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #     """
     #     标记文件状态
     #     """
-    #     items = self.setlocale.filestate
+    #     items = self.doodle_set.filestate
     #     ass_type, is_type = QtWidgets.QInputDialog.getItem(self, "标记文件状态", "要先选中文件", items, 0, False)
     #     info, is_input = QtWidgets.QInputDialog.getText(self, "输入信息", "", QtWidgets.QLineEdit.Normal)
     #     if is_type and is_input:
     #         code.filestate = ass_type
-    #         code.infor = f"| {self.setlocale.user}:  {info}"
+    #         code.infor = f"| {self.doodle_set.user}:  {info}"
     #         code.undataInformation(code.query_id)
     #     logging.info("%s , %s", ass_type, info)
 
@@ -500,7 +499,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #     so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #     try:
     #         so.connect(address)
-    #         maya_export = shotMayaExportFile(self.shot, self.setlocale)
+    #         maya_export = shotMayaExportFile(self.shot, self.doodle_set)
     #         content = maya_export.down(self.shot.query_id)
     #
     #         data = {"eps": self.shot.episodes, "shot": self.shot.shot, "content": json.loads(content)}
@@ -527,7 +526,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #         logging.info("成功关闭链接")
     #
     # def convertCloth(self):
-    #     shotMayaClothExportFile(self.shot, self.setlocale).down(self.shot.query_id)
+    #     shotMayaClothExportFile(self.shot, self.doodle_set).down(self.shot.query_id)
     # </editor-fold>
 
 

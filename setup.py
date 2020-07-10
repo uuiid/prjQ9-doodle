@@ -63,7 +63,7 @@ options = {
 }
 
 executables = [
-    Executable('doodle_tray.py', base=base)
+    Executable('doodle.py', base=base)
 ]
 
 setup(name='doodle',
