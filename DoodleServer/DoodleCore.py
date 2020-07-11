@@ -1,4 +1,6 @@
+import json
 import pathlib
+import pickle
 import re
 import threading
 import logging
@@ -10,11 +12,11 @@ import typing
 
 import DoodleServer.DoodleOrm as DoleOrm
 import DoodleServer.DoodleSql as Conect
-import DoodleServer.DoodleZNCHConvert as Convert
-import DoodleServer.DoodleDictToObject as DoleDict
+import DoodleServer.DoodleZNCHConvert
+import DoodleServer.DoodleDictToObject
 import DoodleServer.DoodleSet as DoodleSet
 import zmq
-
+from multiprocessing import connection as Conn
 from DoodleServer.DoodleOrm import Shot
 
 
@@ -387,7 +389,8 @@ class PrjAss(PrjCore):
             assert isinstance(session, sqlalchemy.orm.session.Session)
             data = session.query(DoleOrm.fileClass) \
                 .order_by(DoleOrm.fileClass.file_class) \
-                .filter(DoleOrm.fileClass.__shot__.is_(None)).all()
+                .filter(DoleOrm.fileClass.__shot__.is_(None))\
+                .filter(DoleOrm.fileClass.__episodes__.is_(None)).all()
         return data
 
     def queryAssname(self) -> typing.List[DoleOrm.assClass]:
@@ -459,61 +462,9 @@ class PrjAss(PrjCore):
         return file_class, file_name, file_type
 
 
-class DoodleServer(threading.Thread):
-    server = None
-    connect: zmq.Context
-    socket: zmq.Socket
-
-    def __init__(self, doodle_set):
-        super().__init__()
-        self.doodle_set = doodle_set
-        """=============="""
-        # self.shot = script.DooDlePrjCode.PrjShot(self.doodle_set.projectname,
-        #                                          self.doodle_set.project,
-        #                                          self.doodle_set.shotRoot)
-        # self.ass = script.DooDlePrjCode.PrjAss(self.doodle_set.projectname,
-        #                                        self.doodle_set.project,
-        #                                        self.doodle_set.assetsRoot)
-
-    def run(self):
-        self.connect = zmq.Context()
-        self.socket = self.connect.socket(zmq.REP)
-        self.socket.bind("tcp://127.0.0.1:23369")
-
-        # self.server = Conn.Listener(("127.0.0.1", 23369), authkey=b"doodle")
-        while True:
-            try:
-                self.recv_data = self.socket.recv_pyobj()
-                if self.recv_data == b'close':
-                    self.socket.send_pyobj(b"close")
-                    self.socket.close()
-                    break
-                self.analysis()
-            except EOFError:
-                logging.error(traceback.print_exc())
-                self.socket.send_pyobj("+++出错了++++")
-                break
-            finally:
-                logging.info("完成了一次转发")
-
-    def analysis(self):
-        logging.info("开始分析传入数据")
-        try:
-            data = DoleDict.convertTool().convert(self.recv_data)
-            getattr(self, data.url)(data)
-        except EOFError:
-            logging.error(traceback.print_exc())
-
-    def getDoodleSet(self, data):
-        my_set = {"user": Convert.isChinese(self.doodle_set.user).easyToEn(),
-                  "department": self.doodle_set.department,
-                  "projectname": self.doodle_set.projectname, "cache_path": self.doodle_set.cache_path.as_posix()}
-        self.socket.send_pyobj(my_set, protocol=2)
-
 
 if __name__ == '__main__':
     import DoodleServer.DoodleSet as DoleSet
 
     t = DoodleServer(DoleSet.Doodlesetting())
     t.start()
-    t.join()

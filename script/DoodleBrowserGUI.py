@@ -1,27 +1,17 @@
 # -*- coding: UTF-8 -*-
-import pathlib
-import re
-import socket
-import sys
 import logging
-import potplayer
-import pyperclip
-import typing
+import sys
 
+import potplayer
+import qdarkstyle
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
 
-import qdarkstyle
 import UiFile.ProjectBrowser
-
-import script.DoodleSetGui
 import script.DoodleCoreApp
-import DoodleServer
-import script.DoodlePrjUI.DoodleListWidget
-import script.DoodlePrjUI.DoodleTableWidget
 import script.DoodlePrjUI.DoodleButten
-
+import DoodleServer.DoodleBaseClass
 
 class _prjColor(object):
     @staticmethod
@@ -129,46 +119,9 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         # # 关闭ue链接函数
         # self.close_socket.triggered.connect(self.closesocket)
         # # 合成拍屏
-        # self.actioncom_video.triggered.connect(self.comEpsVideo)
+        self.actioncom_video.triggered.connect(self.comEpsVideo)
         # # 转换布料
         # self.actionclothToFbx.triggered.connect(self.convertCloth)
-
-        # <editor-fold desc="添加上下文菜单">
-        # 添加集数上下文菜单
-        # self.listepisodes.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        # self.listepisodes.customContextMenuRequested.connect(
-        #     lambda pos: self.addRightClickMenu(self.listepisodes.mapToGlobal(pos), 'episodes'))
-        # # 添加镜头上下文菜单
-        # self.listshot.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        # self.listshot.customContextMenuRequested.connect(
-        #     lambda pos: self.addRightClickMenu(self.listshot.mapToGlobal(pos), "shot"))
-        # # 部门菜单
-        # self.listdepartment.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        # self.listdepartment.customContextMenuRequested.connect(
-        #     lambda pos: self.addRightClickMenu(self.listdepartment.mapToGlobal(pos), "department"))
-        # # 部门类型菜单
-        # self.listdepType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        # self.listdepType.customContextMenuRequested.connect(
-        #     lambda pos: self.addRightClickMenu(self.listdepType.mapToGlobal(pos), "depType"))
-
-        # 镜头文件菜单
-        # self.listfile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        # self.listfile.customContextMenuRequested.connect(
-        #     lambda pos: self.addRightClickMenu(self.listfile.mapToGlobal(pos), "shotFile"))
-        #
-        # # 资产种类菜单
-        # self.listAss.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        # self.listAss.customContextMenuRequested.connect(
-        #     lambda pos: self.addRightClickMenu(self.listAss.mapToGlobal(pos), "assFolder"))
-        # # 资产类型菜单
-        # self.listAssType.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        # self.listAssType.customContextMenuRequested.connect(
-        #     lambda pos: self.addRightClickMenu(self.listAssType.mapToGlobal(pos), "assType"))
-        # # 资产文件菜单
-        # self.listAssFile.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        # self.listAssFile.customContextMenuRequested.connect(
-        #     lambda pos: self.addRightClickMenu(self.listAssFile.mapToGlobal(pos), "assFile"))
-        # </editor-fold>
 
         self.pot_player = potplayer.PlayList()
 
@@ -179,7 +132,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         if index == 0:
             logging.info("点击资产")
             self.doodle_app.codeToAss()
-            self.character.file_clas, self.effects.file_clas, self.props.file_clas, self.scane.file_clas = self.core.queryAssClass()
+            self.character.file_clas, self.effects.file_clas, self.props.file_clas, self.scane.file_clas = self.core.queryAssClass()[:4]
             self.assClassSortClicked("character")
         elif index == 1:
             self.doodle_app.codeToShot()
@@ -466,10 +419,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     #         QtWidgets.QMessageBox.warning(self, "警告:", "警告:请关闭360后重新打开本软件,或者检查安装potplayer",
     #                                       QtWidgets.QMessageBox.Yes)
     #
-    # def comEpsVideo(self):
-    #     player = shotMayaFBFile(self.shot, self.doodle_set)
-    #     video = player.makeEpisodesFlipBook()
-    #     return video
+    @QtCore.Slot()
+    def comEpsVideo(self):
+        return DoodleServer.DoodleBaseClass.shotFbEpisodesFile(self.core,self.doodle_set).makeEpisodesFlipBook()
+
+    def closeEvent(self, event):
+        self.doodle_app.codeToShot()
+
+
     #
     # def subInfo(self, code: script.DooDlePrjCode.PrjCode):
     #     """

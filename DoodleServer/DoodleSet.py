@@ -169,7 +169,7 @@ class Doodlesetting(object):
         """
         # 读取本地部门类型 以及每集类型
         # 获得设置的文件路径
-        sql_com = "SELECT DISTINCT value3, value4 FROM `configure` " \
+        sql_com = f"SELECT DISTINCT value3, value4 FROM {self._projectname}.`configure` " \
                   f"WHERE name='synpath' AND value='{self.department}' AND value2 ='{self.synEp:0>3d}'"
         with self.my_sql.engine.connect() as connect:
             data = connect.execute(sql_com).fetchall()
@@ -183,7 +183,7 @@ class Doodlesetting(object):
         :return: dict
         """
 
-        sql_com = "SELECT DISTINCT name,value FROM `configure`"
+        sql_com = f"SELECT DISTINCT name,value FROM {self._projectname}.`configure`"
         with self.my_sql.engine.connect() as connect:
             data = connect.execute(sql_com).fetchall()
 

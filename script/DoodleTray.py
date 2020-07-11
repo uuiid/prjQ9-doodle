@@ -8,7 +8,6 @@ import qdarkstyle
 from PySide2 import QtCore
 from PySide2 import QtWidgets, QtGui
 
-import script.DoodleLog
 import script.DoodleSynXml
 import script.DoodleUpdata
 import script.DoodleCoreApp
@@ -16,7 +15,7 @@ import script.DoodleCoreApp
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
     timeSyn = 7200000
-    version = 1.130
+    version = 0.230
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
@@ -103,7 +102,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
 
     @staticmethod
     def openUE():
-        script.DoodleLog.ta_log.info('启动UE')
+        logging.info('启动UE')
         subprocess.Popen("D:\\Source\\UnrealEngine\\Engine\\Binaries\\Win64\\UE4Editor.exe")
 
     def Updata(self, unpdata_=True):

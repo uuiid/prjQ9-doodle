@@ -1,11 +1,10 @@
 # -*- coding: UTF-8 -*-
 import pathlib
 import sys
-
+import logging
 from PySide2 import QtWidgets
 
 import UiFile.setting
-import script.DoodleLog
 import DoodleServer
 import script.DoodleCoreApp
 
@@ -14,7 +13,6 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow, scri
 
     def __init__(self, parent=None):
         super(DoodlesettingGUI, self).__init__(parent=parent)
-        self.ta_log_GUI = script.DoodleLog.get_logger(__name__ + 'GUI')
 
         self.setupUi(self)
         # 设置部门显示
@@ -55,7 +53,7 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow, scri
         # 当设置更改时获得更改
         # self.doodle_set.setting[key] = newValue
         setattr(self.doodle_set, key, newValue)
-        self.ta_log_GUI.info('用户将%s更改为%s', key, newValue)
+        logging.info('用户将%s更改为%s', key, newValue)
         self.synSeverPath()
 
     def synSeverPath(self):
@@ -76,7 +74,7 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow, scri
     def editConfZhongWen(self, key, newValue: pathlib.Path):
         newValue = DoodleServer.DoodleZNCHConvert.isChinese(newValue).easyToEn()
         self.sysTestYing.setText(newValue.as_posix())
-        self.ta_log_GUI.info('中文%s更改为%s', key, newValue)
+        logging.info('中文%s更改为%s', key, newValue)
         setattr(self.doodle_set, key, newValue.as_posix())
         self.synSeverPath()
 
@@ -86,8 +84,9 @@ class DoodlesettingGUI(QtWidgets.QMainWindow, UiFile.setting.Ui_MainWindow, scri
 
     def saveset(self):
         # 保存到文档的设置文件中
-        self.ta_log_GUI.info('设置保存')
+        logging.info('设置保存')
         self.doodle_set.writeDoodlelocalSet()
+        self.doodle_set.__init__()
 
     def projecrEdit(self, index):
         self.doodle_set.projectname = self.projectCombo.itemText(index)

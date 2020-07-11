@@ -15,7 +15,6 @@ import sys
 import pathlib
 from cx_Freeze import setup, Executable
 
-
 def toolspy() -> list:
     path = pathlib.Path("tools")
     # infil = []
@@ -34,17 +33,16 @@ includefiles = ["UiFile", ("tools/template", "tools/template"),
                 "datas", "config"] + toolspy()
 includes = ['urllib3',
             "multiprocessing",
-            "script.convert",
-            "script.doodle_setting",
-            "script.doodleLog",
-            "script.doodlePlayer",
-            "script.DooDlePrjCode",
             "script.DoodleUpdata",
-            "script.MayaExportCam",
-            "script.MySqlComm",
-            "script.ProjectBrowserGUI",
-            "script.synchronizeFiles",
-            "script.synXml",
+            "script.DoodleMain",
+            "script.DoodleBrowserGUI",
+            "DoodleServer.DoodleBaseClass",
+            "DoodleServer.DoodleCore",
+            "DoodleServer.DoodleDictToObject",
+            "DoodleServer.DoodleLoging",
+            "script.DoodlePrjUI",
+            "script.DoodlePrjUI.DoodleLabel",
+            "UiFile",
             "sqlalchemy",
             "sqlalchemy.ext.declarative",
             "sqlalchemy.sql",

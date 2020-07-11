@@ -12,7 +12,7 @@ class convert(object):
     ass_name: typing.Dict[str, assClass]
 
     def __init__(self):
-        self.sql = DoodleServer.DoodleSql.commMysql("dubuxiaoyao")
+        self.sql = DoodleServer.DoodleSql.commMysql("changanhuanjie")
         self.eps = {}
         self.shots = {}
         self.file_class = {}
@@ -23,7 +23,7 @@ class convert(object):
 
     def convert(self):
         ass = ["character", "effects", "scane", "props"]
-        sqlcom_2 = """SELECT `name`,localname FROM dubuxiaoyao.nametochinese"""
+        sqlcom_2 = """SELECT `name`,localname FROM changanhuanjie.nametochinese"""
         with self.sql.engine.connect() as connect:
             assert isinstance(connect, sqlalchemy.engine.Connection)
             name_to_zhcn = connect.execute(sqlcom_2).fetchall()
@@ -31,7 +31,7 @@ class convert(object):
         for __a in ass:
             self.file_type = {}
             self.ass_name = {}
-            sqlcom = f"""SELECT `name`,`type`,`file`,`fileSuffixes`,`user`,`version`,`infor`,filepath,filestate,filetime FROM dubuxiaoyao.`{__a}`"""
+            sqlcom = f"""SELECT `name`,`type`,`file`,`fileSuffixes`,`user`,`version`,`infor`,filepath,filestate,filetime FROM changanhuanjie.`{__a}`"""
             # 添加fileclass
             self.file_class[__a] = fileClass(file_class=__a)
             with self.sql.engine.connect() as connect:
@@ -81,7 +81,7 @@ class convert(object):
                     ass_file.ass_class = self.ass_name[_ass_s_[0]]
 
     def eps_shot(self):
-        sqlcom = """SELECT episodes FROM dubuxiaoyao.mainshot"""
+        sqlcom = """SELECT episodes FROM changanhuanjie.mainshot"""
         with self.sql.engine.connect() as connect:
             assert isinstance(connect, sqlalchemy.engine.Connection)
             eps = connect.execute(sqlcom).fetchall()
@@ -196,7 +196,7 @@ class convert(object):
 def run():
     test = convert()
     test.convert()
-    # test.subass()
+    test.subass()
     print(test)
     test.eps_shot()
     test.subeps()

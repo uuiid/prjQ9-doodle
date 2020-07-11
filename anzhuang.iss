@@ -27,16 +27,16 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "dist\doodle_tray\doodle_tray.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\doodle_tray\doodle.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\doodle_tray\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs replacesameversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{group}\doodle"; Filename: "{app}\doodle_tray.exe"
+Name: "{group}\doodle"; Filename: "{app}\doodle.exe"
 Name: "{group}\{cm:ProgramOnTheWeb,doodle}"; Filename: "http://www.example.com/"
 Name: "{group}\{cm:UninstallProgram,doodle}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\doodle"; Filename: "{app}\doodle_tray.exe"; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\doodle"; Filename: "{app}\doodle_tray.exe"; Tasks: quicklaunchicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\doodle"; Filename: "{app}\doodle.exe"; Tasks: quicklaunchicon
 
 [Run]
 Filename: "{app}\doodle_tray.exe"; Description: "{cm:LaunchProgram,doodle}"; Flags: nowait postinstall skipifsilent

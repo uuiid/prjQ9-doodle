@@ -35,7 +35,7 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
         super(FileTableWidget, self).__init__(parent=parent)
         self.setAcceptDrops(True)
         self.itemClicked.connect(self.setCore)
-        self.itemDoubleClicked.connect(self.openShotExplorer)
+        self.itemDoubleClicked.connect(self.openFile)
 
     def addTableItems(self, labels: typing.List[DoodleServer.DoodleOrm.fileAttributeInfo_]):
         for index, item in enumerate(labels):
@@ -103,16 +103,23 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
                                                                 "files (*.mb *.ma *.uproject"
                                                                 " *.max *.fbx *.png *.tga *.jpg)")
         if file:
-            self.uploadfile.emit(pathlib.Path(file))
+            dowclass = DoodleServer.baseClass.doodleFileFactory(self.core, self.currentItem().file_data.fileSuffixes)
+            if dowclass:
+                dowclass_obj = dowclass(self.core, self.doodle_set)
+                QtWidgets.QMessageBox.critical(self, "复制中", "请等待.....")
+                dowclass_obj.down(pathlib.Path(file))
+            else:
+                QtWidgets.QMessageBox.critical(self, "无法下载此文件.....")
 
     @QtCore.Slot()
     def updataClass(self, item: FileTableWidgetItem):
-        remarks_info = QtWidgets.QInputDialog.getText(self,
-                                                      "填写备注(中文)",
-                                                      "备注",
-                                                      QtWidgets.QLineEdit.Normal)[0]
-        item.file_data.infor += remarks_info
-        self.core.updataClass(item.file_data)
+        remarks_info, is_ok = QtWidgets.QInputDialog.getText(self,
+                                                             "填写备注(中文)",
+                                                             "备注",
+                                                             QtWidgets.QLineEdit.Normal)[0]
+        if is_ok:
+            item.file_data.infor += remarks_info
+            self.core.updataClass(item.file_data)
 
     def doodleClear(self):
         mrowtmp = self.rowCount()
@@ -125,6 +132,22 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
 
     def setCore(self, item: FileTableWidgetItem):
         self.core.query_file = item.file_data
+
+    @QtCore.Slot()
+    def downFile(self):
+        path = QtWidgets.QFileDialog.getExistingDirectory(self,
+                                                          "选择下载目录",
+                                                          "",
+                                                          QtWidgets.QFileDialog.ShowDirsOnly)
+
+        dowclass = DoodleServer.baseClass.doodleFileFactory(self.core, self.currentItem().file_data.fileSuffixes)
+        if dowclass:
+            dowclass_obj = dowclass(self.core, self.doodle_set)
+            QtWidgets.QMessageBox.critical(self, "复制中", "请等待.....")
+            dowclass_obj.down(pathlib.Path(path))
+            os.startfile(path)
+        else:
+            QtWidgets.QMessageBox.critical(self, "无法下载此文件.....")
 
 
 class assTableWidget(FileTableWidget):
@@ -141,24 +164,26 @@ class assTableWidget(FileTableWidget):
                 open_ass_explorer = menu.addAction("打开文件管理器")
                 open_ass_explorer.triggered.connect(self.openShotExplorer)
                 add_info = menu.addAction("更新概述")
-                add_info.triggered.connect(lambda: self.subInfo.emit(self.currentItem().file_data))
+                add_info.triggered.connect(self.updataClass)
                 filestate = menu.addAction("标记问题")
                 filestate.triggered.connect(lambda: self.subInfo.emit(self.currentItem().file_data))
                 add_ass_file_dow = menu.addAction("下载文件")
-                add_ass_file_dow.triggered.connect(lambda: self.dowfile.emit(self.currentItem().file_data))
+                add_ass_file_dow.triggered.connect(self.downFile)
             add_ass_file = menu.addAction('上传(同步)文件')
-            add_ass_file.triggered.connect(lambda: self.localuploadFiles)
+            add_ass_file.triggered.connect(self.subFilePath)
             get_ass_path = menu.addAction('指定文件')
             get_ass_path.triggered.connect(self.appointFilePath)
         menu.move(QtGui.QCursor().pos())
         return menu.show()
 
+    @QtCore.Slot()
     def appointFilePath(self):
         subclass_obj, path = self.__subAndAppoint__()
         if not subclass_obj:
             subclass_obj.appoint(path)
         self.doodle_refresh.emit()
 
+    @QtCore.Slot()
     def subFilePath(self):
         subclass_obj, path = self.__subAndAppoint__()
         if not subclass_obj:

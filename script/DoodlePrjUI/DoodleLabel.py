@@ -14,7 +14,7 @@ class ScreenshotQlabel(QtWidgets.QLabel, script.DoodleCoreApp.core):
         pixmap = QtGui.QPixmap()
         if path:
             pixmap.load(path.as_posix())
-            pixmap = pixmap.scaled(self.geometry().size(), QtCore.Qt.KeepAspectRatio)
+            pixmap = pixmap.scaled(self.geometry().size()*0.98, QtCore.Qt.KeepAspectRatio)
             self.setPixmap(pixmap)
         else:
             # painter = QtGui.QPainter()

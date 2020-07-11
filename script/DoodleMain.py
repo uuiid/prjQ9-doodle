@@ -9,7 +9,7 @@ import script.DoodleBrowserGUI
 import script.DoodleTray
 import script.DoodleSetGui
 import script.DoodleRegister
-
+import script.Server
 
 class DoodleMain(QtWidgets.QApplication):
     @property
@@ -26,6 +26,9 @@ class DoodleMain(QtWidgets.QApplication):
         self.browser = None
         self.tray = None
         self.doodle_set_gui = None
+        self.server = script.Server.DoodleServer__()
+        self.server.setDaemon(True)
+        self.server.start()
         # tray_icon = ProjectBrowserGUI()
         # tray_icon.showMessage('文件管理', 'hello')
         #

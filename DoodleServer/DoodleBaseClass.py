@@ -1,4 +1,5 @@
 import contextlib
+import copy
 import datetime
 import json
 import logging
@@ -251,7 +252,8 @@ class _fileclass(object, metaclass=ABCMeta):
         Args:
             code_shot: DooDlePrjCode._shot
         """
-        self.code = code_shot
+
+        self.code = copy.copy(code_shot)
         self.doodle_set = doodle_set
         self.user = doodle_set.user
         self._creteThread()
@@ -837,6 +839,7 @@ class shotFbEpisodesFile(shotFBFile):
         return DoleOrm.fileType(file_type="FB_{}".format(self.code.file_class.file_class))
 
     def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
+        sub_class.infor = self.infor
         assert isinstance(sub_class, DoleOrm.shotFlipBook)
         # class类约束
         self.code.file_class.episodes = self.code.episodes

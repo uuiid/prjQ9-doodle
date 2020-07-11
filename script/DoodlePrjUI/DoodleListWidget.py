@@ -4,8 +4,10 @@ import pathlib
 import re
 import sys
 import abc
+import tempfile
 import typing
 
+import potplayer
 import pyperclip
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -65,13 +67,15 @@ class EpisodesListWidget(DoodleListWidegt):
         menu = QtWidgets.QMenu(self)
         add_episodes_folder = menu.addAction('添加')
         add_episodes_folder.triggered.connect(self.addFofler)
+        com_episdoes_player = menu.addAction("合成整集拍屏")
+        com_episdoes_player.triggered.connect(self.comEpsVideo)
         add_player = menu.addMenu("播放整集拍屏")
         anm_player = add_player.addAction("播放Anm拍屏")
         vfx_player = add_player.addAction("播放vfx拍屏")
         light_player = add_player.addAction("播放light拍屏")
-        anm_player.triggered.connect(lambda: self.player.emit(self.currentItem(), "Anm"))
-        vfx_player.triggered.connect(lambda: self.player.emit(self.currentItem(), "VFX"))
-        light_player.triggered.connect(lambda: self.player.emit(self.currentItem(), "Light"))
+        anm_player.triggered.connect(self.playerFlibBook)
+        vfx_player.triggered.connect(self.playerFlibBook)
+        light_player.triggered.connect(self.playerFlibBook)
         menu.move(QtGui.QCursor().pos())
         return menu.show()
 
@@ -94,6 +98,20 @@ class EpisodesListWidget(DoodleListWidegt):
 
     def doodleUpdata(self):
         self.addItems(self.core.queryEps())
+
+    @QtCore.Slot()
+    def playerFlibBook(self):
+        path = DoodleServer.DoodleBaseClass.shotFbEpisodesFile(self.core, self.doodle_set).down()
+        pot_player = potplayer.PlayList()
+        pot_player.add(path.as_posix())
+        tmp_path = os.path.join(tempfile.gettempdir(), "potplayer_temp.dpl")
+        pot_player.dump(tmp_path)
+        potplayer.run(tmp_path)
+
+    @QtCore.Slot()
+    def comEpsVideo(self):
+        self.core.episodes = self.currentItem().eps_data
+        return DoodleServer.DoodleBaseClass.shotFbEpisodesFile(self.core, self.doodle_set).makeEpisodesFlipBook()
 
     @QtCore.Slot()
     def setCore(self, item: EpisodesListWidgetItem):
