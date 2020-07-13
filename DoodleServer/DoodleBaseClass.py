@@ -405,7 +405,7 @@ class _Screenshot(_fileclass, metaclass=ABCMeta):
             else:
                 logging.error("未发现截图")
 
-    def down(self, down_path: pathlib.Path = None) -> typing.Union[pathlib.Path,None]:
+    def down(self, down_path: pathlib.Path = None) -> typing.Union[pathlib.Path, None]:
         # 查询数据库获得文件路径
         self.code.file_type = self._seekScreenshot_()
         query_file = self.code.queryFile(self.doodle_file_class)
@@ -418,6 +418,8 @@ class _Screenshot(_fileclass, metaclass=ABCMeta):
         #     return None
         # 获得下载路径
         down_path_ = self.pathAndCache(self.code.commPath("Screenshot"))
+        if down_path_.joinpath(path.name).is_file():
+            return down_path_.joinpath(path.name)
         # if not down_path:
         #     down_path_ = pathlib.Path("datas/icon.png")
         # 添加文件下载路径
@@ -918,12 +920,14 @@ class shotMayaExportFile(_fileclass):
         self.doodle_file_class = DoleOrm.shotMayaAnmScane
         self.soure_file = super(shotMayaExportFile, self).down()
         self.doodle_file_class = DoleOrm.shotMayaAnmExport
+        # 调整查询类型
+
         # 获得目标路径
         trange_path = self.code.commPath()
         # 获得缓存路径
         self.cache_path = self.pathAndCache(trange_path)
         # 获得版本
-        self.version_max = self.code.queryMaxVersion(self.doodle_file_class)
+        self.version_max = self._seekFileType_().addshotMayaAnmExport.__len__() + 1
         # 获得文件名称
         self.file_name = "doodle_Export.json"
         # 更新目标路径,进行提交
@@ -932,25 +936,33 @@ class shotMayaExportFile(_fileclass):
 
     def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
         assert isinstance(sub_class, DoleOrm.shotMayaAnmExport)
+        sub_class.infor = self.infor
         # shot类约束
         self.code.shot.episodes = self.code.episodes
         # class类约束
         self.code.file_class.episodes = self.code.episodes
         self.code.file_class.shot = self.code.shot
         # type约束
-        self.code.file_type.episodes = self.code.episodes
-        self.code.file_type.shot = self.code.shot
-        self.code.file_type.file_class = self.code.file_class
+        file_type = self._seekFileType_()
+        file_type.episodes = self.code.episodes
+        file_type.shot = self.code.shot
+        file_type.file_class = self.code.file_class
         # 文件类型约束
         sub_class.episodes = self.code.episodes
         sub_class.shot = self.code.shot
         sub_class.file_class = self.code.file_class
-        sub_class.file_type = self.code.file_type
+        sub_class.file_type = file_type
         return sub_class
+
+    def _seekFileType_(self):
+        for tmp_type in self.code.file_class.addfileType:
+            if re.findall("export", tmp_type.file_type):
+                return tmp_type
+        return DoleOrm.fileType(file_type="export")
 
     def export(self):
         self.subDataToBD()
-        threading.Thread(target=self.run).start()
+        # threading.Thread(target=self.run).start()
 
     def run(self) -> None:
         self._exportCam_()

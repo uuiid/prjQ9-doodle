@@ -348,39 +348,49 @@ class fileType(DoleSql.Base):
     shot = sqlalchemy.orm.relationship("Shot", back_populates="addfileType")
 
     # 添加资产ue场景反射
-    addassUEScane = sqlalchemy.orm.relationship("assUEScane", back_populates="file_type",
-                                                order_by="assUEScane.filetime.desc()")
-    addassMayaScane = sqlalchemy.orm.relationship("assMayaScane", back_populates="file_type",
-                                                  order_by="assMayaScane.filetime.desc()")
-    addassUECharacter = sqlalchemy.orm.relationship("assUECharacter", back_populates="file_type",
-                                                    order_by="assUECharacter.filetime.desc()")
-    addassMayaLowModleModel = sqlalchemy.orm.relationship("assMayaLowModleModel", back_populates="file_type",
-                                                          order_by="assMayaLowModleModel.filetime.desc()")
-    addassMayaRigModel = sqlalchemy.orm.relationship("assMayaRigModel", back_populates="file_type",
-                                                     order_by="assMayaRigModel.filetime.desc()")
-    addassMapping = sqlalchemy.orm.relationship("assMapping", back_populates="file_type",
-                                                order_by="assMapping.filetime.desc()")
-    addassFlipBook = sqlalchemy.orm.relationship("assFlipBook", back_populates="file_type",
-                                                 order_by="assFlipBook.filetime.desc()")
-    addassScreenshot = sqlalchemy.orm.relationship("assScreenshot", back_populates="file_type",
-                                                   order_by="assScreenshot.filetime.desc()")
+    addassUEScane: typing.List[assUEScane] = sqlalchemy.orm.relationship("assUEScane", back_populates="file_type",
+                                                                         order_by="assUEScane.filetime.desc()")
+    addassMayaScane: typing.List[assMayaScane] = sqlalchemy.orm.relationship("assMayaScane", back_populates="file_type",
+                                                                             order_by="assMayaScane.filetime.desc()")
+    addassUECharacter: typing.List[assUECharacter] = sqlalchemy.orm.relationship("assUECharacter",
+                                                                                 back_populates="file_type",
+                                                                                 order_by="assUECharacter.filetime.desc()")
+    addassMayaLowModleModel: typing.List[assMayaScane] = sqlalchemy.orm.relationship("assMayaLowModleModel",
+                                                                                     back_populates="file_type",
+                                                                                     order_by="assMayaLowModleModel.filetime.desc()")
+    addassMayaRigModel: typing.List[assMayaRigModel] = sqlalchemy.orm.relationship("assMayaRigModel",
+                                                                                   back_populates="file_type",
+                                                                                   order_by="assMayaRigModel.filetime.desc()")
+    addassMapping: typing.List[assMapping] = sqlalchemy.orm.relationship("assMapping", back_populates="file_type",
+                                                                         order_by="assMapping.filetime.desc()")
+    addassFlipBook: typing.List[assFlipBook] = sqlalchemy.orm.relationship("assFlipBook", back_populates="file_type",
+                                                                           order_by="assFlipBook.filetime.desc()")
+    addassScreenshot: typing.List[assScreenshot] = sqlalchemy.orm.relationship("assScreenshot",
+                                                                               back_populates="file_type",
+                                                                               order_by="assScreenshot.filetime.desc()")
     # 添加灯光镜头反射
-    addshotUELightScane = sqlalchemy.orm.relationship("shotUELightScane", back_populates="file_type",
-                                                      order_by="shotUELightScane.filetime.desc()")
+    addshotUELightScane: typing.List[shotUELightScane] = sqlalchemy.orm.relationship("shotUELightScane",
+                                                                                     back_populates="file_type",
+                                                                                     order_by="shotUELightScane.filetime.desc()")
     # 添加特效镜头反射
-    addshotUEVFXScane = sqlalchemy.orm.relationship("shotUEVFXScane", back_populates="file_type",
-                                                    order_by="shotUEVFXScane.filetime.desc()")
+    addshotUEVFXScane: typing.List[shotUEVFXScane] = sqlalchemy.orm.relationship("shotUEVFXScane",
+                                                                                 back_populates="file_type",
+                                                                                 order_by="shotUEVFXScane.filetime.desc()")
     # 添加特效镜头反射
-    addshotMayaAnmScane = sqlalchemy.orm.relationship("shotMayaAnmScane", back_populates="file_type",
-                                                      order_by="shotMayaAnmScane.filetime.desc()")
-    addshotSequeueceImage = sqlalchemy.orm.relationship("shotSequeueceImage", back_populates="file_type",
-                                                        order_by="shotSequeueceImage.filetime.desc()")
-    addshotFlipBook = sqlalchemy.orm.relationship("shotFlipBook", back_populates="file_type",
-                                                  order_by="shotFlipBook.filetime.desc()")
-    addshotScreenshot = sqlalchemy.orm.relationship("shotScreenshot", back_populates="file_type",
-                                                    order_by="shotScreenshot.filetime.desc()")
-    addshotMayaAnmExport = sqlalchemy.orm.relationship("shotMayaAnmExport", back_populates="file_type",
-                                                       order_by="shotMayaAnmExport.filetime.desc()")
+    addshotMayaAnmScane: typing.List[shotMayaAnmScane] = sqlalchemy.orm.relationship("shotMayaAnmScane",
+                                                                                     back_populates="file_type",
+                                                                                     order_by="shotMayaAnmScane.filetime.desc()")
+    addshotSequeueceImage: typing.List[shotUELightScane] = sqlalchemy.orm.relationship("shotSequeueceImage",
+                                                                                       back_populates="file_type",
+                                                                                       order_by="shotSequeueceImage.filetime.desc()")
+    addshotFlipBook: typing.List[shotFlipBook] = sqlalchemy.orm.relationship("shotFlipBook", back_populates="file_type",
+                                                                             order_by="shotFlipBook.filetime.desc()")
+    addshotScreenshot: typing.List[shotScreenshot] = sqlalchemy.orm.relationship("shotScreenshot",
+                                                                                 back_populates="file_type",
+                                                                                 order_by="shotScreenshot.filetime.desc()")
+    addshotMayaAnmExport: typing.List[shotMayaAnmExport] = sqlalchemy.orm.relationship("shotMayaAnmExport",
+                                                                                       back_populates="file_type",
+                                                                                       order_by="shotMayaAnmExport.filetime.desc()")
 
 
 class assClass(DoleSql.Base):
@@ -435,7 +445,8 @@ class fileClass(DoleSql.Base):
                                                             order_by="assClass.file_name")
 
     # 添加种类反射
-    addfileType:typing.List[fileType] = sqlalchemy.orm.relationship("fileType", back_populates="file_class", order_by="fileType.file_type")
+    addfileType: typing.List[fileType] = sqlalchemy.orm.relationship("fileType", back_populates="file_class",
+                                                                     order_by="fileType.file_type")
 
     # 添加资产ue场景反射
     addassUEScane = sqlalchemy.orm.relationship("assUEScane", back_populates="file_class")
@@ -488,8 +499,8 @@ class Shot(DoleSql.Base):
                                                       order_by="shotMayaAnmScane.filetime.desc()")
     addshotSequeueceImage = sqlalchemy.orm.relationship("shotSequeueceImage", back_populates="shot",
                                                         order_by="shotSequeueceImage.filetime.desc()")
-    addshotFlipBook:typing.List[shotFlipBook] = sqlalchemy.orm.relationship("shotFlipBook", back_populates="shot",
-                                                  order_by="shotFlipBook.filetime.desc()")
+    addshotFlipBook: typing.List[shotFlipBook] = sqlalchemy.orm.relationship("shotFlipBook", back_populates="shot",
+                                                                             order_by="shotFlipBook.filetime.desc()")
     addshotScreenshot = sqlalchemy.orm.relationship("shotScreenshot", back_populates="shot",
                                                     order_by="shotScreenshot.filetime.desc()")
 

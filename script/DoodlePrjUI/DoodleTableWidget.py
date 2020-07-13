@@ -256,7 +256,13 @@ class shotTableWidget(FileTableWidget):
         # 离开时取消高亮
         self.enableBorder(False)
 
+    def dragMoveEvent(self, event):
+        # super(shotTableWidget, self).dragMoveEvent(event)
+        pass
+
     def dropEvent(self, a0: QtGui.QDropEvent) -> None:
+        super(shotTableWidget, self).dropEvent(a0)
+        print("")
         if a0.mimeData().hasUrls():
             # 检测文件路劲和类型,限制拖动
             if len(a0.mimeData().urls()) == 1:
@@ -268,15 +274,16 @@ class shotTableWidget(FileTableWidget):
                 # 创建maya文件并上传
                 DoodleServer.baseClass.shotMayaFile(self.core, self.doodle_set).upload(path)
 
-                self.listDepTypeClicked(self.listdepType.selectedItems()[0])
                 self.enableBorder(False)
             else:
                 pass
+
         else:
             a0.ignore()
 
     @QtCore.Slot()
     def export(self, item: FileTableWidgetItem):
+        item = self.currentItem()
         self.core.query_file = item.file_data
         DoodleServer.baseClass.shotMayaExportFile(self.core, self.doodle_set).export()
 

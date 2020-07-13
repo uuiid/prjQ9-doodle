@@ -88,7 +88,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
 
         # 设置tabWigget点击清除事件
         self.tabWidget.currentChanged.connect(lambda index: self.tabWigetClick(index))
-
+        self.setAcceptDrops(True)
         # 首先扫描根目录获得集数
         self.setepisodex()
         # 并链接函数处理下一级

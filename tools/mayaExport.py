@@ -45,7 +45,7 @@ def camBakeAim():
             newCam = pymel.core.createNode('camera').getParent()
             newCam.setDisplayResolution(True)
             newCam.setDisplayGateMask(True)
-            maya.mel.eval('setAttr "{{}}.displayGateMaskOpacity" 1;'.format(cam.getShape().longName()))
+            maya.mel.eval('setAttr "{}.displayGateMaskOpacity" 1;'.format(cam.getShape().longName()))
             newCam.setOverscan(1)
             pymel.core.rename(newCam, cam.nodeName())
             # try:
@@ -74,6 +74,7 @@ def camBakeAim():
             pymel.core.bakeResults(newCam, sm=True, t=(start, end))
 
             pymel.core.delete(pointCon, orientCon, camloa)
+            pymel.core.select(newCam)
         except:
             print("shi_Bai")
         else:
