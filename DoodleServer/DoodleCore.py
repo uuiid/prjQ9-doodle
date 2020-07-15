@@ -246,6 +246,7 @@ class PrjShot(PrjCore):
 
             data = session.query(DoleOrm.fileClass) \
                 .filter(DoleOrm.fileClass.__shot__ == shot_id) \
+                .filter(DoleOrm.fileClass.__episodes__ == self.episodes.id) \
                 .order_by(DoleOrm.fileClass.file_class).all()
         return data
 
