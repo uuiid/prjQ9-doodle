@@ -46,6 +46,9 @@ class commMysql(object):
         finally:
             session.close()
 
+    def notWithSession(self):
+        return sqlalchemy.orm.sessionmaker(bind=self.engine)()
+
     @contextlib.contextmanager
     def sessionOne(self) -> sqlalchemy.orm.session.Session:
         # self.sessionclass.registry

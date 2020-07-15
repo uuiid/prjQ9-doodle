@@ -566,6 +566,15 @@ class configure(DoleSql.Base):
     value4: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128))
 
 
+class user(DoleSql.Base):
+    __tablename__ = "user"
+    __table_args__ = {'schema': 'allUser'}
+
+    id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True, nullable=False, autoincrement=True, unique=True)
+    user: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128), nullable=False)
+    password: str = sqlalchemy.Column(sqlalchemy.VARCHAR(1024), nullable=False)
+
+
 if __name__ == '__main__':
     # pass
     # test = Episodes(episodes=1)

@@ -160,33 +160,32 @@ class assTableWidget(FileTableWidget):
     def contextMenuEvent(self, arg__1):
         menu = QtWidgets.QMenu(self)
         if self.selectedItems():
-            if self.selectedItems():
-                open_ass_explorer = menu.addAction("打开文件管理器")
-                open_ass_explorer.triggered.connect(self.openShotExplorer)
-                add_info = menu.addAction("更新概述")
-                add_info.triggered.connect(self.updataClass)
-                filestate = menu.addAction("标记问题")
-                filestate.triggered.connect(lambda: self.subInfo.emit(self.currentItem().file_data))
-                add_ass_file_dow = menu.addAction("下载文件")
-                add_ass_file_dow.triggered.connect(self.downFile)
-            add_ass_file = menu.addAction('上传(同步)文件')
-            add_ass_file.triggered.connect(self.subFilePath)
-            get_ass_path = menu.addAction('指定文件')
-            get_ass_path.triggered.connect(self.appointFilePath)
+            open_ass_explorer = menu.addAction("打开文件管理器")
+            open_ass_explorer.triggered.connect(self.openShotExplorer)
+            add_info = menu.addAction("更新概述")
+            add_info.triggered.connect(self.updataClass)
+            filestate = menu.addAction("标记问题")
+            filestate.triggered.connect(lambda: self.subInfo.emit(self.currentItem().file_data))
+            add_ass_file_dow = menu.addAction("下载文件")
+            add_ass_file_dow.triggered.connect(self.downFile)
+        add_ass_file = menu.addAction('上传(同步)文件')
+        add_ass_file.triggered.connect(self.subFilePath)
+        get_ass_path = menu.addAction('指定文件')
+        get_ass_path.triggered.connect(self.appointFilePath)
         menu.move(QtGui.QCursor().pos())
         return menu.show()
 
     @QtCore.Slot()
     def appointFilePath(self):
         subclass_obj, path = self.__subAndAppoint__()
-        if not subclass_obj:
+        if subclass_obj:
             subclass_obj.appoint(path)
         self.doodle_refresh.emit()
 
     @QtCore.Slot()
     def subFilePath(self):
         subclass_obj, path = self.__subAndAppoint__()
-        if not subclass_obj:
+        if subclass_obj:
             subclass_obj.upload(path)
         self.doodle_refresh.emit()
 

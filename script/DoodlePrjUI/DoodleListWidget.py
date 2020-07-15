@@ -20,7 +20,6 @@ class DoodleListWidegt(QtWidgets.QListWidget, script.DoodleCoreApp.core):
     #     super(DoodleListWidegt, self).__init__(parent=parent)
     #
     item_class: typing.Any
-    doodle_stting: DoodleServer.DoodleSet.Doodlesetting
 
     def addFofler(self):
         pass
@@ -219,7 +218,7 @@ class ShotFileClassListWidget(DoodleListWidegt):
 
     @QtCore.Slot()
     def addFofler(self, ):
-        department = self.doodle_stting.department
+        department = self.doodle_set.department
         if not self.findItems(department, QtCore.Qt.MatchExactly):
             item = self.item_class()
             item.file_class = DoodleServer.DoodleOrm.fileClass(file_class=department)
@@ -419,8 +418,8 @@ class AssFileTypeListWidget(DoodleListWidegt):
 
     @QtCore.Slot()
     def addFofler(self):
-        items: typing.List[str] = self.doodle_stting.assTypeFolder.copy()
-        items = [i.format(self.ass.name) for i in items]
+        items: typing.List[str] = self.doodle_set.assTypeFolder.copy()
+        items = [i.format(self.core.ass_class.file_name) for i in items]
 
         ass_type, is_ok = QtWidgets.QInputDialog.getItem(self, '选择资产类型', '要先选择资产', items, 0, False)
         if is_ok:

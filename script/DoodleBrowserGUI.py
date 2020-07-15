@@ -133,7 +133,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
             logging.info("点击资产")
             self.doodle_app.codeToAss()
             self.character.file_clas, self.effects.file_clas, self.props.file_clas, self.scane.file_clas = self.core.queryAssClass()[:4]
-            self.assClassSortClicked("character")
+            # self.assClassSortClicked("character")
         elif index == 1:
             self.doodle_app.codeToShot()
             logging.info("点击镜头")

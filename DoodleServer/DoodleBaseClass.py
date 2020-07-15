@@ -962,7 +962,7 @@ class shotMayaExportFile(_fileclass):
 
     def export(self):
         self.subDataToBD()
-        # threading.Thread(target=self.run).start()
+        threading.Thread(target=self.run).start()
 
     def run(self) -> None:
         self._exportCam_()

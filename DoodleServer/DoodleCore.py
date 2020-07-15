@@ -118,9 +118,9 @@ class PrjCore(object):
             elif re.findall("_UE4$", self.file_type.file_type):
                 cls = DoleOrm.assUEScane
             elif re.findall("rig", self.file_type.file_type):
-                cls = DoleOrm.assMayaRigModel
+                cls = DoleOrm.assMayaScane
             elif re.findall("_low$", self.file_type.file_type):
-                cls = DoleOrm.assMayaLowModleModel
+                cls = DoleOrm.assMayaScane
             if re.findall("^screenshot", self.file_type.file_type):
                 cls = DoleOrm.assScreenshot
         return cls
@@ -347,7 +347,7 @@ class PrjAss(PrjCore):
     @property
     def file_class(self):
         if not hasattr(self, '_file_class'):
-            self._file_class = DoleOrm.fileClass()
+            assert AttributeError("assCore没有这个属性")
         return self._file_class
 
     @file_class.setter
@@ -407,6 +407,7 @@ class PrjAss(PrjCore):
             assert isinstance(session, sqlalchemy.orm.session.Session)
             data = session.query(DoleOrm.fileType) \
                 .filter(DoleOrm.fileType.__ass_class__ == self.ass_class.id) \
+                .filter(DoleOrm.fileType.__file_class__ == self.file_class.id) \
                 .all()
         return data
 

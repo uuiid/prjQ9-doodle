@@ -1,7 +1,6 @@
 import logging
 import os
 import pathlib
-import subprocess
 import sys
 import time
 import tempfile
@@ -11,7 +10,10 @@ from PySide2 import QtWidgets
 
 import DoodleServer
 
-__FFMPEG__ = str(DoodleServer.GETDOODLEROOT(pathlib.Path(".").absolute()).joinpath("tools","bin","ffmpeg"))
+__FFMPEG__ = "tools\\bin\\ffmpeg.exe"
+
+
+# '"' + str(DoodleServer.GETDOODLEROOT(pathlib.Path(".").absolute()).joinpath("tools","bin","ffmpeg")) + '"' "tools\\bin\\ffmpeg.exe"
 class doodleScreenshot(QtWidgets.QDialog):
 
     def __init__(self, parent=None, path: str = "C:/"):
@@ -69,13 +71,13 @@ class doodleScreenshot(QtWidgets.QDialog):
 
 
 def videoToMp4(video: pathlib.Path, mp4_path: pathlib.Path, watermark: str = "none"):
-
     tools_bin_ffmpeg = __FFMPEG__
     tools_bin_ffmpeg += " -i " + str(video)
     tools_bin_ffmpeg += " -vcodec h264"
     tools_bin_ffmpeg += f""" -filter_complex "drawtext=text='{watermark}': fontcolor=0xc62d1d: fontsize=44: x=10:y=10: shadowx=3: shadowy=3" """
     tools_bin_ffmpeg += "-acodec mp2 -s 1920*1080 " + str(mp4_path)
     checkDirAndFile(mp4_path)
+    logging.info(tools_bin_ffmpeg)
     os.system(tools_bin_ffmpeg)
     # ffmpeg.kill()
 
@@ -97,6 +99,7 @@ def imageToMp4(video_path: pathlib.Path, image_path: pathlib.Path, watermark: st
     tools_bin_ffmpeg += '-c:v libx264 -pix_fmt yuv420p -s 1920*1080 ' + video_path.as_posix()
     logging.info("命令ffmpeg %s", tools_bin_ffmpeg)
     checkDirAndFile(video_path)
+    logging.info(tools_bin_ffmpeg)
     os.system(tools_bin_ffmpeg)
 
 
@@ -123,6 +126,7 @@ def comMp4(video_path: pathlib.Path, paths: list):
     tools_bin_ffmpeg += ' -c:v libx264 -pix_fmt yuv420p -s 1920*1080 -movflags +faststart ' + video_path.as_posix()
     logging.info("命令ffmpeg %s", tools_bin_ffmpeg)
     checkDirAndFile(video_path)
+    logging.info(tools_bin_ffmpeg)
     os.system(tools_bin_ffmpeg)
 
 
@@ -133,4 +137,3 @@ if __name__ == '__main__':
     w.show()
 
     sys.exit(app.exec_())
-
