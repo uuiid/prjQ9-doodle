@@ -71,7 +71,7 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.recentlyOpenedFolder = ""
         # 设置UI
         self.setupUi(self)
-
+        self.doodle_app.codeToShot()
         # self.setToolTip("Remer")
         # 设置最后的文件编辑器的一些标准动作
         # 设置每行选择

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\tools\maya_plug\UiFile\DleClothToFbx.ui',
-# licensing of 'C:\Users\teXiao\doodle\tools\maya_plug\UiFile\DleClothToFbx.ui' applies.
+# Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\tools\maya_plug\scripts\UiFile\DleClothToFbx.ui',
+# licensing of 'C:\Users\teXiao\doodle\tools\maya_plug\scripts\UiFile\DleClothToFbx.ui' applies.
 #
-# Created: Sun Jun 21 12:53:32 2020
+# Created: Thu Jul 16 16:14:16 2020
 #      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -124,5 +124,5 @@ class Ui_MainWindow(object):
         self.shotAb.setItemText(2, QtWidgets.QApplication.translate("MainWindow", "C", None, -1))
         self.shotAb.setItemText(3, QtWidgets.QApplication.translate("MainWindow", "D", None, -1))
         self.testing.setText(QtWidgets.QApplication.translate("MainWindow", "检测", None, -1))
-        self.ExportClothAndFbx.setText(QtWidgets.QApplication.translate("MainWindow", "导出", None, -1))
+        self.ExportClothAndFbx.setText(QtWidgets.QApplication.translate("MainWindow", "转换", None, -1))
 

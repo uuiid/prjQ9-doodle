@@ -69,7 +69,7 @@ import script.DoodleCoreApp
 #         self.socket.send_pyobj(my_set, protocol=2)
 
 
-class DoodleServer__(threading.Thread,script.DoodleCoreApp.core):
+class DoodleServer__(threading.Thread, script.DoodleCoreApp.core):
     server = None
     client: Conn.Connection
 
@@ -111,8 +111,11 @@ class DoodleServer__(threading.Thread,script.DoodleCoreApp.core):
         self.send_To(my_set)
 
     def getPath(self, data):
-        core = getattr(self, data.core)
-        self._setBaseCoreAttr(data, core)
+        if data.core == "shot":
+            self.doodle_app.codeToShot()
+        else:
+            self.doodle_app.codeToAss()
+        self._setBaseCoreAttr(data, self.core)
         path: pathlib.Path = self.core.commPath()
         self.send_To(path.as_posix())
 
@@ -133,20 +136,20 @@ class DoodleServer__(threading.Thread,script.DoodleCoreApp.core):
         file.upload(data.info.filepath)
 
     def _setBaseCoreAttr(self, data, core):
-        if isinstance(core,  DoodleServer.DoodleCore.PrjAss):
+        if isinstance(core, DoodleServer.DoodleCore.PrjAss):
             try:
                 pass
             except KeyError:
                 pass
-        elif isinstance(core,  DoodleServer.DoodleCore.PrjShot):
+        elif isinstance(core, DoodleServer.DoodleCore.PrjShot):
             try:
-                core.episodes = data.episodes
-                core.shot = data.shot
-                core.shotab = data.shotab
-                core.department = self.doodle_set.department
-                core.Type = data.Type
+                core.episodes = DoodleServer.DoodleOrm.Episodes(episodes=data.episodes)
+                core.shot = DoodleServer.DoodleOrm.Shot(shot_=data.shot, shotab=data.shotab)
+                core.file_class = DoodleServer.DoodleOrm.fileClass(file_class=self.doodle_set.department)
+                core.file_type = DoodleServer.DoodleOrm.fileType(file_type=data.Type)
             except KeyError:
                 logging.error("传入字典无法解析 %s", traceback.print_exc())
+
 
 if __name__ == '__main__':
     t = DoodleServer__()

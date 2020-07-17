@@ -65,17 +65,20 @@ class convertSet(object):
         return path
 
     def toCommand(self):
-        list_com = ["DemBones.exe", "--abc", self.Iabc_filepath, "--init", self.Ifbx_filepath, "--out", self.Ofbx_filepath,
-                    "--nBones", self.bones, "--nInitIters", self.cluster_iter_num, "--nIters", self.global_iter_num,
-                    "--nTransIters", self.trans_iter_num, "--bindUpdate", self.bind_update_num,
-                    "--transAffine", self.trans_affine, "--transAffineNorm", self.trans_affine_norm,
-                    "--nWeightsIters", self.weights_iters, "--nnz", self.not_zero_bone_num,
-                    "--weightsSmooth", self.weights_smooth, "--weightsSmoothStep", self.weights_smooth_step]
+        list_com = ["DemBones.exe", "--abc=" + self.Iabc_filepath, "--init=" + self.Ifbx_filepath,
+                    "--out=" + self.Ofbx_filepath.__str__(),
+                    "--nBones=" + self.bones.__str__(), "--nInitIters=" + self.cluster_iter_num.__str__(),
+                    "--nIters=" + self.global_iter_num.__str__(),
+                    "--nTransIters=" + self.trans_iter_num.__str__(), "--bindUpdate=" + self.bind_update_num.__str__(),
+                    "--transAffine=" + self.trans_affine.__str__(), "--transAffineNorm=" + self.trans_affine_norm.__str__(),
+                    "--nWeightsIters=" + self.weights_iters.__str__(), "--nnz=" + self.not_zero_bone_num.__str__(),
+                    "--weightsSmooth=" + self.weights_smooth.__str__(), "--weightsSmoothStep=" + self.weights_smooth_step.__str__()]
         return list_com
 
     def to_dict(self):
-        return {"Ifbx_filepath":self.Ifbx_filepath,"Iabc_filepath":self.Iabc_filepath,"Ofbx_filepath":self.Ofbx_filepath,
-        "Command":self.toCommand()}
+        return {"Ifbx_filepath": self.Ifbx_filepath, "Iabc_filepath": self.Iabc_filepath,
+                "Ofbx_filepath": self.Ofbx_filepath,
+                "Command": self.toCommand()}
 
     def exportMesh(self, start, end):
         if not os.path.isdir(self.Iabc_path):
@@ -92,10 +95,10 @@ class convertSet(object):
 
     def countBone(self, tranNode):
         num = pymel.core.polyEvaluate(tranNode.name(), vertex=True)
-        bone = int(num/100)
-        if bone>100:
-            index = bone/100
-            bone = 100 + int((bone-100)/index)
+        bone = int(num / 100)
+        if bone > 100:
+            index = bone / 100
+            bone = 100 + int((bone - 100) / index)
         self.bones = bone
 
 
@@ -110,6 +113,12 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
         self.setWindowFlags(QtCore.Qt.Window)
 
         self.setupUi(self)
+        # 加载插件
+        pymel.core.loadPlugin("fbxmaya")
+        pymel.core.loadPlugin("AbcExport")
+        pymel.core.loadPlugin("AbcImport")
+        pymel.core.loadPlugin("AbcBullet")
+
         # 设置启用
         self.ExportClothAndFbx.setEnabled(False)
         self.getSelectDynamicCloth.setEnabled(False)
@@ -140,13 +149,16 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
         self.dynamicCloth.stateChanged.connect(self._setEnableDynamicCloth)
 
     def _getSelectMesh(self, a0):
-        self.bem_bone=[]
+        self.bem_bone = []
         self.tran = []
         self.tran = pymel.core.ls(sl=True)
         self.selectClothList.clear()
         self.selectClothList.addItems([t.name() for t in self.tran])
         self.ExportClothAndFbx.setEnabled(False)
-
+        # 获得路径
+        path = os.path.join(self.cache_path, self.getpath()[1:])
+        # 填写输出路径和名称
+        print(path)
         for line, tran in enumerate(self.tran):
             bem_bone = convertSet()
             # 获得fbx网格名称和节点
@@ -157,10 +169,7 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
             bem_bone.abc_obj = tran
 
             bem_bone.Ofbx_filename = tran.name() + u".fbx"
-            # 获得路径
-            path = os.path.join(self.cache_path, self.getpath()[1:])
-            # 填写输出路径和名称
-            print(path)
+
             bem_bone.Ifbx_filename = tran.name() + u"_fbx.fbx"
             bem_bone.Ifbx_path = path
 
@@ -169,7 +178,7 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
 
             bem_bone.Ofbx_path = path
             bem_bone.countBone(tran)
-            self.bem_bone.append(bem_bone)    
+            self.bem_bone.append(bem_bone)
 
     def _getSelectDynamMesh(self):
         self.abc = []
@@ -185,7 +194,6 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
             bem_bone.abc_obj = tran
 
             bem_bone.Iabc_filename = tran.name() + u"_abc.abc"
-    
 
     def _getFileInfo(self):
         filename = pymel.core.system.sceneName()
@@ -225,8 +233,6 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
         self.ExportClothAndFbx.setEnabled(False)
         self.selectdynamicClothList.clear()
 
-
-
     def getpath(self):
         my_dict = pickle.dumps(dict({"url": "getPath", "core": "shot"}, **self.pathInfo()))
         self.client.send_bytes(my_dict)
@@ -261,17 +267,18 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
             bem.exportMesh(self.ScaneStartFrame, self.ScaneEndFrame)
             if not (os.path.isfile(bem.Ifbx_filepath) and os.path.isfile(bem.Iabc_filepath)):
                 is_export_ok = False
-        
+
         if is_export_ok:
-            self.client.send_bytes(pickle.dumps(
-                {"url":"subInfo","core":"shot","specific":"subClothExport",
-                 "info":dict({"filepath":[bem.Ifbx_filepath for bem in self.bem_bone] +
-                                         [bem.Iabc_filepath for bem in self.bem_bone]},**self.pathInfo()),
-                 "_data_":[bem.to_dict() for bem in self.bem_bone]}))
-        self.client.send_bytes(b"close")
-        self.client.close()
-        self.close()
-
-
-
-
+            for ben in self.bem_bone:
+                os.system("C:\\PROGRA~1\\doodle\\tools\\dem_bones\\" + " ".join(ben.toCommand()))
+                pymel.core.FBXImportSkins("-v", True)
+                pymel.core.FBXImportMode("-v", "add")
+                pymel.core.FBXImport("-file",ben.Ofbx_filepath)
+        #     self.client.send_bytes(pickle.dumps(
+        #         {"url": "subInfo", "core": "shot", "specific": "subClothExport",
+        #          "info": dict({"filepath": [bem.Ifbx_filepath for bem in self.bem_bone] +
+        #                                    [bem.Iabc_filepath for bem in self.bem_bone]}, **self.pathInfo()),
+        #          "_data_": [bem.to_dict() for bem in self.bem_bone]}))
+        # self.client.send_bytes(b"close")
+        # self.client.close()
+        # self.close()
