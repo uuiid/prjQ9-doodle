@@ -207,6 +207,11 @@
               <string>changanhuanjie</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>dubuxiaoyao3</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>

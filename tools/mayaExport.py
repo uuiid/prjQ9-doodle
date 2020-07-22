@@ -95,9 +95,9 @@ exports = maya.cmds.ls("::*UE4")
 
 log = export()
 
-for export in exports:
+for index,export in enumerate(exports):
     maya.cmds.select(export)
-    split___ = export.split(":")[0].split("_")[0]
+    split___ = export.split(":")[0].split("_")[0] + index.__str__()
     mel_name = "{path}/{name}_{suh}.fbx".format(path=args.exportpath, name=args.name, suh=split___)
 
     maya.cmds.bakeResults(simulation=True, t=(start, end), hierarchy="below", sampleBy=1, disableImplicitControl=True,

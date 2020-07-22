@@ -10,7 +10,9 @@ import tools.ue_path
 # <editor-fold desc="表格">
 # it = []
 """
-DiYiGuan_UE4
+MiLin_UE4
+ShaMo_UE4
+ShaMoHuanJing_UE4
 
 """
 # for dep in ["Light", "VFX"]:
@@ -27,9 +29,9 @@ DiYiGuan_UE4
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-synfile = ["EP024_DiYiGuan"]
+synfile = ["MiLin_UE4","ShaMo_UE4","ShaMoHuanJing_UE4"]
 LR = ["Left", "Right"]
-ep = 25
+ep = 32
 
 it = []
 for dep in ["Light", "VFX"]:

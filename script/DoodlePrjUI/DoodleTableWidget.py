@@ -3,7 +3,7 @@ import os
 import pathlib
 import re
 import typing
-
+import json
 import pyperclip
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -12,7 +12,7 @@ import script.DoodleCoreApp
 
 
 class FileTableWidgetItem(QtWidgets.QTableWidgetItem):
-    _file_data_: DoodleServer.DoodleOrm.fileAttributeInfo_
+    _file_data_: DoodleServer.DoodleOrm.fileAttributeInfo
 
     @property
     def file_data(self):
@@ -26,8 +26,8 @@ class FileTableWidgetItem(QtWidgets.QTableWidgetItem):
 
 
 class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
-    subInfo = QtCore.Signal(DoodleServer.DoodleOrm.fileAttributeInfo_)
-    dowfile = QtCore.Signal(DoodleServer.DoodleOrm.fileAttributeInfo_)
+    subInfo = QtCore.Signal(DoodleServer.DoodleOrm.fileAttributeInfo)
+    dowfile = QtCore.Signal(DoodleServer.DoodleOrm.fileAttributeInfo)
 
     doodle_refresh = QtCore.Signal()
 
@@ -37,7 +37,7 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
         self.itemClicked.connect(self.setCore)
         self.itemDoubleClicked.connect(self.openFile)
 
-    def addTableItems(self, labels: typing.List[DoodleServer.DoodleOrm.fileAttributeInfo_]):
+    def addTableItems(self, labels: typing.List[DoodleServer.DoodleOrm.fileAttributeInfo]):
         for index, item in enumerate(labels):
             self.insertRow(index)
             # 设置版本号
@@ -69,8 +69,8 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
 
     @QtCore.Slot()
     def openShotExplorer(self, item: FileTableWidgetItem):
-        item = self.currentItem()
-        joinpath = self.doodle_set.project.joinpath(item.file_data.file_path.parent)
+        item: FileTableWidgetItem = self.currentItem()
+        joinpath = self.doodle_set.project.joinpath(item.file_data.file_path_list[0].parent)
         try:
             os.startfile(joinpath)
         except FileNotFoundError:
@@ -80,7 +80,7 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
 
     @QtCore.Slot()
     def openFile(self, item: FileTableWidgetItem):
-        joinpath = self.doodle_set.project.joinpath(item.file_data.file_path)
+        joinpath = self.doodle_set.project.joinpath(item.file_data.file_path_list[0])
         try:
             os.startfile(joinpath)
         except FileNotFoundError:
@@ -90,11 +90,11 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
 
     @QtCore.Slot()
     def copyPathToClipboard(self, item: FileTableWidgetItem):
-        pyperclip.copy(item.file_data.file_path.parent.as_posix())
+        pyperclip.copy(item.file_data.file_path_list[0].parent.as_posix())
 
     @QtCore.Slot()
     def copyNameToClipboard(self, item: FileTableWidgetItem):
-        pyperclip.copy(item.file_data.file_path.name)
+        pyperclip.copy(item.file_data.file_path_list[0].name)
 
     def localuploadFiles(self):
         file, file_type = QtWidgets.QFileDialog.getOpenFileName(self,
@@ -147,7 +147,7 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
             dowclass_obj.down(pathlib.Path(path))
             os.startfile(path)
         else:
-            QtWidgets.QMessageBox.critical(self, "无法下载此文件.....")
+            QtWidgets.QMessageBox.critical(self, '错误',"无法下载此文件.....",QtWidgets.QMessageBox.Yes)
 
 
 class assTableWidget(FileTableWidget):
@@ -205,8 +205,25 @@ class assTableWidget(FileTableWidget):
             if subclass:
                 subclass_obj = subclass(self.core, self.doodle_set)
                 subclass_obj.infor = remarks_info
+                if path.suffix in [".png", ".tga", ".jpg"]:
+                    path = self.__imageSubAndAppoint__(path)
                 return subclass_obj, path
         return None, None
+
+    def __imageSubAndAppoint__(self, path: pathlib.Path):
+        QtWidgets.QMessageBox.information(self, "提示:","由于贴图有多张,请在下一个打开的文件窗口一次指定多张贴图",
+                                          QtWidgets.QMessageBox.Yes)
+        file, file_type = QtWidgets.QFileDialog.getOpenFileNames(self,
+                                                                 "选择指定(多个)文件",
+                                                                 path.parent.as_posix(),
+                                                                 "files (*.png *.tga *.jpg)")
+        json_str = []
+        for path_ in [pathlib.Path(p) for p in file]:
+            if path_.is_file():
+                json_str.append(path_)
+        if json_str:
+            return json_str
+            # path.parent.joinpath("doodle_Mapping.json")
 
 
 class shotTableWidget(FileTableWidget):
@@ -271,7 +288,13 @@ class shotTableWidget(FileTableWidget):
                 # 获得文件路径并进行复制
 
                 # 创建maya文件并上传
-                DoodleServer.baseClass.shotMayaFile(self.core, self.doodle_set).upload(path)
+                if path.suffix in [".ma", ".mb"]:
+                    DoodleServer.baseClass.shotMayaFile(self.core, self.doodle_set).upload(path)
+                elif path.suffix in [".mp4", ".mov", '.avi']:
+                    DoodleServer.DoodleBaseClass.shotFBFile(self.core, self.doodle_set).upload(path)
+                else:
+                    QtWidgets.QMessageBox.warning(self, "警告:", f"无法识别文件类型",
+                                                  QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
 
                 self.enableBorder(False)
             else:
