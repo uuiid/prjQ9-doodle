@@ -1,28 +1,19 @@
-import json
-import pathlib
-import pickle
-import re
-import threading
-import logging
-import traceback
-import sqlalchemy.orm
 
-# from DoodleServer.DoodleOrm import *
+import pathlib
 import typing
 
-import DoodleServer.DoodleOrm as DoleOrm
-import DoodleServer.DoodleSql as Conect
-import DoodleServer.DoodleZNCHConvert
+import sqlalchemy.orm
+
 import DoodleServer.DoodleDictToObject
+import DoodleServer.DoodleOrm as DoleOrm
 import DoodleServer.DoodleSet as DoodleSet
-import zmq
-from multiprocessing import connection as Conn
+import DoodleServer.DoodleSql as Conect
 from DoodleServer.DoodleOrm import Shot
 
 
 class PrjCore(object):
     query_id: int
-    query_file: DoleOrm.fileAttributeInfo_
+    query_file: DoleOrm.fileAttributeInfo
 
     file_type: DoleOrm.fileType
     file_class: DoleOrm.fileClass
@@ -36,24 +27,22 @@ class PrjCore(object):
         self.mysqllib = doodle_set.projectname
         self.comsql = Conect.commMysql(self.mysqllib)
 
-    def queryMaxVersion(self, sql_class: typing.Type[DoleOrm.fileAttributeInfo_] = None) -> int:
+    def queryMaxVersion(self, sql_class: typing.Type[DoleOrm.fileAttributeInfo] = None) -> int:
         if not sql_class:
-            _sql_class_ = self.decideTypeClass()
-        else:
-            _sql_class_ = sql_class
+            sql_class = DoleOrm.fileAttributeInfo
         with self.comsql.sessionOne() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            data = session.query(_sql_class_.version) \
-                .filter(_sql_class_.__file_type__ == self.file_type.id) \
-                .order_by(_sql_class_.filetime.desc()).first()
+            data = session.query(sql_class.version) \
+                .filter(sql_class.__file_type__ == self.file_type.id) \
+                .order_by(sql_class.filetime.desc()).first()
         if data:
             data = data[0]
         else:
             data = 0
         return data
 
-    def queryFile(self, sql_class: typing.Type[DoleOrm.fileAttributeInfo_] = None) -> typing.List[
-        DoleOrm.fileAttributeInfo_]:
+    def queryFile(self, sql_class: typing.Type[DoleOrm.fileAttributeInfo] = None) -> typing.List[
+        DoleOrm.fileAttributeInfo]:
         pass
 
     def commPath(self, folder_type: str = "Scenefiles") -> pathlib.Path:
@@ -62,21 +51,21 @@ class PrjCore(object):
     def commName(self, version: int, user_: str, suffix: str = "", prefix: str = "") -> str:
         pass
 
-    def _getClassTypeInfo(self):
+    def _getClassTypeInfo_(self):
         pass
 
-    def subClass(self, base_class: DoleOrm.fileAttributeInfo_):
+    def subClass(self, base_class: DoleOrm.fileAttributeInfo):
         with self.comsql.sessionOne() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
             session.add(base_class)
 
-    def updataClass(self, base_class: DoleOrm.fileAttributeInfo_):
+    def updataClass(self, base_class: DoleOrm.fileAttributeInfo):
         with self.comsql.sessionOne() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
             session.flush(base_class)
 
-    def quertById(self, base_class: typing.Type[DoleOrm.fileAttributeInfo_],
-                  query_id: int = None) -> DoleOrm.fileAttributeInfo_:
+    def quertById(self, base_class: typing.Type[DoleOrm.fileAttributeInfo],
+                  query_id: int = None) -> DoleOrm.fileAttributeInfo:
         if not query_id:
             if self.query_file:
                 query_id = self.query_file.id
@@ -90,40 +79,6 @@ class PrjCore(object):
         else:
             data = None
         return data
-
-    def decideTypeClass(self):
-        if isinstance(self, PrjShot):
-            if re.fullmatch("[a,A]nm", self.file_class.file_class):
-                if re.findall("^FB_", self.file_type.file_type):
-                    cls = DoleOrm.shotFlipBook
-                else:
-                    cls = DoleOrm.shotMayaAnmScane
-            elif re.fullmatch('VFX', self.file_class.file_class):
-                if re.findall("^FB_", self.file_type.file_type):
-                    cls = DoleOrm.shotFlipBook
-                else:
-                    cls = DoleOrm.shotUEVFXScane
-            elif re.fullmatch("Light", self.file_class.file_class):
-                if re.findall("^FB_", self.file_type.file_type):
-                    cls = DoleOrm.shotFlipBook
-            if re.findall("^export", self.file_type.file_type):
-                cls = DoleOrm.shotMayaAnmExport
-            if re.findall("screenshot", self.file_type.file_type):
-                cls = DoleOrm.shotScreenshot
-        elif isinstance(self, PrjAss):
-            if re.findall("sourceimages", self.file_type.file_type):
-                cls = DoleOrm.assMapping
-            elif re.findall("scenes", self.file_type.file_type):
-                cls = DoleOrm.assMayaScane
-            elif re.findall("_UE4$", self.file_type.file_type):
-                cls = DoleOrm.assUEScane
-            elif re.findall("rig", self.file_type.file_type):
-                cls = DoleOrm.assMayaScane
-            elif re.findall("_low$", self.file_type.file_type):
-                cls = DoleOrm.assMayaScane
-            if re.findall("^screenshot", self.file_type.file_type):
-                cls = DoleOrm.assScreenshot
-        return cls
 
     @staticmethod
     def convertPathToIp(path: pathlib.Path) -> pathlib.Path:
@@ -273,7 +228,7 @@ class PrjShot(PrjCore):
     def queryFileTypeList(self):
         return [dep_type.file_type for dep_type in self.queryFileType()]
 
-    def queryFile(self, sql_class: typing.Type[DoleOrm.fileAttributeInfo_] = None) -> typing.List[DoleOrm.DoleSql.Base]:
+    def queryFile(self, sql_class: typing.Type[DoleOrm.fileAttributeInfo] = None) -> typing.List[DoleOrm.DoleSql.Base]:
         """
         查询文件本身信息
         :param sql_class:
@@ -282,21 +237,19 @@ class PrjShot(PrjCore):
         :return:
         """
         if not sql_class:
-            _sql_class_ = self.decideTypeClass()
-        else:
-            _sql_class_ = sql_class
+            sql_class = DoleOrm.fileAttributeInfo
         with self.comsql.sessionOne() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            data = session.query(_sql_class_) \
-                .filter(_sql_class_.__file_type__ == self.file_type.id) \
-                .order_by(_sql_class_.filetime.desc()).all()
+            data = session.query(sql_class) \
+                .filter(sql_class.__file_type__ == self.file_type.id) \
+                .order_by(sql_class.filetime.desc()).all()
         return data
 
     def commPath(self, folder_type: str = "Scenefiles") -> pathlib.Path:
         """
         组合镜头信息, 返回文件路径
         """
-        episodes, file_class, file_type = self._getClassTypeInfo()
+        episodes, file_class, file_type = self._getClassTypeInfo_()
         if self.shot:
             if self.shot.shot_:
                 shot = f'sc{self.shot.shot_:0>4d}{self.shot.shotab}'
@@ -314,7 +267,7 @@ class PrjShot(PrjCore):
         """
         组合文件信息,  生成文件名称
         """
-        episodes, file_class, file_type = self._getClassTypeInfo()
+        episodes, file_class, file_type = self._getClassTypeInfo_()
         if self.shot:
             if self.shot.shot_:
                 shot = "sc{:0>4d}{}".format(self.shot.shot_, self.shot.shotab)
@@ -326,7 +279,7 @@ class PrjShot(PrjCore):
                f"__{user_}_{suffix}"
         return name
 
-    def _getClassTypeInfo(self):
+    def _getClassTypeInfo_(self):
         if self.episodes.episodes:
             episodes = self.episodes.episodes
         else:
@@ -412,23 +365,21 @@ class PrjAss(PrjCore):
                 .all()
         return data
 
-    def queryFile(self, sql_class: typing.Type[DoleOrm.fileAttributeInfo_] = None) -> typing.List[DoleOrm.DoleSql.Base]:
+    def queryFile(self, sql_class: typing.Type[DoleOrm.fileAttributeInfo] = None) -> typing.List[DoleOrm.DoleSql.Base]:
         if not sql_class:
-            _sql_class_ = self.decideTypeClass()
-        else:
-            _sql_class_ = sql_class
+            sql_class = DoleOrm.fileAttributeInfo
         with self.comsql.sessionOne() as session:
             assert isinstance(session, sqlalchemy.orm.session.Session)
-            data = session.query(_sql_class_) \
-                .filter(_sql_class_.__file_type__ == self.file_type.id) \
-                .order_by(_sql_class_.filetime.desc()).all()
+            data = session.query(sql_class) \
+                .filter(sql_class.__file_type__ == self.file_type.id) \
+                .order_by(sql_class.filetime.desc()).all()
         return data
 
     def commPath(self, folder_type: str = "Scenefiles") -> pathlib.Path:
         """
         组合文件信息, 返回路径变量
         """
-        file_class, file_name, file_type = self._getClassTypeInfo()
+        file_class, file_name, file_type = self._getClassTypeInfo_()
         path = self._root.joinpath(file_class,
                                    file_name,
                                    folder_type,
@@ -440,7 +391,7 @@ class PrjAss(PrjCore):
         """
         组合文件名称
         """
-        file_class, file_name, file_type = self._getClassTypeInfo()
+        file_class, file_name, file_type = self._getClassTypeInfo_()
         add_suffix = ""
         if file_type in ["rig"]:
             add_suffix = "_rig"
@@ -448,7 +399,7 @@ class PrjAss(PrjCore):
                                                  suffix=suffix, prefix=prefix)
         return name
 
-    def _getClassTypeInfo(self):
+    def _getClassTypeInfo_(self):
         if self.file_class.file_class:
             file_class = self.file_class.file_class
         else:

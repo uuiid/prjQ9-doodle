@@ -84,7 +84,7 @@ class Doodlesetting(object):
 
     @projectname.setter
     def projectname(self, projectname: str):
-        if not projectname in ["dubuxiaoyao", "changanhuanjie"]:
+        if not projectname in ["dubuxiaoyao", "changanhuanjie","dubuxiaoyao3"]:
             projectname = "dubuxiaoyao"
         self._projectname = projectname
 
@@ -209,7 +209,7 @@ class Doodlesetting(object):
 
     def FTPconnectIsGood(self) -> bool:
         with self.my_sql.session() as session:
-            session.connection(execution_options={"schema_translate_map": {"allUser": "myuser"}})
+            session.connection(execution_options={"schema_translate_map": {"myuser": "myuser"}})
             server_user = session.query(DoodleServer.DoodleOrm.user).all()
             server_user_ = [s.user for s in server_user]
         if self.user in server_user_:
@@ -219,7 +219,7 @@ class Doodlesetting(object):
 
     def FTP_Register(self):
         with self.my_sql.session() as session:
-            session.connection(execution_options={"schema_translate_map": {"allUser": "myuser"}})
+            session.connection(execution_options={"schema_translate_map": {"myuser": "myuser"}})
             session.add(DoodleServer.DoodleOrm.user(user=self.user,password=self.password))
 
 

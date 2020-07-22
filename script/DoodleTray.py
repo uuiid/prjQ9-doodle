@@ -14,8 +14,8 @@ import script.DoodleCoreApp
 
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
-    timeSyn = 7200000
-    version = 0.230
+    timeSyn = 900000
+    version = 0.330
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)

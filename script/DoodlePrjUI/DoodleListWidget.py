@@ -24,7 +24,7 @@ class DoodleListWidegt(QtWidgets.QListWidget, script.DoodleCoreApp.core):
     def addFofler(self):
         pass
 
-    def addItems(self, labels: typing.List[DoodleServer.DoodleOrm.fileAttributeInfo_], p_str=None):
+    def addItems(self, labels: typing.List[DoodleServer.DoodleOrm.fileAttributeInfo], p_str=None):
         for i in labels:
             item = self.item_class
             item.shot = i
@@ -226,7 +226,7 @@ class ShotFileClassListWidget(DoodleListWidegt):
         else:
             self.showMessageBox()
 
-    def addItems(self, labels: typing.List[DoodleServer.DoodleOrm.fileAttributeInfo_], p_str=None):
+    def addItems(self, labels: typing.List[DoodleServer.DoodleOrm.fileAttributeInfo], p_str=None):
         for i in labels:
             item = self.item_class()
             item.file_class = i
