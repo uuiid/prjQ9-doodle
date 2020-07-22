@@ -230,7 +230,7 @@ class _fileclass(object, metaclass=ABCMeta):
     file_name = ""
     trange_path: pathlib.Path
     infor = ""
-    doodle_file_class: typing.Type[DoleOrm.fileAttributeInfo_]
+    doodle_file_class: typing.Type[DoleOrm.fileAttributeInfo]
 
     @property
     def soure_file(self):
@@ -259,6 +259,7 @@ class _fileclass(object, metaclass=ABCMeta):
         self._creteThread()
         self._creteFtpServer()
         self.user__easy_to_en = DoleConvert.isChinese(self.doodle_set.user).easyToEn()
+        self.doodle_file_class = DoleOrm.fileAttributeInfo
 
     def _creteThread(self):
         self.syn = Syn.FreeFileSync(doc=self.doodle_set.cache_path,
@@ -336,7 +337,7 @@ class _fileclass(object, metaclass=ABCMeta):
         self.ftp.run()
 
     def subInfo(self):
-        sub_class = self.doodle_file_class()  # type DoleOrm.fileAttributeInfo_
+        sub_class = self.doodle_file_class()  # type DoleOrm.fileAttributeInfo
         sub_class.user = self.user
         sub_class.file = self.file_name
         sub_class.version = self.version_max
@@ -346,7 +347,7 @@ class _fileclass(object, metaclass=ABCMeta):
         self.code.subClass(sub_class)
 
     @abstractmethod
-    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
         return sub_class
 
 
@@ -492,14 +493,9 @@ class _FlipBook(_fileclass, metaclass=ABCMeta):
 # <editor-fold desc="Description">
 class assUePrj(_AssFile):
 
-    def __init__(self, code_shot: DoleCore.PrjAss, doodle_set: DoleSet.Doodlesetting):
-        super(_AssFile, self).__init__(code_shot, doodle_set)
-
-        self.doodle_file_class = DoleOrm.assUEScane
-
     def down(self, down_path: pathlib.Path = None):
         # 查询数据库获得文件路径
-        path = self.code.convertPathToIp(self.code.quertById(DoleOrm.assUEScane).file_path)
+        path = self.code.convertPathToIp(self.code.quertById(DoleOrm.fileAttributeInfo).file_path)
         # 获得下载路径或者输入路径
         if down_path:
             down_path_ = down_path.as_posix()  # type: str
@@ -550,8 +546,7 @@ class assUePrj(_AssFile):
         # 开始提交线程
         self.syn.start()
 
-    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
-        assert isinstance(sub_class, DoleOrm.assUEScane)
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
         sub_class.infor = self.infor
         self.code.file_type.ass_class = self.code.ass_class
         self.code.file_type.file_class = self.code.file_class
@@ -563,25 +558,63 @@ class assUePrj(_AssFile):
 
 
 class assMapping(_AssFile):
-    def __init__(self, code_shot: DoleCore.PrjAss, doodle_set: DoleSet.Doodlesetting):
-        super(assMapping, self).__init__(code_shot, doodle_set)
-        self.doodle_file_class = DoleOrm.assScreenshot
+    trange_path_list: typing.List[pathlib.Path]
+
+    def down(self, down_path: pathlib.Path = None):
+        path_list = self.code.quertById(self.doodle_file_class)
+        if not down_path:
+            down_path = self.pathAndCache(self.code.commPath())
+        for path in path_list.file_path_list:
+            self.ftp.addFile(DoodlefilePath(down_path,path.parent,path.name))
+        self.ftp.setRun("down")
+        self.ftp.run()
+
+    def upload(self, soure_file: typing.List[pathlib.Path]):
+        # 目标路径
+        self.trange_path = self.code.commPath()
+        # 缓存路径
+        cache_path = self.pathAndCache(self.trange_path)
+        self.version_max = self.code.queryMaxVersion() + 1
+
+        for path in soure_file:
+            # 复制到缓存路径
+            self.copyToCache(path, cache_path.joinpath(path.name))
+            self.ftp.addFile(DoodlefilePath(cache_path, self.trange_path, path.name))
+        self.trange_path_list = [self.trange_path.joinpath(p.name) for p in soure_file]
+        self.ftp.setRun("upload")
+        self.ftp.run()
+        self.subInfo()
+
+    def appoint(self, soure_file: typing.List[pathlib.Path]):
+        self.trange_path_list = [self.code.convertPathToIp(p) for p in soure_file]
+        self.version_max = self.code.queryMaxVersion() + 1
+
+    def subInfo(self):
+        sub_class = self.doodle_file_class()  # type DoleOrm.fileAttributeInfo
+        sub_class.user = self.user
+        sub_class.file = "doodle_mapping"
+        sub_class.version = self.version_max
+        sub_class.file_path_list = self.trange_path_list
+        sub_class.fileSuffixes = ".png"
+        sub_class.infor = self.infor
+        sub_class = self._addConract_(sub_class)
+        self.code.subClass(sub_class)
+
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
+        sub_class.infor = self.infor
+        self.code.file_type.ass_class = self.code.ass_class
+        self.code.file_type.file_class = self.code.file_class
+        self.code.ass_class.file_class = self.code.file_class
+        sub_class.file_type = self.code.file_type
+        sub_class.file_class = self.code.file_class
+        sub_class.ass_class = self.code.ass_class
+        return sub_class
 
 
 class assScreenshot(_Screenshot):
-    code: DoleOrm.assScreenshot
+    code: DoleCore.PrjAss
 
-    def __init__(self, code_shot: DoleCore.PrjAss, doodle_set: DoleSet.Doodlesetting):
-        """
-        使用doodle初始化
-        Args:
-            code_shot: DooDlePrjCode._shot
-        """
-        super(assScreenshot, self).__init__(code_shot, doodle_set)
-        self.doodle_file_class = DoleOrm.assScreenshot
-
-    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
-        assert isinstance(sub_class, DoleOrm.assScreenshot)
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
         tmp_type = self._seekScreenshot_()
 
         tmp_type.ass_class = self.code.ass_class
@@ -600,19 +633,9 @@ class assScreenshot(_Screenshot):
 
 
 class assFBFile(_FlipBook):
-    code: DoleOrm.assFlipBook
+    code: DoleCore.PrjAss
 
-    def __init__(self, code_shot: DoleCore.PrjAss, doodle_set: DoleSet.Doodlesetting):
-        """
-        使用doodle初始化
-        Args:
-            code_shot: DooDlePrjCode._shot
-        """
-        super(assFBFile, self).__init__(code_shot, doodle_set)
-        self.doodle_file_class = DoleOrm.assFlipBook
-
-    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
-        assert isinstance(sub_class, DoleOrm.assFlipBook)
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
         tmp_type = self._seekFlibBook_()
 
         # 添加各种联系
@@ -638,11 +661,7 @@ class assFBFile(_FlipBook):
 
 
 class assMayaFile(_AssFile):
-    code: DoleOrm.assMayaScane
-
-    def __init__(self, code_shot: DoleCore.PrjAss, doodle_set: DoleSet.Doodlesetting):
-        super(assMayaFile, self).__init__(code_shot, doodle_set)
-        self.doodle_file_class = DoleOrm.assMayaScane
+    code: DoleCore.PrjAss
 
     def upload(self, soure_file: pathlib.Path):
         if soure_file.suffix not in [".ma", ".mb"]:
@@ -650,8 +669,7 @@ class assMayaFile(_AssFile):
         else:
             super(assMayaFile, self).upload(soure_file)
 
-    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
-        assert isinstance(sub_class, DoleOrm.assMayaScane)
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
         self.code.file_type.ass_class = self.code.ass_class
         self.code.file_type.file_class = self.code.file_class
         self.code.ass_class.file_class = self.code.file_class
@@ -664,12 +682,7 @@ class assMayaFile(_AssFile):
 class shotMayaFile(_fileclass):
     code: DoleCore.PrjShot
 
-    def __init__(self, code_shot: DoleCore.PrjShot, doodle_set: DoleSet.Doodlesetting):
-        super(shotMayaFile, self).__init__(code_shot, doodle_set)
-        self.doodle_file_class = DoleOrm.shotMayaAnmScane
-
-    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
-        assert isinstance(sub_class, DoleOrm.shotMayaAnmScane)
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
         # shot类约束
         self.code.shot.episodes = self.code.episodes
         # class类约束
@@ -689,15 +702,6 @@ class shotMayaFile(_fileclass):
 
 class shotFBFile(_FlipBook):
     code: DoleCore.PrjShot
-
-    def __init__(self, code_shot: DoleCore.PrjShot, doodle_set: DoleSet.Doodlesetting):
-        """
-        使用doodle初始化
-        Args:
-            code_shot: DooDlePrjCode._shot
-        """
-        super(shotFBFile, self).__init__(code_shot, doodle_set)
-        self.doodle_file_class = DoleOrm.shotFlipBook
 
     # @contextlib.contextmanager
     # def uploadMultiple(self, soure_file):
@@ -736,8 +740,7 @@ class shotFBFile(_FlipBook):
                 return tmp_type
         return DoleOrm.fileType(file_type="FB_{}".format(self.code.file_class.file_class))
 
-    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
-        assert isinstance(sub_class, DoleOrm.shotFlipBook)
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
         sub_class.infor = "这是拍屏"
         # shot类约束
         self.code.shot.episodes = self.code.episodes
@@ -789,12 +792,18 @@ class shotFbEpisodesFile(shotFBFile):
 
     def down(self, down_path: pathlib.Path = None):
         self.__checkAndSetAttr__()
-        self.code.query_file = self.code.file_type.addshotFlipBook[0]
+        self.code.query_file = self.code.file_type.addfileAttributeInfo[0]
         return super(_FlipBook, self).down()
 
     def makeEpisodesFlipBook(self) -> pathlib.Path:
         # 获得来源路径
-        path = [shotEp.addshotFlipBook[0].file_path for shotEp in self.code.episodes.addShot if shotEp.addshotFlipBook]
+        path = []
+        for shot in self.code.episodes.addShot:
+            for _fileType_ in shot.addfileType:
+                if re.findall("^FB_", _fileType_.file_type):
+                    path.append(_fileType_.addfileAttributeInfo[0].file_path)
+        # _shot_ = [for shot in self.code.episodes.addShot if re.findall("^FB_",shot.ad)]
+        # path = [fileType.addfileAttributeInfo[0].file_path for fileType in self.code.episodes.addFileType if re.findall("^FB_",fileType.file_type)]
         # 设置各种属性
         self.__checkAndSetAttr__()
         # 获得整集拍屏的服务器路径
@@ -840,9 +849,8 @@ class shotFbEpisodesFile(shotFBFile):
                 return tmp_type
         return DoleOrm.fileType(file_type="FB_{}".format(self.code.file_class.file_class))
 
-    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
         sub_class.infor = self.infor
-        assert isinstance(sub_class, DoleOrm.shotFlipBook)
         # class类约束
         self.code.file_class.episodes = self.code.episodes
         # type约束
@@ -860,11 +868,6 @@ class shotFbEpisodesFile(shotFBFile):
 
 class shotMayaExportFile(_fileclass):
     code: DoleCore.PrjShot
-
-    def __init__(self, code_shot: DoleCore.PrjShot, doodle_set: DoleSet.Doodlesetting):
-        # super(threading.Thread, self).__init__()
-        super(shotMayaExportFile, self).__init__(code_shot, doodle_set)
-        self.doodle_file_class = DoleOrm.shotMayaAnmExport
 
     def down(self, down_path: pathlib.Path = None):
         """
@@ -917,9 +920,7 @@ class shotMayaExportFile(_fileclass):
             self.ftp.run()
 
     def subDataToBD(self):
-        self.doodle_file_class = DoleOrm.shotMayaAnmScane
         self.soure_file = super(shotMayaExportFile, self).down()
-        self.doodle_file_class = DoleOrm.shotMayaAnmExport
         # 调整查询类型
 
         # 获得目标路径
@@ -927,15 +928,14 @@ class shotMayaExportFile(_fileclass):
         # 获得缓存路径
         self.cache_path = self.pathAndCache(trange_path)
         # 获得版本
-        self.version_max = self._seekFileType_().addshotMayaAnmExport.__len__() + 1
+        self.version_max = self._seekFileType_().addfileAttributeInfo.__len__() + 1
         # 获得文件名称
         self.file_name = "doodle_Export.json"
         # 更新目标路径,进行提交
         self.trange_path = trange_path.joinpath(self.file_name)
         self.subInfo()
 
-    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
-        assert isinstance(sub_class, DoleOrm.shotMayaAnmExport)
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
         sub_class.infor = self.infor
         # shot类约束
         self.code.shot.episodes = self.code.episodes
@@ -989,10 +989,6 @@ class shotMayaExportFile(_fileclass):
 
 class shotMayaClothExportFile(_fileclass):
     code: DoleCore.PrjShot
-
-    def __init__(self, code_shot: DoleCore.PrjShot, doodle_set: DoleSet.Doodlesetting):
-        super(shotMayaClothExportFile, self).__init__(code_shot, doodle_set)
-        self.doodle_file_class = DoleOrm.shotMayaAnmExport
 
     def upload(self, soure_file: typing.List[pathlib.Path]):
         self.code.file_class = self._seekFileClass_()
@@ -1054,8 +1050,7 @@ class shotMayaClothExportFile(_fileclass):
         subprocess.Popen(comm[:1] + list(map(lambda x, y: "=".join([str(x), str(y)]), comm[1::2], comm[2::2])),
                          start_new_session=True)
 
-    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
-        assert isinstance(sub_class, DoleOrm.shotMayaAnmExport)
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
         # shot类约束
         self.code.shot.episodes = self.code.episodes
         # class类约束
@@ -1090,17 +1085,7 @@ class shotMayaClothExportFile(_fileclass):
 class shotScreenshot(_Screenshot):
     code: DoleCore.PrjShot
 
-    def __init__(self, code_shot: DoleCore.PrjShot, doodle_set: DoleSet.Doodlesetting):
-        """
-        使用doodle初始化
-        Args:
-            code_shot: DooDlePrjCode._shot
-        """
-        super(shotScreenshot, self).__init__(code_shot, doodle_set)
-        self.doodle_file_class = DoleOrm.shotScreenshot
-
-    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo_):
-        assert isinstance(sub_class, DoleOrm.shotScreenshot)
+    def _addConract_(self, sub_class: DoleOrm.fileAttributeInfo):
         tmp_type = self._seekScreenshot_()
         # shot类约束
         self.code.shot.episodes = self.code.episodes

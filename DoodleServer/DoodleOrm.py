@@ -1,11 +1,10 @@
+import json
 import pathlib
 import typing
 
 import sqlalchemy.orm
 import sqlalchemy.sql
-# from DoodleServer import DoleSql,dictToObj
 import DoodleServer.DoodleDictToObject as dictToObj
-# # import sqlalchemy
 import DoodleServer.DoodleSql as DoleSql
 
 
@@ -16,8 +15,8 @@ def convertData(cls: DoleSql.Base, obj: object):
     return cls(**kwargs)
 
 
-class fileAttributeInfo_(DoleSql.Base):
-    __abstract__ = True
+class fileAttributeInfo(DoleSql.Base):
+    __tablename__ = "baseFile"
     dole_data = ["file", "fileSuffixes", "user", "version", "filepath", "infor", "filestate"]
 
     id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True, nullable=False, autoincrement=True, unique=True)
@@ -52,275 +51,43 @@ class fileAttributeInfo_(DoleSql.Base):
         self.fileSuffixes = file_path.suffix
         self.__tmp_path__ = file_path
 
+    _file_path_list_: typing.List[pathlib.Path]
 
-class assUEScane(fileAttributeInfo_):
-    """
-    资产ue场景
-    """
-    __tablename__ = "assuescane"
+    @property
+    def file_path_list(self) -> typing.List[pathlib.Path]:
+        if not hasattr(self, '_file_path_list_'):
+            try:
+                pathlist = json.loads(self._file_path_)
+            except json.decoder.JSONDecodeError:
+                pathlist = [self._file_path_]
+            self._file_path_list_ = [pathlib.Path(p) for p in pathlist]
+        return self._file_path_list_
 
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addassUEScane")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addassUEScane")
-
-    # 添加资产名称外键
-    __ass_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("assclass.id"))
-    ass_class = sqlalchemy.orm.relationship("assClass", back_populates="addassUEScane")
-
-
-class assMayaScane(fileAttributeInfo_):
-    __tablename__ = "assMayaScane"
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addassMayaScane")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addassMayaScane")
-
-    # 添加资产名称外键
-    __ass_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("assclass.id"))
-    ass_class = sqlalchemy.orm.relationship("assClass", back_populates="addassMayaScane")
-
-
-class assUECharacter(fileAttributeInfo_):
-    __tablename__ = "assUECharacter"
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addassUECharacter")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addassUECharacter")
-
-    # 添加资产名称外键
-    __ass_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("assclass.id"))
-    ass_class = sqlalchemy.orm.relationship("assClass", back_populates="addassUECharacter")
-
-
-class assMayaLowModleModel(fileAttributeInfo_):
-    __tablename__ = "assMayaLowModleModel"
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addassMayaLowModleModel")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addassMayaLowModleModel")
-
-    # 添加资产名称外键
-    __ass_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("assclass.id"))
-    ass_class = sqlalchemy.orm.relationship("assClass", back_populates="addassMayaLowModleModel")
-
-
-class assMayaRigModel(fileAttributeInfo_):
-    __tablename__ = "assMayaRigModel"
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addassMayaRigModel")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addassMayaRigModel")
-
-    # 添加资产名称外键
-    __ass_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("assclass.id"))
-    ass_class = sqlalchemy.orm.relationship("assClass", back_populates="addassMayaRigModel")
-
-
-class assMapping(fileAttributeInfo_):
-    __tablename__ = "assMapping"
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addassMapping")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addassMapping")
-
-    # 添加资产名称外键
-    __ass_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("assclass.id"))
-    ass_class = sqlalchemy.orm.relationship("assClass", back_populates="addassMapping")
-
-
-class assFlipBook(fileAttributeInfo_):
-    __tablename__ = "assFlipBook"
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addassFlipBook")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addassFlipBook")
-
-    # 添加资产名称外键
-    __ass_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("assclass.id"))
-    ass_class = sqlalchemy.orm.relationship("assClass", back_populates="addassFlipBook")
-
-
-class assScreenshot(fileAttributeInfo_):
-    __tablename__ = "assScreenshot"
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addassScreenshot")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addassScreenshot")
-
-    # 添加资产名称外键
-    __ass_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("assclass.id"))
-    ass_class = sqlalchemy.orm.relationship("assClass", back_populates="addassScreenshot")
-
-
-class shotUELightScane(fileAttributeInfo_):
-    """
-    镜头ue灯光场景
-    """
-    __tablename__ = "shotUELightScane"
+    @file_path_list.setter
+    def file_path_list(self, file_path_list: typing.List[pathlib.Path]):
+        self._file_path_list_ = file_path_list
+        self._file_path_ = json.dumps([p.as_posix() for p in file_path_list], ensure_ascii=False, indent=1,
+                                      separators=(',', ':'))
 
     # 集数外键约束
     __episodes__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("episodes.id"))
-    episodes = sqlalchemy.orm.relationship("Episodes", back_populates="addshotUELightScane")
+    episodes = sqlalchemy.orm.relationship("Episodes", back_populates="addfileAttributeInfo")
 
     # 镜头外键
     __shot__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("shot.id"))
-    shot = sqlalchemy.orm.relationship("Shot", back_populates="addshotUELightScane")
+    shot = sqlalchemy.orm.relationship("Shot", back_populates="addfileAttributeInfo")
 
     # 添加类型外键
     __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addshotUELightScane")
+    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addfileAttributeInfo")
 
     # 添加种类外键
     __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addshotUELightScane")
+    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addfileAttributeInfo")
 
-
-class shotUEVFXScane(fileAttributeInfo_):
-    """
-    镜头ue特效场景
-    """
-    __tablename__ = "shotUEVFXScane"
-
-    # 集数外键约束
-    __episodes__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("episodes.id"))
-    episodes = sqlalchemy.orm.relationship("Episodes", back_populates="addshotUEVFXScane")
-
-    # 镜头外键
-    __shot__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("shot.id"))
-    shot = sqlalchemy.orm.relationship("Shot", back_populates="addshotUEVFXScane")
-
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addshotUEVFXScane")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addshotUEVFXScane")
-
-
-class shotMayaAnmScane(fileAttributeInfo_):
-    """
-    镜头maya动画场景
-    """
-    __tablename__ = "shotmayaanmscane"
-    # 集数外键约束
-    __episodes__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("episodes.id"))
-    episodes = sqlalchemy.orm.relationship("Episodes", back_populates="addshotMayaAnmScane")
-
-    # 镜头外键
-    __shot__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("shot.id"))
-    shot = sqlalchemy.orm.relationship("Shot", back_populates="addshotMayaAnmScane")
-
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addshotMayaAnmScane")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addshotMayaAnmScane")
-
-
-class shotMayaAnmExport(fileAttributeInfo_):
-    """
-    镜头maya动画场景
-    """
-    __tablename__ = "shotmayaanmexport"
-    # 集数外键约束
-    __episodes__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("episodes.id"))
-    episodes: typing.List = sqlalchemy.orm.relationship("Episodes", back_populates="addshotMayaAnmExport")
-
-    # 镜头外键
-    __shot__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("shot.id"))
-    shot: typing.List = sqlalchemy.orm.relationship("Shot", back_populates="addshotMayaAnmExport")
-
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class: typing.List = sqlalchemy.orm.relationship("fileClass", back_populates="addshotMayaAnmExport")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type: typing.List = sqlalchemy.orm.relationship("fileType", back_populates="addshotMayaAnmExport")
-
-
-class shotSequeueceImage(fileAttributeInfo_):
-    __tablename__ = "shotSequeueceImage"
-    # 集数外键约束
-    __episodes__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("episodes.id"))
-    episodes = sqlalchemy.orm.relationship("Episodes", back_populates="addshotSequeueceImage")
-
-    # 镜头外键
-    __shot__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("shot.id"))
-    shot = sqlalchemy.orm.relationship("Shot", back_populates="addshotSequeueceImage")
-
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addshotSequeueceImage")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addshotSequeueceImage")
-
-
-class shotFlipBook(fileAttributeInfo_):
-    __tablename__ = "shotFlipBook"
-    # 集数外键约束
-    __episodes__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("episodes.id"))
-    episodes = sqlalchemy.orm.relationship("Episodes", back_populates="addshotFlipBook")
-
-    # 镜头外键
-    __shot__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("shot.id"))
-    shot = sqlalchemy.orm.relationship("Shot", back_populates="addshotFlipBook")
-
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addshotFlipBook")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addshotFlipBook")
-
-
-class shotScreenshot(fileAttributeInfo_):
-    __tablename__ = "shotScreenshot"
-    __episodes__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("episodes.id"))
-    episodes = sqlalchemy.orm.relationship("Episodes", back_populates="addshotScreenshot")
-
-    # 镜头外键
-    __shot__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("shot.id"))
-    shot = sqlalchemy.orm.relationship("Shot", back_populates="addshotScreenshot")
-
-    # 添加类型外键
-    __file_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("fileclass.id"))
-    file_class = sqlalchemy.orm.relationship("fileClass", back_populates="addshotScreenshot")
-
-    # 添加种类外键
-    __file_type__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("filetype.id"))
-    file_type = sqlalchemy.orm.relationship("fileType", back_populates="addshotScreenshot")
+    # 添加资产名称外键
+    __ass_class__ = sqlalchemy.Column(sqlalchemy.SMALLINT, sqlalchemy.ForeignKey("assclass.id"))
+    ass_class = sqlalchemy.orm.relationship("assClass", back_populates="addfileAttributeInfo")
 
 
 class fileType(DoleSql.Base):
@@ -348,49 +115,9 @@ class fileType(DoleSql.Base):
     shot = sqlalchemy.orm.relationship("Shot", back_populates="addfileType")
 
     # 添加资产ue场景反射
-    addassUEScane: typing.List[assUEScane] = sqlalchemy.orm.relationship("assUEScane", back_populates="file_type",
-                                                                         order_by="assUEScane.filetime.desc()")
-    addassMayaScane: typing.List[assMayaScane] = sqlalchemy.orm.relationship("assMayaScane", back_populates="file_type",
-                                                                             order_by="assMayaScane.filetime.desc()")
-    addassUECharacter: typing.List[assUECharacter] = sqlalchemy.orm.relationship("assUECharacter",
-                                                                                 back_populates="file_type",
-                                                                                 order_by="assUECharacter.filetime.desc()")
-    addassMayaLowModleModel: typing.List[assMayaScane] = sqlalchemy.orm.relationship("assMayaLowModleModel",
-                                                                                     back_populates="file_type",
-                                                                                     order_by="assMayaLowModleModel.filetime.desc()")
-    addassMayaRigModel: typing.List[assMayaRigModel] = sqlalchemy.orm.relationship("assMayaRigModel",
-                                                                                   back_populates="file_type",
-                                                                                   order_by="assMayaRigModel.filetime.desc()")
-    addassMapping: typing.List[assMapping] = sqlalchemy.orm.relationship("assMapping", back_populates="file_type",
-                                                                         order_by="assMapping.filetime.desc()")
-    addassFlipBook: typing.List[assFlipBook] = sqlalchemy.orm.relationship("assFlipBook", back_populates="file_type",
-                                                                           order_by="assFlipBook.filetime.desc()")
-    addassScreenshot: typing.List[assScreenshot] = sqlalchemy.orm.relationship("assScreenshot",
-                                                                               back_populates="file_type",
-                                                                               order_by="assScreenshot.filetime.desc()")
-    # 添加灯光镜头反射
-    addshotUELightScane: typing.List[shotUELightScane] = sqlalchemy.orm.relationship("shotUELightScane",
-                                                                                     back_populates="file_type",
-                                                                                     order_by="shotUELightScane.filetime.desc()")
-    # 添加特效镜头反射
-    addshotUEVFXScane: typing.List[shotUEVFXScane] = sqlalchemy.orm.relationship("shotUEVFXScane",
-                                                                                 back_populates="file_type",
-                                                                                 order_by="shotUEVFXScane.filetime.desc()")
-    # 添加特效镜头反射
-    addshotMayaAnmScane: typing.List[shotMayaAnmScane] = sqlalchemy.orm.relationship("shotMayaAnmScane",
-                                                                                     back_populates="file_type",
-                                                                                     order_by="shotMayaAnmScane.filetime.desc()")
-    addshotSequeueceImage: typing.List[shotUELightScane] = sqlalchemy.orm.relationship("shotSequeueceImage",
+    addfileAttributeInfo: typing.List[fileAttributeInfo] = sqlalchemy.orm.relationship("fileAttributeInfo",
                                                                                        back_populates="file_type",
-                                                                                       order_by="shotSequeueceImage.filetime.desc()")
-    addshotFlipBook: typing.List[shotFlipBook] = sqlalchemy.orm.relationship("shotFlipBook", back_populates="file_type",
-                                                                             order_by="shotFlipBook.filetime.desc()")
-    addshotScreenshot: typing.List[shotScreenshot] = sqlalchemy.orm.relationship("shotScreenshot",
-                                                                                 back_populates="file_type",
-                                                                                 order_by="shotScreenshot.filetime.desc()")
-    addshotMayaAnmExport: typing.List[shotMayaAnmExport] = sqlalchemy.orm.relationship("shotMayaAnmExport",
-                                                                                       back_populates="file_type",
-                                                                                       order_by="shotMayaAnmExport.filetime.desc()")
+                                                                                       order_by="fileAttributeInfo.filetime.desc()")
 
 
 class assClass(DoleSql.Base):
@@ -410,16 +137,8 @@ class assClass(DoleSql.Base):
     # 添加中文
     nameZNCH = sqlalchemy.orm.relationship("ZNch", uselist=False, back_populates="ass_class")
 
-    # 添加ue场景
-    addassUEScane = sqlalchemy.orm.relationship("assUEScane", back_populates="ass_class")
-    # 添加maya场景映射
-    addassMayaScane = sqlalchemy.orm.relationship("assMayaScane", back_populates="ass_class")
-    addassUECharacter = sqlalchemy.orm.relationship("assUECharacter", back_populates="ass_class")
-    addassMayaLowModleModel = sqlalchemy.orm.relationship("assMayaLowModleModel", back_populates="ass_class")
-    addassMayaRigModel = sqlalchemy.orm.relationship("assMayaRigModel", back_populates="ass_class")
-    addassMapping = sqlalchemy.orm.relationship("assMapping", back_populates="ass_class")
-    addassFlipBook = sqlalchemy.orm.relationship("assFlipBook", back_populates="ass_class")
-    addassScreenshot = sqlalchemy.orm.relationship("assScreenshot", back_populates="ass_class")
+    # file
+    addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="ass_class")
 
 
 class fileClass(DoleSql.Base):
@@ -441,34 +160,15 @@ class fileClass(DoleSql.Base):
     episodes = sqlalchemy.orm.relationship("Episodes", back_populates="addFileClass")
 
     # 添加资产名称反射
-    addass_class: typing.List = sqlalchemy.orm.relationship("assClass", back_populates="file_class",
-                                                            order_by="assClass.file_name")
+    addass_class: typing.List[assClass] = sqlalchemy.orm.relationship("assClass", back_populates="file_class",
+                                                                      order_by="assClass.file_name")
 
     # 添加种类反射
     addfileType: typing.List[fileType] = sqlalchemy.orm.relationship("fileType", back_populates="file_class",
                                                                      order_by="fileType.file_type")
 
     # 添加资产ue场景反射
-    addassUEScane = sqlalchemy.orm.relationship("assUEScane", back_populates="file_class")
-    addassMayaScane = sqlalchemy.orm.relationship("assMayaScane", back_populates="file_class")
-    addassUECharacter = sqlalchemy.orm.relationship("assUECharacter", back_populates="file_class")
-    addassMayaLowModleModel = sqlalchemy.orm.relationship("assMayaLowModleModel", back_populates="file_class")
-    addassMayaRigModel = sqlalchemy.orm.relationship("assMayaRigModel", back_populates="file_class")
-    addassMapping = sqlalchemy.orm.relationship("assMapping", back_populates="file_class")
-    addassFlipBook = sqlalchemy.orm.relationship("assFlipBook", back_populates="file_class")
-    addassScreenshot = sqlalchemy.orm.relationship("assScreenshot", back_populates="file_class")
-    # 添加灯光镜头反射
-    addshotUELightScane = sqlalchemy.orm.relationship("shotUELightScane", back_populates="file_class")
-    # 添加特效镜头反射
-    addshotUEVFXScane = sqlalchemy.orm.relationship("shotUEVFXScane", back_populates="file_class")
-    # 添加特效镜头反射
-    addshotMayaAnmScane = sqlalchemy.orm.relationship("shotMayaAnmScane", back_populates="file_class")
-    addshotSequeueceImage = sqlalchemy.orm.relationship("shotSequeueceImage", back_populates="file_class")
-    addshotFlipBook = sqlalchemy.orm.relationship("shotFlipBook", back_populates="file_class")
-    addshotScreenshot = sqlalchemy.orm.relationship("shotScreenshot", back_populates="file_class")
-
-    addshotMayaAnmExport = sqlalchemy.orm.relationship("shotMayaAnmExport", back_populates="file_class",
-                                                       order_by="shotMayaAnmExport.filetime.desc()")
+    addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="file_class")
 
 
 class Shot(DoleSql.Base):
@@ -488,24 +188,8 @@ class Shot(DoleSql.Base):
     # 添加type反射
     addfileType: typing.List[fileType] = sqlalchemy.orm.relationship("fileType", back_populates="shot",
                                                                      order_by="fileType.file_type")
-    # 添加灯光镜头反射
-    addshotUELightScane = sqlalchemy.orm.relationship("shotUELightScane", back_populates="shot",
-                                                      order_by="shotUELightScane.filetime.desc()")
-    # 添加特效镜头反射
-    addshotUEVFXScane = sqlalchemy.orm.relationship("shotUEVFXScane", back_populates="shot",
-                                                    order_by="shotUEVFXScane.filetime.desc()")
-    # 添加特效镜头反射
-    addshotMayaAnmScane = sqlalchemy.orm.relationship("shotMayaAnmScane", back_populates="shot",
-                                                      order_by="shotMayaAnmScane.filetime.desc()")
-    addshotSequeueceImage = sqlalchemy.orm.relationship("shotSequeueceImage", back_populates="shot",
-                                                        order_by="shotSequeueceImage.filetime.desc()")
-    addshotFlipBook: typing.List[shotFlipBook] = sqlalchemy.orm.relationship("shotFlipBook", back_populates="shot",
-                                                                             order_by="shotFlipBook.filetime.desc()")
-    addshotScreenshot = sqlalchemy.orm.relationship("shotScreenshot", back_populates="shot",
-                                                    order_by="shotScreenshot.filetime.desc()")
-
-    addshotMayaAnmExport = sqlalchemy.orm.relationship("shotMayaAnmExport", back_populates="shot",
-                                                       order_by="shotMayaAnmExport.filetime.desc()")
+    # 添加资产ue场景反射
+    addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="shot")
 
 
 class Episodes(DoleSql.Base):
@@ -520,26 +204,10 @@ class Episodes(DoleSql.Base):
     # 添加fileClass约束
     addFileClass: typing.List[fileClass] = sqlalchemy.orm.relationship("fileClass", back_populates="episodes",
                                                                        order_by="fileClass.file_class")
-    # 添加type约束
     addFileType: typing.List[fileType] = sqlalchemy.orm.relationship("fileType", back_populates="episodes",
                                                                      order_by="fileType.file_type")
-    # 添加灯光镜头反射
-    addshotUELightScane = sqlalchemy.orm.relationship("shotUELightScane", back_populates="episodes",
-                                                      order_by="shotUELightScane.filetime.desc()")
-    # 添加特效镜头反射
-    addshotUEVFXScane = sqlalchemy.orm.relationship("shotUEVFXScane", back_populates="episodes",
-                                                    order_by="shotUEVFXScane.filetime.desc()")
-    # 添加特效镜头反射
-    addshotMayaAnmScane = sqlalchemy.orm.relationship("shotMayaAnmScane", back_populates="episodes",
-                                                      order_by="shotMayaAnmScane.filetime.desc()")
-    addshotSequeueceImage = sqlalchemy.orm.relationship("shotSequeueceImage", back_populates="episodes",
-                                                        order_by="shotMayaAnmScane.filetime.desc()")
-    addshotFlipBook = sqlalchemy.orm.relationship("shotFlipBook", back_populates="episodes",
-                                                  order_by="shotFlipBook.filetime.desc()")
-    addshotScreenshot = sqlalchemy.orm.relationship("shotScreenshot", back_populates="episodes",
-                                                    order_by="shotScreenshot.filetime.desc()")
-    addshotMayaAnmExport = sqlalchemy.orm.relationship("shotMayaAnmExport", back_populates="episodes",
-                                                       order_by="shotMayaAnmExport.filetime.desc()")
+    # 添加资产ue场景反射
+    addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="episodes")
 
 
 # =======================================================================
@@ -568,7 +236,7 @@ class configure(DoleSql.Base):
 
 class user(DoleSql.Base):
     __tablename__ = "user"
-    __table_args__ = {'schema': 'allUser'}
+    __table_args__ = {'schema': 'myuser'}
 
     id: int = sqlalchemy.Column(sqlalchemy.SMALLINT, primary_key=True, nullable=False, autoincrement=True, unique=True)
     user: str = sqlalchemy.Column(sqlalchemy.VARCHAR(128), nullable=False)
