@@ -32,7 +32,7 @@ WenXinFengHuaCong_2
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-synfile = ["SiTuZhengTianYuanZi_UE4"]
+synfile = ["WenXinFengFangWu_UE4"]
 LR = ["Left", "Right"]
 ep = 40
 

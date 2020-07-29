@@ -90,11 +90,12 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
 
     @QtCore.Slot()
     def copyPathToClipboard(self, item: FileTableWidgetItem):
-        pyperclip.copy(item.file_data.file_path_list[0].parent.as_posix())
+        pyperclip.copy(
+            self.doodle_set.project.joinpath(self.currentItem().file_data.file_path_list[0].parent.as_posix()[1:]))
 
     @QtCore.Slot()
     def copyNameToClipboard(self, item: FileTableWidgetItem):
-        pyperclip.copy(item.file_data.file_path_list[0].name)
+        pyperclip.copy(self.currentItem().file_data.file_path_list[0].name)
 
     def localuploadFiles(self):
         file, file_type = QtWidgets.QFileDialog.getOpenFileName(self,
@@ -147,7 +148,7 @@ class FileTableWidget(QtWidgets.QTableWidget, script.DoodleCoreApp.core):
             dowclass_obj.down(pathlib.Path(path))
             os.startfile(path)
         else:
-            QtWidgets.QMessageBox.critical(self, '错误',"无法下载此文件.....",QtWidgets.QMessageBox.Yes)
+            QtWidgets.QMessageBox.critical(self, '错误', "无法下载此文件.....", QtWidgets.QMessageBox.Yes)
 
 
 class assTableWidget(FileTableWidget):
@@ -211,7 +212,7 @@ class assTableWidget(FileTableWidget):
         return None, None
 
     def __imageSubAndAppoint__(self, path: pathlib.Path):
-        QtWidgets.QMessageBox.information(self, "提示:","由于贴图有多张,请在下一个打开的文件窗口一次指定多张贴图",
+        QtWidgets.QMessageBox.information(self, "提示:", "由于贴图有多张,请在下一个打开的文件窗口一次指定多张贴图",
                                           QtWidgets.QMessageBox.Yes)
         file, file_type = QtWidgets.QFileDialog.getOpenFileNames(self,
                                                                  "选择指定(多个)文件",
@@ -290,7 +291,7 @@ class shotTableWidget(FileTableWidget):
                 # 创建maya文件并上传
                 if path.suffix in [".ma", ".mb"]:
                     DoodleServer.baseClass.shotMayaFile(self.core, self.doodle_set).upload(path)
-                elif path.suffix in [".mp4", ".mov", '.avi',".png","jpg"]:
+                elif path.suffix in [".mp4", ".mov", '.avi', ".png", "jpg"]:
                     DoodleServer.DoodleBaseClass.shotFBFile(self.core, self.doodle_set).upload(path)
                 else:
                     QtWidgets.QMessageBox.warning(self, "警告:", f"无法识别文件类型",
