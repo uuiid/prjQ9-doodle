@@ -75,15 +75,14 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
             include_ = ["*"]
             if self.doodle_set.department in ["VFX"]:
                 include_ = ["*\\VFX\\*"]
-            script.DoodleSynXml.FreeFileSync(doc=self.doodle_set.doc,
-                                             syn_file=self.doodle_set.getsever(),
-                                             program=self.doodle_set.FreeFileSync,
-                                             file_name='{}-ep-{}'.format(self.doodle_set.department,
-                                                                         self.doodle_set.synEp),
-                                             user=self.doodle_set.ftpuser,
-                                             ip_=self.doodle_set.ftpip,
-                                             password=self.doodle_set.password,
-                                             include=include_).run()
+            file_sync = script.DoodleSynXml.FreeFileSync(doc=self.doodle_set.doc, syn_file=self.doodle_set.getsever(),
+                                                         program=self.doodle_set.FreeFileSync,
+                                                         file_name='{}-ep-{}'.format(self.doodle_set.department,
+                                                                                     self.doodle_set.synEp),
+                                                         user=self.doodle_set.ftpuser, ip_=self.doodle_set.ftpip,
+                                                         password=self.doodle_set.password, include=include_)
+            file_sync.setVersioningFolder("/03_Workflow/Assets/VFX")
+            file_sync.run()
 
             self.ta_log.info('同步时间: %s', time.asctime(time.localtime(time.time())))
 

@@ -96,9 +96,9 @@ class convertSet(object):
     def countBone(self, tranNode):
         num = pymel.core.polyEvaluate(tranNode.name(), vertex=True)
         bone = int(num / 100)
-        if bone > 100:
-            index = bone / 100
-            bone = 100 + int((bone - 100) / index)
+        # if bone > 100:
+        #     index = bone / 100
+        #     bone = 100 + int((bone - 100) / index)
         self.bones = bone
 
 

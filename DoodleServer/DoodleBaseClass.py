@@ -588,6 +588,7 @@ class assMapping(_AssFile):
     def appoint(self, soure_file: typing.List[pathlib.Path]):
         self.trange_path_list = [self.code.convertPathToIp(p) for p in soure_file]
         self.version_max = self.code.queryMaxVersion() + 1
+        self.subInfo()
 
     def subInfo(self):
         sub_class = self.doodle_file_class()  # type DoleOrm.fileAttributeInfo
@@ -832,8 +833,7 @@ class shotFbEpisodesFile(shotFBFile):
         return cache_file
 
     def __checkAndSetAttr__(self):
-        if self.code.shot:
-            self.code.shot = None
+        self.code.shot = None
         self.code.file_class = self._seekFileClass_()
         self.code.file_type = self._seekFlibBook_()
 

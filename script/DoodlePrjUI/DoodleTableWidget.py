@@ -290,7 +290,7 @@ class shotTableWidget(FileTableWidget):
                 # 创建maya文件并上传
                 if path.suffix in [".ma", ".mb"]:
                     DoodleServer.baseClass.shotMayaFile(self.core, self.doodle_set).upload(path)
-                elif path.suffix in [".mp4", ".mov", '.avi']:
+                elif path.suffix in [".mp4", ".mov", '.avi',".png","jpg"]:
                     DoodleServer.DoodleBaseClass.shotFBFile(self.core, self.doodle_set).upload(path)
                 else:
                     QtWidgets.QMessageBox.warning(self, "警告:", f"无法识别文件类型",
