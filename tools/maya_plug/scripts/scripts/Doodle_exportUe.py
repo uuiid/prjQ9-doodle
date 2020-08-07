@@ -72,8 +72,8 @@ def getoutFileName(outtype, older):
                     "sc{shot:0>4d}{shotab}/Scenefiles/{dep}/{aim}".format(eps=_eps,
                                                                           shot=_shot,
                                                                           shotab=_shotab,
-                                                                          dep=filename.split("_")[2],
-                                                                          aim=filename.split("_")[3])
+                                                                          dep=filename.split("_")[3],
+                                                                          aim=filename.split("_")[4])
         tfilepath = mkdir(tfilepath)
         filepath = filename.split("_")
         exname = tfilepath + "/" + filepath[0] + "_" + filepath[1] + "_" + filepath[2] + "_" + filepath[

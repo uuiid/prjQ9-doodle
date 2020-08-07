@@ -10,12 +10,53 @@ import tools.ue_path
 # <editor-fold desc="表格">
 # it = []
 """
-MiJingShanGu_LWZ
-MiJiShanGuDongKuNei
-ShaMo_UE4
+FuTuJieShenYuan_ZX
+HuaiLaoBanDeDain_LZ
+ZhuiZhuXiaoXiang_ZL
 
 
 """
+
+
+def dubuRun():
+    synfile = ["精神世界"]
+    LR = ["Left", "Right"]
+    ep = 38
+    it = []
+    for dep in ["Light", "VFX"]:
+        for key in synfile:
+            for ls in LR:
+                t = f"('synpath','{dep}','{ep:0>3d}','{ls}','Ep_{ep:0>2d}/{key}/Content/shot')"
+                path = tools.ue_path.createPath(f"W:/data/ue_prj/Ep_{ep:0>2d}/{key}/Content", eps=ep, secene=120)
+                path.create()
+                it.append(t)
+    # print(it)
+    sql_com = f"INSERT INTO `configure` (name, value, value2, value3, value4) VALUES {','.join(it)}"
+    with DoodleServer.DoodleSql.commMysql("dubuxiaoyao").engine.connect() as connect:
+        assert isinstance(connect, sqlalchemy.engine.Connection)
+        eps = connect.execute(sql_com)
+    # </editor-fold>
+
+
+def chanAnRun():
+    synfile = ["FuTuJieShenYuan_ZX", "HuaiLaoBanDeDain_LZ", "ZhuiZhuXiaoXiang_ZL"]
+    LR = ["Left", "Right"]
+    ep = 1
+    it = []
+    for dep in ["Light", "VFX"]:
+        for key in synfile:
+            for ls in LR:
+                t = f"('synpath','{dep}','{ep:0>3d}','{ls}','Ep_{ep:0>2d}/{key}/Content/shot')"
+                path = tools.ue_path.createPath(f"X:/03_Workflow/Assets/Light/Ep_{ep:0>2d}/{key}/Content", eps=ep, secene=120)
+                path.create()
+                it.append(t)
+    # print(it)
+    sql_com = f"INSERT INTO `configure` (name, value, value2, value3, value4) VALUES {','.join(it)}"
+    with DoodleServer.DoodleSql.commMysql("changanhuanjie").engine.connect() as connect:
+        assert isinstance(connect, sqlalchemy.engine.Connection)
+        eps = connect.execute(sql_com)
+    # </editor-fold>
+dubuRun()
 # for dep in ["Light", "VFX"]:
 #     synPath = pathlib.Path(f"W:\\configuration\\{dep}_synFile.json")
 #     data = synPath.read_text(encoding='utf-8')
@@ -30,22 +71,4 @@ ShaMo_UE4
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-synfile = ["MiLin_UE4"]
-LR = ["Left", "Right"]
-ep = 33
 
-it = []
-for dep in ["Light", "VFX"]:
-    for key in synfile:
-        for ls in LR:
-            t = f"('synpath','{dep}','{ep:0>3d}','{ls}','Ep_{ep:0>2d}/{key}/Content/shot')"
-            path = tools.ue_path.createPath(f"W:/data/ue_prj/Ep_{ep:0>2d}/{key}/Content",eps=ep,secene=120)
-            path.create()
-            it.append(t)
-
-# print(it)
-sql_com = f"INSERT INTO `configure` (name, value, value2, value3, value4) VALUES {','.join(it)}"
-with DoodleServer.DoodleSql.commMysql("dubuxiaoyao").engine.connect() as connect:
-    assert isinstance(connect, sqlalchemy.engine.Connection)
-    eps = connect.execute(sql_com)
-# </editor-fold>

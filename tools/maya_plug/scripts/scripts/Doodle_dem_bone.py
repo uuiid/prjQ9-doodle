@@ -28,15 +28,9 @@ class doodleSet(object):
 class convertSet(object):
     url = ""
 
-    # abc_poly_meshname = ""
-    # abc_obj = ""
     poly_meshname = ""
-    convert_obj = ""
+    convert_obj = None
     bones = 100
-    # Ifbx_filename = ""
-    # Ifbx_path = ""
-    # Iabc_filename = ""
-    # Iabc_path = ""
     Ofbx_filename = ""
     Ofbx_path = ""
     cluster_iter_num = 10
@@ -50,15 +44,6 @@ class convertSet(object):
     weights_smooth = 0.0001
     weights_smooth_step = 1
 
-    # @property
-    # def Ifbx_filepath(self):
-    #     path = os.path.abspath(os.path.join(self.Ifbx_path, self.Ifbx_filename)).replace("\\", "/")
-    #     return path
-    #
-    # @property
-    # def Iabc_filepath(self):
-    #     path = os.path.abspath(os.path.join(self.Iabc_path, self.Iabc_filename)).replace("\\", "/")
-    #     return path
     def __init__(self):
         self.convert_node = None
         self.bind_obj = []
@@ -70,23 +55,26 @@ class convertSet(object):
         path = os.path.abspath(os.path.join(self.Ofbx_path, self.Ofbx_filename)).replace("\\", "/")
         return path
 
-    def toCommand(self):
-        list_com = ["DemBones.exe", "--abc=" + self.Iabc_filepath, "--init=" + self.Ifbx_filepath,
-                    "--out=" + self.Ofbx_filepath.__str__(),
-                    "--nBones=" + self.bones.__str__(), "--nInitIters=" + self.cluster_iter_num.__str__(),
-                    "--nIters=" + self.global_iter_num.__str__(),
-                    "--nTransIters=" + self.trans_iter_num.__str__(), "--bindUpdate=" + self.bind_update_num.__str__(),
-                    "--transAffine=" + self.trans_affine.__str__(),
-                    "--transAffineNorm=" + self.trans_affine_norm.__str__(),
-                    "--nWeightsIters=" + self.weights_iters.__str__(), "--nnz=" + self.not_zero_bone_num.__str__(),
-                    "--weightsSmooth=" + self.weights_smooth.__str__(),
-                    "--weightsSmoothStep=" + self.weights_smooth_step.__str__()]
-        return list_com
+    # def toCommand(self):
+    #     list_com = ["DemBones.exe", "--abc=" + self.Iabc_filepath, "--init=" + self.Ifbx_filepath,
+    #                 "--out=" + self.Ofbx_filepath.__str__(),
+    #                 "--nBones=" + self.bones.__str__(), "--nInitIters=" + self.cluster_iter_num.__str__(),
+    #                 "--nIters=" + self.global_iter_num.__str__(),
+    #                 "--nTransIters=" + self.trans_iter_num.__str__(), "--bindUpdate=" + self.bind_update_num.__str__(),
+    #                 "--transAffine=" + self.trans_affine.__str__(),
+    #                 "--transAffineNorm=" + self.trans_affine_norm.__str__(),
+    #                 "--nWeightsIters=" + self.weights_iters.__str__(), "--nnz=" + self.not_zero_bone_num.__str__(),
+    #                 "--weightsSmooth=" + self.weights_smooth.__str__(),
+    #                 "--weightsSmoothStep=" + self.weights_smooth_step.__str__()]
+    #     return list_com
 
-    def to_dict(self):
-        return {"Ifbx_filepath": self.Ifbx_filepath, "Iabc_filepath": self.Iabc_filepath,
-                "Ofbx_filepath": self.Ofbx_filepath,
-                "Command": self.toCommand()}
+    # def to_dict(self):
+    #     return {"Ifbx_filepath": self.Ifbx_filepath, "Iabc_filepath": self.Iabc_filepath,
+    #             "Ofbx_filepath": self.Ofbx_filepath,
+    #             "Command": self.toCommand()}
+
+    def addSelectObj(self):
+        pymel.core.select(self.convert_obj, add=True)
 
     def exportMesh(self, start, end):
         if not os.path.isdir(self.Ofbx_path):
@@ -99,18 +87,12 @@ class convertSet(object):
         maya.mel.eval("FBXExportConstraints -v true")
         maya.mel.eval('FBXExport -f "{}" -s'.format(self.Ofbx_filepath))
         os.startfile(self.Ofbx_path)
-        # pymel.core.other.FBXExport("-file", self.Ofbx_filepath, "-s")
-        # abc_mesh = "-root {}".format(self.abc_obj.longName())
-        # pymel.core.other.AbcExport(
-        #     jobArg="-frameRange {range_start} {range_end}  -worldSpace -dataFormat ogawa {mesh_path} -file {file_path}".format(
-        #         range_start=start, range_end=end, mesh_path=abc_mesh, file_path=self.Iabc_filepath
-        #     ))
 
     def _countBone_(self):
         num = pymel.core.polyEvaluate(self.convert_obj.name(), vertex=True)
         bone = int(num / 100)
-        if bone > 120:
-            bone = 120
+        if bone > 50:
+            bone = 50
         self.bones = bone
         return bone
 
@@ -120,6 +102,7 @@ class convertSet(object):
         self.convert_node.rename("{}_dolConvertBone".format(self.poly_meshname))
         self.convert_obj.getShape().outMesh >> self.convert_node.inputMesh
         self.convert_node.nBones.set(self._countBone_())
+        self.convert_node.nIters.set(5)
         self.convert_node.startFrame.set(pymel.core.playbackOptions(query=True, min=True))
         self.convert_node.endFrame.set(pymel.core.playbackOptions(query=True, max=True) + 1)
         self.convert_node.bindFrame.set(pymel.core.playbackOptions(query=True, min=True) + 3)
@@ -127,13 +110,6 @@ class convertSet(object):
 
     def playGetMesh(self):
         self.convert_node.getFrameData.get()
-
-        # pymel.core.playbackOptions(maxPlaybackSpeed=0, loop="once")
-        # pymel.core.currentTime(self.convert_node.bindFrame.get())
-        # if not pymel.core.play(q=True, state=True):
-        #     pymel.core.currentTime(pymel.core.playbackOptions(query=True, min=True))
-        #     pymel.core.play(forward=True)
-        #     play = True
 
     def compute(self):
         if self.convert_node:
@@ -145,13 +121,16 @@ class convertSet(object):
             self.bind_obj = self.convert_obj.duplicate()[0]
             pymel.core.parent(self.bind_obj, world=True)
             self.convertJoint = []
+            bounding_box = self.bind_obj.boundingBox()
+            size = pymel.core.datatypes.Vector(bounding_box[0] - bounding_box[1]).length()/self.convert_node.nBones.get()
             for i in range(self.convert_node.nBones.get()):
                 jointnode = pymel.core.joint(None, name="{}_{:0>3d}".format(self.poly_meshname, i))
                 jointnode.setTransformation(self.convert_node.localBindPoseList[i].localBindPose.get())
+                jointnode.radius.set(size)
                 self.convertJoint.append(jointnode)
             tmp = self.convertJoint[:]
             tmp.append(self.bind_obj)
-            self.skinNode = pymel.core.skinCluster(tmp, toSelectedBones=True)
+            self.skinNode = pymel.core.skinCluster(tmp, toSelectedBones=True,polySmoothness=10.0)
             self.skinNode.normalizeWeights.set(0)
             # 设置帧
             for frame in range((self.convert_node.endFrame.get() - self.convert_node.startFrame.get())):
@@ -170,16 +149,18 @@ class convertSet(object):
         pymel.core.parent([group, node], absolute=True)
 
     def _copyWeights_(self):
-        evaluate = pymel.core.polyEvaluate(self.bind_obj, vertex=True)
-        for i in range(evaluate):
-            pymel.core.select(self.bind_obj.vtx[i])
-            value = []
-            for jone in range(self.convert_node.nBones.get()):
-                weight = self.convert_node.bindWeightsList[i].bindWeights[jone].get()
-                value.append((self.convertJoint[jone], weight))
-            # "{} :{}".format(prs, (i / evaluate) * 100)
-            print("{po} {v:.3%} {po}".format(v=(float(i) / float(evaluate - 1)), po=("=" * 20)))
-            pymel.core.skinPercent(self.skinNode, transformValue=value, normalize=False)
+        pymel.core.doodleWeight(doodleConvertNode=self.convert_node,
+                                doodleSkinCluster=self.skinNode)
+        # evaluate = pymel.core.polyEvaluate(self.bind_obj, vertex=True)
+        # for i in range(evaluate):
+        #     pymel.core.select(self.bind_obj.vtx[i])
+        #     value = []
+        #     for jone in range(self.convert_node.nBones.get()):
+        #         weight = self.convert_node.bindWeightsList[i].bindWeights[jone].get()
+        #         value.append((self.convertJoint[jone], weight))
+        #     # "{} :{}".format(prs, (i / evaluate) * 100)
+        #     print("{po} {v:.3%} {po}".format(v=(float(i) / float(evaluate - 1)), po=("=" * 20)))
+        #     pymel.core.skinPercent(self.skinNode, transformValue=value, normalize=False)
 
 
 class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
@@ -258,12 +239,13 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
         self.ExportClothAndFbx.setEnabled(False)
         # 获得路径
         path = os.path.join(self.cache_path, self.getpath()[1:])
+        self.outPath = path
         # 填写输出路径和名称
         print(path)
         for line, tran in enumerate(self.tran):
             bem_bone = convertSet()
             # 获得fbx网格名称和节点
-            bem_bone.poly_meshname = tran.name()
+            bem_bone.poly_meshname = tran.name().split(":")[-1]
             bem_bone.convert_obj = tran
             # 如果是动态特网格在一起就直接设置为一种
             bem_bone.abc_poly_meshname = tran.name()
@@ -271,30 +253,9 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
 
             bem_bone.Ofbx_filename = tran.name() + u".fbx"
 
-            # bem_bone.Ifbx_filename = tran.name() + u"_fbx.fbx"
-            # bem_bone.Ifbx_path = path
-            #
-            # bem_bone.Iabc_filename = tran.name() + u"_abc.abc"
-            # bem_bone.Iabc_path = path
-
             bem_bone.Ofbx_path = path
             # bem_bone._countBone_(tran)
             self.bem_bone.append(bem_bone)
-
-    # def _getSelectDynamMesh(self):
-    #     self.abc = []
-    #     self.abc = pymel.core.ls(sl=True)
-    #     self.selectdynamicClothList.clear()
-    #     self.selectdynamicClothList.addItems([t.name() for t in self.abc])
-    #     self.ExportClothAndFbx.setEnabled(False)
-    #
-    #     for line, tran in enumerate(self.abc):
-    #         bem_bone = self.bem_bone[line]
-    #         # 设置abc信息
-    #         bem_bone.abc_poly_meshname = tran.name()
-    #         bem_bone.abc_obj = tran
-    #
-    #         bem_bone.Iabc_filename = tran.name() + u"_abc.abc"
 
     def _getFileInfo(self):
         filename = pymel.core.system.sceneName()
@@ -322,16 +283,6 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
             self.testing.setStyleSheet("background-color: darkred")
             # print(self.testing.text)
             self.testing.setText(u"检测(无法自动解析,请手动输入)")
-
-    # def _setEnableDynamicCloth(self, a0):
-    #     if a0 == 2:
-    #         self.selectdynamicClothList.setStyleSheet("")
-    #         self.getSelectDynamicCloth.setEnabled(True)
-    #     else:
-    #         self.selectdynamicClothList.setStyleSheet("background-color: rgb(60,60,60)")
-    #         self.getSelectDynamicCloth.setEnabled(False)
-    #     self.ExportClothAndFbx.setEnabled(False)
-    #     self.selectdynamicClothList.clear()
 
     def getpath(self):
         my_dict = pickle.dumps(dict({"url": "getPath", "core": "shot"}, **self.pathInfo()))
@@ -390,11 +341,20 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
             conBone.addParent(select_bone)
 
     def exportButtenClicked(self):
-        is_export_ok = True
+        name = pymel.core.ls(sl=True)[0].name().split(":")[0].split("_")[0]
         for bem in self.bem_bone:
-            bem.exportMesh(self.ScaneStartFrame, self.ScaneEndFrame)
-            # if not (os.path.isfile(bem.Ifbx_filepath) and os.path.isfile(bem.Iabc_filepath)):
-            #     is_export_ok = False
+            bem.addSelectObj()
+        maya.mel.eval("FBXExportBakeComplexStart -v {}".format(self.ScaneStartFrame))
+        maya.mel.eval("FBXExportBakeComplexEnd -v {}".format(self.ScaneEndFrame))
+        maya.mel.eval("FBXExportBakeComplexAnimation -v true")
+        maya.mel.eval("FBXExportSmoothingGroups -v true")
+        maya.mel.eval("FBXExportConstraints -v true")
+        path = os.path.abspath(os.path.join(self.outPath, name)).replace("\\", "/")
+        maya.mel.eval('FBXExport -f "{}" -s'.format(path))
+        os.startfile(self.outPath)
+
+        # if not (os.path.isfile(bem.Ifbx_filepath) and os.path.isfile(bem.Iabc_filepath)):
+        #     is_export_ok = False
 
         # if is_export_ok:
         #     for ben in self.bem_bone:

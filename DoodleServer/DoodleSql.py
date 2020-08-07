@@ -18,6 +18,11 @@ class commMysql(object):
             with commMysql._instance_lock:
                 if not hasattr(commMysql, '_instance'):
                     commMysql._instance = object.__new__(cls)
+        else:
+            commMysql._instance.sessionclass().close()
+            commMysql._instance.engine.dispose()
+            del commMysql._instance.sessionclass
+            del commMysql._instance.engine
         return commMysql._instance
 
     def __init__(self, mybd: str = '', departmen='', password=''):
@@ -62,6 +67,7 @@ class commMysql(object):
             session.rollback()
         finally:
             pass
+            # session.close()
 
     def __del__(self):
         self.sessionclass().close()

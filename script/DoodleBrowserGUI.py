@@ -13,6 +13,7 @@ import script.DoodleCoreApp
 import script.DoodlePrjUI.DoodleButten
 import DoodleServer.DoodleBaseClass
 
+
 class _prjColor(object):
     @staticmethod
     def listItemStateError():
@@ -42,25 +43,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
     """
     这个类用来实现项目管理的属性和UI操作,其中shot和ass是两个数据库链接器,  用来在ui和数据库中添加一个中间层
     """
-
-    #
-    # @property
-    # def core(self) -> DoodleServer.Core.PrjCore:
-    #     """
-    #     获得核心解析器
-    #     :return:
-    #     :rtype:
-    #     """
-    #     return QtCore.QCoreApplication.instance().code
-    #
-    # @property
-    # def doodle_set(self) -> DoodleServer.Set.Doodlesetting:
-    #     """
-    #     获得核心设置
-    #     :return:
-    #     :rtype:
-    #     """
-    #     return QtCore.QCoreApplication.instance().doodle_set
 
     def __init__(self, parent=None):
         super(ProjectBrowserGUI, self).__init__(parent)
@@ -132,7 +114,8 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         if index == 0:
             logging.info("点击资产")
             self.doodle_app.codeToAss()
-            self.character.file_clas, self.effects.file_clas, self.props.file_clas, self.scane.file_clas = self.core.queryAssClass()[:4]
+            self.character.file_clas, self.effects.file_clas, self.props.file_clas, self.scane.file_clas = self.core.queryAssClass()[
+                                                                                                           :4]
             # self.assClassSortClicked("character")
         elif index == 1:
             self.doodle_app.codeToShot()
@@ -210,7 +193,6 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listdepType.doodleUpdata()
         self.shot_thumbnail.doodleUpdata()
 
-
     def listDepTypeClicked(self, item):
         """
         部门类型点击事件
@@ -256,235 +238,14 @@ class ProjectBrowserGUI(QtWidgets.QMainWindow, UiFile.ProjectBrowser.Ui_MainWind
         self.listAssFile.doodleUpdata()
         self.ass_thumbnail.doodleUpdata()
 
-    # </editor-fold>
-    # def assUploadMapHandle(self, soure_file: pathlib.Path, target: pathlib.Path, version: int):
-    #     """
-    #     上传贴图文件
-    #     :param version:
-    #     :param target:
-    #     :param soure_file: pathlib.Path
-    #     :return: Bool
-    #     """
-    #     pass
-    #
-    # def download(self, core: script.DooDlePrjCode.PrjCode):
-    #     path = QtWidgets.QFileDialog.getExistingDirectory(self,
-    #                                                       "选择同步目录",
-    #                                                       self.recentlyOpenedFolder,
-    #                                                       QtWidgets.QFileDialog.ShowDirsOnly)
-    #     pathprj = pathlib.Path(path)
-    #     # is_enpty = True
-    #     # for p in pathprj.iterdir():
-    #     #     is_enpty = False
-    #     #     break
-    #     # if not is_enpty:
-    #     #     QtWidgets.QMessageBox.warning(self, "警告", "请选择空目录",
-    #     #                                   QtWidgets.QMessageBox.Yes)
-    #     #     return None
-    #     if isinstance(core, script.DooDlePrjCode.PrjAss):
-    #         cls_file = doodleFileFactory(self.ass, ".uproject")
-    #         if cls_file:
-    #             cls_file = cls_file(core, self.doodle_set)
-    #             cls_file.down()
-    #
-    #         QtWidgets.QMessageBox.critical(self, "复制中", "请等待.....")
-    #         logging.info(path)
-    #
-    #
-    # def andTranslate(self):
-    #     text = self.listAss.selectedItems()[0].text()
-    #     self.ass.convertMy.getnameTochinese()
-    #     try:
-    #         self.ass.convertMy.local_name[text]
-    #     except KeyError:
-    #         self.ass.convertMy.addLocalName(self.ass.convertMy.toEn(text), text)
-    #     else:
-    #         logging.info("库中已经储存此键值,无需上传中文名称")
-    #
-    # # </editor-fold>
-    #
-    # # <editor-fold desc="各种对于文件的操作">
-    #
-    # def exportMaya(self):
-    #     """
-    #     导出maya相机和动画FBX
-    #     """
-    #     file_data = self.shot.queryFileName(self.shot.query_id)
-    #
-    #     logging.info(file_data)
-    #     if file_data:
-    #         QtWidgets.QMessageBox.warning(self, "警告", "不要关闭弹出窗口",
-    #                                       QtWidgets.QMessageBox.Yes)
-    #
-    #         export = shotMayaExportFile(self.shot, self.doodle_set)
-    #         export.infor = "这是maya导出文件"
-    #         export.subDataToBD(file_data)
-    #
-    #         self.listDepTypeClicked(self.listdepType.selectedItems()[0])
-    #
-    # def Screenshot(self, my_type: str, thumbnail: QtWidgets.QLabel):
-    #     """
-    #     截图保存动作
-    #     """
-    #     # 获得核心
-    #     core: script.DooDlePrjCode.PrjCode = getattr(self, my_type)
-    #     # 判断类型
-    #     cls_sshot = doodleFileFactory(core, "Screenshot")(core, self.doodle_set)
-    #     cls_sshot.infor = "这是截图"
-    #     # 上传截屏
-    #     with cls_sshot.upload() as cache:
-    #         screen_shot = script.DoodlePlayer.doodleScreenshot(path=cache.as_posix())
-    #         self.hide()
-    #         screen_shot.exec_()
-    #         self.show()
-    #     self.setThumbnail(my_type, thumbnail)
-    #
-    # def setThumbnail(self, type_: str, thumbnail: QtWidgets.QLabel):
-    #     """
-    #     设置截图显示
-    #     """
-    #     core = getattr(self, type_)
-    #     # 获得截图类
-    #     cls_sshot = doodleFileFactory(core, "Screenshot")(core, self.doodle_set)
-    #     # 下载文件
-    #     path = cls_sshot.down()
-    #
-    #     pixmap = QtGui.QPixmap(str(path))
-    #     pixmap = pixmap.scaled(thumbnail.geometry().size(), QtCore.Qt.KeepAspectRatio)
-    #     thumbnail.setPixmap(pixmap)
-    #
-    # def uploadFlipBook(self, code: script.DooDlePrjCode.PrjCode):
-    #     """
-    #     上传拍屏 多线程
-    #     :return: None
-    #     """
-    #     file, file_type = QtWidgets.QFileDialog.getOpenFileName(self,
-    #                                                             "选择上传文件",
-    #                                                             self.recentlyOpenedFolder,
-    #                                                             "files (*.mp4 *.avi *.mov *.exr "
-    #                                                             "*.png *.tga *.jpg)")
-    #
-    #     self.recentlyOpenedFolder = file
-    #     # 获得拍屏类
-    #     cla_FB = assFBFile(code, self.doodle_set)
-    #     cla_FB.infor = "这是拍屏"
-    #     cla_FB.upload(file)
-    #     self.listDepartmenClicked(self.listdepartment.selectedItems()[0])
-    #
-    # def playerButtenClicked(self, one_or_mut: str, department="Anm"):
-    #     """
-    #     打开拍屏
-    #     """
-    #     tmp_path = os.path.join(tempfile.gettempdir(), "potplayer_temp.dpl")
-    #     self.pot_player = potplayer.PlayList()
-    #     if one_or_mut == "one":
-    #         path = pathlib.Path("")
-    #         if self.listAssType.selectedItems():
-    #             code = self.ass
-    #         else:
-    #             code = self.shot
-    #         player = doodleFileFactory(code, "FB")(code, self.doodle_set)
-    #
-    #         path = player.downPlayer(code.Type)
-    #
-    #         while player.syn.is_alive():
-    #             pass
-    #
-    #         if path:
-    #             self.pot_player.add(path.as_posix())
-    #     else:
-    #         player = shotMayaFBFile(self.shot, self.doodle_set)
-    #         video = player.getEpisodesFlipBook()
-    #
-    #         while player.syn.is_alive():
-    #             pass
-    #
-    #         if video:
-    #             self.pot_player.add(video)
-    #         else:
-    #             reply = QtWidgets.QMessageBox.warning(self, "警告:", "没有找到转换视频，是否执行自动转换",
-    #                                                   QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-    #             if reply == QtWidgets.QMessageBox.Yes:
-    #                 # 合成视频
-    #                 video = player.makeEpisodesFlipBook()
-    #
-    #                 self.pot_player.dump(video.as_posix())
-    #             else:
-    #                 return None
-    #
-    #     self.pot_player.dump(tmp_path)
-    #     try:
-    #         potplayer.run(tmp_path)
-    #     except:
-    #         QtWidgets.QMessageBox.warning(self, "警告:", "警告:请关闭360后重新打开本软件,或者检查安装potplayer",
-    #                                       QtWidgets.QMessageBox.Yes)
-    #
     @QtCore.Slot()
     def comEpsVideo(self):
-        return DoodleServer.DoodleBaseClass.shotFbEpisodesFile(self.core,self.doodle_set).makeEpisodesFlipBook()
+        return DoodleServer.DoodleBaseClass.shotFbEpisodesFile(self.core, self.doodle_set).makeEpisodesFlipBook()
 
     def closeEvent(self, event):
         self.doodle_app.codeToShot()
-
-
-    #
-    # def subInfo(self, code: script.DooDlePrjCode.PrjCode):
-    #     """
-    #     修改评论
-    #     """
-    #     info, is_input = QtWidgets.QInputDialog.getText(self, "输入信息", "", QtWidgets.QLineEdit.Normal)
-    #     if is_input:
-    #         if not re.findall(r"\|", info):
-    #             code.infor += "|" + info
-    #             code.undataInformation(code.query_id)
-    #
-    # def markFileStart(self, code: script.DooDlePrjCode.PrjCode):
-    #     """
-    #     标记文件状态
-    #     """
-    #     items = self.doodle_set.filestate
-    #     ass_type, is_type = QtWidgets.QInputDialog.getItem(self, "标记文件状态", "要先选中文件", items, 0, False)
-    #     info, is_input = QtWidgets.QInputDialog.getText(self, "输入信息", "", QtWidgets.QLineEdit.Normal)
-    #     if is_type and is_input:
-    #         code.filestate = ass_type
-    #         code.infor = f"| {self.doodle_set.user}:  {info}"
-    #         code.undataInformation(code.query_id)
-    #     logging.info("%s , %s", ass_type, info)
-
-    # def importUe(self):
-    #     address = ("127.0.0.1", 23335)
-    #     so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #     try:
-    #         so.connect(address)
-    #         maya_export = shotMayaExportFile(self.shot, self.doodle_set)
-    #         content = maya_export.down(self.shot.query_id)
-    #
-    #         data = {"eps": self.shot.episodes, "shot": self.shot.shot, "content": json.loads(content)}
-    #
-    #         so.send(json.dumps(data, ensure_ascii=False, indent=4, separators=(',', ':')).encode("utf-8"))
-    #         so.close()
-    #     except ConnectionRefusedError:
-    #         logging.info("导入ue失败")
-    #     else:
-    #         logging.info("成功导入ue")
-
-    # @staticmethod
-    # def closesocket():
-    #     address = ("127.0.0.1", 23335)
-    #     so = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #     try:
-    #         so.connect(address)
-    #         data = "close"
-    #         so.send(data.encode("utf-8"))
-    #         so.close()
-    #     except ConnectionRefusedError:
-    #         logging.info("关闭链接失败")
-    #     else:
-    #         logging.info("成功关闭链接")
-    #
-    # def convertCloth(self):
-    #     shotMayaClothExportFile(self.shot, self.doodle_set).down(self.shot.query_id)
-    # </editor-fold>
+        self.doodle_set.my_sql.sessionclass().close()
+        print("关闭")
 
 
 if __name__ == '__main__':

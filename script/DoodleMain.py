@@ -11,6 +11,7 @@ import script.DoodleSetGui
 import script.DoodleRegister
 import script.Server
 
+
 class DoodleMain(QtWidgets.QApplication):
     @property
     def core(self) -> DoodleServer.Core.PrjCore:
