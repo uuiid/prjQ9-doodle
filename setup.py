@@ -29,6 +29,7 @@ if sys.platform == 'win32':
     base = 'Win32GUI'
 includefiles = [("tools/template", "tools/template"),
                 ("tools/maya_plug","tools/maya_plug"),
+                ("tools/uePlug","tools/uePlug"),
                 ("tools/dem_bones","tools/dem_bones"),
                 "datas", "config"] + toolspy()
 includes = ['urllib3',

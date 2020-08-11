@@ -175,7 +175,7 @@ class Doodlesetting(object):
         with self.my_sql.engine.connect() as connect:
             data = connect.execute(sql_com).fetchall()
         tmp = [data[i:i + 2] for i in range(0, len(data), 2)]
-        return [{i[0][0]: self.syn + '/' + i[0][1], i[1][0]: self.synSever + '/' + i[1][1]} for i in tmp]
+        return [{i[0][0]: self.syn + "/" + self.projectname + '/' + i[0][1], i[1][0]: self.synSever + '/' + i[1][1]} for i in tmp]
 
     # @functools.lru_cache()
     def __getseverPrjBrowser(self) -> dict:
