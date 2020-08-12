@@ -6,26 +6,28 @@ import scripts.Doodle_exportUe as Doodle_exportUe
 import scripts.Doodle_cam as Doodle_cam
 import scripts.Doodle_clear as Doodle_clear
 import scripts.Doodle_dem_bone as Doodle_dem_bone
+import scripts.Doodle_deleteSurplusWeight as deleteWeight
+
 
 class DlsShelf(shelfBase._shelf):
 
-
     def build(self):
-        self.addButon("export_cam",icon="icons/OUTcam.png",command=self.exportCam)
-        self.addButon("export_abc",icon="icons/OUTabc.png",command=self.exportAbc)
-        self.addButon("back_cam",icon="icons/back_cam.png",command=self.BakeAimCam)
-        
-        self.addButon("remesh",icon="icons/remesh.png",command=self.polyremesh)
+        self.addButon("export_cam", icon="icons/OUTcam.png", command=self.exportCam)
+        self.addButon("export_abc", icon="icons/OUTabc.png", command=self.exportAbc)
+        self.addButon("back_cam", icon="icons/back_cam.png", command=self.BakeAimCam)
 
-        self.addButon("clear",icon="icons/clear.png",command=self.clearScane)
-        self.addButon("CLoth_to_Fbx",icon="icons/cloth_to_fbx.png",command=self.clothToFbx)
-    
+        self.addButon("remesh", icon="icons/remesh.png", command=self.polyremesh)
+
+        self.addButon("clear", icon="icons/clear.png", command=self.clearScane)
+        self.addButon("CLoth_to_Fbx", icon="icons/cloth_to_fbx.png", command=self.clothToFbx)
+        self.addButon("delect Weight", icon="icons/ue_delete_weight.png", command=self.deleteWeightPoint)
+
     def polyremesh(self):
         Doodle_PolyRemesh.myRemesh()
-    
+
     def exportCam(self):
         Doodle_exportUe.export("one")
-    
+
     def exportAbc(self):
         Doodle_exportUe.export("two")
 
@@ -37,6 +39,10 @@ class DlsShelf(shelfBase._shelf):
 
     def clothToFbx(self):
         Doodle_dem_bone.DleClothToFbx().show()
+
+    def deleteWeightPoint(self):
+        deleteWeight.deleteSurplusWeight().show()
+
 
 class DoodleUIManage(object):
     _instances = set()

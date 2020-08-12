@@ -5,8 +5,8 @@ import json
 import re
 import pymel.core
 import maya.mel
-import UiFile.DleClothToFbx
 import pickle
+import UiFile.DleClothToFbx
 
 from maya import OpenMayaUI as omui
 from PySide2 import QtCore
