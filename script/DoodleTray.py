@@ -1,5 +1,7 @@
 # -*- coding: UTF-8 -*-
 import logging
+import pathlib
+import shutil
 import subprocess
 import sys
 import time
@@ -15,7 +17,7 @@ import script.DoodleCoreApp
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
     timeSyn = 900000
-    version = 0.350
+    version = 0.410
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
@@ -55,6 +57,9 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
         install_maya: QtWidgets.QAction = install_plug.addAction("安装maya插件")
         install_maya.triggered.connect(self.installMaya)
 
+        install_ue: QtWidgets.QAction = install_plug.addAction("安装ue插件")
+        install_ue.triggered.connect(self.installUE)
+
         setmenu = menu.addAction('设置')
         setmenu.triggered.connect(self.doodle_app.showSet)
 
@@ -72,17 +77,37 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
 
     def file_syns(self):
         if self.doodle_set.department in ['Light', 'VFX']:
-            include_ = ["*"]
+            server_syn= self.doodle_set.getsever()
             if self.doodle_set.department in ["VFX"]:
                 include_ = ["*\\VFX\\*"]
-            file_sync = script.DoodleSynXml.FreeFileSync(doc=self.doodle_set.doc, syn_file=self.doodle_set.getsever(),
-                                                         program=self.doodle_set.FreeFileSync,
-                                                         file_name='{}-ep-{}'.format(self.doodle_set.department,
-                                                                                     self.doodle_set.synEp),
-                                                         user=self.doodle_set.ftpuser, ip_=self.doodle_set.ftpip,
-                                                         password=self.doodle_set.password, include=include_)
-            file_sync.setVersioningFolder("/03_Workflow/Assets/VFX")
-            file_sync.run()
+                file_sync = script.DoodleSynXml.FreeFileSync(doc=self.doodle_set.doc, syn_file=server_syn,
+                                                             program=self.doodle_set.FreeFileSync,
+                                                             file_name='{}-ep-{}'.format(self.doodle_set.department,
+                                                                                         self.doodle_set.synEp),
+                                                             user=self.doodle_set.ftpuser, ip_=self.doodle_set.ftpip,
+                                                             password=self.doodle_set.password, include=include_)
+                file_sync.setVersioningFolder("/03_Workflow/Assets/{}/backup".format(self.doodle_set.department))
+                file_sync.run()
+            if self.doodle_set.department in ["Light"]:
+                file_sync = script.DoodleSynXml.FreeFileSync(doc=self.doodle_set.doc,
+                                                             program=self.doodle_set.FreeFileSync,
+                                                             file_name='{}-ep-{}'.format(self.doodle_set.department,
+                                                                                         self.doodle_set.synEp),
+                                                             user=self.doodle_set.ftpuser, ip_=self.doodle_set.ftpip,
+                                                             password=self.doodle_set.password,)
+                backup__format = "/03_Workflow/Assets/{}/backup".format(self.doodle_set.department)
+                file_sync.setVersioningFolder(backup__format)
+                file_sync.addInclude(["*"])
+                file_sync.addSynFile([{"Left":i["Left"],"Right":i["Right"].replace("Light","VFX")} for i in server_syn[:]])
+                for i in range(server_syn.__len__()):
+                    file_sync.addSubIncludeExclude(i,["*\\VFX\\*"])
+                    file_sync.addSubSynchronize(i,"down",backup__format)
+
+                file_sync.addSynFile(server_syn)
+                for i in range(server_syn.__len__(),server_syn.__len__()*2):
+                    file_sync.addSubIncludeExclude(i)
+                    file_sync.addSubSynchronize(i,"syn",backup__format)
+                file_sync.run()
 
             self.ta_log.info('同步时间: %s', time.asctime(time.localtime(time.time())))
 
@@ -117,6 +142,19 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
         if not maya_plug_path.is_dir():
             maya_plug_path.mkdir(parents=True, exist_ok=True)
         maya_plug_path.joinpath("Doodle.mod").write_text(mode)
+
+    def installUE(self):
+        file, file_type = QtWidgets.QFileDialog.getOpenFileName(None,
+                                                                "选择ue项目",
+                                                                "",
+                                                                "files (*.uproject)")
+        if file:
+            path = pathlib.Path(file)
+            QtWidgets.QMessageBox.warning(None, "警告:", f"复制文件需要一些时间,完成后请重启ue4",
+                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            shutil.copytree("tools/uePlug/Plugins",path.parent.joinpath("Plugins"))
+            QtWidgets.QMessageBox.warning(None, "警告:", "复制完成",
+                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
 
 
 if __name__ == '__main__':

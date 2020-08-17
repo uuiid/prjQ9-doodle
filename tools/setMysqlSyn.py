@@ -7,27 +7,47 @@ import sqlalchemy.orm
 
 import DoodleServer.DoodleSql
 import tools.ue_path
+
 # <editor-fold desc="表格">
 # it = []
 """
-FuTuJieShenYuan_ZX
-HuaiLaoBanDeDain_LZ
-ZhuiZhuXiaoXiang_ZL
-
+MiJingShanGu_LWZ
+MiLin34_01_UE4
 
 """
 
 
-def dubuRun():
-    synfile = ["精神世界"]
+def dubuRun3():
+    synfile = ["WenXinFengHuaCong_UE4"]
     LR = ["Left", "Right"]
-    ep = 38
+    ep = 41
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:
             for ls in LR:
                 t = f"('synpath','{dep}','{ep:0>3d}','{ls}','Ep_{ep:0>2d}/{key}/Content/shot')"
-                path = tools.ue_path.createPath(f"W:/data/ue_prj/Ep_{ep:0>2d}/{key}/Content", eps=ep, secene=120)
+                path = tools.ue_path.createPath(f"V:/03_Workflow/Assets/Light/Ep_{ep:0>2d}/{key}/Content", eps=ep,
+                                                secene=120)
+                path.create()
+                it.append(t)
+    # print(it)
+    sql_com = f"INSERT INTO `configure` (name, value, value2, value3, value4) VALUES {','.join(it)}"
+    with DoodleServer.DoodleSql.commMysql("dubuxiaoyao3").engine.connect() as connect:
+        assert isinstance(connect, sqlalchemy.engine.Connection)
+        eps = connect.execute(sql_com)
+    # </editor-fold>
+
+
+def dubuRun():
+    synfile = ["MiJingShanGu_LWZ","MiLin34_01_UE4"]
+    LR = ["Left", "Right"]
+    ep = 34
+    it = []
+    for dep in ["Light", "VFX"]:
+        for key in synfile:
+            for ls in LR:
+                t = f"('synpath','{dep}','{ep:0>3d}','{ls}','Ep_{ep:0>2d}/{key}/Content/shot')"
+                path = tools.ue_path.createPath(f"W:/data/ue_prj/Light/Ep_{ep:0>2d}/{key}/Content", eps=ep, secene=120)
                 path.create()
                 it.append(t)
     # print(it)
@@ -47,7 +67,8 @@ def chanAnRun():
         for key in synfile:
             for ls in LR:
                 t = f"('synpath','{dep}','{ep:0>3d}','{ls}','Ep_{ep:0>2d}/{key}/Content/shot')"
-                path = tools.ue_path.createPath(f"X:/03_Workflow/Assets/Light/Ep_{ep:0>2d}/{key}/Content", eps=ep, secene=120)
+                path = tools.ue_path.createPath(f"X:/03_Workflow/Assets/Light/Ep_{ep:0>2d}/{key}/Content", eps=ep,
+                                                secene=120)
                 path.create()
                 it.append(t)
     # print(it)
@@ -56,6 +77,8 @@ def chanAnRun():
         assert isinstance(connect, sqlalchemy.engine.Connection)
         eps = connect.execute(sql_com)
     # </editor-fold>
+
+
 dubuRun()
 # for dep in ["Light", "VFX"]:
 #     synPath = pathlib.Path(f"W:\\configuration\\{dep}_synFile.json")
@@ -71,4 +94,3 @@ dubuRun()
 #                 # sql_com = f"INSERT INTO `configure`(name, value, value2, value3, value4) VALUE {t}"
 #                 # script.MySqlComm.inserteCommMysql("dubuxiaoyao", "", "", sql_command=sql_com)
 #                 # print(sql_com)
-

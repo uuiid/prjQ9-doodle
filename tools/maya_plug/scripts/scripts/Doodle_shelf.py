@@ -11,6 +11,10 @@ import scripts.Doodle_deleteSurplusWeight as deleteWeight
 
 class DlsShelf(shelfBase._shelf):
 
+    def __init__(self):
+        super(DlsShelf, self).__init__()
+        self.cloth_to_fbx = None
+
     def build(self):
         self.addButon("export_cam", icon="icons/OUTcam.png", command=self.exportCam)
         self.addButon("export_abc", icon="icons/OUTabc.png", command=self.exportAbc)
@@ -38,7 +42,10 @@ class DlsShelf(shelfBase._shelf):
         Doodle_clear.clearAndUpload().clearScane()
 
     def clothToFbx(self):
-        Doodle_dem_bone.DleClothToFbx().show()
+        if not self.cloth_to_fbx:
+            self.cloth_to_fbx.show()
+        else:
+            self.cloth_to_fbx = Doodle_dem_bone.DleClothToFbx().show()
 
     def deleteWeightPoint(self):
         deleteWeight.deleteSurplusWeight().show()

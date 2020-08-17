@@ -212,6 +212,11 @@
               <string>dubuxiaoyao3</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>kuangshenmozun</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>

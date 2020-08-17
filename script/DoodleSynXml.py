@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 import subprocess
-import xml.etree.cElementTree as Et
+import xml.etree.ElementTree as Et
 import base64
 import pathlib
 import shutil
@@ -58,7 +58,8 @@ class FreeFileSync(threading.Thread):
         self.program = program
         self.tree = Et.parse(pathlib.Path("tools\\template\\temp.ffs_batch").as_posix())
 
-        self.pair = self.tree.findall('./FolderPairs')[0] # Et.SubElement(self.tree.findall('./FolderPairs')[0], 'Pair')
+        self.pair = self.tree.findall('./FolderPairs')[
+            0]  # Et.SubElement(self.tree.findall('./FolderPairs')[0], 'Pair')
         self.user = user
         self.ip_ = ip_
         self.password = base64.b64encode(password.encode("utf-8")).decode("utf-8")
@@ -121,6 +122,58 @@ class FreeFileSync(threading.Thread):
             exclude_path = Et.SubElement(exclude_my, 'Item')
             exclude_path.text = exclude_i
 
+    def addSubIncludeExclude(self, sub_index: int, include: list = ("*"), exclude: list = ("")):
+        my_pair = self.tree.findall('./FolderPairs/Pair')[sub_index]
+        my_filter = Et.SubElement(my_pair, "Filter")
+        include_my = Et.SubElement(my_filter, 'Include')
+        exclude_my = Et.SubElement(my_filter, 'Exclude')
+        for include_i in include:
+            include_path = Et.SubElement(include_my, "Item")
+            include_path.text = include_i
+        for exclude_i in exclude:
+            exclude_path = Et.SubElement(exclude_my, "Item")
+            exclude_path.text = exclude_i
+        element = Et.SubElement(my_filter, "TimeSpan")
+        element.set("Type", "None")
+        element.text = "0"
+        sub_element = Et.SubElement(my_filter, "SizeMin")
+        sub_element.text = "0"
+        sub_element.set("Unit", "None")
+        et_sub_element = Et.SubElement(my_filter, "SizeMax")
+        et_sub_element.text = "0"
+        et_sub_element.set("Unit", "None")
+
+    def addSubSynchronize(self, sub_index: int, synchronize_set: str, versioning_folder: str, max_age=-1):
+        my_pair = self.tree.findall('./FolderPairs/Pair')[sub_index]
+        synchronize = Et.SubElement(my_pair, "Synchronize")
+        variant = Et.SubElement(synchronize, "Variant")
+        if synchronize_set == "down":
+            variant.text = "Custom"
+            custom_directions = Et.SubElement(synchronize, "CustomDirections")
+            Et.SubElement(custom_directions, "LeftOnly").text = "left"
+            Et.SubElement(custom_directions, "RightOnly").text = "left"
+            Et.SubElement(custom_directions, "LeftNewer").text = "left"
+            Et.SubElement(custom_directions, "RightNewer").text = "left"
+            Et.SubElement(custom_directions, "Different").text = "none"
+            Et.SubElement(custom_directions, "Conflict").text = "left"
+        elif synchronize_set == "upload":
+            variant.text = "Update"
+        elif synchronize_set == "syn":
+            variant.text = "TwoWay"
+        Et.SubElement(synchronize, "DetectMovedFiles").text = "false"
+        Et.SubElement(synchronize, "DeletionPolicy").text = "Versioning"
+        versioning_folder_my = Et.SubElement(synchronize, "VersioningFolder")
+        versioning_folder_my.text = "ftp://{user}@{ip_}:21{path}|pass64={password}". \
+            format(user=self.user,
+                   ip_=self.ip_,
+                   path=self.testpath(versioning_folder),
+                   password=self.password)
+        if max_age > 0:
+            versioning_folder_my.set("Style", "TimeStamp-Folder")
+            versioning_folder_my.set("MaxAge", max_age.__str__())
+        else:
+            versioning_folder_my.set("Style","TimeStamp-Folder")
+
     def setVariant(self, variant):
         variant_my = self.tree.findall('./Synchronize/Variant')[0]
         variant_my.text = variant
@@ -135,7 +188,7 @@ class FreeFileSync(threading.Thread):
         if max_age > 0:
             versioning_folder_my.set("MaxAge", max_age.__str__())
 
-    def setSynchronize(self, synchronize: str):
+    def setSynchronize(self, synchronize_set: str):
         """
 
         Args:
@@ -144,22 +197,22 @@ class FreeFileSync(threading.Thread):
         Returns:
 
         """
-        if synchronize == "down":
+        if synchronize_set == "down":
             synchronize = self.tree.findall('./Synchronize/Variant')[0]
             synchronize.text = "Custom"
             syn_my = self.tree.findall("./Synchronize")[0]
 
             custom_directions = Et.SubElement(syn_my, "CustomDirections")
-            Et.SubElement(custom_directions, "LeftOnly").text("left")
-            Et.SubElement(custom_directions, "RightOnly").text("left")
-            Et.SubElement(custom_directions, "LeftNewer").text("left")
-            Et.SubElement(custom_directions, "RightNewer").text("left")
-            Et.SubElement(custom_directions, "Different").text("none")
-            Et.SubElement(custom_directions, "Conflict").text("left")
-        elif synchronize == "upload":
+            Et.SubElement(custom_directions, "LeftOnly").text = "left"
+            Et.SubElement(custom_directions, "RightOnly").text = "left"
+            Et.SubElement(custom_directions, "LeftNewer").text = "left"
+            Et.SubElement(custom_directions, "RightNewer").text = "left"
+            Et.SubElement(custom_directions, "Different").text = "none"
+            Et.SubElement(custom_directions, "Conflict").text = "left"
+        elif synchronize_set == "upload":
             synchronize = self.tree.findall('./Synchronize/Variant')[0]
             synchronize.text = "Update"
-        elif synchronize == "syn":
+        elif synchronize_set == "syn":
             synchronize = self.tree.findall('./Synchronize/Variant')[0]
             synchronize.text = "TwoWay"
 
@@ -175,7 +228,7 @@ class FreeFileSync(threading.Thread):
     def testpath(path: str):
         path = pathlib.Path(path)
         if path.drive:
-            if path.drive.__len__() ==2:
+            if path.drive.__len__() == 2:
                 return path.as_posix()[2:]
             else:
                 strlen = path.as_posix().split("/")[2].__len__() + 2

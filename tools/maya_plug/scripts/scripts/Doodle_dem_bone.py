@@ -74,7 +74,7 @@ class convertSet(object):
     #             "Command": self.toCommand()}
 
     def addSelectObj(self):
-        pymel.core.select(self.convert_obj, add=True)
+        pymel.core.select(self.bind_obj, add=True)
 
     def exportMesh(self, start, end):
         if not os.path.isdir(self.Ofbx_path):
@@ -91,8 +91,8 @@ class convertSet(object):
     def _countBone_(self):
         num = pymel.core.polyEvaluate(self.convert_obj.name(), vertex=True)
         bone = int(num / 100)
-        if bone > 50:
-            bone = 50
+        if bone > 55:
+            bone = 55
         self.bones = bone
         return bone
 
@@ -132,13 +132,13 @@ class convertSet(object):
             tmp.append(self.bind_obj)
             self.skinNode = pymel.core.skinCluster(tmp, toSelectedBones=True,polySmoothness=10.0)
             self.skinNode.normalizeWeights.set(0)
-            # 设置帧
-            for frame in range((self.convert_node.endFrame.get() - self.convert_node.startFrame.get())):
-                pymel.core.currentTime(frame + self.convert_node.startFrame.get())
-                for jone in range(self.convert_node.nBones.get()):
-                    value = self.convert_node.localAnimList[jone].localAnim[frame].get()
-                    self.convertJoint[jone].setTransformation(value)
-                    pymel.core.setKeyframe(self.convertJoint[jone])
+            # # 设置帧
+            # for frame in range((self.convert_node.endFrame.get() - self.convert_node.startFrame.get())):
+            #     pymel.core.currentTime(frame + self.convert_node.startFrame.get())
+            #     for jone in range(self.convert_node.nBones.get()):
+            #         value = self.convert_node.localAnimList[jone].localAnim[frame].get()
+            #         self.convertJoint[jone].setTransformation(value)
+            #         pymel.core.setKeyframe(self.convertJoint[jone])
             # 复制权重
             self._copyWeights_()
 
@@ -350,6 +350,7 @@ class DleClothToFbx(QtWidgets.QMainWindow, UiFile.DleClothToFbx.Ui_MainWindow):
         maya.mel.eval("FBXExportSmoothingGroups -v true")
         maya.mel.eval("FBXExportConstraints -v true")
         path = os.path.abspath(os.path.join(self.outPath, name)).replace("\\", "/")
+        print(path)
         maya.mel.eval('FBXExport -f "{}" -s'.format(path))
         os.startfile(self.outPath)
 

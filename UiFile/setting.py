@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\setting.ui',
 # licensing of 'C:\Users\teXiao\doodle\UiFile\setting.ui' applies.
 #
-# Created: Mon Jul 20 09:07:18 2020
+# Created: Fri Aug 14 13:37:04 2020
 #      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -105,6 +105,7 @@ class Ui_MainWindow(object):
         self.projectCombo.addItem("")
         self.projectCombo.addItem("")
         self.projectCombo.addItem("")
+        self.projectCombo.addItem("")
         self.horizontalLayout_5.addWidget(self.projectCombo)
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
         self.freeFileSync = QtWidgets.QLabel(self.centralwidget)
@@ -167,6 +168,7 @@ class Ui_MainWindow(object):
         self.projectCombo.setItemText(0, QtWidgets.QApplication.translate("MainWindow", "dubuxiaoyao", None, -1))
         self.projectCombo.setItemText(1, QtWidgets.QApplication.translate("MainWindow", "changanhuanjie", None, -1))
         self.projectCombo.setItemText(2, QtWidgets.QApplication.translate("MainWindow", "dubuxiaoyao3", None, -1))
+        self.projectCombo.setItemText(3, QtWidgets.QApplication.translate("MainWindow", "kuangshenmozun", None, -1))
         self.freeFileSync.setText(QtWidgets.QApplication.translate("MainWindow", "同步软件安装目录", None, -1))
         self.freeFileSyncButton.setText(QtWidgets.QApplication.translate("MainWindow", "PushButton", None, -1))
         self.menu.setTitle(QtWidgets.QApplication.translate("MainWindow", "文件", None, -1))
