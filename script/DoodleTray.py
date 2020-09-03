@@ -17,7 +17,7 @@ import script.DoodleCoreApp
 
 class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
     timeSyn = 900000
-    version = 0.410
+    version = 0.411
 
     def __init__(self, icon, parent=None):
         self.tray = QtWidgets.QSystemTrayIcon.__init__(self, icon, parent)
@@ -26,9 +26,9 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
 
         self.timer = QtCore.QTimer(self)
         self.timer.setSingleShot(True)
-        self.timer.timeout.connect(self.file_syns)
+        # self.timer.timeout.connect(self.file_syns)
         # self.timer.timeout.connect(lambda: self.Updata(lambda: float(self.doodle_set.version) > self.version))
-        self.timer.start(self.timeSyn)
+        # self.timer.start(self.timeSyn)
         # 添加本地线程服务器
         # self.localServer = script.DoodleLocalConnection.DoodleServer(self.doodle_set)
         # self.localServer.setDaemon(True)

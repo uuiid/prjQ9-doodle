@@ -800,9 +800,10 @@ class shotFbEpisodesFile(shotFBFile):
         # 获得来源路径
         path = []
         for shot in self.code.episodes.addShot:
-            for _fileType_ in shot.addfileType:
-                if re.findall("^FB_", _fileType_.file_type):
-                    path.append(_fileType_.addfileAttributeInfo[0].file_path)
+            for file_ in shot.addfileAttributeInfo:
+                if re.findall("^FB_", file_.file_type.file_type):
+                    path.append(file_.file_path)
+                    break
         # _shot_ = [for shot in self.code.episodes.addShot if re.findall("^FB_",shot.ad)]
         # path = [fileType.addfileAttributeInfo[0].file_path for fileType in self.code.episodes.addFileType if re.findall("^FB_",fileType.file_type)]
         # 设置各种属性

@@ -11,16 +11,25 @@ import tools.ue_path
 # <editor-fold desc="表格">
 # it = []
 """
-MiJingShanGu_LWZ
-MiLin34_01_UE4
+BiTaoGeDaBuJu
+BiTaoGeShiWuSuo_UE4
+LongShouFengGuangChangDeLeiTai_UE4
+PoSuiLongShouFengLeiTai
+
 
 """
 
 
 def dubuRun3():
-    synfile = ["WenXinFengHuaCong_UE4"]
+    """
+BiTaoGeDaBuJu
+MiLin46_01_UE4
+    :return:
+    :rtype:
+    """
+    synfile = ["BiTaoGeDaBuJu","MiLin46_01_UE4"]
     LR = ["Left", "Right"]
-    ep = 41
+    ep = 46
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:
@@ -39,9 +48,16 @@ def dubuRun3():
 
 
 def dubuRun():
-    synfile = ["MiJingShanGu_LWZ","MiLin34_01_UE4"]
+    """
+    MiJingShanGu_LWZ
+MiJiShanGuDongKuNei
+
+    :return:
+    :rtype:
+    """
+    synfile = ["ShaMo_UE4"]
     LR = ["Left", "Right"]
-    ep = 34
+    ep = 36
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:
@@ -59,9 +75,9 @@ def dubuRun():
 
 
 def chanAnRun():
-    synfile = ["FuTuJieShenYuan_ZX", "HuaiLaoBanDeDain_LZ", "ZhuiZhuXiaoXiang_ZL"]
+    synfile = ["ZiFeiKeZhan_ZL"]
     LR = ["Left", "Right"]
-    ep = 1
+    ep = 4
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:
@@ -79,7 +95,8 @@ def chanAnRun():
     # </editor-fold>
 
 
-dubuRun()
+chanAnRun()
+# dubuRun()
 # for dep in ["Light", "VFX"]:
 #     synPath = pathlib.Path(f"W:\\configuration\\{dep}_synFile.json")
 #     data = synPath.read_text(encoding='utf-8')

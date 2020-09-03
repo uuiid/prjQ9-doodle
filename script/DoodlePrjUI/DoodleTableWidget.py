@@ -173,6 +173,8 @@ class assTableWidget(FileTableWidget):
         add_ass_file.triggered.connect(self.subFilePath)
         get_ass_path = menu.addAction('指定文件')
         get_ass_path.triggered.connect(self.appointFilePath)
+        show_all_version = menu.addAction("显示所有版本")
+        show_all_version.triggered.connect(self.showAllVersion)
         menu.move(QtGui.QCursor().pos())
         return menu.show()
 
@@ -225,6 +227,12 @@ class assTableWidget(FileTableWidget):
         if json_str:
             return json_str
             # path.parent.joinpath("doodle_Mapping.json")
+
+    def doodleUpdata(self):
+        self.addTableItems(self.core.queryFile()[:1])
+
+    def showAllVersion(self):
+        self.addTableItems(self.core.queryFile())
 
 
 class shotTableWidget(FileTableWidget):

@@ -91,8 +91,8 @@ class convertSet(object):
     def _countBone_(self):
         num = pymel.core.polyEvaluate(self.convert_obj.name(), vertex=True)
         bone = int(num / 100)
-        if bone > 55:
-            bone = 55
+        if bone < 35:
+            bone = 35
         self.bones = bone
         return bone
 
@@ -102,7 +102,7 @@ class convertSet(object):
         self.convert_node.rename("{}_dolConvertBone".format(self.poly_meshname))
         self.convert_obj.getShape().outMesh >> self.convert_node.inputMesh
         self.convert_node.nBones.set(self._countBone_())
-        self.convert_node.nIters.set(5)
+        self.convert_node.nIters.set(3)
         self.convert_node.startFrame.set(pymel.core.playbackOptions(query=True, min=True))
         self.convert_node.endFrame.set(pymel.core.playbackOptions(query=True, max=True) + 1)
         self.convert_node.bindFrame.set(pymel.core.playbackOptions(query=True, min=True) + 3)

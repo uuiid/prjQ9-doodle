@@ -180,7 +180,7 @@ class PrjShot(PrjCore):
             assert isinstance(session, sqlalchemy.orm.session.Session)
             data = session.query(DoleOrm.Shot) \
                 .filter(DoleOrm.Shot.__episodes__ == self.episodes.id) \
-                .order_by(DoleOrm.Shot.shot_).all()
+                .order_by(DoleOrm.Shot.shot_,DoleOrm.Shot.shotab).all()
 
         return data
 

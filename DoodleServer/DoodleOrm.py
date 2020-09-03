@@ -138,7 +138,8 @@ class assClass(DoleSql.Base):
     nameZNCH = sqlalchemy.orm.relationship("ZNch", uselist=False, back_populates="ass_class")
 
     # file
-    addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="ass_class")
+    addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="ass_class",
+                                                       order_by="fileAttributeInfo.filetime.desc()")
 
 
 class fileClass(DoleSql.Base):
@@ -168,7 +169,8 @@ class fileClass(DoleSql.Base):
                                                                      order_by="fileType.file_type")
 
     # 添加资产ue场景反射
-    addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="file_class")
+    addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="file_class",
+                                                       order_by="fileAttributeInfo.filetime.desc()")
 
 
 class Shot(DoleSql.Base):
@@ -188,8 +190,9 @@ class Shot(DoleSql.Base):
     # 添加type反射
     addfileType: typing.List[fileType] = sqlalchemy.orm.relationship("fileType", back_populates="shot",
                                                                      order_by="fileType.file_type")
-    # 添加资产ue场景反射
-    addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="shot")
+    # 添加资产文件
+    addfileAttributeInfo:typing.List[fileAttributeInfo] = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="shot",
+                                                       order_by="fileAttributeInfo.filetime.desc()")
 
 
 class Episodes(DoleSql.Base):
@@ -207,7 +210,8 @@ class Episodes(DoleSql.Base):
     addFileType: typing.List[fileType] = sqlalchemy.orm.relationship("fileType", back_populates="episodes",
                                                                      order_by="fileType.file_type")
     # 添加资产ue场景反射
-    addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="episodes")
+    addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="episodes",
+                                                       order_by="fileAttributeInfo.filetime.desc()")
 
 
 # =======================================================================

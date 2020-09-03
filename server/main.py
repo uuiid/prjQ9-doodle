@@ -28,7 +28,7 @@ def maim():
 
 
 def addUser(authorizer):
-    prj = {"dubuxiaoyao":"W:\\","changanhuanjie":"X:\\","dubuxiaoyao3":"V:\\"}
+    prj = {"dubuxiaoyao":"W:\\","changanhuanjie":"X:\\","dubuxiaoyao3":"V:\\","kuangshenmozun":"T:\\"}
     # server_user = script.MySqlComm.selsctCommMysql("myuser", "", "", """SELECT `user`,password FROM `user`""")
     with DoleSql.commMysql().engine.connect() as connect:
         server_user = connect.execute("""SELECT `user`,password FROM myuser.`user`""").fetchall()
