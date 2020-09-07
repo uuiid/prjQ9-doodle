@@ -8,6 +8,7 @@ import scripts.Doodle_clear as Doodle_clear
 import scripts.Doodle_dem_bone as Doodle_dem_bone
 import scripts.Doodle_deleteSurplusWeight as deleteWeight
 import scripts.Doodle_deleteAttr as deleteAttr
+import scripts.export_usd as export_usd
 
 class DlsShelf(shelfBase._shelf):
     cloth_to_fbx = None
@@ -28,6 +29,7 @@ class DlsShelf(shelfBase._shelf):
         self.addButon("delect Weight", icon="icons/ue_delete_weight.png", command=self.deleteWeightPoint)
         self.addButon("delect Mixed deformation attr", icon="icons/doodle_delete_attr",
                       command=self.deleteAttr)
+        self.addButon("export usd", icon="icons/export_usd",command=self.exportUSD)
 
     def polyremesh(self):
         Doodle_PolyRemesh.myRemesh()
@@ -55,6 +57,9 @@ class DlsShelf(shelfBase._shelf):
 
     def deleteAttr(self):
         deleteAttr.deleteShape().show()
+
+    def exportUSD(self):
+        export_usd.export()
 
 class DoodleUIManage(object):
     _instances = set()

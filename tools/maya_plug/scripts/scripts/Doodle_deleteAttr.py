@@ -39,7 +39,7 @@ class deleteShape(QtWidgets.QMainWindow):
 
         self.wimMain = QtWidgets.QWidget(mayaMainWindow)
 
-        self.node = pymel.core.ls(sl=True)[0]
+        self.node = None
         self.deletebutten = {}
 
         self.scrollara = QtWidgets.QScrollArea(mayaMainWindow)

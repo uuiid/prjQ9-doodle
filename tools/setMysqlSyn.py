@@ -22,14 +22,17 @@ PoSuiLongShouFengLeiTai
 
 def dubuRun3():
     """
-BiTaoGeDaBuJu
+FeiLongShanShanJiao
 MiLin46_01_UE4
+posuibitaogedabuju_UE4
+ShanDong_UE4
+
     :return:
     :rtype:
     """
-    synfile = ["BiTaoGeDaBuJu","MiLin46_01_UE4"]
+    synfile = ["FeiLongShanShanJiao","MiLin46_01_UE4","posuibitaogedabuju_UE4","ShanDong_UE4"]
     LR = ["Left", "Right"]
-    ep = 46
+    ep = 50
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:
@@ -94,8 +97,7 @@ def chanAnRun():
         eps = connect.execute(sql_com)
     # </editor-fold>
 
-
-chanAnRun()
+dubuRun3()
 # dubuRun()
 # for dep in ["Light", "VFX"]:
 #     synPath = pathlib.Path(f"W:\\configuration\\{dep}_synFile.json")
