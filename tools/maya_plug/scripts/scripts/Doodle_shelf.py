@@ -30,6 +30,7 @@ class DlsShelf(shelfBase._shelf):
         self.addButon("delect Mixed deformation attr", icon="icons/doodle_delete_attr",
                       command=self.deleteAttr)
         self.addButon("export usd", icon="icons/export_usd",command=self.exportUSD)
+        self.addButon("repair",     icon="icons/repair",command=self.repair)
 
     def polyremesh(self):
         Doodle_PolyRemesh.myRemesh()
@@ -60,6 +61,20 @@ class DlsShelf(shelfBase._shelf):
 
     def exportUSD(self):
         export_usd.export()
+
+    def repair(self):
+        import pymel.core
+        import re
+        f = pymel.core.listReferences();
+        for i in f:
+            print(i)
+            if (re.match(r"V:/03_Workflow/Assets/[P,p]rop", i.__str__())):
+                if (re.match(r"V:/03_Workflow/Assets/[P,p]rops", i.__str__())):
+                    continue
+                try:
+                    i.load(re.sub(r"V:/03_Workflow/Assets/[P,p]rop", r"V:/03_Workflow/Assets/props", i.__str__()))
+                except:
+                    pass
 
 class DoodleUIManage(object):
     _instances = set()

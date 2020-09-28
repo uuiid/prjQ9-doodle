@@ -1,6 +1,8 @@
 import pymel.core
 import re
 import random
+import os
+
 
 def export():
     export = pymel.core.ls(sl=True)
@@ -16,9 +18,13 @@ def export():
         if getMat(mesh.getTransform()).__len__() > 1:
             for inst in mesh.instObjGroups:
                 for iGrp in inst.objectGroups:
-                    pymel.core.polyChipOff([mesh.node() + "." + tmp_ for tmp_ in iGrp.objectGrpCompList.get()],
-                                           duplicate=False, keepFacesTogether=True)
-            splitnodeList = pymel.core.polySeparate(mesh.node())
+                    try:
+                        pymel.core.polyChipOff([mesh.node() + "." + tmp_ for tmp_ in iGrp.objectGrpCompList.get()],
+                                                duplicate=False, keepFacesTogether=True)
+                    except:
+                        pass
+
+            splitnodeList = pymel.core.polySeparate(mesh.getTransform())
             for spM in splitnodeList:
                 pymel.core.select(spM)
                 pymel.core.hyperShade(shaderNetworksSelectMaterialNodes=True)
@@ -26,7 +32,10 @@ def export():
                     if [c for c in shd.classification() if 'shader/surface' in c]:
                         comMwsh[shd].append(spM)
         else:
-            comMwsh[getMat(mesh.getTransform())[0]].append(mesh.getTransform())
+            try:
+                comMwsh[getMat(mesh.getTransform())[0]].append(mesh.getTransform())
+            except IndexError:
+                print("{} is not materal".format(mesh.getTransform()))
     for key, merg in comMwsh.items():
         if merg.__len__() > 1:
             mesh_globe.append(pymel.core.polyUnite(merg, name="{}_export".format(key.name()))[0])
@@ -46,9 +55,8 @@ def getMat(obj):
 
 
 def exportUsd(exportList):
-
     pymel.core.select(exportList, replace=True)
-    root = pymel.core.group(name=exportList[0].name().split(":")[0].split("_")[0] + random.randint(1,100).__str__(),
+    root = pymel.core.group(name=exportList[0].name().split(":")[0].split("_")[0] + random.randint(1, 100).__str__(),
                             world=True)
     # for i in exportList:
     #     pymel.core.parent(i,root)
@@ -81,8 +89,10 @@ def exportUsd(exportList):
     except:
         depp = None
     name_e = "shot_ep{ep:0>3d}_sc{sh:0>4d}{shab}_VFX_usd_{name_}_.{s}_{e}.usd".format(ep=_eps, sh=_shot, shab=_shotab,
-                                                                                      name_=root.name().split(":")[0].split("_")[0],
-                                                                                      s=start,e=end)
+                                                                                      name_=
+                                                                                      root.name().split(":")[0].split(
+                                                                                          "_")[0],
+                                                                                      s=start, e=end)
     pymel.core.mayaUSDExport(file="D:/03_Workflow/shots/ep{ep:0>3d}/sc{sh:0>4d}{shab}/Anm/{de}/{na}".format(ep=_eps,
                                                                                                             sh=_shot,
                                                                                                             shab=_shotab,
