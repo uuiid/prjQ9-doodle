@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Framework/Commands/Commands.h"
-#include "doodleStyle.h"
+#include "DoodleStyle.h"
 
-class FdoodleCommands : public TCommands<FdoodleCommands>
+class FDoodleCommands : public TCommands<FDoodleCommands>
 {
 public:
 
-	FdoodleCommands()
-		: TCommands<FdoodleCommands>(TEXT("doodle"), NSLOCTEXT("Contexts", "doodle", "doodle Plugin"), NAME_None, FdoodleStyle::GetStyleSetName())
+	FDoodleCommands()
+		: TCommands<FDoodleCommands>(TEXT("Doodle"), NSLOCTEXT("Contexts", "Doodle", "Doodle Plugin"), NAME_None, FDoodleStyle::GetStyleSetName())
 	{
 	}
 

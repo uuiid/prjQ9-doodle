@@ -1,10 +1,12 @@
 # -*- coding: UTF-8 -*-
 import logging
+import os
 import pathlib
 import shutil
 import subprocess
 import sys
 import time
+import winreg
 
 import qdarkstyle
 from PySide2 import QtCore
@@ -57,8 +59,11 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
         install_maya: QtWidgets.QAction = install_plug.addAction("安装maya插件")
         install_maya.triggered.connect(self.installMaya)
 
-        install_ue: QtWidgets.QAction = install_plug.addAction("安装ue插件")
+        install_ue: QtWidgets.QAction = install_plug.addAction("安装ue插件到项目")
         install_ue.triggered.connect(self.installUE)
+
+        install_ue_app: QtWidgets.QAction = install_plug.addAction("安装ue插件(永久)")
+        install_ue_app.triggered.connect(self.installUEAppPlug)
 
         setmenu = menu.addAction('设置')
         setmenu.triggered.connect(self.doodle_app.showSet)
@@ -150,12 +155,26 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
                                                                 "files (*.uproject)")
         if file:
             path = pathlib.Path(file)
+            if(path.parent.joinpath("Plugins","Doodle").exists()):
+                os.remove(path.parent.joinpath("Plugins","Doodle"))
             QtWidgets.QMessageBox.warning(None, "警告:", f"复制文件需要一些时间,完成后请重启ue4",
                                           QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-            shutil.copytree("tools/uePlug/Plugins",path.parent.joinpath("Plugins"))
+            shutil.copytree("tools/uePlug/4.25/Plugins",path.parent.joinpath("Plugins"))
             QtWidgets.QMessageBox.warning(None, "警告:", "复制完成",
                                           QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
 
+    def installUEAppPlug(self):
+        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,r"SOFTWARE\EpicGames\Unreal Engine\4.25")
+        path = pathlib.Path(winreg.QueryValueEx(key,"InstalledDirectory")[0])
+        if(path):
+            QtWidgets.QMessageBox.warning(None, "警告:", f"复制文件需要一些时间,完成后请重启ue4,"
+                                                       f"还有如果 杀软 有拦截极有可能不成功,"
+                                                       f"在C盘的话,权限不够也不行",
+                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            shutil.copytree("tools/uePlug/4.25/Plugins/Doodle",
+                            path.joinpath("Engine","Plugins","Runtime","Doodle"))
+            QtWidgets.QMessageBox.warning(None, "警告:", "复制完成",
+                                          QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "doodle",
+	"FriendlyName": "Doodle",
 	"Description": "",
 	"Category": "Other",
 	"CreatedBy": "",
@@ -11,19 +11,13 @@
 	"MarketplaceURL": "",
 	"SupportURL": "",
 	"EngineVersion": "4.25.0",
-	"CanContainContent": false,
+	"CanContainContent": true,
 	"Installed": true,
 	"Modules": [
 		{
-			"Name": "doodle",
+			"Name": "Doodle",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
-		}
-	],
-	"Plugins": [
-		{
-			"Name": "EditorScriptingUtilities",
-			"Enabled": true
 		}
 	]
 }

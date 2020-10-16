@@ -2,9 +2,9 @@
 
 using UnrealBuildTool;
 
-public class doodle : ModuleRules
+public class Doodle : ModuleRules
 {
-	public doodle(ReadOnlyTargetRules Target) : base(Target)
+	public Doodle(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
@@ -26,8 +26,6 @@ public class doodle : ModuleRules
 			new string[]
 			{
 				"Core",
-                "ContentBrowser",
-                "EditorScriptingUtilities",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -44,8 +42,6 @@ public class doodle : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-                "ContentBrowser",
-                "EditorScriptingUtilities",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

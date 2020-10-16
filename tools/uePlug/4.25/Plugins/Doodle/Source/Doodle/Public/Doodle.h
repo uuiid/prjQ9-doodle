@@ -8,7 +8,7 @@
 class FToolBarBuilder;
 class FMenuBuilder;
 
-class FdoodleModule : public IModuleInterface
+class FDoodleModule : public IModuleInterface
 {
 public:
 
