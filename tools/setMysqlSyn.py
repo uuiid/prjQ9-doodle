@@ -22,21 +22,15 @@ PoSuiLongShouFengLeiTai
 
 def dubuRun3():
     """
-BiTaoGeDaBuJu
-ShanDong_UE4
-ShanFengXiaShanLu
+LinZhouJieDao
 TianHuoZongBuJu
-WenXinFengFangWu_UE4
-WenXinFengHuaCong_UE4
-wenxinfengyuanjing_UE4
 
     :return:
     :rtype:
     """
-    synfile = ["BiTaoGeDaBuJu","ShanDong_UE4","ShanFengXiaShanLu","TianHuoZongBuJu",
-               "WenXinFengFangWu_UE4","WenXinFengHuaCong_UE4","wenxinfengyuanjing_UE4"]
+    synfile = ["MiLin46_01_UE4"]
     LR = ["Left", "Right"]
-    ep = 54
+    ep = 55
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:

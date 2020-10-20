@@ -1,42 +1,44 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "Doodle.h"
-#include "DoodleStyle.h"
-#include "DoodleCommands.h"
+#include "doodle.h"
+#include "doodleStyle.h"
+#include "doodleCommands.h"
 #include "LevelEditor.h"
 #include "Widgets/Docking/SDockTab.h"
 #include "Widgets/Layout/SBox.h"
 #include "Widgets/Text/STextBlock.h"
 #include "ToolMenus.h"
 
-static const FName DoodleTabName("Doodle");
+#include "doodleCopyMaterial.h"
 
-#define LOCTEXT_NAMESPACE "FDoodleModule"
+static const FName doodleTabName("doodle");
 
-void FDoodleModule::StartupModule()
+#define LOCTEXT_NAMESPACE "FdoodleModule"
+
+void FdoodleModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	
-	FDoodleStyle::Initialize();
-	FDoodleStyle::ReloadTextures();
+	FdoodleStyle::Initialize();
+	FdoodleStyle::ReloadTextures();
 
-	FDoodleCommands::Register();
+	FdoodleCommands::Register();
 	
 	PluginCommands = MakeShareable(new FUICommandList);
 
 	PluginCommands->MapAction(
-		FDoodleCommands::Get().OpenPluginWindow,
-		FExecuteAction::CreateRaw(this, &FDoodleModule::PluginButtonClicked),
+		FdoodleCommands::Get().OpenPluginWindow,
+		FExecuteAction::CreateRaw(this, &FdoodleModule::PluginButtonClicked),
 		FCanExecuteAction());
 
-	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FDoodleModule::RegisterMenus));
+	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FdoodleModule::RegisterMenus));
 	
-	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(DoodleTabName, FOnSpawnTab::CreateRaw(this, &FDoodleModule::OnSpawnPluginTab))
-		.SetDisplayName(LOCTEXT("FDoodleTabTitle", "Doodle"))
+	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(doodleTabName, FOnSpawnTab::CreateRaw(this, &FdoodleModule::OnSpawnPluginTab))
+		.SetDisplayName(LOCTEXT("FdoodleTabTitle", "doodle"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden);
 }
 
-void FDoodleModule::ShutdownModule()
+void FdoodleModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
@@ -45,19 +47,19 @@ void FDoodleModule::ShutdownModule()
 
 	UToolMenus::UnregisterOwner(this);
 
-	FDoodleStyle::Shutdown();
+	FdoodleStyle::Shutdown();
 
-	FDoodleCommands::Unregister();
+	FdoodleCommands::Unregister();
 
-	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(DoodleTabName);
+	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(doodleTabName);
 }
 
-TSharedRef<SDockTab> FDoodleModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
+TSharedRef<SDockTab> FdoodleModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnTabArgs)
 {
 	FText WidgetText = FText::Format(
 		LOCTEXT("WindowWidgetText", "Add code to {0} in {1} to override this window's contents"),
-		FText::FromString(TEXT("FDoodleModule::OnSpawnPluginTab")),
-		FText::FromString(TEXT("Doodle.cpp"))
+		FText::FromString(TEXT("FdoodleModule::OnSpawnPluginTab")),
+		FText::FromString(TEXT("doodle.cpp"))
 		);
 
 	return SNew(SDockTab)
@@ -65,21 +67,20 @@ TSharedRef<SDockTab> FDoodleModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnT
 		[
 			// Put your tab content here!
 			SNew(SBox)
-			.HAlign(HAlign_Center)
-			.VAlign(VAlign_Center)
+			.HAlign(HAlign_Left)
+			.VAlign(VAlign_Top)
 			[
-				SNew(STextBlock)
-				.Text(WidgetText)
+				SNew(DoodleCopyMat)//这里创建我们自己的界面
 			]
 		];
 }
 
-void FDoodleModule::PluginButtonClicked()
+void FdoodleModule::PluginButtonClicked()
 {
-	FGlobalTabmanager::Get()->InvokeTab(DoodleTabName);
+	FGlobalTabmanager::Get()->InvokeTab(doodleTabName);
 }
 
-void FDoodleModule::RegisterMenus()
+void FdoodleModule::RegisterMenus()
 {
 	// Owner will be used for cleanup in call to UToolMenus::UnregisterOwner
 	FToolMenuOwnerScoped OwnerScoped(this);
@@ -88,7 +89,7 @@ void FDoodleModule::RegisterMenus()
 		UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.MainMenu.Window");
 		{
 			FToolMenuSection& Section = Menu->FindOrAddSection("WindowLayout");
-			Section.AddMenuEntryWithCommandList(FDoodleCommands::Get().OpenPluginWindow, PluginCommands);
+			Section.AddMenuEntryWithCommandList(FdoodleCommands::Get().OpenPluginWindow, PluginCommands);
 		}
 	}
 
@@ -97,7 +98,7 @@ void FDoodleModule::RegisterMenus()
 		{
 			FToolMenuSection& Section = ToolbarMenu->FindOrAddSection("Settings");
 			{
-				FToolMenuEntry& Entry = Section.AddEntry(FToolMenuEntry::InitToolBarButton(FDoodleCommands::Get().OpenPluginWindow));
+				FToolMenuEntry& Entry = Section.AddEntry(FToolMenuEntry::InitToolBarButton(FdoodleCommands::Get().OpenPluginWindow));
 				Entry.SetCommandList(PluginCommands);
 			}
 		}
@@ -106,4 +107,4 @@ void FDoodleModule::RegisterMenus()
 
 #undef LOCTEXT_NAMESPACE
 	
-IMPLEMENT_MODULE(FDoodleModule, Doodle)
+IMPLEMENT_MODULE(FdoodleModule, doodle)

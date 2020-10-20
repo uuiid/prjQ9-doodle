@@ -1,12 +1,12 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "DoodleCommands.h"
+#include "doodleCommands.h"
 
-#define LOCTEXT_NAMESPACE "FDoodleModule"
+#define LOCTEXT_NAMESPACE "FdoodleModule"
 
-void FDoodleCommands::RegisterCommands()
+void FdoodleCommands::RegisterCommands()
 {
-	UI_COMMAND(OpenPluginWindow, "Doodle", "Bring up Doodle window", EUserInterfaceActionType::Button, FInputGesture());
+	UI_COMMAND(OpenPluginWindow, "doodle", "Bring up doodle window", EUserInterfaceActionType::Button, FInputGesture());
 }
 
 #undef LOCTEXT_NAMESPACE

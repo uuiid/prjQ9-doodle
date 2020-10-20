@@ -2,7 +2,7 @@
 	"FileVersion": 3,
 	"Version": 1,
 	"VersionName": "1.0",
-	"FriendlyName": "Doodle",
+	"FriendlyName": "doodle",
 	"Description": "",
 	"Category": "Other",
 	"CreatedBy": "",
@@ -15,9 +15,15 @@
 	"Installed": true,
 	"Modules": [
 		{
-			"Name": "Doodle",
+			"Name": "doodle",
 			"Type": "Editor",
 			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "EditorScriptingUtilities",
+			"Enabled": true
 		}
 	]
 }

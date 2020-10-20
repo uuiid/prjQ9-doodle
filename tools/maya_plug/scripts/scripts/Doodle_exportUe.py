@@ -68,7 +68,7 @@ def getoutFileName(outtype, older):
         except NameError:
             _shot = 1
             _shotab = ""
-        tfilepath = "W:/03_Workflow/shots/ep{eps:0>3d}/" \
+        tfilepath = "V:/03_Workflow/shots/ep{eps:0>3d}/" \
                     "sc{shot:0>4d}{shotab}/Scenefiles/{dep}/{aim}".format(eps=_eps,
                                                                           shot=_shot,
                                                                           shotab=_shotab,

@@ -1,14 +1,14 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "DoodleStyle.h"
+#include "doodleStyle.h"
 #include "Styling/SlateStyleRegistry.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Slate/SlateGameResources.h"
 #include "Interfaces/IPluginManager.h"
 
-TSharedPtr< FSlateStyleSet > FDoodleStyle::StyleInstance = NULL;
+TSharedPtr< FSlateStyleSet > FdoodleStyle::StyleInstance = NULL;
 
-void FDoodleStyle::Initialize()
+void FdoodleStyle::Initialize()
 {
 	if (!StyleInstance.IsValid())
 	{
@@ -17,16 +17,16 @@ void FDoodleStyle::Initialize()
 	}
 }
 
-void FDoodleStyle::Shutdown()
+void FdoodleStyle::Shutdown()
 {
 	FSlateStyleRegistry::UnRegisterSlateStyle(*StyleInstance);
 	ensure(StyleInstance.IsUnique());
 	StyleInstance.Reset();
 }
 
-FName FDoodleStyle::GetStyleSetName()
+FName FdoodleStyle::GetStyleSetName()
 {
-	static FName StyleSetName(TEXT("DoodleStyle"));
+	static FName StyleSetName(TEXT("doodleStyle"));
 	return StyleSetName;
 }
 
@@ -40,12 +40,12 @@ const FVector2D Icon16x16(16.0f, 16.0f);
 const FVector2D Icon20x20(20.0f, 20.0f);
 const FVector2D Icon40x40(40.0f, 40.0f);
 
-TSharedRef< FSlateStyleSet > FDoodleStyle::Create()
+TSharedRef< FSlateStyleSet > FdoodleStyle::Create()
 {
-	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("DoodleStyle"));
-	Style->SetContentRoot(IPluginManager::Get().FindPlugin("Doodle")->GetBaseDir() / TEXT("Resources"));
+	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("doodleStyle"));
+	Style->SetContentRoot(IPluginManager::Get().FindPlugin("doodle")->GetBaseDir() / TEXT("Resources"));
 
-	Style->Set("Doodle.OpenPluginWindow", new IMAGE_BRUSH(TEXT("ButtonIcon_40x"), Icon40x40));
+	Style->Set("doodle.OpenPluginWindow", new IMAGE_BRUSH(TEXT("ButtonIcon_40x"), Icon40x40));
 
 	return Style;
 }
@@ -56,7 +56,7 @@ TSharedRef< FSlateStyleSet > FDoodleStyle::Create()
 #undef TTF_FONT
 #undef OTF_FONT
 
-void FDoodleStyle::ReloadTextures()
+void FdoodleStyle::ReloadTextures()
 {
 	if (FSlateApplication::IsInitialized())
 	{
@@ -64,7 +64,7 @@ void FDoodleStyle::ReloadTextures()
 	}
 }
 
-const ISlateStyle& FDoodleStyle::Get()
+const ISlateStyle& FdoodleStyle::Get()
 {
 	return *StyleInstance;
 }

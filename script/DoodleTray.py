@@ -48,10 +48,10 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
         # <editor-fold desc="动作">
         UEmenu = menu.addMenu('UE动作')
 
-        UE_open = UEmenu.addAction('打开UE')
+        UE_open = UEmenu.addAction('更新ue配置文件')
         UE_open.triggered.connect(self.openUE)
 
-        UE_sync = UEmenu.addAction('同步UE')
+        UE_sync = UEmenu.addAction('清除ue4缓存')
         UE_sync.triggered.connect(self.UEsync)
         # </editor-fold>
 
@@ -117,22 +117,36 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
             self.ta_log.info('同步时间: %s', time.asctime(time.localtime(time.time())))
 
     def UEsync(self):
-        if self.doodle_set.department in ['Light', 'VFX', 'modle']:
-            synPath = [{'Left': 'D:\\Source\\UnrealEngine', 'Right': 'W:\\data\\Source\\UnrealEngine'}]
-            synUE = 'UE_syn'
-            script.DoodleSynXml.FreeFileSync(doc=self.doodle_set.doc,
-                                             syn_file=synPath,
-                                             program=self.doodle_set.FreeFileSync,
-                                             file_name=synUE,
-                                             user=self.doodle_set.ftpuser,
-                                             ip_=self.doodle_set.ftpip,
-                                             password=self.doodle_set.password,
-                                             include=['\\Engine\\*']).run()
+        if pathlib.Path(os.getenv("LOCALAPPDATA")).joinpath("UnrealEngine").exists():
+            os.system(r"rmdir /s /q %LOCALAPPDATA%\UnrealEngine")
+        # if self.doodle_set.department in ['Light', 'VFX', 'modle']:
+        #     synPath = [{'Left': 'D:\\Source\\UnrealEngine', 'Right': 'W:\\data\\Source\\UnrealEngine'}]
+        #     synUE = 'UE_syn'
+        #     script.DoodleSynXml.FreeFileSync(doc=self.doodle_set.doc,
+        #                                      syn_file=synPath,
+        #                                      program=self.doodle_set.FreeFileSync,
+        #                                      file_name=synUE,
+        #                                      user=self.doodle_set.ftpuser,
+        #                                      ip_=self.doodle_set.ftpip,
+        #                                      password=self.doodle_set.password,
+        #                                      include=['\\Engine\\*']).run()
 
     @staticmethod
     def openUE():
-        logging.info('启动UE')
-        subprocess.Popen("D:\\Source\\UnrealEngine\\Engine\\Binaries\\Win64\\UE4Editor.exe")
+        for i in ["5","6"]:
+            try:
+                key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,r"SOFTWARE\EpicGames\Unreal Engine\4.2{}".format(i))
+            except FileNotFoundError:
+                QtWidgets.QMessageBox.warning(None, "警告:", "没有安装 4.2{} 版本 不替换缓存目录".format(i),
+                                              QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            else:
+                path = pathlib.Path(winreg.QueryValueEx(key,"InstalledDirectory")[0]).joinpath("Engine","Config")
+                file_cong = pathlib.Path("tools/BaseEngine.ini").absolute()
+                if path.joinpath("BaseEngine.ini").exists():
+                    os.remove(path.joinpath("BaseEngine.ini"))
+                shutil.copyfile(file_cong,path.joinpath("BaseEngine.ini"))
+
+
 
     def Updata(self, unpdata_=True):
         script.DoodleUpdata.downloadThread(self.doodle_set).run()
@@ -155,7 +169,7 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
                                                                 "files (*.uproject)")
         if file:
             path = pathlib.Path(file)
-            if(path.parent.joinpath("Plugins","Doodle").exists()):
+            if path.parent.joinpath("Plugins", "Doodle").exists():
                 os.remove(path.parent.joinpath("Plugins","Doodle"))
             QtWidgets.QMessageBox.warning(None, "警告:", f"复制文件需要一些时间,完成后请重启ue4",
                                           QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
@@ -166,11 +180,13 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
     def installUEAppPlug(self):
         key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE,r"SOFTWARE\EpicGames\Unreal Engine\4.25")
         path = pathlib.Path(winreg.QueryValueEx(key,"InstalledDirectory")[0])
-        if(path):
+        if path:
             QtWidgets.QMessageBox.warning(None, "警告:", f"复制文件需要一些时间,完成后请重启ue4,"
                                                        f"还有如果 杀软 有拦截极有可能不成功,"
                                                        f"在C盘的话,权限不够也不行",
                                           QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if path.joinpath("Engine", "Plugins", "Runtime", "Doodle").exists():
+                os.remove(path.joinpath("Engine","Plugins","Runtime","Doodle"))
             shutil.copytree("tools/uePlug/4.25/Plugins/Doodle",
                             path.joinpath("Engine","Plugins","Runtime","Doodle"))
             QtWidgets.QMessageBox.warning(None, "警告:", "复制完成",
