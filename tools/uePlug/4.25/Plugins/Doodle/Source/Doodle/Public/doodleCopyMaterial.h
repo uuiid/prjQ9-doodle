@@ -1,17 +1,19 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Widgets/SCompoundWidget.h"
 #include "Widgets/DeclarativeSyntaxSupport.h"
 #include "UObject/GCObject.h"
+
+
 
 class DoodleCopyMat :public SCompoundWidget, public FGCObject
 {
 public:
     SLATE_BEGIN_ARGS(DoodleCopyMat) {}
     SLATE_END_ARGS( )
-    //ÕâÀïÊÇÄÚÈİ´´½¨º¯Êı
+    //è¿™é‡Œæ˜¯å†…å®¹åˆ›å»ºå‡½æ•°
     void Construct(const FArguments& Arg);
-    //Õâ¸öÔİÊ±²»ÖªµÀÊ²Ã´ÒâË¼,µ«ÊÇ²»¼Ó¾Í¼¸°Ñ±àÒë²»¹ıÈ¥
+    //è¿™ä¸ªæš‚æ—¶ä¸çŸ¥é“ä»€ä¹ˆæ„æ€,ä½†æ˜¯ä¸åŠ å°±å‡ æŠŠç¼–è¯‘ä¸è¿‡å»
     virtual void AddReferencedObjects(FReferenceCollector& collector) override;
 
 private:
@@ -19,5 +21,6 @@ private:
     FReply CopyMateral( );
 
 private:
-    USkeletalMesh* copySoure;
+    USkeletalMesh* copySoureSkinObj;
+    UObject* copySoureGeoCache;
 };

@@ -7,13 +7,17 @@ import pymel.core
 import re
 import os
 
+from PySide2 import QtCore
+from PySide2 import QtGui
+from PySide2 import QtWidgets
+
 
 def addPlug():
     maya.cmds.loadPlugin('AbcExport.mll')
     maya.cmds.loadPlugin('AbcImport.mll')
 
 
-def getoutFileName(outtype, older):
+def getoutFileName(outtype, older, root):
     exname = ""
     # get name space
     inum = 0
@@ -68,12 +72,13 @@ def getoutFileName(outtype, older):
         except NameError:
             _shot = 1
             _shotab = ""
-        tfilepath = "V:/03_Workflow/shots/ep{eps:0>3d}/" \
+        tfilepath = "{root_}/03_Workflow/shots/ep{eps:0>3d}/" \
                     "sc{shot:0>4d}{shotab}/Scenefiles/{dep}/{aim}".format(eps=_eps,
                                                                           shot=_shot,
                                                                           shotab=_shotab,
                                                                           dep=filename.split("_")[3],
-                                                                          aim=filename.split("_")[4])
+                                                                          aim=filename.split("_")[4],
+                                                                          root_=root)
         tfilepath = mkdir(tfilepath)
         filepath = filename.split("_")
         exname = tfilepath + "/" + filepath[0] + "_" + filepath[1] + "_" + filepath[2] + "_" + filepath[
@@ -97,17 +102,33 @@ def mkdir(path):
 def export(nump):
     exmashs = maya.cmds.ls(sl=True, long=True)
     if exmashs != "":
+        box = QtWidgets.QMessageBox()
+        dubu_Butten = QtWidgets.QPushButton()
+        dubu_Butten.setText("duBuXiaoYao")
+        dubu = box.addButton(dubu_Butten, QtWidgets.QMessageBox.AcceptRole)
+
+        chan_butten = QtWidgets.QPushButton()
+        chan_butten.setText("changAnHuanJie")
+        chan = box.addButton(chan_butten, QtWidgets.QMessageBox.AcceptRole)
+        box.exec_()
+        while 1:
+            if box.clickedButton() == dubu_Butten:
+                root = "V:"
+                break
+            elif box.clickedButton() == chan_butten:
+                root = "X:"
+                break
         print(exmashs)
-        fileinabc = getoutFileName("abc", "repair")
+        fileinabc = getoutFileName("abc", "repair", root)
         if nump == "two":
-            fileinfbx = getoutFileName("fbx", "repair")
+            fileinfbx = getoutFileName("fbx", "repair", root)
             exmashFBX = maya.cmds.duplicate(exmashs)
             exmashFBX = maya.cmds.ls(sl=True, long=True)
             maya.cmds.polyUnite(exmashFBX, n="exfbx")
             exmashFBX = maya.cmds.ls(sl=True, long=True)
             maya.cmds.currentTime(fileinabc[2], update=True, edit=True)
         else:
-            fileinfbx = getoutFileName("fbx", "cam")
+            fileinfbx = getoutFileName("fbx", "cam", root)
         print(fileinfbx)
         maya.mel.eval("FBXExportBakeComplexAnimation -v true")
         maya.mel.eval("FBXExportSmoothingGroups -v true")
@@ -122,10 +143,11 @@ def export(nump):
             for exmash in exmashs:
                 abcexmashs = abcexmashs + "-root " + exmash + " "
 
-            abcExportCom = 'AbcExport -j "-frameRange ' + str(fileinabc[1]) + " " + str(
-                fileinabc[2]) + " -worldSpace -dataFormat ogawa " + abcexmashs + "-file " + fileinabc[0].replace("\\",
-                                                                                                                 "/") + '"'  # -uvWrite
-
+            # abcExportCom = 'AbcExport -j "-frameRange ' + str(fileinabc[1]) + " " + str(
+            #     fileinabc[2]) + " -worldSpace -dataFormat ogawa " + abcexmashs + "-file " + fileinabc[0].replace("\\",
+            #                                                                                                      "/") + '"'   -uvWrite
+            abcExportCom = """AbcExport -j "-frameRange {f1} {f2} -uvWrite -writeFaceSets -worldSpace -dataFormat ogawa {mash} -file {f0}" """ \
+                .format(f0=fileinabc[0].replace("\\", "/"), f1=fileinabc[1], f2=fileinabc[2], mash=abcexmashs)
             maya.mel.eval(abcExportCom)
             # This is a command to export FBX
     else:

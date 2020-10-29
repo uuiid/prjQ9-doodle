@@ -1,12 +1,16 @@
-#include "doodleCopyMaterial.h"
+ï»¿#include "doodleCopyMaterial.h"
 
 #include "Editor/ContentBrowser/Public/ContentBrowserModule.h"
 #include "Editor/ContentBrowser/Public/IContentBrowserSingleton.h"
 #include "EditorAssetLibrary.h"
 
+#include "GeometryCache.h"
+#include "Materials/MaterialInterface.h"
+#include "Materials/Material.h"
+
 void DoodleCopyMat::Construct(const FArguments & Arg)
 {
-    //Õâ¸öÊÇue½çÃæµÄ´´½¨·½·¨
+    //è¿™ä¸ªæ˜¯ueç•Œé¢çš„åˆ›å»ºæ–¹æ³•
 
     ChildSlot[
         SNew(SHorizontalBox)
@@ -15,10 +19,10 @@ void DoodleCopyMat::Construct(const FArguments & Arg)
             .HAlign(HAlign_Left)
             .Padding(FMargin(1.f,1.f))
             [
-                SNew(SButton)//´´½¨°´Å¥
-                .OnClicked(this, &DoodleCopyMat::getSelect)//Ìí¼Ó»Øµ÷º¯Êı
+                SNew(SButton)//åˆ›å»ºæŒ‰é’®
+                .OnClicked(this, &DoodleCopyMat::getSelect)//æ·»åŠ å›è°ƒå‡½æ•°
                 [
-                    SNew(STextBlock).Text(FText::FromString("Get Select Obj"))//°´Å¥ÖĞµÄ×Ö·û
+                    SNew(STextBlock).Text(FText::FromString("Get Select Obj"))//æŒ‰é’®ä¸­çš„å­—ç¬¦
                 ]
             ]
             +SHorizontalBox::Slot( )
@@ -26,10 +30,10 @@ void DoodleCopyMat::Construct(const FArguments & Arg)
                 .HAlign(HAlign_Left)
                 .Padding(FMargin(1.f, 1.f))
             [
-                SNew(SButton)//´´½¨°´Å¥
-                .OnClicked(this, &DoodleCopyMat::CopyMateral)//Ìí¼Ó»Øµ÷º¯Êı
+                SNew(SButton)//åˆ›å»ºæŒ‰é’®
+                .OnClicked(this, &DoodleCopyMat::CopyMateral)//æ·»åŠ å›è°ƒå‡½æ•°
                 [
-                    SNew(STextBlock).Text(FText::FromString("copy To obj"))//°´Å¥ÖĞµÄ×Ö·û
+                    SNew(STextBlock).Text(FText::FromString("copy To obj"))//æŒ‰é’®ä¸­çš„å­—ç¬¦
                 ]
             ]
     ];
@@ -43,34 +47,37 @@ void DoodleCopyMat::AddReferencedObjects(FReferenceCollector& collector)
 FReply DoodleCopyMat::getSelect( )
 {
     /*
-    »ñµÃÎÄ¼ş¹ÜÀíÆ÷ÖĞµÄ¹Ç¼ÜÍø¸ñÎïÌåµÄÑ¡Ôñ
-    ÕâÊÇÒ»¸ö°´Å¥µÄ»Øµ÷²ÎÊı
+    è·å¾—æ–‡ä»¶ç®¡ç†å™¨ä¸­çš„éª¨æ¶ç½‘æ ¼ç‰©ä½“çš„é€‰æ‹©
+    è¿™æ˜¯ä¸€ä¸ªæŒ‰é’®çš„å›è°ƒå‚æ•°
     */
 
-    //»ñµÃÎÄ¼ş¹ÜÀíÆ÷µÄÄ£¿é(»òÕßÀà?)
+    //è·å¾—æ–‡ä»¶ç®¡ç†å™¨çš„æ¨¡å—(æˆ–è€…ç±»?)
     FContentBrowserModule& contentBrowserModle = FModuleManager::Get( ).LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
     TArray<FAssetData> selectedAss;
     contentBrowserModle.Get( ).GetSelectedAssets(selectedAss);
     for (int i = 0; i < selectedAss.Num( ); i++)
     {
-        // ²âÊÔÑ¡ÖĞÎïÌåÊÇ·ñÊÇ¹Ç÷ÀÎïÌå
+        // æµ‹è¯•é€‰ä¸­ç‰©ä½“æ˜¯å¦æ˜¯éª¨éª¼ç‰©ä½“
         if (selectedAss[i].GetClass( )->IsChildOf<USkeletalMesh>( ))
         {
-            //Èç¹ûÊÇ¹Ç÷ÀÎïÌå¾Í¿ÉÒÔ¸´ÖÆ²ÄÖÊÁË
-            UE_LOG(LogTemp, Log, TEXT("%s"), *(selectedAss[i].GetFullName( )));
+            //å¦‚æœæ˜¯éª¨éª¼ç‰©ä½“å°±å¯ä»¥å¤åˆ¶æè´¨äº†
+            UE_LOG(LogTemp, Log, TEXT("ç¡®è®¤éª¨éª¼ç‰©ä½“ %s"), *(selectedAss[i].GetFullName( )));
             
-            UObject* skinObj = selectedAss[i].ToSoftObjectPath( ).TryLoad( );// assLoad.LoadAsset(selectedAss[i].GetFullName( ));
-            //½«¼ÓÔØµÄÀà×ª»»ÎªskeletalMeshÀà²¢½øĞĞ´¢´æ
-            copySoure = Cast<USkeletalMesh>(skinObj);
-            UE_LOG(LogTemp, Log, TEXT("%s"), *(copySoure->GetPathName( )));
-            //TArray<FSkeletalMaterial> SoureMat = copySoure->Materials;
+            UObject* skinObj = selectedAss[i].ToSoftObjectPath( ).TryLoad( );
+            // assLoad.LoadAsset(selectedAss[i].GetFullName( ));
+            //å°†åŠ è½½çš„ç±»è½¬æ¢ä¸ºskeletalMeshç±»å¹¶è¿›è¡Œå‚¨å­˜
+            if (skinObj) {
+                copySoureSkinObj = Cast<USkeletalMesh>(skinObj);
+                UE_LOG(LogTemp, Log, TEXT("%s"), *(copySoureSkinObj->GetPathName( )));
+            }
+            //TArray<FSkeletalMaterial> SoureMat = copySoureSkinObj->Materials;
             //for (int m = 0; m < SoureMat.Num( ); m++)
             //{
             //    SoureMat[m].MaterialInterface->GetPathName( );
             //    UE_LOG(LogTemp, Log, TEXT("%s"), *(SoureMat[m].MaterialInterface->GetPathName( )));
             //}
-
-            //if (UClass *cl = skinObj->GetClass())
+            //
+            //if (UClass *cl = loadObj->GetClass())
             //{
             //    if (UProperty *mproperty = cl->FindPropertyByName("materials"))
             //    {
@@ -79,12 +86,22 @@ FReply DoodleCopyMat::getSelect( )
             //    }
             //}
             //selectedAss[i].ToSoftObjectPath( ).TryLoad()
-            //TFieldIterator<UProperty> iter(skinObj);
+            //TFieldIterator<UProperty> iter(loadObj);
             //USkeletalMeshComponent test;
             //test.getmaterial
             //test.SetMaterial( );
             //UStaticMeshComponent test2;
             //test2.SetMaterial( );
+        }//æµ‹è¯•æ˜¯å¦æ˜¯å‡ ä½•ç¼“å­˜ç‰©ä½“
+        else if (selectedAss[i].GetClass( ) == UGeometryCache::StaticClass()) {
+            //å¦‚æœæ˜¯éª¨éª¼ç‰©ä½“å°±å¯ä»¥å¤åˆ¶æè´¨äº†
+            UE_LOG(LogTemp, Log, TEXT("ç¡®è®¤å‡ ä½•ç¼“å­˜  %s"), *(selectedAss[i].GetFullName( )));
+            UObject* cacheObj = selectedAss[i].ToSoftObjectPath( ).TryLoad( );
+            if(cacheObj){
+                copySoureGeoCache = cacheObj;
+                //*(cacheObj->GetFullName( )
+                UE_LOG(LogTemp, Log, TEXT("%s"), *(cacheObj->GetFullName( )));
+            }
         }
         //bool is =selectedAss[i].GetClass( )->IsChildOf<USkeletalMesh>( );
         //UE_LOG(LogTemp, Log, TEXT("%s"), *(FString::FromInt(is)));
@@ -100,25 +117,40 @@ FReply DoodleCopyMat::CopyMateral( )
     contentBrowserModle.Get( ).GetSelectedAssets(selectedAss);
     for (int i = 0; i < selectedAss.Num( ); i++)
     {
-        // ²âÊÔÑ¡ÖĞÎïÌåÊÇ·ñÊÇ¹Ç÷ÀÎïÌå
+        UObject* loadObj = selectedAss[i].ToSoftObjectPath( ).TryLoad( );// assLoad.LoadAsset(selectedAss[i].GetFullName( ));
+
+        // æµ‹è¯•é€‰ä¸­ç‰©ä½“æ˜¯å¦æ˜¯éª¨éª¼ç‰©ä½“
         if (selectedAss[i].GetClass( )->IsChildOf<USkeletalMesh>( ))
         {
-            //Èç¹ûÊÇ¹Ç÷ÀÎïÌå¾Í¿ÉÒÔ¸´ÖÆ²ÄÖÊÁË
-            UE_LOG(LogTemp, Log, TEXT("%s"), *(selectedAss[i].GetFullName( )));
+            //å¦‚æœæ˜¯éª¨éª¼ç‰©ä½“å°±å¯ä»¥å¤åˆ¶æè´¨äº†
+            UE_LOG(LogTemp, Log, TEXT("å¼€å§‹å¤åˆ¶æè´¨ %s"), *(selectedAss[i].GetFullName( )));
 
-            UObject* skinObj = selectedAss[i].ToSoftObjectPath( ).TryLoad( );// assLoad.LoadAsset(selectedAss[i].GetFullName( ));
-            USkeletalMesh *copyTrange = Cast<USkeletalMesh>(skinObj);
-            UE_LOG(LogTemp, Log, TEXT("%s"), *(copyTrange->GetPathName( )));
+            USkeletalMesh *copyTrange = Cast<USkeletalMesh>(loadObj);
+            UE_LOG(LogTemp, Log, TEXT("ç¡®è®¤å¹¶åŠ è½½ä¸ºå‡ ä½•ç‰©ä½“ %s"), *(copyTrange->GetPathName( )));
             TArray<FSkeletalMaterial> trangeMat = copyTrange->Materials;
-            if (copySoure)
-            {
-                for (int m = 0; m < trangeMat.Num(); m++)
-                {
-                    trangeMat[m] = copySoure->Materials[m];
+            if (copySoureSkinObj)
+                for (int m = 0; m < trangeMat.Num( ); m++) {
+                    trangeMat[m] = copySoureSkinObj->Materials[m];
                     UE_LOG(LogTemp, Log, TEXT("%s"), *(trangeMat[m].MaterialInterface->GetPathName( )));
-                }                       
-            }
+                }
             copyTrange->Materials = trangeMat;
+
+        }//å¦‚æœæ˜¯å‡ ä½•ç¼“å­˜å°±å¤åˆ¶å‡ ä½•ç¼“å­˜
+        else if (selectedAss[i].GetClass( ) == UGeometryCache::StaticClass( )) {
+            UE_LOG(LogTemp, Log, TEXT("å¼€å§‹å¤åˆ¶æè´¨ %s"), *(selectedAss[i].GetFullName( )));
+
+            UGeometryCache* copyTrange = Cast<UGeometryCache>(loadObj);
+            TArray<UMaterialInterface *> trange = copyTrange->Materials;
+            
+            if (copySoureGeoCache) {
+                auto soure = Cast<UGeometryCache>(copySoureGeoCache);
+                for (int m = 0; m < trange.Num( ); m++)
+                {
+                    trange[m] = soure->Materials[m];
+                    UE_LOG(LogTemp, Log, TEXT("%s"), *(trange[m]->GetPathName()));
+                }
+            }
+            copyTrange->Materials = trange;
         }
     }
     return FReply::Handled( );

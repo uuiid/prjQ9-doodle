@@ -10,6 +10,7 @@ import scripts.Doodle_deleteSurplusWeight as deleteWeight
 import scripts.Doodle_deleteAttr as deleteAttr
 import scripts.export_usd as export_usd
 
+
 class DlsShelf(shelfBase._shelf):
     cloth_to_fbx = None
 
@@ -29,8 +30,9 @@ class DlsShelf(shelfBase._shelf):
         self.addButon("delect Weight", icon="icons/ue_delete_weight.png", command=self.deleteWeightPoint)
         self.addButon("delect Mixed deformation attr", icon="icons/doodle_delete_attr",
                       command=self.deleteAttr)
-        self.addButon("export usd", icon="icons/export_usd",command=self.exportUSD)
-        self.addButon("repair",     icon="icons/repair",command=self.repair)
+        self.addButon("export usd", icon="icons/export_usd.png", command=self.exportUSD)
+        self.addButon("repair", icon="icons/repair", command=self.repair)
+        self.addButon("randomColor" ,icon="icons/randomColor.png", command=self.randomColor)
 
     def polyremesh(self):
         Doodle_PolyRemesh.myRemesh()
@@ -75,6 +77,16 @@ class DlsShelf(shelfBase._shelf):
                     i.load(re.sub(r"V:/03_Workflow/Assets/[P,p]rop", r"V:/03_Workflow/Assets/props", i.__str__()))
                 except:
                     pass
+
+    def randomColor(self):
+        import pymel.core
+        import random
+        select_lists = pymel.core.ls(sl=True)
+        for select_obj in select_lists:
+            pymel.core.select(select_obj)
+            pymel.core.polyColorPerVertex(colorDisplayOption=True,
+                                          rgb=(random.random(), random.random(), random.random()))
+
 
 class DoodleUIManage(object):
     _instances = set()

@@ -2,7 +2,9 @@ import pathlib
 import json
 import subprocess
 import time
-import script.MySqlComm
+from PySide2 import QtCore
+from PySide2 import QtGui
+from PySide2 import QtWidgets
 
 # import script.doodlePlayer
 # if __name__ == '__main__':

@@ -22,15 +22,14 @@ PoSuiLongShouFengLeiTai
 
 def dubuRun3():
     """
-LinZhouJieDao
-TianHuoZongBuJu
 
     :return:
     :rtype:
     """
-    synfile = ["MiLin46_01_UE4"]
+    synfile = ["TianHuoZongBuJu","WenXinFengFangWu_UE4",
+               "wenxinfengyuanjing_UE4","XinLongsShouFeng"]
     LR = ["Left", "Right"]
-    ep = 55
+    ep = 57
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:
@@ -77,16 +76,16 @@ MiJiShanGuDongKuNei
 
 def chanAnRun():
     """
-    ChangAnCheng_LZ
-HuaiLaoBanDeDain_LZ
+YueYanJiuLou_ZL
 ZiFeiKeZhan_ZL
-
+岩浆02
+云端
     :return:
     :rtype:
     """
-    synfile = ["ChangAnCheng_LZ","HuaiLaoBanDeDain_LZ","ZiFeiKeZhan_ZL"]
+    synfile = ["YueYanJiuLou_ZL","ZiFeiKeZhan_ZL","岩浆02","云端"]
     LR = ["Left", "Right"]
-    ep = 3
+    ep = 6
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:

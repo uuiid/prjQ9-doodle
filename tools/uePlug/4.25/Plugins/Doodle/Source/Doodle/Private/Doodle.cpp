@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+ï»¿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "doodle.h"
 #include "doodleStyle.h"
@@ -70,7 +70,7 @@ TSharedRef<SDockTab> FdoodleModule::OnSpawnPluginTab(const FSpawnTabArgs& SpawnT
 			.HAlign(HAlign_Left)
 			.VAlign(VAlign_Top)
 			[
-				SNew(DoodleCopyMat)//ÕâÀï´´½¨ÎÒÃÇ×Ô¼ºµÄ½çÃæ
+				SNew(DoodleCopyMat)//è¿™é‡Œåˆ›å»ºæˆ‘ä»¬è‡ªå·±çš„ç•Œé¢
 			]
 		];
 }
