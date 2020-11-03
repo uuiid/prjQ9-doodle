@@ -59,10 +59,13 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
         install_maya: QtWidgets.QAction = install_plug.addAction("安装maya插件")
         install_maya.triggered.connect(self.installMaya)
 
-        install_ue: QtWidgets.QAction = install_plug.addAction("安装ue插件到项目")
-        install_ue.triggered.connect(self.installUE)
+        install_ue_425: QtWidgets.QAction = install_plug.addAction("安装ue插件到项目(4.25)")
+        install_ue_425.triggered.connect(lambda :self.installUE(425))
 
-        install_ue_app: QtWidgets.QAction = install_plug.addAction("安装ue插件(永久)")
+        install_ue_426:QtWidgets.QAction = install_plug.addAction("安装ue插件到项目(4.26)")
+        install_ue_426.triggered.connect(lambda: self.installUE(426))
+
+        install_ue_app: QtWidgets.QAction = install_plug.addAction("安装ue插件(永久 4.25)")
         install_ue_app.triggered.connect(self.installUEAppPlug)
 
         setmenu = menu.addAction('设置')
@@ -162,18 +165,25 @@ class SystemTrayIcon(QtWidgets.QSystemTrayIcon, script.DoodleCoreApp.core):
             maya_plug_path.mkdir(parents=True, exist_ok=True)
         maya_plug_path.joinpath("Doodle.mod").write_text(mode)
 
-    def installUE(self):
+    def installUE(self,version:int):
         file, file_type = QtWidgets.QFileDialog.getOpenFileName(None,
                                                                 "选择ue项目",
                                                                 "",
                                                                 "files (*.uproject)")
         if file:
             path = pathlib.Path(file)
+            if version == 425:
+                plug_path_str = "tools/uePlug/4.25/Plugins"
+            elif version == 426:
+                plug_path_str = "tools/uePlug/4.26/Plugins"
+            else:
+                plug_path_str = "tools/uePlug/4.25/Plugins"
+
             if path.parent.joinpath("Plugins", "Doodle").exists():
                 os.remove(path.parent.joinpath("Plugins","Doodle"))
             QtWidgets.QMessageBox.warning(None, "警告:", f"复制文件需要一些时间,完成后请重启ue4",
                                           QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-            shutil.copytree("tools/uePlug/4.25/Plugins",path.parent.joinpath("Plugins"))
+            shutil.copytree(plug_path_str,path.parent.joinpath("Plugins"))
             QtWidgets.QMessageBox.warning(None, "警告:", "复制完成",
                                           QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
 

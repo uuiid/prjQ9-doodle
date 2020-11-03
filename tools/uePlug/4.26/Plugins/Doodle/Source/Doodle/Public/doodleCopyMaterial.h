@@ -20,8 +20,6 @@ private:
     FReply getSelect( );
     FReply CopyMateral( );
 
-    FReply BathImport( );
-    TArray<FString> OpenFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& FileTypes);
 private:
     USkeletalMesh* copySoureSkinObj;
     UObject* copySoureGeoCache;

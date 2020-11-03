@@ -28,11 +28,9 @@ public class doodle : ModuleRules
 			new string[]
 			{
 				"Core",
-
                 "ContentBrowser",
                 "EditorScriptingUtilities",
 				"GeometryCache",
-				"AlembicImporter",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -49,15 +47,9 @@ public class doodle : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
-
                 "ContentBrowser",
                 "EditorScriptingUtilities",
-				"GeometryCache",  //复制材质依赖
-				"AssetTools",     //资产工具 导入依赖
-
-				"DesktopPlatform",//桌面依赖  打开文件对话框的依赖
-				"AlembicImporter",//abc导入依赖
-				"AlembicLibrary",
+				"GeometryCache",
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

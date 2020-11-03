@@ -12,143 +12,155 @@ from PySide2 import QtGui
 from PySide2 import QtWidgets
 
 
-def addPlug():
-    maya.cmds.loadPlugin('AbcExport.mll')
-    maya.cmds.loadPlugin('AbcImport.mll')
+class exportUe:
 
+    def __init__(self):
+        # 加载需要的插件
+        maya.cmds.loadPlugin('AbcExport.mll')
+        maya.cmds.loadPlugin('AbcImport.mll')
 
-def getoutFileName(outtype, older, root):
-    exname = ""
-    # get name space
-    inum = 0
-    while inum < len(pymel.core.selected()):
-        namesp = pymel.core.selected()[inum].namespace()
-        if namesp != "":
-            break
-        inum = inum + 1
-    try:
-        namesp = namesp.split(":")[-2].replace("_", "-")
-    except:
-        namesp = ""
-    else:
-        print(namesp)
+        filename = maya.cmds.file(q=True, sn=True, shn=True)
+        self.filename = filename.split('.')[0]
+        self._eps = 0
+        self._shot = 0
+        self._shotab = ""
+        self.start = int(maya.cmds.playbackOptions(query=True, min=True))
+        self.end = int(maya.cmds.playbackOptions(query=True, max=True))
 
-    if outtype not in ["abc", "fbx"]:
-        return exname
-    older_B = older
-    older = "/" + older
-    if older == "/cam":
-        namesp = ""
-        older = ""
-    # Get scene name
-    print(namesp)
-    filename = maya.cmds.file(q=True, sn=True, shn=True)
-    filename = filename.split('.')[0]
+        self.path = "C:/"
+        self.root = "W:/"
+        self.name = "tmp.ma"
+        self.selects = pymel.core.selected()
 
-    print(filename)
-    # Get the end and start frames of the scene
-    start = maya.cmds.playbackOptions(query=True, min=True)
-    end = maya.cmds.playbackOptions(query=True, max=True)
+    def analyseFileName(self):
+        name_parsing_ep = re.findall("ep\d+", self.filename)
+        name_parsing_shot = re.findall("sc\d+[_BCD]", self.filename)
+        if name_parsing_ep and name_parsing_shot:
+            try:
+                self._eps = int(name_parsing_ep[0][2:])
+                self._shot = int(name_parsing_shot[0][2:-1])
+                shotab = name_parsing_shot[0][-1:]
+                if shotab != "_":
+                    self._shotab = shotab
+            except NameError:
+                print("not get episodes and shots")
 
-    start = int(start)
-    end = int(end)
-    print(start)
-    print(end)
-
-    name_parsing_ep = re.findall("ep\d+", filename)
-    name_parsing_shot = re.findall("sc\d+[_BCD]", filename)
-    if name_parsing_ep and name_parsing_shot:
+    def createPath(self,suffix,extype):
+        for sel in self.selects:
+            namesp = sel.namespace()
+            if namesp:
+                break
         try:
-            _eps = int(name_parsing_ep[0][2:])
-        except NameError:
-            _eps = 1
-        try:
-            _shot = int(name_parsing_shot[0][2:-1])
-            shotab = name_parsing_shot[0][-1:]
-            if shotab != "_":
-                _shotab = shotab
-            else:
-                _shotab = ""
-        except NameError:
-            _shot = 1
-            _shotab = ""
-        tfilepath = "{root_}/03_Workflow/shots/ep{eps:0>3d}/" \
-                    "sc{shot:0>4d}{shotab}/Scenefiles/{dep}/{aim}".format(eps=_eps,
-                                                                          shot=_shot,
-                                                                          shotab=_shotab,
-                                                                          dep=filename.split("_")[3],
-                                                                          aim=filename.split("_")[4],
-                                                                          root_=root)
-        tfilepath = mkdir(tfilepath)
-        filepath = filename.split("_")
-        exname = tfilepath + "/" + filepath[0] + "_" + filepath[1] + "_" + filepath[2] + "_" + filepath[
-            3] + "_" + filepath[4] \
-                 + "_" + "export-" + older_B + "_" + namesp + "_" + "." + str(start) + "-" + str(
-            end) + "." + outtype
-    return [os.path.abspath(exname), start, end]
+            namesp = namesp.split(":")[-2].replace("_", "-")
+        except:
+            namesp =""
+
+        if suffix not in ["abc","fbx"]:
+            return
+        if self.selects[0] in pymel.core.ls(type="camera",l=True):
+            namesp = ""
+            extype = "cam"
+
+        self.path = "{root_}/03_Workflow/shots/ep{eps:0>3d}/" \
+                    "sc{shot:0>4d}{shotab}/Scenefiles/{dep}/{aim}" \
+            .format(
+            eps=self._eps,
+            shot=self._shot,
+            shotab=self._shotab,
+            dep=self.filename.split("_")[3],
+            aim=self.filename.split("_")[4],
+            root_=self.root
+        )
+        self.makePath()
+        filecom = self.filename.split("_")
+        self.name = "{f1}_{f2}_{f3}_{f4}_{f5}_export-{oa}_{ns}_.{st}-{end}.{su}"\
+        .format(
+            f1=filecom[0],
+            f2=filecom[1],
+            f3=filecom[2],
+            f4=filecom[3],
+            f5=filecom[4],
+            oa=extype,
+            ns=namesp,
+            st=self.start,
+            end=self.end,
+            su=suffix
+        )
+        print("path --> {}".format(self.path))
+        print("name --> {}".format(self.name))
+
+    def makePath(self):
+        myisExis = os.path.exists(self.path)
+        if not myisExis:
+            os.makedirs(self.path)
+            print(self.path + " ok")
+        else:
+            print(self.path + " yi Zai")
+
+    def export(self,nump):
+        self.selects = pymel.core.selected()
+        if not self.selects:
+            return
+        if not self.getRoot():
+            return
+        self.analyseFileName()
 
 
-def mkdir(path):
-    myisExis = os.path.exists(path)
-    if not myisExis:
-        os.makedirs(path)
-        print(path + " ok")
-        return path
-    else:
-        print(path + " yi Zai")
-        return path
+        if nump == "two":
+            self.createPath("fbx", "repair")
+            exMesh = pymel.core.duplicate(self.selects)
+            exMesh = pymel.core.polyUnite(exMesh)
+            pymel.core.currentTime(self.end, update=True, edit=True)
+        else:
+            self.createPath("fbx","cam")
+        pymel.core.mel.eval("FBXExportBakeComplexAnimation -v true")
+        pymel.core.mel.eval("FBXExportSmoothingGroups -v true")
+        pymel.core.mel.eval("FBXExportConstraints -v true")
+        pymel.core.mel.FBXExport(f="{}/{}".format(self.path,self.name),s=True)
+
+        if nump == "two":
+            self.createPath("abc","repair")
+            abcexmashs = ""
+            exAbc = pymel.core.polyUnite(self.selects)
+            for exmash in exAbc:
+                abcexmashs = "{} -root {}".format(abcexmashs,exmash)
+
+            abcExportCom = """AbcExport -j "-frameRange {f1} {f2} -uvWrite -writeFaceSets -worldSpace -dataFormat ogawa {mash} -file {f0}" """ \
+                .format(f0="{}/{}".format(self.path,self.name).replace("\\", "/"), f1=self.start, f2=self.end, mash=abcexmashs)
+            pymel.core.mel.eval(abcExportCom)
+        print(self.path)
 
 
-def export(nump):
-    exmashs = maya.cmds.ls(sl=True, long=True)
-    if exmashs != "":
+    def getRoot(self):
         box = QtWidgets.QMessageBox()
         dubu_Butten = QtWidgets.QPushButton()
         dubu_Butten.setText("duBuXiaoYao")
-        dubu = box.addButton(dubu_Butten, QtWidgets.QMessageBox.AcceptRole)
+        box.addButton(dubu_Butten, QtWidgets.QMessageBox.AcceptRole)
 
         chan_butten = QtWidgets.QPushButton()
         chan_butten.setText("changAnHuanJie")
-        chan = box.addButton(chan_butten, QtWidgets.QMessageBox.AcceptRole)
+        box.addButton(chan_butten, QtWidgets.QMessageBox.AcceptRole)
+
+        user = QtWidgets.QPushButton()
+        user.setText("custom")
+        box.addButton(user, QtWidgets.QMessageBox.AcceptRole)
+
+        my_quit_ = QtWidgets.QPushButton()
+        my_quit_.setText("quit")
+        box.addButton(my_quit_, QtWidgets.QMessageBox.AcceptRole)
+
         box.exec_()
         while 1:
             if box.clickedButton() == dubu_Butten:
-                root = "V:"
+                self.root = "V:"
                 break
             elif box.clickedButton() == chan_butten:
-                root = "X:"
+                self.root = "X:"
                 break
-        print(exmashs)
-        fileinabc = getoutFileName("abc", "repair", root)
-        if nump == "two":
-            fileinfbx = getoutFileName("fbx", "repair", root)
-            exmashFBX = maya.cmds.duplicate(exmashs)
-            exmashFBX = maya.cmds.ls(sl=True, long=True)
-            maya.cmds.polyUnite(exmashFBX, n="exfbx")
-            exmashFBX = maya.cmds.ls(sl=True, long=True)
-            maya.cmds.currentTime(fileinabc[2], update=True, edit=True)
-        else:
-            fileinfbx = getoutFileName("fbx", "cam", root)
-        print(fileinfbx)
-        maya.mel.eval("FBXExportBakeComplexAnimation -v true")
-        maya.mel.eval("FBXExportSmoothingGroups -v true")
-        maya.mel.eval("FBXExportConstraints -v true")
-        maya.cmds.FBXExport("-file", fileinfbx[0], "-s")
-        if nump == "two":
-            maya.cmds.delete(exmashFBX)
+            elif box.clickedButton() == user:
+                self.root = QtWidgets.QFileDialog().getExistingDirectory()
+                break
+            elif box.clickedButton() == my_quit_:
+                return False
+        return True
 
-        if nump == "two":
-            abcexmashs = ""
-            print(fileinabc)
-            for exmash in exmashs:
-                abcexmashs = abcexmashs + "-root " + exmash + " "
-
-            # abcExportCom = 'AbcExport -j "-frameRange ' + str(fileinabc[1]) + " " + str(
-            #     fileinabc[2]) + " -worldSpace -dataFormat ogawa " + abcexmashs + "-file " + fileinabc[0].replace("\\",
-            #                                                                                                      "/") + '"'   -uvWrite
-            abcExportCom = """AbcExport -j "-frameRange {f1} {f2} -uvWrite -writeFaceSets -worldSpace -dataFormat ogawa {mash} -file {f0}" """ \
-                .format(f0=fileinabc[0].replace("\\", "/"), f1=fileinabc[1], f2=fileinabc[2], mash=abcexmashs)
-            maya.mel.eval(abcExportCom)
-            # This is a command to export FBX
-    else:
-        pass

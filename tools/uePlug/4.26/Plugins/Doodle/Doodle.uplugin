@@ -10,7 +10,7 @@
 	"DocsURL": "",
 	"MarketplaceURL": "",
 	"SupportURL": "",
-	"EngineVersion": "4.25.0",
+	"EngineVersion": "4.26.0",
 	"CanContainContent": true,
 	"Installed": true,
 	"Modules": [
@@ -23,10 +23,6 @@
 	"Plugins": [
 		{
 			"Name": "EditorScriptingUtilities",
-			"Enabled": true
-		},
-		{
-			"Name": "AlembicImporter",
 			"Enabled": true
 		},
 		{

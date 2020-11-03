@@ -10,6 +10,9 @@ import scripts.Doodle_deleteSurplusWeight as deleteWeight
 import scripts.Doodle_deleteAttr as deleteAttr
 import scripts.export_usd as export_usd
 
+from PySide2 import QtCore
+from PySide2 import QtGui
+from PySide2 import QtWidgets
 
 class DlsShelf(shelfBase._shelf):
     cloth_to_fbx = None
@@ -35,33 +38,42 @@ class DlsShelf(shelfBase._shelf):
         self.addButon("randomColor" ,icon="icons/randomColor.png", command=self.randomColor)
 
     def polyremesh(self):
+        self.re()
         Doodle_PolyRemesh.myRemesh()
 
     def exportCam(self):
-        Doodle_exportUe.export("one")
+        self.re()
+        Doodle_exportUe.exportUe().export("one")
 
     def exportAbc(self):
-        Doodle_exportUe.export("two")
+        self.re()
+        Doodle_exportUe.exportUe().export("two")
 
     def BakeAimCam(self):
+        self.re()
         Doodle_cam.camBakeAim()
 
     def clearScane(self):
+        self.re()
         Doodle_clear.clearAndUpload().clearScane()
 
     def clothToFbx(self):
+        self.re()
         if self.cloth_to_fbx:
             self.cloth_to_fbx.show()
         else:
             self.cloth_to_fbx = Doodle_dem_bone.DleClothToFbx().show()
 
     def deleteWeightPoint(self):
+        self.re()
         deleteWeight.deleteSurplusWeight().show()
 
     def deleteAttr(self):
+        self.re()
         deleteAttr.deleteShape().show()
 
     def exportUSD(self):
+        self.re()
         export_usd.export()
 
     def repair(self):
@@ -86,6 +98,17 @@ class DlsShelf(shelfBase._shelf):
             pymel.core.select(select_obj)
             pymel.core.polyColorPerVertex(colorDisplayOption=True,
                                           rgb=(random.random(), random.random(), random.random()))
+    def re(self):
+        key = QtWidgets.QApplication.keyboardModifiers()
+        if key == QtCore.Qt.ShiftModifier:
+            reload(Doodle_PolyRemesh)
+            reload(Doodle_exportUe)
+            reload(Doodle_cam)
+            reload(Doodle_clear)
+            reload(Doodle_dem_bone)
+            reload(deleteWeight)
+            reload(deleteAttr)
+            reload(export_usd)
 
 
 class DoodleUIManage(object):
