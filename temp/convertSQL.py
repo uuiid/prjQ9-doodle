@@ -122,8 +122,8 @@ class assType(Base):
                                 unique=True)
     ass_type: str = sqlalchemy.Column(sqlalchemy.VARCHAR(64))
 
-    project_id = sqlalchemy.Column(sqlalchemy.databases.mssql.BIGINT, sqlalchemy.ForeignKey("project.id"), unique=True)
-    project = sqlalchemy.orm.relationship("project", back_populates="assType")
+    project_id = sqlalchemy.Column(sqlalchemy.databases.mssql.BIGINT, sqlalchemy.ForeignKey("project.id"))
+    project = sqlalchemy.orm.relationship("project", back_populates="assType_list")
 
     baseFile_list: typing.List[baseFile] = sqlalchemy.orm.relationship(
         "baseFile",
@@ -314,9 +314,9 @@ class convertSql:
         self.conn_duo: DoodleServer.DoodleSql.commMysql = None
         self.set = DoodleServer.DoodleSet.Doodlesetting()
 
-        self.assType: typing.List[typing.Dict[str, assType]] = [{}]
-        self.shotClass = [{}]
-        self.shotType = [{}]
+        self.assType: typing.List[typing.Dict[str, assType]] = [{},{}]
+        self.shotClass: typing.List[typing.Dict[str, shotClass]] = [{},{}]
+        self.shotType: typing.List[typing.Dict[str, shotType]] = [{},{}]
 
     @contextlib.contextmanager
     def session(self) -> sqlalchemy.orm.session.Session:
@@ -384,32 +384,37 @@ class convertSql:
                             self.assType[prj_index]["scenes"].baseFile_list.append(ass_file)
                         elif re.findall("rig", oldAssType.file_type):
                             self.chickAssType(prj_index, "rig")
-                            self.assType[prj_index]["scenes"].baseFile_list.append(ass_file)
+                            self.assType[prj_index]["rig"].baseFile_list.append(ass_file)
                         elif re.findall("sourceimages", oldAssType.file_type):
                             self.chickAssType(prj_index, "sourceimages")
-                            self.assType[prj_index]["scenes"].baseFile_list.append(ass_file)
+                            self.assType[prj_index]["sourceimages"].baseFile_list.append(ass_file)
                         elif re.findall("_low", oldAssType.file_type):
                             self.chickAssType(prj_index, "_low")
                             self.assType[prj_index]["_low"].baseFile_list.append(ass_file)
+                        elif re.findall("screenshot",oldAssType.file_type):
+                            self.chickAssType(prj_index, "screenshot")
+                            self.assType[prj_index]["screenshot"].baseFile_list.append(ass_file)
                         else:
                             raise Exception()
         pass
 
     def chickAssType(self, prj_index, name_type: str):
-        if self.assType[prj_index][name_type]:
+        if name_type not in self.assType[prj_index]:
             ass_type = assType(ass_type=name_type)
             self.prj_list[prj_index].assType_list.append(ass_type)
+            self.assType[prj_index][name_type] = ass_type
 
     def chickShotClass(self, prj_index, name_type: str):
-        if self.shotClass[prj_index][name_type]:
+        if name_type not in self.shotClass[prj_index]:
             shot_class = shotClass(shot_class=name_type)
             self.prj_list[prj_index].shotClass_list.append(shot_class)
+            self.shotClass[prj_index][name_type] = shot_class
 
     def chickShotType(self, prj_index, name_type: str):
-        if self.shotType[prj_index][name_type]:
-            shot_type = shotType(shot_type= name_type)
-            self.prj_list[prj_index].shotClass_list.append(shot_type)
-
+        if name_type not in self.shotType[prj_index]:
+            shot_type = shotType(shot_type=name_type)
+            self.prj_list[prj_index].shotType_list.append(shot_type)
+            self.shotType[prj_index][name_type] = shot_type
 
     def getOldShot(self, prj_index):
         self.shot_old = DoodleServer.DoodleCore.PrjShot(self.set)
@@ -426,14 +431,8 @@ class convertSql:
                 eps.shots_list.append(shot)
                 # 镜头类别循环
                 for old_class in old_shot.addfileClass:
-                    # shot_class = shotClass(shot_class=old_class.file_class)
-                    # shot.shotClass_list.append(shot_class)
                     # 镜头type循环
                     for old_type in old_class.addfileType:
-                        # shot_type = shotType(shot_type=old_type.file_type)
-                        # shot_class.shotType_list.append(shot_type)
-                        # shot.shotType_list.append(shot_type)
-
                         for old_file in old_type.addfileAttributeInfo:
                             base_file = baseFile(file=old_file.file, fileSuffixes=old_file.fileSuffixes,
                                                  user=old_file.user, version=old_file.version,
@@ -444,6 +443,47 @@ class convertSql:
                             self.prj_list[prj_index].baseFile_list.append(base_file)
                             eps.baseFile_list.append(base_file)
                             shot.baseFile_list.append(base_file)
+                            if re.findall("[A,a]nm", old_class.file_class):
+                                self.chickShotClass(prj_index, "Anm")
+                                self.shotClass[prj_index]["Anm"].baseFile_list.append(base_file)
+                            elif re.findall("VFX", old_class.file_class):
+                                self.chickShotClass(prj_index, "VFX")
+                                self.shotClass[prj_index]["VFX"].baseFile_list.append(base_file)
+                            elif re.findall("Light",old_class.file_class):
+                                self.chickShotClass(prj_index, "Light")
+                                self.shotClass[prj_index]["Light"].baseFile_list.append(base_file)
+                            else:
+                                raise Exception()
+
+                            if re.findall("FB_VFX", old_type.file_type):
+                                self.chickShotType(prj_index, "FB_VFX")
+                                self.shotType[prj_index]["FB_VFX"].baseFile_list.append(base_file)
+
+                            elif re.findall("Ani", old_type.file_type):
+                                self.chickShotType(prj_index, "Animation")
+                                self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
+                            elif re.findall("donghua", old_type.file_type):
+                                self.chickShotType(prj_index, "Animation")
+                                self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
+                            elif re.findall("anm", old_type.file_type):
+                                self.chickShotType(prj_index, "Animation")
+                                self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
+                            elif re.findall("[f,F][B,b][x,X]", old_type.file_type):
+                                self.chickShotType(prj_index, "Animation")
+                                self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
+
+                            elif re.findall("export", old_type.file_type):
+                                self.chickShotType(prj_index, "maya_export")
+                                self.shotType[prj_index]["maya_export"].baseFile_list.append(base_file)
+                            elif re.findall("FB_Light", old_type.file_type):
+                                self.chickShotType(prj_index, "FB_Light")
+                                self.shotType[prj_index]["FB_Light"].baseFile_list.append(base_file)
+
+                            elif re.findall("screenshot", old_class.file_class):
+                                self.chickShotType(prj_index, "screenshot")
+                                self.shotType[prj_index]["screenshot"].baseFile_list.append(base_file)
+                            else:
+                                pass
                             # shot_class.baseFile_list.append(base_file)
                             # shot_type.baseFile_list.append(base_file)
                             # if not base_file.shots:
@@ -493,6 +533,6 @@ class convertSql:
 
 
 if __name__ == '__main__':
-    Base.metadata.create_all(DoodleServer.DoodleSql.commMysql("doodle_main", "", "").engine)
-    # convertSql().run()
+    # Base.metadata.create_all(DoodleServer.DoodleSql.commMysql("doodle_main", "", "").engine)
+    convertSql().run()
     # convertSql().patch()
