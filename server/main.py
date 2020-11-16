@@ -1,4 +1,6 @@
+import logging
 import os
+import pathlib
 
 import pyftpdlib.authorizers as ftpauth
 import pyftpdlib.handlers as ftphand
@@ -40,4 +42,8 @@ def addUser(authorizer):
 
 
 if __name__ == '__main__':
+    logpath = pathlib.Path("F:/doodle/var/log")
+    if not logpath.exists():
+        logpath.mkdir(parents=True)
+    logging.basicConfig(filename='F:/doodle/var/log/pyftpd.log', level=logging.INFO)
     maim()

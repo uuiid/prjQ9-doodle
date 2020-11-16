@@ -209,7 +209,7 @@ class Episodes(DoleSql.Base):
                                                                        order_by="fileClass.file_class")
     addFileType: typing.List[fileType] = sqlalchemy.orm.relationship("fileType", back_populates="episodes",
                                                                      order_by="fileType.file_type")
-    # 添加资产ue场景反射
+    # 添加资产反射
     addfileAttributeInfo = sqlalchemy.orm.relationship("fileAttributeInfo", back_populates="episodes",
                                                        order_by="fileAttributeInfo.filetime.desc()")
 

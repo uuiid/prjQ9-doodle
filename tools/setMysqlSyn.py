@@ -24,13 +24,12 @@ def dubuRun3():
     """
 
 
-
     :return:
     :rtype:
     """
-    synfile = ["JingShenShiJie"]
+    synfile = ["ManZuShengDi","ManZuYingDi"]
     LR = ["Left", "Right"]
-    ep = 59
+    ep = 66
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:

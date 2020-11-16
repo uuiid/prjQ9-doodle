@@ -21,6 +21,7 @@ private:
     FReply CopyMateral( );
 
     FReply BathImport( );
+    FReply BathReameAss( );
     TArray<FString> OpenFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& FileTypes);
 private:
     USkeletalMesh* copySoureSkinObj;

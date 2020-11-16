@@ -17,6 +17,11 @@
 #include "AbcImporter.h"
 #include "AbcImportSettings.h"
 #include "AssetImportTask.h"
+#include "ObjectTools.h"
+
+//重命名资产
+#include "EditorAssetLibrary.h"
+//#include "doodleAbcFactory.h"
 
 void DoodleCopyMat::Construct(const FArguments& Arg)
 {
@@ -56,6 +61,16 @@ void DoodleCopyMat::Construct(const FArguments& Arg)
             [
                 SNew(STextBlock).Text(FText::FromString("bath import"))
             ]
+            ]
+        + SHorizontalBox::Slot( )
+            .AutoWidth()
+            .HAlign(HAlign_Left)
+            .Padding(FMargin(1.f,1.f))
+            [
+                SNew(SButton)
+                .OnClicked(this, &DoodleCopyMat::BathReameAss)[
+                    SNew(STextBlock).Text(FText::FromString("bath rename"))
+                ]
             ]
     ];
 }
@@ -147,12 +162,14 @@ FReply DoodleCopyMat::CopyMateral( )
             UE_LOG(LogTemp, Log, TEXT("开始复制材质 %s"), *(selectedAss[i].GetFullName( )));
 
             USkeletalMesh* copyTrange = Cast<USkeletalMesh>(loadObj);
+
             UE_LOG(LogTemp, Log, TEXT("确认并加载为几何物体 %s"), *(copyTrange->GetPathName( )));
             TArray<FSkeletalMaterial> trangeMat = copyTrange->Materials;
             if (copySoureSkinObj)
                 for (int m = 0; m < trangeMat.Num( ); m++) {
                     trangeMat[m] = copySoureSkinObj->Materials[m];
                     UE_LOG(LogTemp, Log, TEXT("%s"), *(trangeMat[m].MaterialInterface->GetPathName( )));
+                    //材质插槽命名
                 }
             copyTrange->Materials = trangeMat;
 
@@ -179,10 +196,37 @@ FReply DoodleCopyMat::CopyMateral( )
 
 FReply DoodleCopyMat::BathImport( )
 {
-    auto fileName = OpenFileDialog("Bath import abc file", "", " abc file|*.abc;");
+    FlushRenderingCommands( );
+    //auto fileName = OpenFileDialog("Bath import abc file", "", " abc file|*.abc;");
     //TScriptInterface<IAssetTools> test = UAssetToolsHelpers::GetAssetTools( );
-    IAssetTools& assetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get( );
-    auto arr_string = assetTools.ImportAssetsWithDialog(FString("/game/test"));
+    
+    //IAssetTools& assetTools = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get( );
+    
+    //重命名资产
+    UEditorAssetLibrary::RenameAsset("/Game/Developers/teXiao/Collections/NewMaterial", "/Game/Developers/teXiao/Collections/NewMaterial2");
+    //auto arr_string = assetTools.ImportAssetsWithDialog(FString("/game/test"));
+    
+    //auto abc_import = NewObject<FAbcImporter>( );
+    //auto import = FAbcImporter( );
+
+    //auto errCore = import.OpenAbcFileForImport("D:/tmp/test.abc");
+
+    //if (errCore != AbcImportError_NoError)
+    //{
+    //    GEditor->GetEditorSubsystem<UImportSubsystem>()->BroadcastAssetPreImport()
+    //}
+    
+    //auto test = UAlembicImportFactory::StaticClass( );
+    //auto test1 = test->GetDefaultObject( );
+
+
+
+
+
+
+
+
+
     //auto open_ex = UAssetToolsHelpers::GetAssetTools( );
     //auto arr_string = open_ex->ImportAssetsWithDialog(FString("/game/test"));
     //
@@ -226,16 +270,72 @@ FReply DoodleCopyMat::BathImport( )
     //importTask->bAutomated = true;
     //importTask->bSave = true;
 
-    for (auto&& item : fileName) {
-        UE_LOG(LogTemp, Log, TEXT("%s"), *item);
-        //if (!abc_import_factory->FactoryCanImport(item)) {
-        //    UE_LOG(LogTemp, Log, TEXT("无法导入 %s 文件"), *item);
-        //    continue;
-        //}
+    //for (auto&& item : fileName) {
+    //    UE_LOG(LogTemp, Log, TEXT("%s"), *item);
+    //    //if (!abc_import_factory->FactoryCanImport(item)) {
+    //    //    UE_LOG(LogTemp, Log, TEXT("无法导入 %s 文件"), *item);
+    //    //    continue;
+    //    //}
+
+    //}
+
+    return FReply::Handled( );
+}
+
+FReply DoodleCopyMat::BathReameAss( )
+{
+    FContentBrowserModule& contentBrowserModle = FModuleManager::Get( ).LoadModuleChecked<FContentBrowserModule>("ContentBrowser");
+    TArray<FAssetData> selectedAss;
+    contentBrowserModle.Get( ).GetSelectedAssets(selectedAss);
+
+    for (auto&& item : selectedAss) {
+        UObject* loadObj = item.ToSoftObjectPath( ).TryLoad( );
+        if (loadObj == nullptr) continue;
+        if (!item.GetClass( )->IsChildOf<USkeletalMesh>( )) continue;
+        //确认时骨骼物体
+        USkeletalMesh* skinObj = Cast<USkeletalMesh>(loadObj);
+        UE_LOG(LogTemp, Log, TEXT("确认并加载骨骼物体 %s"), *(skinObj->GetPathName( )));
+        if (skinObj == nullptr) continue;
+        for (auto& mat : skinObj->Materials)
+        {
+            if (mat.ImportedMaterialSlotName.IsValid( )) {
+                
+                if (mat.MaterialInterface->GetMaterial( ) != nullptr)
+                {
+                    mat.MaterialInterface->GetMaterial( )->bUsedWithGeometryCache = true;
+                    UE_LOG(LogTemp, Log, TEXT("使材料支持集合缓存 %s"), *(mat.MaterialInterface->GetPathName( )));
+
+                }
+                UE_LOG(LogTemp, Log, TEXT("确认材质插槽名称 %s"), *(mat.ImportedMaterialSlotName.ToString( )));
+                UEditorAssetLibrary::RenameAsset(mat.MaterialInterface->GetPathName( ),
+                                                 mat.MaterialInterface->GetPathName( )
+                                                 .Replace(
+                                                    *(mat.MaterialInterface->GetName( )),
+                                                    *(mat.ImportedMaterialSlotName.ToString( ))
+                                                          )
+                );
+                //auto test = mat.MaterialInterface->GetPathName( )
+                //    .Replace(*(mat.MaterialInterface->GetName( )),
+                //             *(mat.ImportedMaterialSlotName.ToString( )));
+                //FString left;
+                //FString reag;
+                //test.Split(".", &left, &reag);
+                //UE_LOG(LogTemp, Log,
+                //       TEXT("Test  %s  %s --> %s"),
+                //       *(test),
+                //       *(mat.MaterialInterface->GetName( )),
+                //       *(mat.ImportedMaterialSlotName.ToString( )));
+                UE_LOG(LogTemp, Log,
+                       TEXT("重命名材质 路径 %s  %s --> %s"),
+                       *(mat.MaterialInterface->GetPathName( )),
+                       *(mat.MaterialInterface->GetName( )),
+                       *(mat.ImportedMaterialSlotName.ToString( )));
+            }
+        }
 
     }
 
-    return FReply::Handled( );
+    return FReply::Handled();
 }
 
 TArray<FString> DoodleCopyMat::OpenFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& FileTypes) {

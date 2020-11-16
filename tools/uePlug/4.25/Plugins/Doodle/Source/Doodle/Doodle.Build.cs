@@ -58,6 +58,9 @@ public class doodle : ModuleRules
 				"DesktopPlatform",//桌面依赖  打开文件对话框的依赖
 				"AlembicImporter",//abc导入依赖
 				"AlembicLibrary",
+				"RenderCore",
+
+				"EditorScriptingUtilities",//重命名资产
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

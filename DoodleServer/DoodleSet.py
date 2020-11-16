@@ -5,6 +5,7 @@ import pathlib
 import threading
 
 import psutil
+import typing
 
 import DoodleServer.DoodleSql as Dolesql
 import DoodleServer.DoodleZNCHConvert as DoleConvert
@@ -178,8 +179,22 @@ class Doodlesetting(object):
         return [{i[0][0]: "{}/{}/{}".format(self.syn, self.projectname, i[0][1]),
                  i[1][0]: "{}/{}/{}".format(self.synSever,self.department,i[1][1])} for i in tmp]
 
+    def getsever_backup(self) -> typing.List[typing.Dict]:
+        """
+        返回服务器上的 同步目录设置
+        """
+        # 读取本地部门类型 以及每集类型
+        # 获得设置的文件路径
+        sql_com = f"SELECT DISTINCT value3, value4 FROM {self._projectname}.`configure` " \
+                  f"WHERE name='synpath' AND value='{self.department}' AND value2 ='{self.synEp:0>3d}'"
+        with self.my_sql.engine.connect() as connect:
+            data = connect.execute(sql_com).fetchall()
+        tmp = [data[i:i + 2] for i in range(0, len(data), 2)]
+        return [{i[0][0]: "{}".format(i[0][1]),
+                 i[1][0]: "{}".format(i[1][1])} for i in tmp]
     # @functools.lru_cache()
-    def __getseverPrjBrowser(self) -> dict:
+
+    def __getseverPrjBrowser(self) -> typing.List[typing.Dict]:
         """
         返回服务器上的project设置
         :return: dict

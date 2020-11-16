@@ -120,11 +120,11 @@ class exportUe:
 
         if nump == "two":
             self.createPath("abc","repair")
-            abcexmashs = ""
-            exAbc = pymel.core.polyUnite(self.selects)
-            for exmash in exAbc:
-                abcexmashs = "{} -root {}".format(abcexmashs,exmash)
-
+            exAbc = pymel.core.polyUnite(self.selects)[0]
+            abcexmashs = "-root |{}".format(exAbc)
+            # for exmash in exAbc:
+            #     abcexmashs = "{} -root {}".format(abcexmashs,exmash)
+            # -stripNamespaces
             abcExportCom = """AbcExport -j "-frameRange {f1} {f2} -uvWrite -writeFaceSets -worldSpace -dataFormat ogawa {mash} -file {f0}" """ \
                 .format(f0="{}/{}".format(self.path,self.name).replace("\\", "/"), f1=self.start, f2=self.end, mash=abcexmashs)
             pymel.core.mel.eval(abcExportCom)
