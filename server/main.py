@@ -49,5 +49,5 @@ if __name__ == '__main__':
     # config_log = config_log.joinpath('doodleServerLog.ini')
     # logging.config.fileConfig(config_log)
     logging.basicConfig(filename='F:/doodle/var/log/pyftpd.log', level=logging.INFO)
-    logging.FileHandler("F:/doodle/var/log/pyftpd.log", encoding='utf-8')
+    logging.FileHandler("F:/doodle/var/log/pyftpd.log", encoding='gbk')
     maim()

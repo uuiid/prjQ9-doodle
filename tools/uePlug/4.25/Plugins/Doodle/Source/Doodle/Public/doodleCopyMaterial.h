@@ -23,7 +23,9 @@ private:
     FReply BathImport( );
     FReply BathReameAss( );
     TArray<FString> OpenFileDialog(const FString& DialogTitle, const FString& DefaultPath, const FString& FileTypes);
-private:
+    FString OpenDirDialog(const FString& DialogTitle,
+                          const FString& DefaultPath);
+   private:
     USkeletalMesh* copySoureSkinObj;
     UObject* copySoureGeoCache;
 };

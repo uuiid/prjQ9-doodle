@@ -60,7 +60,6 @@ public class doodle : ModuleRules
 				"AlembicLibrary",
 				"RenderCore",
 
-				"EditorScriptingUtilities",//重命名资产
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

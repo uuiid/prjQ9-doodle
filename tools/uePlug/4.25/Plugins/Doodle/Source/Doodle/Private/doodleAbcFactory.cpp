@@ -10,7 +10,11 @@
 #include "AbcImportLogger.h"
 #include "AbcAssetImportData.h"
 
-UdoodleAbcFactory::UdoodleAbcFactory( ) {
+UdoodleAbcFactory::UdoodleAbcFactory( )
+    :UFactory(),
+    FReimportHandler(),
+    ImportSettings(NewObject<UAbcImportSettings>( )){
+    
     bCreateNew = false;
     bEditAfterNew = true;
     SupportedClass = nullptr;
@@ -19,15 +23,16 @@ UdoodleAbcFactory::UdoodleAbcFactory( ) {
     bText = false;
     bShowOption = false;
 
-    Formats.Add(TEXT("abc;Alembic"));
+    Formats.Add(TEXT("abc;Doodle_Alembic"));
     ImportPriority = 0.f;
+    AssetImportTask = NewObject<UAssetImportTask>( );
 }
 
 
 void UdoodleAbcFactory::PostInitProperties( )
 {
     Super::PostInitProperties( );
-    importSetting = UAbcImportSettings::Get( );
+    ImportSettings = UAbcImportSettings::Get( );
 }
 
 FText UdoodleAbcFactory::GetDisplayName( ) const
@@ -54,7 +59,7 @@ UObject* UdoodleAbcFactory::FactoryCreateFile(UClass* InClass, UObject* InParent
     FAbcImporter Import;
     EAbcImportError errorCode = Import.OpenAbcFileForImport(Filename);
 
-    importSetting->bReimport = false;
+    ImportSettings->bReimport = false;
 
     AdditionalImportedObjects.Empty( );
 
@@ -63,14 +68,14 @@ UObject* UdoodleAbcFactory::FactoryCreateFile(UClass* InClass, UObject* InParent
         GEditor->GetEditorSubsystem<UImportSubsystem>( )->BroadcastAssetPostImport(this, nullptr);
         return nullptr;
     }
-    importSetting->SamplingSettings.FrameStart = 1001;
-    importSetting->SamplingSettings.FrameEnd = Import.GetEndFrameIndex( );
+    ImportSettings->SamplingSettings.FrameStart = 1001;
+    ImportSettings->SamplingSettings.FrameEnd = Import.GetEndFrameIndex( );
     bOutOperationCanceled = false;
 
     UAbcImportSettings* scriptedStting = AssetImportTask ? Cast<UAbcImportSettings>(AssetImportTask->Options) : nullptr;
     if (scriptedStting)
     {
-        importSetting = scriptedStting;
+        ImportSettings = scriptedStting;
     }
     //输出日志
     const FString PageName = "Importing " + InName.ToString( ) + ".abc";
@@ -86,7 +91,7 @@ UObject* UdoodleAbcFactory::FactoryCreateFile(UClass* InClass, UObject* InParent
             NumThreads = FPlatformMisc::NumberOfCores( );
         }
         //导入文件
-        errorCode = Import.ImportTrackData(NumThreads, importSetting);
+        errorCode = Import.ImportTrackData(NumThreads, ImportSettings);
 
         if (errorCode != AbcImportError_NoError)
         {
@@ -96,7 +101,7 @@ UObject* UdoodleAbcFactory::FactoryCreateFile(UClass* InClass, UObject* InParent
         }
         else
         {//导入几何缓存
-            if (importSetting->ImportType == EAlembicImportType::GeometryCache)
+            if (ImportSettings->ImportType == EAlembicImportType::GeometryCache)
             {
                 UObject* GeometryCache = ImportGeometryCache(Import, InParent, Flags);
                 if (GeometryCache)
@@ -155,7 +160,7 @@ void UdoodleAbcFactory::SetReimportPaths(UObject* Obj, const TArray<FString>& Ne
 
 EReimportResult::Type UdoodleAbcFactory::Reimport(UObject* Obj)
 {
-    importSetting->bReimport = true;
+    ImportSettings->bReimport = true;
     const FString PageName = "Reimporting " + Obj->GetName( ) + ".abc";
     if (Obj->GetClass( ) == UGeometryCache::StaticClass( ))
     {
@@ -276,9 +281,9 @@ EReimportResult::Type UdoodleAbcFactory::ReimportGeometryCache(UGeometryCache* C
         return EReimportResult::Failed;
     }
     
-    importSetting->ImportType = EAlembicImportType::GeometryCache;
-    importSetting->SamplingSettings.FrameStart = 0;
-    importSetting->SamplingSettings.FrameEnd = Importer.GetEndFrameIndex( );
+    ImportSettings->ImportType = EAlembicImportType::GeometryCache;
+    ImportSettings->SamplingSettings.FrameStart = 0;
+    ImportSettings->SamplingSettings.FrameEnd = Importer.GetEndFrameIndex( );
 
     if (Cache->AssetImportData && Cache->AssetImportData->IsA<UAbcAssetImportData>( ))
     {
@@ -287,16 +292,15 @@ EReimportResult::Type UdoodleAbcFactory::ReimportGeometryCache(UGeometryCache* C
         Importer.RetrieveAssetImportData(ImportData);
     }
 
-    //if (bShowOption)
-    //{
-    //    TSharedPtr<SAlembicImportOptions> Options;
-    //    ShowImportOptionsWindow(Options, CurrentFilename, Importer);
-
-    //    if (!Options->ShouldImport( ))
-    //    {
-    //        return EReimportResult::Cancelled;
-    //    }
-    //}
+    if (bShowOption)
+    {
+        //TSharedPtr<SAlembicImportOptions> Options;
+        //ShowImportOptionsWindow(Options, CurrentFilename, Importer);
+        //if (!Options->ShouldImport( ))
+        //{
+        //    return EReimportResult::Cancelled;
+        //}
+    }
 
     int32 NumThreads = 1;
     if (FPlatformProcess::SupportsMultithreading( ))
@@ -305,7 +309,7 @@ EReimportResult::Type UdoodleAbcFactory::ReimportGeometryCache(UGeometryCache* C
     }
 
     // Import file	
-    ErrorCode = Importer.ImportTrackData(NumThreads, importSetting);
+    ErrorCode = Importer.ImportTrackData(NumThreads, ImportSettings);
 
     if (ErrorCode != AbcImportError_NoError)
     {
@@ -340,7 +344,7 @@ EReimportResult::Type UdoodleAbcFactory::ReimportGeometryCache(UGeometryCache* C
 
 void UdoodleAbcFactory::PopulateOptionsWithImportData(UAbcAssetImportData* ImportData)
 {
-    importSetting->SamplingSettings = ImportData->SamplingSettings;
+    ImportSettings->SamplingSettings = ImportData->SamplingSettings;
 }
 
 

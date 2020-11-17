@@ -29,7 +29,7 @@ public:
 	UdoodleAbcFactory( );
 
 	UPROPERTY( )
-	UAbcImportSettings* importSetting;
+	UAbcImportSettings* ImportSettings;
 	
 	UPROPERTY( )
 	bool bShowOption;
