@@ -1,39 +1,16 @@
-import pathlib
-import json
-import subprocess
-import time
-
 import sqlalchemy.orm
 
 import DoodleServer.DoodleSql
 import tools.ue_path
 
-# <editor-fold desc="表格">
-# it = []
-"""
-BiTaoGeDaBuJu
-BiTaoGeShiWuSuo_UE4
-LongShouFengGuangChangDeLeiTai_UE4
-PoSuiLongShouFengLeiTai
-
-
-"""
-
-
 def dubuRun3():
     """
-
-
-
-
-
-
     :return:
     :rtype:
     """
-    synfile = ["ManZuJiTan","ManZuShengDi","ManZuYingDi","TianKongSenLinXiaoLu"]
+    synfile = ["ManZuShengDi","ManZuYingDi","jinshengshijie"]
     LR = ["Left", "Right"]
-    ep = 63
+    ep = 65
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:
@@ -80,13 +57,12 @@ MiJiShanGuDongKuNei
 
 def chanAnRun():
     """
-
     :return:
     :rtype:
     """
-    synfile = ["SenLin_09","XiShi","YueYanJiuLou_ZL","ZiFeiKeZhan_ZL"]
+    synfile = ["ChanAnJieDao","ZhuiZhuXiaoXiang_ZL",]
     LR = ["Left", "Right"]
-    ep = 9
+    ep = 2
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:
@@ -103,7 +79,7 @@ def chanAnRun():
         eps = connect.execute(sql_com)
     # </editor-fold>
 
-dubuRun3()
+chanAnRun()
 # dubuRun()
 # for dep in ["Light", "VFX"]:
 #     synPath = pathlib.Path(f"W:\\configuration\\{dep}_synFile.json")

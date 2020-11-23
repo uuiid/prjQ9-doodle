@@ -199,6 +199,11 @@
            <widget class="QComboBox" name="projectCombo">
             <item>
              <property name="text">
+              <string>dubuxiaoyao3</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>dubuxiaoyao</string>
              </property>
             </item>
@@ -209,12 +214,12 @@
             </item>
             <item>
              <property name="text">
-              <string>dubuxiaoyao3</string>
+              <string>kuangshenmozun</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>kuangshenmozun</string>
+              <string>wanyufengshen</string>
              </property>
             </item>
            </widget>

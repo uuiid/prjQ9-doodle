@@ -314,9 +314,9 @@ class convertSql:
         self.conn_duo: DoodleServer.DoodleSql.commMysql = None
         self.set = DoodleServer.DoodleSet.Doodlesetting()
 
-        self.assType: typing.List[typing.Dict[str, assType]] = [{},{}]
-        self.shotClass: typing.List[typing.Dict[str, shotClass]] = [{},{}]
-        self.shotType: typing.List[typing.Dict[str, shotType]] = [{},{}]
+        self.assType: typing.List[typing.Dict[str, assType]] = [{}, {}]
+        self.shotClass: typing.List[typing.Dict[str, shotClass]] = [{}, {}]
+        self.shotType: typing.List[typing.Dict[str, shotType]] = [{}, {}]
 
     @contextlib.contextmanager
     def session(self) -> sqlalchemy.orm.session.Session:
@@ -377,8 +377,8 @@ class convertSql:
                         # ass_type.baseFile_list.append(ass_file)
                         ass_class.baseFile_list.append(ass_file)
                         if re.findall("_UE4", oldAssType.file_type):
-                            self.chickAssType(prj_index, "_UE4")
-                            self.assType[prj_index]["_UE4"].baseFile_list.append(ass_file)
+                            self.chickAssType(prj_index, "UE4")
+                            self.assType[prj_index]["UE4"].baseFile_list.append(ass_file)
                         elif re.findall("scenes", oldAssType.file_type):
                             self.chickAssType(prj_index, "scenes")
                             self.assType[prj_index]["scenes"].baseFile_list.append(ass_file)
@@ -389,9 +389,9 @@ class convertSql:
                             self.chickAssType(prj_index, "sourceimages")
                             self.assType[prj_index]["sourceimages"].baseFile_list.append(ass_file)
                         elif re.findall("_low", oldAssType.file_type):
-                            self.chickAssType(prj_index, "_low")
-                            self.assType[prj_index]["_low"].baseFile_list.append(ass_file)
-                        elif re.findall("screenshot",oldAssType.file_type):
+                            self.chickAssType(prj_index, "scenes_low")
+                            self.assType[prj_index]["scenes_low"].baseFile_list.append(ass_file)
+                        elif re.findall("screenshot", oldAssType.file_type):
                             self.chickAssType(prj_index, "screenshot")
                             self.assType[prj_index]["screenshot"].baseFile_list.append(ass_file)
                         else:
@@ -449,36 +449,64 @@ class convertSql:
                             elif re.findall("VFX", old_class.file_class):
                                 self.chickShotClass(prj_index, "VFX")
                                 self.shotClass[prj_index]["VFX"].baseFile_list.append(base_file)
-                            elif re.findall("Light",old_class.file_class):
+                            elif re.findall("Light", old_class.file_class):
                                 self.chickShotClass(prj_index, "Light")
                                 self.shotClass[prj_index]["Light"].baseFile_list.append(base_file)
                             else:
                                 raise Exception()
 
                             if re.findall("FB_VFX", old_type.file_type):
-                                self.chickShotType(prj_index, "FB_VFX")
-                                self.shotType[prj_index]["FB_VFX"].baseFile_list.append(base_file)
+                                self.chickShotType(prj_index, "flipbook")
+                                self.shotType[prj_index]["flipbook"].baseFile_list.append(base_file)
+                                if self.shotType[prj_index]["flipbook"] not in self.shotClass[prj_index][
+                                    "VFX"].shotType_list:
+                                    self.shotClass[prj_index]["VFX"].shotType_list.append(
+                                        self.shotType[prj_index]["flipbook"])
 
                             elif re.findall("Ani", old_type.file_type):
                                 self.chickShotType(prj_index, "Animation")
                                 self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
+                                if self.shotType[prj_index]["Animation"] not in self.shotClass[prj_index][
+                                    "Anm"].shotType_list:
+                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
+                                        self.shotType[prj_index]["Animation"])
+
                             elif re.findall("donghua", old_type.file_type):
                                 self.chickShotType(prj_index, "Animation")
                                 self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
+                                if self.shotType[prj_index]["Animation"] not in self.shotClass[prj_index][
+                                    "Anm"].shotType_list:
+                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
+                                        self.shotType[prj_index]["Animation"])
                             elif re.findall("anm", old_type.file_type):
                                 self.chickShotType(prj_index, "Animation")
                                 self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
+                                if self.shotType[prj_index]["Animation"] not in self.shotClass[prj_index][
+                                    "Anm"].shotType_list:
+                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
+                                        self.shotType[prj_index]["Animation"])
                             elif re.findall("[f,F][B,b][x,X]", old_type.file_type):
                                 self.chickShotType(prj_index, "Animation")
                                 self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
+                                if self.shotType[prj_index]["Animation"] not in self.shotClass[prj_index][
+                                    "Anm"].shotType_list:
+                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
+                                        self.shotType[prj_index]["Animation"])
 
                             elif re.findall("export", old_type.file_type):
                                 self.chickShotType(prj_index, "maya_export")
                                 self.shotType[prj_index]["maya_export"].baseFile_list.append(base_file)
+                                if self.shotType[prj_index]["maya_export"] not in self.shotClass[prj_index][
+                                    "Anm"].shotType_list:
+                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
+                                        self.shotType[prj_index]["maya_export"])
                             elif re.findall("FB_Light", old_type.file_type):
-                                self.chickShotType(prj_index, "FB_Light")
-                                self.shotType[prj_index]["FB_Light"].baseFile_list.append(base_file)
-
+                                self.chickShotType(prj_index, "flipbook")
+                                self.shotType[prj_index]["flipbook"].baseFile_list.append(base_file)
+                                if self.shotType[prj_index]["flipbook"] not in self.shotClass[prj_index][
+                                    "VFX"].shotType_list:
+                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
+                                        self.shotType[prj_index]["flipbook"])
                             elif re.findall("screenshot", old_class.file_class):
                                 self.chickShotType(prj_index, "screenshot")
                                 self.shotType[prj_index]["screenshot"].baseFile_list.append(base_file)

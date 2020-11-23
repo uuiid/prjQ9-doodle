@@ -280,7 +280,7 @@ class PrjShot(PrjCore):
         return name
 
     def _getClassTypeInfo_(self):
-        if self.episodes.episodes:
+        if self.episodes.episodes >= 0:
             episodes = self.episodes.episodes
         else:
             episodes = ""

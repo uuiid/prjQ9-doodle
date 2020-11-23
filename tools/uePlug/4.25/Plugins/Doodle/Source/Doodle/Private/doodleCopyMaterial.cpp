@@ -258,7 +258,7 @@ FReply DoodleCopyMat::BathImport( ) {
         UE_LOG(LogTemp, Log, TEXT("镜头号 %s"), *(myMatch.GetCaptureGroup(2)));
         UE_LOG(LogTemp, Log, TEXT("开始帧 %s"), *(myMatch.GetCaptureGroup(3)));
         UE_LOG(LogTemp, Log, TEXT("结束帧 %s"), *(myMatch.GetCaptureGroup(4)));
-        uePath = FString::Printf(TEXT("/Game/Shot/Ep_%03i/Sc%04i/Ren"), eps, shot);
+        uePath = FString::Printf(TEXT("/Game/Shot/Ep%03i/Sc%04i/Ren"), eps, shot);
         UE_LOG(LogTemp, Log, TEXT("导入路径 %s"), *(uePath));
         AssetImportTask->DestinationPath = uePath;
         abcImportTask->SamplingSettings.FrameEnd = end_f;
@@ -279,7 +279,10 @@ FReply DoodleCopyMat::BathImport( ) {
       fbxFactory->ImportUI->bImportMesh = true;
       fbxFactory->ImportUI->MeshTypeToImport = FBXIT_SkeletalMesh;
       fbxFactory->ImportUI->SkeletalMeshImportData->bImportMorphTargets = true;
+      fbxFactory->ImportUI->bImportMaterials = false;
+      fbxFactory->ImportUI->bImportTextures = false;
       AssetImportTask->Factory = fbxFactory;
+
 
       if (myMatch.FindNext( )) {
         auto eps = FCString::Atoi(*myMatch.GetCaptureGroup(1));
@@ -290,7 +293,7 @@ FReply DoodleCopyMat::BathImport( ) {
         UE_LOG(LogTemp, Log, TEXT("镜头号 %s"), *(myMatch.GetCaptureGroup(2)));
         //UE_LOG(LogTemp, Log, TEXT("开始帧 %s"), *(myMatch.GetCaptureGroup(3)));
         //UE_LOG(LogTemp, Log, TEXT("结束帧 %s"), *(myMatch.GetCaptureGroup(4)));
-        uePath = FString::Printf(TEXT("/Game/Shot/Ep_%03i/Sc%04i/Ren"), eps, shot);
+        uePath = FString::Printf(TEXT("/Game/Shot/Ep%03i/Sc%04i/Ren"), eps, shot);
         UE_LOG(LogTemp, Log, TEXT("导入路径 %s"), *(uePath));
         AssetImportTask->DestinationPath = uePath;
       }

@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'C:\Users\teXiao\doodle\UiFile\setting.ui',
 # licensing of 'C:\Users\teXiao\doodle\UiFile\setting.ui' applies.
 #
-# Created: Fri Aug 14 13:37:04 2020
+# Created: Wed Nov 18 15:04:25 2020
 #      by: pyside2-uic  running on PySide2 5.12.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -106,6 +106,7 @@ class Ui_MainWindow(object):
         self.projectCombo.addItem("")
         self.projectCombo.addItem("")
         self.projectCombo.addItem("")
+        self.projectCombo.addItem("")
         self.horizontalLayout_5.addWidget(self.projectCombo)
         self.verticalLayout_2.addLayout(self.horizontalLayout_5)
         self.freeFileSync = QtWidgets.QLabel(self.centralwidget)
@@ -165,10 +166,11 @@ class Ui_MainWindow(object):
         self.synSever.setText(QtWidgets.QApplication.translate("MainWindow", "TextLabel", None, -1))
         self.label_2.setText(QtWidgets.QApplication.translate("MainWindow", "集数", None, -1))
         self.project.setText(QtWidgets.QApplication.translate("MainWindow", "project", None, -1))
-        self.projectCombo.setItemText(0, QtWidgets.QApplication.translate("MainWindow", "dubuxiaoyao", None, -1))
-        self.projectCombo.setItemText(1, QtWidgets.QApplication.translate("MainWindow", "changanhuanjie", None, -1))
-        self.projectCombo.setItemText(2, QtWidgets.QApplication.translate("MainWindow", "dubuxiaoyao3", None, -1))
+        self.projectCombo.setItemText(0, QtWidgets.QApplication.translate("MainWindow", "dubuxiaoyao3", None, -1))
+        self.projectCombo.setItemText(1, QtWidgets.QApplication.translate("MainWindow", "dubuxiaoyao", None, -1))
+        self.projectCombo.setItemText(2, QtWidgets.QApplication.translate("MainWindow", "changanhuanjie", None, -1))
         self.projectCombo.setItemText(3, QtWidgets.QApplication.translate("MainWindow", "kuangshenmozun", None, -1))
+        self.projectCombo.setItemText(4, QtWidgets.QApplication.translate("MainWindow", "wanyufengshen", None, -1))
         self.freeFileSync.setText(QtWidgets.QApplication.translate("MainWindow", "同步软件安装目录", None, -1))
         self.freeFileSyncButton.setText(QtWidgets.QApplication.translate("MainWindow", "PushButton", None, -1))
         self.menu.setTitle(QtWidgets.QApplication.translate("MainWindow", "文件", None, -1))

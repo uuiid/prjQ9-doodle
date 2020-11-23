@@ -85,7 +85,7 @@ class Doodlesetting(object):
 
     @projectname.setter
     def projectname(self, projectname: str):
-        if not projectname in ["dubuxiaoyao", "changanhuanjie","dubuxiaoyao3","kuangshenmozun"]:
+        if not projectname in ["dubuxiaoyao", "changanhuanjie","dubuxiaoyao3","kuangshenmozun","wanyufengshen"]:
             projectname = "dubuxiaoyao"
         self._projectname = projectname
 

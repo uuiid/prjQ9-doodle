@@ -14,6 +14,7 @@ from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
 
+
 class DlsShelf(shelfBase._shelf):
     cloth_to_fbx = None
 
@@ -35,7 +36,7 @@ class DlsShelf(shelfBase._shelf):
                       command=self.deleteAttr)
         self.addButon("export usd", icon="icons/export_usd.png", command=self.exportUSD)
         self.addButon("repair", icon="icons/repair", command=self.repair)
-        self.addButon("randomColor" ,icon="icons/randomColor.png", command=self.randomColor)
+        self.addButon("randomColor", icon="icons/randomColor.png", command=self.randomColor)
 
     def polyremesh(self):
         self.re()
@@ -97,7 +98,8 @@ class DlsShelf(shelfBase._shelf):
         for select_obj in select_lists:
             pymel.core.select(select_obj)
             pymel.core.polyColorPerVertex(colorDisplayOption=True,
-                                          rgb=(random.random(), random.random(), random.random()))
+                                          rgb=(random.random() * .5, random.random() * .5, random.random() * .5))
+
     def re(self):
         key = QtWidgets.QApplication.keyboardModifiers()
         if key == QtCore.Qt.ShiftModifier:
