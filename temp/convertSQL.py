@@ -335,11 +335,13 @@ class convertSql:
         # self.conn_old = DoodleServer.DoodleSql.commMysql("dubuxiaoyao3", "", "")
         self.set.projectname = "dubuxiaoyao3"
         self.prj_list.append(project(name="dubuxiaoyao3"))
+        self.setConfig(0)
         self.getOldass(0)
         self.getOldShot(0)
 
         self.prj_list.append(project(name="changanhuanjie"))
         self.set.projectname = "changanhuanjie"
+        self.setConfig(1)
         self.getOldass(1)
         self.getOldShot(1)
 
@@ -458,55 +460,34 @@ class convertSql:
                             if re.findall("FB_VFX", old_type.file_type):
                                 self.chickShotType(prj_index, "flipbook")
                                 self.shotType[prj_index]["flipbook"].baseFile_list.append(base_file)
-                                if self.shotType[prj_index]["flipbook"] not in self.shotClass[prj_index][
-                                    "VFX"].shotType_list:
-                                    self.shotClass[prj_index]["VFX"].shotType_list.append(
-                                        self.shotType[prj_index]["flipbook"])
+
 
                             elif re.findall("Ani", old_type.file_type):
                                 self.chickShotType(prj_index, "Animation")
                                 self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
-                                if self.shotType[prj_index]["Animation"] not in self.shotClass[prj_index][
-                                    "Anm"].shotType_list:
-                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
-                                        self.shotType[prj_index]["Animation"])
+
 
                             elif re.findall("donghua", old_type.file_type):
                                 self.chickShotType(prj_index, "Animation")
                                 self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
-                                if self.shotType[prj_index]["Animation"] not in self.shotClass[prj_index][
-                                    "Anm"].shotType_list:
-                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
-                                        self.shotType[prj_index]["Animation"])
+
                             elif re.findall("anm", old_type.file_type):
                                 self.chickShotType(prj_index, "Animation")
                                 self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
-                                if self.shotType[prj_index]["Animation"] not in self.shotClass[prj_index][
-                                    "Anm"].shotType_list:
-                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
-                                        self.shotType[prj_index]["Animation"])
+
                             elif re.findall("[f,F][B,b][x,X]", old_type.file_type):
                                 self.chickShotType(prj_index, "Animation")
                                 self.shotType[prj_index]["Animation"].baseFile_list.append(base_file)
-                                if self.shotType[prj_index]["Animation"] not in self.shotClass[prj_index][
-                                    "Anm"].shotType_list:
-                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
-                                        self.shotType[prj_index]["Animation"])
+
 
                             elif re.findall("export", old_type.file_type):
                                 self.chickShotType(prj_index, "maya_export")
                                 self.shotType[prj_index]["maya_export"].baseFile_list.append(base_file)
-                                if self.shotType[prj_index]["maya_export"] not in self.shotClass[prj_index][
-                                    "Anm"].shotType_list:
-                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
-                                        self.shotType[prj_index]["maya_export"])
+
                             elif re.findall("FB_Light", old_type.file_type):
                                 self.chickShotType(prj_index, "flipbook")
                                 self.shotType[prj_index]["flipbook"].baseFile_list.append(base_file)
-                                if self.shotType[prj_index]["flipbook"] not in self.shotClass[prj_index][
-                                    "VFX"].shotType_list:
-                                    self.shotClass[prj_index]["Anm"].shotType_list.append(
-                                        self.shotType[prj_index]["flipbook"])
+
                             elif re.findall("screenshot", old_class.file_class):
                                 self.chickShotType(prj_index, "screenshot")
                                 self.shotType[prj_index]["screenshot"].baseFile_list.append(base_file)
@@ -548,7 +529,8 @@ class convertSql:
         # josn_: typing.List = json.loads(_str_)
         name = []
         for item in _str_:
-            name.append({"Left": item["Left"].split("/")[1], "Right": item["Right"].split("/")[1]})
+            name.append({"Left": "{}/{}".format(item["Left"].split("/")[0],item["Left"].split("/")[1]),
+                         "Right":  "{}/{}".format(item["Right"].split("/")[0],item["Right"].split("/")[1])})
         return json.dumps(name, ensure_ascii=False, separators=(',', ':'), )
 
     def patch(self):
