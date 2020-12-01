@@ -5,12 +5,16 @@ import tools.ue_path
 
 def dubuRun3():
     """
+
+
+
+
     :return:
     :rtype:
     """
-    synfile = ["ManZuShengDi","ManZuYingDi","jinshengshijie"]
+    synfile = ["ManZuShengDi","ManZuYingDi","jinshuShijie"]
     LR = ["Left", "Right"]
-    ep = 65
+    ep = 68
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:
@@ -57,12 +61,19 @@ MiJiShanGuDongKuNei
 
 def chanAnRun():
     """
+
+
+
+
+
+
+
     :return:
     :rtype:
     """
-    synfile = ["ChanAnJieDao","ZhuiZhuXiaoXiang_ZL",]
+    synfile = ["ChanAnJieDao","DongKuNei","JiaoWaiKuangDong_LWZ","TPPDXW","ZiFeiChaiFang02","ZiFeiKeZhan_ZL"]
     LR = ["Left", "Right"]
-    ep = 2
+    ep = 12
     it = []
     for dep in ["Light", "VFX"]:
         for key in synfile:

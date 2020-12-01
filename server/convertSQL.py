@@ -237,7 +237,7 @@ class episodes(Base):
     __tablename__ = "episodes"
     id: int = sqlalchemy.Column(sqlalchemy.databases.mssql.BIGINT, primary_key=True, nullable=False, autoincrement=True,
                                 unique=True)
-    episodes: int = sqlalchemy.Column(sqlalchemy.databases.mssql.BIGINT, unique=True)
+    episodes: int = sqlalchemy.Column(sqlalchemy.databases.mssql.BIGINT)
 
     project_id: int = sqlalchemy.Column(sqlalchemy.databases.mssql.BIGINT, sqlalchemy.ForeignKey("project.id"))
     project = sqlalchemy.orm.relationship("project", back_populates="episodes_list")
