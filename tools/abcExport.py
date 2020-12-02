@@ -27,7 +27,7 @@ class doodle_log:
     def write(self):
         if not os.path.exists(self.logPath):
             os.makedirs(self.logPath)
-        with open(os.path.join(self.logPath + "doodle_export_abc.json"), "w") as f:
+        with open(os.path.join(self.logPath , "doodle_export_abc.json"), "w") as f:
             f.write(
                 json.dumps(self.log,
                            ensure_ascii=False,
